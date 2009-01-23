@@ -67,7 +67,7 @@ class Answer
     out << %(  text: "#{@text}")
     out << %(  short_text: "#{@short_text}")
     out << %(  help_text: "#{@help_text}")
-    out << %(  numerical_value: #{@numerical_value})
+    out << %(  weight: #{@weight})
     out << %(  response_class: "#{@response_class}")
     out << %(  display_order: #{display_order} )
     out << %(  is_exclusive: #{@is_exclusive})
