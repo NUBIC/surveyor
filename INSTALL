@@ -1,4 +1,4 @@
-0. Init Rails and Install HAML
+0. Init Rails and Install HAML (see http://haml.hamptoncatlin.com/download)
 
 rails your_survey_app
 cd your_survey_app
@@ -7,12 +7,7 @@ mv public/index.html public/index.html.old
 gem install --no-ri haml
 haml --rails .
 
-1. Install Rails Engines Plugin
-
-ruby script/plugin discover
-ruby script/plugin install engines
-
-or
+1. Install Rails Engines Plugin (see http://rails-engines.org/download)
 
 ruby script/plugin install git://github.com/lazyatom/engines.git
 
@@ -20,10 +15,19 @@ ruby script/plugin install git://github.com/lazyatom/engines.git
 
 ruby script/plugin install git://github.com/breakpointer/surveyor.git
 
+or using git submodule (if want the bleeding edge, see http://www.kernel.org/pub/software/scm/git/docs/git-submodule.html)
+
+git submodule add git://github.com/breakpointer/surveyor.git vendor/plugins/surveyor
+git submodule init
+git submodule update
+
 3. Setup SurveyOR
 
-Add to config/environment.rb above after require File.join(File.dirname(__FILE__), 'boot'): require File.join(File.dirname(__FILE__), '../vendor/plugins/engines/boot')
+In config/environment.rb... after require File.join(File.dirname(__FILE__), 'boot') add:
+  require File.join(File.dirname(__FILE__), '../vendor/plugins/engines/boot')
 
-Add to config/routes.rb: map.from_plugin :surveyor
- 
-Run: script/generate plugin_migration && rake db:migrate
+In config/routes.rb add:
+  map.from_plugin :surveyor
+
+Run:
+  script/generate plugin_migration && rake db:migrate
