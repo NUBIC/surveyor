@@ -14,9 +14,9 @@ namespace :survey_dsl do
   desc "Run the DSL on a specific file"
   task :generate do
     unless ENV["FILE"].blank?
-      DSLParse.parse(SURVEYOR_ROOT + ENV["FILE"])
+      DSLParse.parse(File.join(RAILS_ROOT, ENV["FILE"]))
     else
-      raise "filename needed 'FILE=blah.rb'"
+      raise "filename (relative to Rails Root) needed 'FILE=vendor/plugins/surveyor/blah.rb'"
     end
   end
 
