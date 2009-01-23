@@ -1,0 +1,13 @@
+.question_group
+  .head
+    .number= question_number_helper number
+    .text
+      = group.text
+      %span.help= group.help_text
+  - number_counter = 1
+  %ul
+    - group.questions.each do |question|
+      - if !question.has_dependency? or question.dependency_is_satisfied?(@response_set)
+        %li
+          = render(:partial => "/question_display_types/group_#{(!question.display_type.empty?)? question.display_type : "default"}", :locals => {:question => question, :response_set => @response_set, :number => "#{number}.#{number_counter}", :hide_label => true})
+        - number_counter += 1 if question.display_type != "label"

@@ -1,0 +1,13 @@
+# Read about fixtures at http://ar.rubyonrails.org/classes/Fixtures.html
+
+one:
+  user_id: 1
+  survey_id: 1
+  started_at: 2008-06-19 09:31:24
+  completed_at: 2008-06-19 09:31:24
+
+two:
+  user_id: 1
+  survey_id: 1
+  started_at: 2008-06-19 09:31:24
+  completed_at: 2008-06-19 09:31:24

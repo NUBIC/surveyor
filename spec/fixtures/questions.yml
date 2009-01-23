@@ -1,0 +1,15 @@
+# Read about fixtures at http://ar.rubyonrails.org/classes/Fixtures.html
+
+one:
+  survey_section_id: 1
+  display_group_id: 1
+  display_type: MyString
+  display_order: 1
+  text: MyText
+
+two:
+  survey_section_id: 1
+  display_group_id: 1
+  display_type: MyString
+  display_order: 1
+  text: MyText

@@ -1,0 +1,6 @@
+- fields_for_radio(response_obj) do |response_form|
+  -# response_form.hidden_field(:answer_id, :value => 0, :index => nil)
+  = response_form.radio_button(:answer_id, answer.id, :checked => response_obj.selected?)
+  = response_form.label(:answer_id, answer.text)
+- fields_for_response(response_obj) do |second_form|
+  = second_form.text_field(:string_value, :size => 25, :maxlength => 250, :autocomplete => "off")

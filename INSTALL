@@ -1,0 +1,22 @@
+1. Install Rails Engines Plugin
+
+ruby script/plugin discover
+ruby script/plugin install engines
+
+or
+
+ruby script/plugin install git://github.com/lazyatom/engines.git
+
+2. Install SurveyOR
+
+ruby script/plugin install git://github.com/breakpointer/surveyor.git
+
+3. Setup SurveyOR
+
+Add to config/environment.rb above after require File.join(File.dirname(__FILE__), 'boot'): require File.join(File.dirname(__FILE__), '../vendor/plugins/engines/boot')
+
+
+
+Add to config/routes.rb: map.from_plugin :surveyor
+ 
+Run: script/generate plugin_migration && rake db:migrate

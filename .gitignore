@@ -1,0 +1,3 @@
+.DS_Store
+db/load_data/*
+script/survey_dsl/fixtures/*

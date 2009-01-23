@@ -1,0 +1,24 @@
+.question_group
+  .head
+    .number= question_number_helper number
+    .text
+      = group.text
+      %span.help= group.help_text
+  %table.grid
+    %thead
+      %th= "&nbsp;"
+      - reset_cycle("column_highlight")
+      - group.questions.first.answers.each do |answer|
+        %th{:class => "#{cycle("column_highlight", "", :name => "column_highlight")}"}= answer.text
+    %tfoot
+      %th= "&nbsp;"
+      - reset_cycle("column_highlight")
+      - group.questions.first.answers.each do |answer|
+        %th{:class => "#{cycle("column_highlight","", :name => "column_highlight")}"}= answer.text
+    %tbody 
+      - number_counter = 1
+      - group.questions.each do |question|
+        - if !question.has_dependency? or question.dependency_is_satisfied?(response_set)
+          = render(:partial => "/question_display_types/grid_#{question.display_type}", :locals => {:question => question, :response_set => response_set, :number => "#{number}.#{number_counter}"})
+          - number_counter += 1 if question.display_type != "label"
+  

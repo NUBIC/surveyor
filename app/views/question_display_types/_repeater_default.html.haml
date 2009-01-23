@@ -1,0 +1,10 @@
+-disabled ||= false
+.question{ :class => "#{(disabled)? 'disabled' : 'enabled'}"}
+  %span.text= question.text
+  %span.help= question.help_text
+  = hidden_field_tag("response_groups[#{question.id}][#{response_group}][response_group]", response_group)
+  = hidden_field_tag("response_groups[#{question.id}][#{response_group}][question_id]", question.id)
+  %ol.answers
+    - question.answers.each do |answer|
+      %li.answer 
+        =render(:partial => "/answer_display_types/repeater_#{answer.partial_name}", :locals => {:answer => answer, :response_obj => response_set.response_for(question.id, answer.id, response_group),:response_group => response_group, :hide_label => true, :disabled => disabled})

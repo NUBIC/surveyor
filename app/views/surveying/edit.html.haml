@@ -1,0 +1,38 @@
+#content
+  - form_tag(update_my_survey_path, :method => :put, :id => "survey_form") do
+    -unless @survey.sections.size < 3
+      #menu
+        Sections:
+        %ul
+          - @survey.sections.each do |survey_section|
+            - if (survey_section == @section)
+              %li{:class => "active"}= section_submit_helper(survey_section)
+            - else
+              %li= section_submit_helper(survey_section)
+    #header
+      .title= @survey.title
+    .previous_section
+      - unless @section.previous == nil
+        = section_previous_helper(@section.previous) unless @section.previous == nil
+    - unless @dependents.empty?
+      #dependents
+        .title
+          Follow-up questions from your answers on the previous page
+        - @dependents.each_with_index do |question, index|
+          = dependency_explanation_helper(question, @response_set)
+          = render(:partial => "/question_display_types/#{question.display_type}", :locals => {:question => question, :response_set => @response_set, :number => "D#{index+1}", :show_question => true})
+    .section{:id => section_id_helper(@section)}
+      %span.title= @section.title
+      .questions
+        - number_counter = 1
+        - @section.questions.each_with_index do |question, index|
+          - unless question.part_of_group?
+            - show_question = (question.dependency_satisfied?(@response_set) or !question.has_dependency?)
+            = render(:partial => "/question_display_types/#{(!question.display_type.empty?)? question.display_type : "default"}", :locals => {:question => question, :response_set => @response_set, :number => !question.has_dependency? ? number_counter : nil, :show_question => show_question})
+            - number_counter += 1 if question.display_type != "label" and question.display_type != "image" and !question.has_dependency?
+          - else
+            - if (index + 1 >= @section.questions.size) or (question.question_group_id != @section.questions[index + 1].question_group_id) #looking ahead
+              = render(:partial => "/question_group_display_types/#{(!question.question_group.display_type.empty?)? question.question_group.display_type : "default"}", :locals => {:group => question.question_group, :response_set => @response_set, :number => number_counter})
+              - number_counter += 1
+    .next_section
+      = @section.next ? section_next_helper(@section.next) : submit_tag("Click here to finish", :name => "0")

@@ -1,0 +1,12 @@
+.question{:id => question_id_helper(question), :class => "#{'hidden' unless show_question} #{'dependent' if question.has_dependency?}"}
+  .number= question_number_helper number
+  %fieldset
+    %legend
+      %span.text
+        =question.text
+        %span.help= question.help_text
+    = hidden_field_tag("responses[#{question.id}][question_id]", question.id)
+    %ol.answers
+      - question.answers.each do |answer|
+        %li.answer{:id => answer_id_helper(answer)}
+          =render(:partial => "/answer_display_types/#{answer.partial_name}", :locals => {:answer => answer, :response_obj => @response_set.response_for(question.id, answer.id), :hide_label => answer.hide_label})

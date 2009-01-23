@@ -1,0 +1,19 @@
+<h1>Listing surveys</h1>
+
+<table>
+  <tr>
+  </tr>
+<% if @surveys %>
+<% for survey in @surveys %>
+  <tr>
+	<td><%= survey.title %></td>
+	<td>&nbsp;</td>
+    <td><%= link_to 'Show', survey %></td>
+  </tr>
+<% end %>
+</table>
+<% else %>
+No surveys
+<% end %>
+
+<br />

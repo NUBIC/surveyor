@@ -1,0 +1,8 @@
+- @survey.sections.each do |section|
+  .section{:id => section_id_helper(section)}
+    .title= section.title
+    - section.questions.each do |question|
+      - unless question.part_of_group?
+        = render(:partial => "/question_display_types/#{(!question.display_type.empty?)? question.display_type : "default"}", :locals => { :question => question, :response_obj => @response_set.responses.find_by_question_id(question.id) || @response_set.responses.build(:question_id => question.id)})
+      - else
+        Group

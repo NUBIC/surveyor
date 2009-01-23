@@ -1,0 +1,3 @@
+- fields_for_response(response_obj) do |response_form|
+  = response_form.survey_check_box(:selected)
+  = response_form.label("selected", answer.text) # This is a temp fix til I figure out why the id of the checkbox is all jacked up

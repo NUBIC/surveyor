@@ -1,0 +1,17 @@
+#content
+  #header
+    .title You can take these surveys:
+  %br
+  #survey_list
+    %ul
+      - unless @surveys.empty?
+        - @surveys.each do |survey|
+          %li
+            - form_tag(take_survey_path(:survey_code => survey.access_code)) do 
+              = hidden_field_tag("current_user_id", @current_user.id)
+              = survey.title
+              &nbsp;
+              = submit_tag("Take it" )
+      - else
+        %li
+          No surveys

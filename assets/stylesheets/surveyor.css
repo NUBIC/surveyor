@@ -1,0 +1,262 @@
+body {
+  background-color: #dcdcdc;
+  font-family: Helvetica;
+  word-spacing: normal;
+  text-align: left;
+  letter-spacing: 0;
+  line-height: 1.1em;
+  font-size: 1em;
+  margin: 0;
+  padding: 0; }
+
+p {
+  padding: 0.3em;
+  margin: 0.5em;
+  margin: 0.55em; }
+
+input[type="submit"] {
+  font-size: 1.0em;
+  border: 0px;
+  padding: 0.2em;
+  margin: 0.2em;
+  cursor: pointer;
+  background-color: #dcdcdc;
+  color: #464646; }
+
+input[type="text"], textarea {
+  border: 2px inset #333;
+  border-color: #bcbcbc;
+  background-color: #fafafa;
+  padding: 0.1em;
+  margin: 0.1em;
+  font-size: 0.8em; }
+
+.disabled {
+  color: #dfdfd4; }
+  .disabled input[type="text"], .disabled textarea {
+    border: 2px inset #333;
+    border-color: #bcbcbc;
+    background-color: #efefe4; }
+
+input[type="submit"].add_row {
+  padding: 0.1em;
+  margin: 0em;
+  margin-left: -1em;
+  font-size: 0.7em;
+  border: 1px solid #333;
+  border-color: #bcbcbc; }
+
+#flash {
+  background-color: transparent;
+  color: #213e00;
+  width: 98%;
+  margin: 0.3em;
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 1000;
+  color: #f00;
+  text-align: center; }
+
+#survey_with_menu {
+  background-color: #dcdcdc;
+  color: #213e00;
+  margin: 0;
+  padding: 0; }
+  #survey_with_menu #header {
+    font-family: "Century Gothic";
+    padding: 0.5em 1em 1em 0.3em;
+    margin: 0;
+    font-size: 2em;
+    font-weight: bolid; }
+  #survey_with_menu #content {
+    width: 960px;
+    padding: 1em;
+    margin: 0;
+    margin-left: auto;
+    margin-right: auto;
+    background-color: #fffff4;
+    color: #213e00; }
+    #survey_with_menu #content .section {
+      margin: 0.5em 0.5em 0.5em -1em;
+      padding: 0.5em 0 0 0; }
+      #survey_with_menu #content .section .title {
+        font-weight: bold;
+        font-size: 1.2em;
+        margin: 0;
+        padding: 0.3em 0.5em 0.1em 1.4em;
+        background-color: #ebebcc; }
+  #survey_with_menu .previous_section {
+    font-size: 0.8em;
+    margin: -0.6em 0 0.5em -1em;
+    padding: 0; }
+    #survey_with_menu .previous_section input {
+      background-color: #fffff4; }
+  #survey_with_menu .next_section {
+    float: right;
+    margin: -2em 1em 0 0; }
+  #survey_with_menu #menu {
+    width: 11.9em;
+    padding: 0;
+    margin: 0.65em -1em 0 0;
+    float: right; }
+    #survey_with_menu #menu ul {
+      padding: 0;
+      margin: 0;
+      list-style-type: none;
+      border-style: solid;
+      border-width: 1px;
+      border-color: #bcbcbc;
+      border-bottom-width: 0;
+      border-right-width: 0;
+      background-color: #dcdcdc;
+      color: #666666; }
+      #survey_with_menu #menu ul li {
+        border-bottom-style: solid;
+        border-bottom-width: 1px;
+        border-color: #bcbcbc; }
+      #survey_with_menu #menu ul li.active {
+        background-color: #ebebcc;
+        color: #262626; }
+        #survey_with_menu #menu ul li.active input[type="submit"] {
+          background-color: #ebebcc;
+          color: #262626; }
+  #survey_with_menu #survey_list ul {
+    padding-left: 2em;
+    margin-top: -2em; }
+
+.questions {
+  margin: 0;
+  padding: 1em 0.3em; }
+
+.question {
+  margin: 0 0 0.6em 0;
+  padding: 0.2em; }
+  .question legend {
+    width: 940px;
+    white-space: normal; }
+    .question legend span {
+      display: block; }
+  .question .number {
+    padding: 0.2em 0.2em 3em 0.2em;
+    font-weight: bold;
+    font-size: 1.2em;
+    letter-spacing: 0;
+    float: left; }
+  .question .text {
+    padding-top: 0.2em;
+    font-size: 1.1em;
+    line-height: 1.2em; }
+  .question .help {
+    font-size: 0.8em;
+    font-style: italic;
+    color: #000000;
+    display: none; }
+
+ol.answers {
+  list-style-type: none;
+  padding: 0.2em;
+  margin: 0 0 0.3em 1.5em; }
+  ol.answers li.answer {
+    margin: 0.2em; }
+
+ol.answers_inline {
+  margin-left: 1.8em;
+  list-style-type: none; }
+  ol.answers_inline li {
+    display: inline;
+    padding-right: 1.5em; }
+
+.label {
+  padding: 0.5em 1em;
+  margin: 0.5em 1em;
+  line-height: 1.4em; }
+
+#dependents {
+  background-color: #dfdfd4; }
+  #dependents .title {
+    padding: 0.5em;
+    font-weight: bold; }
+
+.dependent {
+  background-color: #dfdfd4;
+  margin-left: 1.2em; }
+
+.hidden {
+  display: none; }
+
+.column_highlight {
+  background-color: #efefe4; }
+
+table.grid {
+  margin: 0.5em 0.2em 0.5em 1em; }
+  table.grid th {
+    padding: 0.2em 0.5em;
+    text-align: center; }
+  table.grid td {
+    padding: 0.2em 0.5em;
+    border-bottom: 2px dotted #999;
+    border-color: #bfbfb4;
+    text-align: center; }
+  table.grid td.question_prefix {
+    text-align: left;
+    padding: 0.2em; }
+  table.grid td.question_postfix {
+    text-align: left;
+    padding: 0.2em; }
+
+.question_group {
+  margin: 0 0 0.6em 0;
+  padding: 0.2em 0.2em 1em 0.2em; }
+  .question_group .head {
+    padding-bottom: 0.5em; }
+    .question_group .head .number {
+      padding: 0.2em 0.2em 4em 0.2em;
+      font-weight: bold;
+      font-size: 1.2em;
+      letter-spacing: 0;
+      float: left; }
+    .question_group .head .text {
+      padding-top: 0.2em;
+      font-size: 1.1em;
+      line-height: 1.2em; }
+    .question_group .head .help {
+      font-size: 0.8em;
+      font-style: italic;
+      color: #000000; }
+  .question_group ul {
+    padding: 0.3em;
+    list-style-type: none; }
+    .question_group ul li {
+      display: inline; }
+      .question_group ul li .question {
+        display: inline; }
+        .question_group ul li .question ol.answers {
+          display: inline;
+          margin: 0.2em; }
+  .question_group ul.repeater {
+    list-style-type: none; }
+  .question_group li.repeater {
+    display: block; }
+    .question_group li.repeater ol {
+      margin: 0;
+      padding: 0; }
+    .question_group li.repeater .question {
+      padding-left: 1.2em; }
+  .question_group .question {
+    margin: 0;
+    padding: 0em 0.3em; }
+    .question_group .question .text {
+      font-size: 0.9em; }
+    .question_group .question .help {
+      font-size: 0.7em;
+      font-style: italic;
+      color: #000000; }
+    .question_group .question .number {
+      padding: 0.2em 0 0.2em 0.2em;
+      margin: 0 0 0.3em 0;
+      font-weight: bold;
+      font-size: 1em;
+      letter-spacing: 0; }
+  .question_group .group_questions {
+    margin: 0.5em 0.2em 0.5em 1em; }

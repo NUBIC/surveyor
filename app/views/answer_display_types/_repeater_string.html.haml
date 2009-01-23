@@ -1,0 +1,7 @@
+- hide_label ||= false
+- disabled ||= false
+- fields_for_repeater_response(response_obj, response_group) do |response_form|
+  = response_form.label(:string_value, answer_text_prefix_helper(answer.text), :class => "#{(disabled)? 'disabled' : 'enabled'}") unless hide_label
+  = response_form.text_field(:string_value, :size => 25, :maxlength => 250, :autocomplete => "off", :disabled => disabled)
+  = response_form.label(:string_value, answer_text_postfix_helper(answer.text), :class => "#{(disabled)? 'disabled' : 'enabled'}") unless hide_label
+  

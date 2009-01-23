@@ -1,0 +1,17 @@
+%script{:type => "text/javascript"}
+  $(function(){
+  //demo 1
+  ="$('#slider_#{question.id}').accessibleUISlider({width: 400, labels:#{question.answers.size} }).hide();"
+  });
+.question{:id => question_id_helper(question), :class => "#{'hidden' unless show_question} #{'dependent' if question.has_dependency?}"}
+  .number= question_number_helper number
+  %fieldset
+    %legend{:style => "display:inline;"}
+      .text
+        = question.text
+        %span.help= question.help_text
+      = hidden_field_tag("responses[#{question.id}][question_id]", question.id)
+    %ol.answers
+      %li.answer
+        - options= question.answers.collect{|a| "<option #{ (response_set.response_for(question.id, a.id).selected?)? "selected='selected'" : nil } value ='#{a.id}'>#{a.text}</option>" }
+        = select_tag("responses[#{question.id}][answer_id]", options, {:id => "slider_#{question.id}"})

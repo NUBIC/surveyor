@@ -1,0 +1,2 @@
+- fields_for_radio(response_obj) do |response_form|
+  = response_form.radio_button(:answer_id, answer.id, :checked => response_obj.selected?)
