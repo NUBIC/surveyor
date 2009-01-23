@@ -9,7 +9,11 @@ module ActionView
   module Helpers
     module FormHelper
       def survey_check_box(object_name, method, options = {}, checked_value = "1", unchecked_value = "0")
-        InstanceTag.new(object_name, method, self, nil, options.delete(:object)).to_survey_check_box_tag(options, checked_value, unchecked_value)
+        if (Rails::VERSION::STRING.to_f > 2.1)
+          InstanceTag.new(object_name, method, self, options.delete(:object)).to_survey_check_box_tag(options, checked_value, unchecked_value)
+        else
+          InstanceTag.new(object_name, method, self, nil, options.delete(:object)).to_survey_check_box_tag(options, checked_value, unchecked_value)
+        end
       end
     end
 

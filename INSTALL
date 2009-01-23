@@ -1,3 +1,12 @@
+0. Init Rails and Install HAML
+
+rails your_survey_app
+cd your_survey_app
+mv public/index.html public/index.html.old
+
+gem install --no-ri haml
+haml --rails .
+
 1. Install Rails Engines Plugin
 
 ruby script/plugin discover
@@ -14,8 +23,6 @@ ruby script/plugin install git://github.com/breakpointer/surveyor.git
 3. Setup SurveyOR
 
 Add to config/environment.rb above after require File.join(File.dirname(__FILE__), 'boot'): require File.join(File.dirname(__FILE__), '../vendor/plugins/engines/boot')
-
-
 
 Add to config/routes.rb: map.from_plugin :surveyor
  
