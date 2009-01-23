@@ -1,3 +1,3 @@
 .DS_Store
-db/load_data/*
-script/survey_dsl/fixtures/*
+db/load_data/*.yml
+script/survey_dsl/fixtures/*.yml
