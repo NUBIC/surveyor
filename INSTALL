@@ -11,7 +11,7 @@ haml --rails .
 
 ruby script/plugin install git://github.com/lazyatom/engines.git
 
-2. Install SurveyOR
+2. Install SurveyOR (surveys on rails)
 
 ruby script/plugin install git://github.com/breakpointer/surveyor.git
 
@@ -31,3 +31,5 @@ In config/routes.rb add:
 
 Run:
   script/generate plugin_migration && rake db:migrate
+  
+  
