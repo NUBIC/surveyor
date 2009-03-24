@@ -1,35 +1,30 @@
-0. Init Rails and Install HAML (see http://haml.hamptoncatlin.com/download)
+INSTALLATION INSTRUCTIONS
+=========================
 
+For the Impatient
+------------------
 rails your_survey_app
 cd your_survey_app
 mv public/index.html public/index.html.old
+gem install --no-ri --no-rdoc haml
+haml --rails
+script/plugin install git://github.com/lazyatom/engines.git
+script/plugin install git://github.com/breakpointer/surveyor.git
 
-gem install --no-ri haml
-haml --rails .
+#
+# or: git submodule add git://github.com/breakpointer/surveyor.git vendor/plugins/surveyor
+#     git submodule init
+#     git submodule update
+#
 
-1. Install Rails Engines Plugin (see http://rails-engines.org/download)
+cp vendor/plugins/surveyor/db/migrate/*.rb db/migrate
+rake db:migrate
 
-ruby script/plugin install git://github.com/lazyatom/engines.git
+Dependencices
+-------------------
+Surveyor requires HAML(http://haml.hamptoncatlin.com/download)
 
-2. Install SurveyOR (surveys on rails)
+Special Considerations for Rails 2.3
+-------------------
+Rails 2.3 does not yet support plugin migrations. Therefore, you will need to copy Surveyor's migrations to your main application's db/migrate subdirectory.
 
-ruby script/plugin install git://github.com/breakpointer/surveyor.git
-
-or using git submodule (if want the bleeding edge, see http://www.kernel.org/pub/software/scm/git/docs/git-submodule.html)
-
-git submodule add git://github.com/breakpointer/surveyor.git vendor/plugins/surveyor
-git submodule init
-git submodule update
-
-3. Setup SurveyOR
-
-In config/environment.rb... after require File.join(File.dirname(__FILE__), 'boot') add:
-  require File.join(File.dirname(__FILE__), '../vendor/plugins/engines/boot')
-
-In config/routes.rb add:
-  map.from_plugin :surveyor
-
-Run:
-  script/generate plugin_migration && rake db:migrate
-  
-  
