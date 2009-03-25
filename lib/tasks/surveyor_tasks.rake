@@ -1,10 +1,9 @@
-# desc "Explaining what the task does"
-# task :surveyor do
-#   # Task goes here
-# end
-SURVEYOR_ROOT = File.join(RAILS_ROOT, "vendor/plugins/surveyor/")
-require SURVEYOR_ROOT + 'script/survey_dsl/dslparse'
+
+# location of plugin
+SURVEYOR_ROOT = File.join(RAILS_ROOT, "vendor/plugins/surveyor")
+require SURVEYOR_ROOT + '/script/survey_dsl/dslparse'
 require 'active_record/fixtures'
+require 'fileutils'
 
 namespace :survey_dsl do
 
@@ -22,8 +21,8 @@ namespace :survey_dsl do
 
   desc "Copy the fixtures in to db/load_data"
   task :copy_fixtures do
-    files = Dir[SURVEYOR_ROOT + 'script/survey_dsl/fixtures/*.yml']
-    FileUtils.cp(files, SURVEYOR_ROOT + 'db/load_data/')
+    files = Dir[SURVEYOR_ROOT + '/script/survey_dsl/fixtures/*.yml']
+    FileUtils.cp(files, SURVEYOR_ROOT + '/db/load_data/')
   end
 
   desc "Delete table content and load fixtures"
@@ -34,10 +33,39 @@ namespace :survey_dsl do
       puts "Loading DSL fixture list from #{generated_fixture_location}"
       fix_files.each{ |f| puts " == " + File.basename(f, '.*')}
       raise "No fixtures in this location!" if fix_files.empty?
-      raise "Error! Fixtures not copied to load folder #{SURVEYOR_ROOT + 'db/load_data/'}\r\nRun 'rake survey_dsl:copy_fixtures'" if Dir.glob(File.join(SURVEYOR_ROOT, 'db', 'load_data', '*.{yml,csv}')).empty?
+      raise "Error! Fixtures not copied to load folder #{SURVEYOR_ROOT + '/db/load_data/'}\r\nRun 'rake survey_dsl:copy_fixtures'" if Dir.glob(File.join(SURVEYOR_ROOT, 'db', 'load_data', '*.{yml,csv}')).empty?
       fix_files.each do |fixture_file|
         puts "added fixtures to table '#{File.basename(fixture_file, '.*')}'"
-        Fixtures.create_fixtures(SURVEYOR_ROOT + 'db/load_data', File.basename(fixture_file, '.*'))
+        Fixtures.create_fixtures(SURVEYOR_ROOT + '/db/load_data', File.basename(fixture_file, '.*'))
       end
   end
+end
+
+namespace :surveyor do
+  
+  desc "copies over assets from the plugin directory to the app root 'public/[:stylesheets,:images,:javascripts]/surveyor'"
+  task :init => ['surveyor:build_css','surveyor:copy_css', 'surveyor:copy_js', 'surveyor:copy_img']
+
+  desc "generates css from sass files"
+  task :build_css do
+    root = "#{RAILS_ROOT}/vendor/plugins/surveyor/assets/stylesheets"
+    `sass #{root}/sass/surveyor.sass #{root}/surveyor.css`
+  end
+  
+  desc "copies css from assets folder to app public/stylesheets/surveyor folder"
+  task :copy_css do
+    FileUtils.mkdir_p "#{RAILS_ROOT}/public/stylesheets/surveyor"
+    FileUtils.cp Dir["#{SURVEYOR_ROOT}/assets/stylesheets/*.css"],"#{RAILS_ROOT}/public/stylesheets/surveyor/"
+  end
+
+  task :copy_js do
+    FileUtils.mkdir_p "#{RAILS_ROOT}/public/javascripts/surveyor"
+    FileUtils.cp Dir["#{SURVEYOR_ROOT}/assets/javascripts/*.js"],"#{RAILS_ROOT}/public/javascripts/surveyor/"
+  end
+
+  task :copy_img do
+    FileUtils.mkdir_p "#{RAILS_ROOT}/public/images/surveyor"
+    FileUtils.cp Dir["#{SURVEYOR_ROOT}/assets/images/*"],"#{RAILS_ROOT}/public/images/surveyor/"
+  end
+
 end

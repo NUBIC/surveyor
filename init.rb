@@ -1,5 +1,3 @@
-# Include hook code 
+# initializing the plugin assets
+`rake surveyor:init`
 
-# Generating sass
-root = "#{RAILS_ROOT}/vendor/plugins/surveyor/assets/stylesheets"
-`sass #{root}/sass/surveyor.sass #{root}/surveyor.css` 
