@@ -49,23 +49,35 @@ namespace :surveyor do
   desc "generates css from sass files"
   task :build_css do
     root = "#{RAILS_ROOT}/vendor/plugins/surveyor/assets/stylesheets"
+    puts "bulding css from sass"
     `sass #{root}/sass/surveyor.sass #{root}/surveyor.css`
   end
   
-  desc "copies css from assets folder to app public/stylesheets/surveyor folder"
+  desc "copies css from plugin assets folder to app public/stylesheets/surveyor folder"
   task :copy_css do
+    puts "copying css to application"
     FileUtils.mkdir_p "#{RAILS_ROOT}/public/stylesheets/surveyor"
     FileUtils.cp Dir["#{SURVEYOR_ROOT}/assets/stylesheets/*.css"],"#{RAILS_ROOT}/public/stylesheets/surveyor/"
   end
 
+  desc "copies js from plugin assets folder to app public/javascripts/surveyor folder"
   task :copy_js do
+    puts "copying javascripts to application"
     FileUtils.mkdir_p "#{RAILS_ROOT}/public/javascripts/surveyor"
     FileUtils.cp Dir["#{SURVEYOR_ROOT}/assets/javascripts/*.js"],"#{RAILS_ROOT}/public/javascripts/surveyor/"
   end
 
+  desc "copies images from plugin assets folder to app public/imges/surveyor folder"
   task :copy_img do
+    puts "copying images to application"
     FileUtils.mkdir_p "#{RAILS_ROOT}/public/images/surveyor"
     FileUtils.cp Dir["#{SURVEYOR_ROOT}/assets/images/*"],"#{RAILS_ROOT}/public/images/surveyor/"
+  end
+ 
+  desc "copies migrations to the apps db/migrations folder"
+  task :copy_migrations do
+    puts "copying migrations to application"
+    FileUtils.cp Dir["#{SURVEYOR_ROOT}/db/migrations/*.rb"], "#{RAILS_ROOT}/db/migrations"
   end
 
 end
