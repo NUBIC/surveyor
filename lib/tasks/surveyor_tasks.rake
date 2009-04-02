@@ -43,8 +43,8 @@ end
 
 namespace :surveyor do
   
-  desc "copies over assets from the plugin directory to the app root 'public/[:stylesheets,:images,:javascripts]/surveyor'"
-  task :init => ['surveyor:build_css','surveyor:copy_css', 'surveyor:copy_js', 'surveyor:copy_img']
+  desc "copies over assets from the plugin directory to the app root 'public/[:stylesheets,:images,:javascripts]/surveyor' along with migrations"
+  task :init => ['surveyor:copy_migrations', 'surveyor:build_css','surveyor:copy_css', 'surveyor:copy_js', 'surveyor:copy_img']
 
   desc "generates css from sass files"
   task :build_css do
