@@ -1,6 +1,6 @@
 require File.expand_path(File.dirname(__FILE__) + '/../spec_helper')
 
-describe AppController do
+describe SurveyingController do
   
   # map.available_surveys 'surveys',                                        :conditions => {:method => :get}, :action => "new"      # GET survey list
   # map.take_survey       'surveys/:survey_code',                           :conditions => {:method => :post}, :action => "create"  # Only POST of survey to create
