@@ -77,6 +77,7 @@ namespace :surveyor do
   desc "copies migrations to the apps db/migrations folder"
   task :copy_migrations do
     puts "copying migrations to application"
+    FileUtils.mkdir_p "#{RAILS_ROOT}/db/migrate"
     FileUtils.cp Dir["#{SURVEYOR_ROOT}/db/migrate/*.rb"], "#{RAILS_ROOT}/db/migrate"
   end
 
