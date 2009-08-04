@@ -1,7 +1,7 @@
 // Javascript source to drive the UI for the survey engine
 
 // Hooking up after the page loads
-$(document).ready(function(){
+jQuery(document).ready(function(){
   /******** Event hooks ******/
 
   // Attaching to the primary survey form to do async postbacks 
@@ -13,18 +13,23 @@ $(document).ready(function(){
 
   function successfulSave(responseText){
     jQuery.each(responseText.show, function(){
-      $('#' + this).show("slow");
+      jQuery('#' + this).show("slow");
     });
     jQuery.each(responseText.hide, function(){
-      $('#' + this).hide("slow");
+      jQuery('#' + this).hide("slow");
     });
     return false;
   }
 
-  $("form#survey_form").bind("change", function(){
-    $(this).ajaxSubmit(options);
+  jQuery("form#survey_form").bind("change", function(){
+    //jQuery(this).ajaxSubmit(options);
+    var this_form = jQuery(this);
+    var post_data = this_form.serialize();
+    jQuery.post(this_form.attr("action"),post_data);
+    return false;
   });
-  $("#dependents").remove();
+
+  jQuery("#dependents").remove();
 
 
 });
