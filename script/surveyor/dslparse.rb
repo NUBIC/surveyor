@@ -10,7 +10,7 @@ class DSLParse
   def initialize
     self.surveys = []
     self.define_counter_methods(%w(survey survey_section question_group question answer dependency dependency_condition))
-    self.initialize_fixtures(%w(surveys survey_sections question_groups questions answers dependencies dependency_conditions), (File.dirname(__FILE__) + "/fixtures"))
+    self.initialize_fixtures(%w(surveys survey_sections question_groups questions answers dependencies dependency_conditions), File.join(RAILS_ROOT, "surveys", "fixtures"))
   end
   
   # new_survey_id, new_survey_section_id, etc.

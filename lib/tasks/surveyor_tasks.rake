@@ -1,40 +1,29 @@
-SURVEYOR_ROOT = File.join(RAILS_ROOT, "vendor/plugins/surveyor") # location of plugin
-require SURVEYOR_ROOT + '/script/survey_dsl/dslparse'
+require File.join(File.dirname(__FILE__), "../../script/surveyor/dslparse")
 require 'active_record/fixtures'
-require 'fileutils'
 
 namespace :surveyor do
 
-  desc  'Runs DSL, copies fixtures, deletes content in tables, loads fixtures (equiv to :generate, :copy_fixtures, :load in that sequence)'
-  task :bootstrap => [ 'survey_dsl:generate', 'survey_dsl:copy_fixtures', 'survey_dsl:load' ]
+  desc "generate and load survey fixtures from survey file"
+  task :bootstrap => [:generate, :load]
   
-  desc "Run the DSL on a specific file"
-  task :generate do
-    unless ENV["FILE"].blank?
-      DSLParse.parse(File.join(RAILS_ROOT, ENV["FILE"]))
-    else
-      raise "filename (relative to Rails Root) needed e.g. 'FILE=surveys/kitchen_sink_survey.rb'"
+  desc "generate survey fixtures from survey file"
+  task :generate => :environment do
+    raise "usage: file name required e.g. 'FILE=surveys/kitchen_sink_survey.rb'" if ENV["FILE"].blank?
+    DSLParse.parse(File.join(RAILS_ROOT, ENV["FILE"]))
+  end
+
+  desc "load survey fixtures"
+  task :load => :environment do
+    ActiveRecord::Base.establish_connection(RAILS_ENV.to_sym)
+
+    fixture_dir = File.join(RAILS_ROOT, "surveys", "fixtures")
+    fixtures = Dir.glob("#{fixture_dir}/*.yml"))
+    raise "No fixtures found." if fixtures.empty?
+    
+    fixtures.each do |file_name|
+      puts "Loading #{file_name}..."
+      Fixtures.create_fixtures(File.join(fixture_dir, file_name))
     end
   end
 
-  desc "Copy the fixtures in to db/load_data"
-  task :copy_fixtures do
-    files = Dir[SURVEYOR_ROOT + '/script/survey_dsl/fixtures/*.yml']
-    FileUtils.cp(files, SURVEYOR_ROOT + '/db/load_data/')
-  end
-
-  desc "Delete table content and load fixtures"
-  task :load => :environment do
-      ActiveRecord::Base.establish_connection(RAILS_ENV.to_sym)
-      generated_fixture_location = File.join(SURVEYOR_ROOT, 'script','survey_dsl', 'fixtures', '*.{yml,csv}')
-      fix_files = Dir.glob(generated_fixture_location) # Getting the list of fixtures from where they are orignially created we actually pull them from the db/load_data folder
-      puts "Loading DSL fixture list from #{generated_fixture_location}"
-      fix_files.each{ |f| puts " == " + File.basename(f, '.*')}
-      raise "No fixtures in this location!" if fix_files.empty?
-      raise "Error! Fixtures not copied to load folder #{SURVEYOR_ROOT + '/db/load_data/'}\r\nRun 'rake survey_dsl:copy_fixtures'" if Dir.glob(File.join(SURVEYOR_ROOT, 'db', 'load_data', '*.{yml,csv}')).empty?
-      fix_files.each do |fixture_file|
-        puts "added fixtures to table '#{File.basename(fixture_file, '.*')}'"
-        Fixtures.create_fixtures(SURVEYOR_ROOT + '/db/load_data', File.basename(fixture_file, '.*'))
-      end
-  end
 end
