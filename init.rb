@@ -1,3 +1,1 @@
-# initializing the plugin assets
-`rake surveyor:init`
-
+# Init hook code here
