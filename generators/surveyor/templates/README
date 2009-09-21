@@ -2,6 +2,6 @@ Run the migrations:
 
 rake db:migrate
 
-Try our the "kitchen sink" survey:
+Try out the "kitchen sink" survey:
 
 rake surveyor:bootstrap FILE=surveys/kitchen_sink_survey.rb

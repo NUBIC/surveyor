@@ -24,7 +24,7 @@ class SurveyorGenerator < Rails::Generator::Base
       m.directory "surveys/fixtures"
       m.file "surveys/kitchen_sink_survey.rb", "surveys/kitchen_sink_survey.rb"
       
-      m.readme "../../../README.md"
+      m.readme "README"
       
     end
   end

@@ -2,25 +2,16 @@
 
 # Install
 
-Create a rails app:
-
-    rails your_survey_app
-    cd your_survey_app
-    mv public/index.html public/index.html.old
-
-Install the HAML gem:
-
-    sudo gem install --no-ri --no-rdoc haml
-
-Install the surveyor plugin:
-    
     script/plugin install git://github.com/breakpointer/surveyor.git
-    or... 
-    git submodule add git://github.com/breakpointer/surveyor.git vendor/plugins/surveyor; git submodule init; git submodule update
 
-Run the migrations:
-
+Generate assets, migrations, and run migrations
+    
+    script/generate surveyor
     rake db:migrate
+
+Try out the "kitchen sink" survey:
+
+    rake surveyor:bootstrap FILE=surveys/kitchen_sink_survey.rb
 
 # Dependencices
 
