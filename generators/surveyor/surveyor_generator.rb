@@ -2,9 +2,13 @@ class SurveyorGenerator < Rails::Generator::Base
   def manifest
     record do |m|
       
-      # Migrate
-      ["surveys", "survey_sections", "questions", "answers", "response_sets", "responses", "dependencies", "question_groups", "dependency_conditions"].each do |model|
-        m.migration_template "migrate/create_#{model}.rb", 'db/migrate', :migration_file_name => "create_#{model}"
+      # Migrate 
+      # not using m.migration_template because all migration timestamps end up the same, causing a collision when running rake db:migrate
+      # coped functionality from RAILS_GEM_PATH/lib/rails_generator/commands.rb
+      m.directory "db/migrate"
+      ["surveys", "survey_sections", "questions", "answers", "response_sets", "responses", "dependencies", "question_groups", "dependency_conditions"].each_with_index do |model, i|
+        raise "Another migration is already named #{migration_file_name}" if not Dir.glob("db/migrate/[0-9]*_*.rb").grep(/[0-9]+_create_#{model}.rb$/).empty?
+        m.template("migrate/create_#{model}.rb", "db/migrate/#{(Time.now.utc.strftime("%Y%m%d%H%M%S").to_i + i).to_s}_create_#{model}.rb")
       end
       
       # Generate CSS
@@ -27,5 +31,8 @@ class SurveyorGenerator < Rails::Generator::Base
       m.readme "README"
       
     end
+  end
+  def self.next_migration_string(i)
+    Time.now.utc.strftime("%Y%m%d%H%M%S")
   end
 end

@@ -1,7 +1,9 @@
-Run the migrations:
 
-rake db:migrate
+Surveyor installed. Next, run the migrations:
+
+    rake db:migrate
 
 Try out the "kitchen sink" survey:
 
-rake surveyor:bootstrap FILE=surveys/kitchen_sink_survey.rb
+    rake surveyor:bootstrap FILE=surveys/kitchen_sink_survey.rb
+    

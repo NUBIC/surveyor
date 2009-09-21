@@ -17,7 +17,7 @@ namespace :surveyor do
     ActiveRecord::Base.establish_connection(RAILS_ENV.to_sym)
 
     fixture_dir = File.join(RAILS_ROOT, "surveys", "fixtures")
-    fixtures = Dir.glob("#{fixture_dir}/*.yml"))
+    fixtures = Dir.glob("#{fixture_dir}/*.yml")
     raise "No fixtures found." if fixtures.empty?
     
     fixtures.each do |file_name|
