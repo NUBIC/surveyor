@@ -8,13 +8,13 @@ class SurveyorGenerator < Rails::Generator::Base
       end
       
       # Generate CSS
-      root = File.join(File.dirname(__FILE__), "templates", "stylesheets")
+      root = File.join(File.dirname(__FILE__), "templates", "assets", "stylesheets")
       `sass #{root}/sass/surveyor.sass #{root}/surveyor.css`
 
       # Assets
       ["images", "javascripts", "stylesheets"].each do |asset_type|
         m.directory "public/#{asset_type}/surveyor"
-        Dir.glob(File.join("assets", asset_type, "*")).each do |filename|
+        Dir.glob(File.join(File.dirname(__FILE__), "templates", "assets", asset_type, "*.*")).map{|path| File.basename(path)}.each do |filename|
           m.file "assets/#{asset_type}/#{filename}", "public/#{asset_type}/surveyor/#{filename}"
         end
       end

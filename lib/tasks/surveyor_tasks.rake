@@ -3,7 +3,7 @@ require 'active_record/fixtures'
 
 namespace :surveyor do
 
-  desc "generate and load survey fixtures from survey file"
+  desc "generate and load survey fixtures from survey file (shortcut for rake surveyor:generate and rake surveyor:load)"
   task :bootstrap => [:generate, :load]
   
   desc "generate survey fixtures from survey file"
