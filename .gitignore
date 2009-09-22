@@ -1,4 +1,6 @@
+*.sw?
 .DS_Store
-db/load_data/*.yml
-script/survey_dsl/fixtures/*.yml
-*.swp
+coverage
+rdoc
+pkg
+surveys/fixtures/*.yml
