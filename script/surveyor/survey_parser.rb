@@ -1,18 +1,18 @@
 require File.dirname(__FILE__) + '/survey'
 
-class DSLParse
+class Survey_Parser
   # Children, Counters, Files
   attr_accessor :surveys
   attr_accessor :last_survey_id, :last_survey_section_id, :last_question_id, :last_answer_id
   attr_accessor :surveys_yml, :survey_sections_yml, :question_groups_yml, :questions_yml, :answers_yml, :dependencies_yml, :dependency_conditions_yml
-  
+
   # no more "ARRRGH, EVIL GLOBALS!!!"
   def initialize
     self.surveys = []
     self.define_counter_methods(%w(survey survey_section question_group question answer dependency dependency_condition))
     self.initialize_fixtures(%w(surveys survey_sections question_groups questions answers dependencies dependency_conditions), File.join(RAILS_ROOT, "surveys", "fixtures"))
   end
-  
+
   # new_survey_id, new_survey_section_id, etc.
   def define_counter_methods(names)
     names.each do |name|
@@ -27,14 +27,14 @@ class DSLParse
   # surveys_yml, survey_sections_yml, etc.
   def initialize_fixtures(names, path)
     names.each do |name|
-      file = self.instance_variable_set("@#{name}_yml", "#{path}/#{name}.yml")
+      file = self.instance_variable_get_set("@#{name}_yml", "#{path}/#{name}.yml")
       File.truncate(file, 0) if File.exist?(file)
     end
   end
-  
+
   def self.parse(file_name)
     puts "--- Parsing '#{file_name}' ---"
-    parser = DSLParse.new
+    parser = SurveyParser.new
     parser.instance_eval(File.read(file_name), file_name)
     parser.to_files
     puts "--- End of parsing ---"
@@ -53,8 +53,6 @@ class DSLParse
     end
   end
 
-
-
   def add_survey(survey)
     self.surveys << survey
   end
@@ -62,5 +60,5 @@ class DSLParse
   def to_files
     self.surveys.compact.map(&:to_file)
   end
-  
+
 end

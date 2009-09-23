@@ -9,7 +9,7 @@ namespace :surveyor do
   desc "generate survey fixtures from survey file"
   task :generate => :environment do
     raise "usage: file name required e.g. 'FILE=surveys/kitchen_sink_survey.rb'" if ENV["FILE"].blank?
-    DSLParse.parse(File.join(RAILS_ROOT, ENV["FILE"]))
+    SurveyParser.parse(File.join(RAILS_ROOT, ENV["FILE"]))
   end
 
   desc "load survey fixtures"
