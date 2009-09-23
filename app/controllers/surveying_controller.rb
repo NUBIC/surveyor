@@ -4,12 +4,11 @@
 # The "resource" could be considered a survey attempt or survey session.
 # It is actually the union of a user filling out a survey and populating a response set.
 
-class SurveyingController < ActionController::Base
+class SurveyingController < ApplicationController
+  unloadable # http://dev.rubyonrails.org/ticket/6001#comment:12
+
   layout 'layouts/surveys'
-  
-  include UserManager
   include SurveyingHelper
-  before_filter :current_user
   before_filter :get_response_set, :except => [:new, :create]
 
   def index
@@ -17,6 +16,7 @@ class SurveyingController < ActionController::Base
   end
 
   def new
+    @current_user = self.respond_to?(:current_user) ? self.current_user : nil
     @surveys = Survey.find(:all)
     respond_to do |format|
       format.html # new.html.erb
@@ -136,4 +136,5 @@ class SurveyingController < ActionController::Base
       redirect_to(available_surveys_path)
     end
   end
+  
 end
