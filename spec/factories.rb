@@ -1,39 +1,39 @@
 # http://github.com/thoughtbot/factory_girl/tree/master
 
 Factory.define :survey do |s|
-  s.title	      	{}
-  s.description		{}
-  s.access_code		{}
+  s.title	      	{"Simple survey"}
+  s.description		{"A simple survey for testing"}
+  s.access_code		{"simple_survey"}
   s.active_at	  	{}
   s.inactive_at		{}
   s.css_url		    {}
 end
 
-Factory.sequence :survey_section_display_order do |n|
-end
+Factory.sequence :survey_section_display_order {|n| n }
 
 Factory.define :survey_section do |s|
-  s.survey_id   	            {}
-  s.title		                  {}
-  s.description	              {}
-  s.display_order	            {}
-  s.reference_identifier		  {}
-  s.data_export_identifier		{}
+  # s.survey_id                 {}
+  s.association               :survey
+  s.title		                  {"Demographics"}
+  s.description	              {"Asking you about your personal data"}
+  s.display_order	            {Factory.next :survey_section_display_order}
+  s.reference_identifier		  {"demographics"}
+  s.data_export_identifier		{"demographics"}
 end
 
-Factory.sequence :question_display_order do |n|
-end
+Factory.sequence :question_display_order {|n| n }
 
 Factory.define :question do |s|
-  s.survey_section_id		    {}
+  # s.survey_section_id       {}
+  s.association             :survey_section
   s.text		                {}
   s.short_text		          {}
   s.help_text	        	    {}
-  s.pick	            	    {}
+  s.pick	            	    {:none}
   s.display_type	    	    {}
-  s.display_order	    	    {}
+  s.display_order	    	    {Factory.next :question_display_order}
   s.question_group_id		    {}
-  s.is_mandatory	    	    {}
+  s.is_mandatory	    	    {false}
   s.reference_identifier		{}
   s.data_export_identifier	{}
   s.display_width       		{}
@@ -73,7 +73,7 @@ Factory.define :response_set do |r|
   r.completed_at		{}
 end
 
-Factory.define :response do |s|
+Factory.define :response do |r|
   r.response_set_id		{}
   r.question_id	    	{}
   r.answer_id	      	{}

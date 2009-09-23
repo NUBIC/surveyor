@@ -28,13 +28,18 @@ end
 
 describe Question, "that has answers" do
   before(:each) do
-    @ss = mock_model(SurveySection)
-    @question = Question.new(:text => "What is your favorite color?", :survey_section => @ss)
-    3.times{ |x| @question.answers.build(:text => "ANSWER #{x}") }  
+    @question = Factory(:question, :text => "What is your favorite color?")
+    Factory(:answer, :question => @question, :display_order => 3, :text => "blue")
+    Factory(:answer, :question => @question, :display_order => 1, :text => "red")
+    Factory(:answer, :question => @question, :display_order => 2, :text => "green")
   end
   
   it "should have answers" do
     @question.answers.should have(3).answers
+  end
+  
+  it "should retrieve those answers in display_order" do
+    @question.answers.map(&:display_order).should == [1,2,3]
   end
   
 end

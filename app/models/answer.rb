@@ -1,5 +1,8 @@
 class Answer < ActiveRecord::Base
-
+  
+  # Scopes
+  default_scope :order => "display_order ASC"
+  
   # Associations
   belongs_to :question
   has_many :responses
