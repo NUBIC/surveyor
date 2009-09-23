@@ -2,6 +2,10 @@ class SurveyorGenerator < Rails::Generator::Base
   def manifest
     record do |m|
       
+      # HAML
+      
+      m.file "initializers/haml.rb", "config/initializers/haml.rb"
+      
       # Migrate 
       # not using m.migration_template because all migration timestamps end up the same, causing a collision when running rake db:migrate
       # coped functionality from RAILS_GEM_PATH/lib/rails_generator/commands.rb
