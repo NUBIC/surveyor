@@ -22,7 +22,7 @@ namespace :surveyor do
     
     fixtures.each do |file_name|
       puts "Loading #{file_name}..."
-      Fixtures.create_fixtures(File.join(fixture_dir, file_name))
+      Fixtures.create_fixtures(fixture_dir, File.basename(file_name, '.*'))
     end
   end
 
