@@ -28,7 +28,8 @@ class ResponseSet < ActiveRecord::Base
     self.access_code = ResponseSet.make_tiny_code
   end
   
-  def response_for(question_id, answer_id, response_group = nil)
+  def response_for(question_id, answer_id, group = nil)
+    response_group = group.nil? ? nil : group.to_s # for PostgreSql 8.3 compatibility - response_group is a string
     found = responses.find_by_question_id_and_answer_id_and_response_group(question_id, answer_id, response_group)
     found.blank? ? responses.new(:question_id => question_id, :answer_id => answer_id, :response_group => response_group) : found
   end
