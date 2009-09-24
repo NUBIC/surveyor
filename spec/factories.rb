@@ -9,7 +9,7 @@ Factory.define :survey do |s|
   s.css_url		    {}
 end
 
-Factory.sequence :survey_section_display_order {|n| n }
+Factory.sequence(:survey_section_display_order){|n| n }
 
 Factory.define :survey_section do |s|
   # s.survey_id                 {}
@@ -21,7 +21,7 @@ Factory.define :survey_section do |s|
   s.data_export_identifier		{"demographics"}
 end
 
-Factory.sequence :question_display_order {|n| n }
+Factory.sequence(:question_display_order){|n| n }
 
 Factory.define :question do |s|
   # s.survey_section_id       {}
@@ -39,8 +39,7 @@ Factory.define :question do |s|
   s.display_width       		{}
 end
 
-Factory.sequence :answer_display_order do |n|
-end
+Factory.sequence(:answer_display_order){|n| n }
 
 Factory.define :answer do |a|
   a.question_id	            	{}
