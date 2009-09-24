@@ -3,7 +3,7 @@ class SurveyorGenerator < Rails::Generator::Base
     record do |m|
       
       # HAML
-      
+      m.file "initializers/surveyor.rb", "config/initializers/surveyor.rb"
       m.file "initializers/haml.rb", "config/initializers/haml.rb"
       
       # Migrate 
@@ -11,7 +11,7 @@ class SurveyorGenerator < Rails::Generator::Base
       # coped functionality from RAILS_GEM_PATH/lib/rails_generator/commands.rb
       m.directory "db/migrate"
       ["surveys", "survey_sections", "questions", "answers", "response_sets", "responses", "dependencies", "question_groups", "dependency_conditions"].each_with_index do |model, i|
-        raise "Another migration is already named #{migration_file_name}" if not Dir.glob("db/migrate/[0-9]*_*.rb").grep(/[0-9]+_create_#{model}.rb$/).empty?
+        raise "Another migration is already named create_#{model}" if not Dir.glob("db/migrate/[0-9]*_*.rb").grep(/[0-9]+_create_#{model}.rb$/).empty?
         m.template("migrate/create_#{model}.rb", "db/migrate/#{(Time.now.utc.strftime("%Y%m%d%H%M%S").to_i + i).to_s}_create_#{model}.rb")
       end
       

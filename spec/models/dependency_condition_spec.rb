@@ -3,16 +3,7 @@ require File.expand_path(File.dirname(__FILE__) + '/../spec_helper')
 
 describe DependencyCondition, "Class methods" do
   it "should have a list of operators" do
-    DependencyCondition.respond_to?(:operators).should be_true
-    DependencyCondition.operators.class.should == Array
-    DependencyCondition.operators.size.should > 0
-    
-    DependencyCondition.operators.include?("==").should be_true
-    DependencyCondition.operators.include?("!=").should be_true
-    DependencyCondition.operators.include?("<").should be_true
-    DependencyCondition.operators.include?(">").should be_true
-    DependencyCondition.operators.include?("<=").should be_true
-    DependencyCondition.operators.include?(">=").should be_true
+    %w(== != < > <= >=).each{|operator| DependencyCondition.operators.include?(operator).should be_true }
   end
 end
 
