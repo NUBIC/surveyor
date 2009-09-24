@@ -6,8 +6,8 @@
 
 class SurveyingController < ApplicationController
   unloadable # http://dev.rubyonrails.org/ticket/6001#comment:12
-
-  layout 'layouts/surveys'
+  
+  layout Surveyor::Config['default.layout'] || 'surveyor_default'
   include SurveyingHelper
   before_filter :get_response_set, :except => [:new, :create]
 

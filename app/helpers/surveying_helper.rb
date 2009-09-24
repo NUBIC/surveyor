@@ -1,5 +1,16 @@
 module SurveyingHelper
-
+  
+  # stylsheets and javascripts for surveyor layout
+  def surveyor_includes
+    surveyor_stylsheets + surveyor_javascripts    
+  end
+  def surveyor_stylsheets
+    stylesheet_link_tag 'surveyor/reset', 'surveyor/surveyor', 'surveyor/ui.theme.css','surveyor/jquery-ui-slider-additions'
+  end
+  def surveyor_javascripts
+    javascript_include_tag 'surveyor/jquery-1.2.6.js', 'surveyor/jquery-ui-personalized-1.5.3.js', 'surveyor/accessibleUISlider.jQuery.js','jquery.form.js', 'surveyor/surveyor.js'
+  end
+  
   # Formats the question number the way we want, or not at all if number is nil
   def question_number_helper(number)
     if number
