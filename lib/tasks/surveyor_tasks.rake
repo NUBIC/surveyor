@@ -1,4 +1,4 @@
-require File.join(File.dirname(__FILE__), "../../script/surveyor/dslparse")
+require File.join(File.dirname(__FILE__), "../../script/surveyor/survey_parser")
 require 'active_record/fixtures'
 
 namespace :surveyor do

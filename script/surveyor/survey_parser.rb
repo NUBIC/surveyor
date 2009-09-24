@@ -1,6 +1,6 @@
 require File.dirname(__FILE__) + '/survey'
 
-class Survey_Parser
+class SurveyParser
   # Children, Counters, Files
   attr_accessor :surveys
   attr_accessor :last_survey_id, :last_survey_section_id, :last_question_id, :last_answer_id
@@ -27,7 +27,7 @@ class Survey_Parser
   # surveys_yml, survey_sections_yml, etc.
   def initialize_fixtures(names, path)
     names.each do |name|
-      file = self.instance_variable_get_set("@#{name}_yml", "#{path}/#{name}.yml")
+      file = self.instance_variable_set("@#{name}_yml", "#{path}/#{name}.yml")
       File.truncate(file, 0) if File.exist?(file)
     end
   end
