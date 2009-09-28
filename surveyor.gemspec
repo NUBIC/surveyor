@@ -2,12 +2,12 @@
 
 Gem::Specification.new do |s|
   s.name = %q{surveyor}
-  s.version = "0.2.0"
+  s.version = "0.3.0"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Brian Chamberlain", "Mark Yoon"]
-  s.date = %q{2009-09-22}
-  s.email = ["b-chamberlain@northwestern.edu", "yoon@northwestern.edu"]
+  s.date = %q{2009-09-28}
+  s.email = %q{yoon@northwestern.edu}
   s.extra_rdoc_files = [
     "README.md"
   ]
@@ -17,21 +17,9 @@ Gem::Specification.new do |s|
      "README.md",
      "Rakefile",
      "VERSION",
-     "app/controllers/answers_controller.rb",
-     "app/controllers/dependencies_controller.rb",
-     "app/controllers/dependency_conditions_controller.rb",
-     "app/controllers/questions_controller.rb",
-     "app/controllers/sections_controller.rb",
      "app/controllers/surveying_controller.rb",
-     "app/controllers/surveys_controller.rb",
-     "app/helpers/answers_helper.rb",
-     "app/helpers/application_helper.rb",
-     "app/helpers/questions_helper.rb",
-     "app/helpers/sections_helper.rb",
      "app/helpers/survey_form_builder.rb",
-     "app/helpers/survey_importer_helper.rb",
      "app/helpers/surveying_helper.rb",
-     "app/helpers/surveys_helper.rb",
      "app/models/answer.rb",
      "app/models/dependency.rb",
      "app/models/dependency_condition.rb",
@@ -41,7 +29,6 @@ Gem::Specification.new do |s|
      "app/models/response_set.rb",
      "app/models/survey.rb",
      "app/models/survey_section.rb",
-     "app/models/user.rb",
      "app/views/answer_display_types/_any_answer.html.haml",
      "app/views/answer_display_types/_any_other_and_string.html.haml",
      "app/views/answer_display_types/_any_string.html.haml",
@@ -63,7 +50,7 @@ Gem::Specification.new do |s|
      "app/views/answer_display_types/_string.html.haml",
      "app/views/answer_display_types/_text.html.haml",
      "app/views/answer_display_types/_time.html.haml",
-     "app/views/layouts/surveys.html.erb",
+     "app/views/layouts/surveyor_default.html.erb",
      "app/views/question_display_types/_default.html.haml",
      "app/views/question_display_types/_dropdown.html.haml",
      "app/views/question_display_types/_grid_default.html.haml",
@@ -80,7 +67,6 @@ Gem::Specification.new do |s|
      "app/views/question_group_display_types/_grid.html.haml",
      "app/views/question_group_display_types/_repeater.html.haml",
      "app/views/surveying/edit.html.haml",
-     "app/views/surveying/finish.html.haml",
      "app/views/surveying/index.html.erb",
      "app/views/surveying/new.html.haml",
      "app/views/surveying/show.html.haml",
@@ -139,6 +125,8 @@ Gem::Specification.new do |s|
      "generators/surveyor/templates/assets/stylesheets/sass/surveyor.sass",
      "generators/surveyor/templates/assets/stylesheets/surveyor.css",
      "generators/surveyor/templates/assets/stylesheets/ui.theme.css",
+     "generators/surveyor/templates/initializers/haml.rb",
+     "generators/surveyor/templates/initializers/surveyor.rb",
      "generators/surveyor/templates/migrate/create_answers.rb",
      "generators/surveyor/templates/migrate/create_dependencies.rb",
      "generators/surveyor/templates/migrate/create_dependency_conditions.rb",
@@ -151,15 +139,14 @@ Gem::Specification.new do |s|
      "generators/surveyor/templates/surveys/kitchen_sink_survey.rb",
      "init.rb",
      "install.rb",
+     "lib/surveyor/config.rb",
      "lib/tasks/surveyor_tasks.rake",
      "lib/tiny_code.rb",
-     "lib/user_manager.rb",
      "lib/xml_formatter.rb",
      "script/surveyor/answer.rb",
      "script/surveyor/columnizer.rb",
      "script/surveyor/dependency.rb",
      "script/surveyor/dependency_condition.rb",
-     "script/surveyor/dslparse.rb",
      "script/surveyor/question.rb",
      "script/surveyor/question_group.rb",
      "script/surveyor/specs/answer_spec.rb",
@@ -168,28 +155,11 @@ Gem::Specification.new do |s|
      "script/surveyor/specs/question_spec.rb",
      "script/surveyor/specs/section_spec.rb",
      "script/surveyor/survey.rb",
+     "script/surveyor/survey_parser.rb",
      "script/surveyor/survey_section.rb",
      "script/surveyor/whr_dsl.tmproj",
-     "spec/controllers/answers_controller_spec.rb",
-     "spec/controllers/dependencies_controller_spec.rb",
-     "spec/controllers/dependency_conditions_controller_spec.rb",
-     "spec/controllers/questions_controller_spec.rb",
-     "spec/controllers/sections_controller_spec.rb",
      "spec/controllers/surveying_controller_spec.rb",
-     "spec/controllers/surveying_routing_spec.rb",
-     "spec/controllers/surveys_controller_spec.rb",
-     "spec/fixtures/answers.yml",
-     "spec/fixtures/dependencies.yml",
-     "spec/fixtures/dependency_conditions.yml",
-     "spec/fixtures/question_groups.yml",
-     "spec/fixtures/questions.yml",
-     "spec/fixtures/response_sets.yml",
-     "spec/fixtures/responses.yml",
-     "spec/fixtures/survey_sections.yml",
-     "spec/fixtures/surveys.yml",
-     "spec/fixtures/users.yml",
-     "spec/helpers/survey_importer_helper_spec.rb",
-     "spec/helpers/surveying_helper_spec.rb",
+     "spec/factories.rb",
      "spec/models/answer_spec.rb",
      "spec/models/dependency_condition_spec.rb",
      "spec/models/dependency_spec.rb",
@@ -199,14 +169,9 @@ Gem::Specification.new do |s|
      "spec/models/response_spec.rb",
      "spec/models/survey_section_spec.rb",
      "spec/models/survey_spec.rb",
-     "spec/models/user_spec.rb",
      "spec/rcov.opts",
      "spec/spec.opts",
      "spec/spec_helper.rb",
-     "spec/views/app/edit.html.erb_spec.rb",
-     "spec/views/app/index.html.erb_spec.rb",
-     "spec/views/app/new.html.erb_spec.rb",
-     "spec/views/app/show.html.erb_spec.rb",
      "surveyor.gemspec",
      "uninstall.rb"
   ]
@@ -216,16 +181,8 @@ Gem::Specification.new do |s|
   s.rubygems_version = %q{1.3.4}
   s.summary = %q{A rails (gem) plugin to enable surveys in your application}
   s.test_files = [
-    "spec/controllers/answers_controller_spec.rb",
-     "spec/controllers/dependencies_controller_spec.rb",
-     "spec/controllers/dependency_conditions_controller_spec.rb",
-     "spec/controllers/questions_controller_spec.rb",
-     "spec/controllers/sections_controller_spec.rb",
-     "spec/controllers/surveying_controller_spec.rb",
-     "spec/controllers/surveying_routing_spec.rb",
-     "spec/controllers/surveys_controller_spec.rb",
-     "spec/helpers/survey_importer_helper_spec.rb",
-     "spec/helpers/surveying_helper_spec.rb",
+    "spec/controllers/surveying_controller_spec.rb",
+     "spec/factories.rb",
      "spec/models/answer_spec.rb",
      "spec/models/dependency_condition_spec.rb",
      "spec/models/dependency_spec.rb",
@@ -235,12 +192,7 @@ Gem::Specification.new do |s|
      "spec/models/response_spec.rb",
      "spec/models/survey_section_spec.rb",
      "spec/models/survey_spec.rb",
-     "spec/models/user_spec.rb",
-     "spec/spec_helper.rb",
-     "spec/views/app/edit.html.erb_spec.rb",
-     "spec/views/app/index.html.erb_spec.rb",
-     "spec/views/app/new.html.erb_spec.rb",
-     "spec/views/app/show.html.erb_spec.rb"
+     "spec/spec_helper.rb"
   ]
 
   if s.respond_to? :specification_version then
