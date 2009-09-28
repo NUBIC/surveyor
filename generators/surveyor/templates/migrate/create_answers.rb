@@ -16,7 +16,6 @@ class CreateAnswers < ActiveRecord::Migration
       t.boolean :is_exclusive # If set it causes some UI trigger to remove (and disable) all the other answer choices selected for a question (needed for the WHR)
       t.boolean :hide_label 
       
-      
       # Reference
       t.string :reference_identifier # Used to relate this question object to questions imported from a paper questionnaire 
       t.string :data_export_identifier # Used when referencing this quesiton in data export. Usually a shortend/cryptic version of the question text
@@ -27,13 +26,13 @@ class CreateAnswers < ActiveRecord::Migration
       t.integer :max_value
       t.integer :min_value
       t.integer :length # number of chars/ints accepted
-      t.integer :decimal_precision #only for floats
+      t.integer :decimal_precision # only for floats
       t.boolean :allow_negative # only for numeric values
       t.boolean :allow_blank
-      t.string :unit #a string representation of the unit (lbs. USD, oz.) - Context is from the survey domain and question
+      t.string :unit # a string representation of the unit (lbs. USD, oz.) - Context is from the survey domain and question
       
       # Display property
-      t.integer :display_length #if smaller than answer.length the html input length will be this value
+      t.integer :display_length # if smaller than answer.length the html input length will be this value
       
       t.timestamps
       

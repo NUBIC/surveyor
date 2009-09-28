@@ -1,6 +1,8 @@
+- question_class = question.has_dependency? ? question.dependency_satisfied?(response_set) ? "dependent" : "hidden dependent" : nil
+
 - case question.renderer
 - when :dropdown
-  .question{:id => question_id_helper(question), :class => "#{'hidden' unless show_question} #{'dependent' if question.has_dependency?}"}
+  .question{:id => question_id_helper(question), :class => question_class}
     .number= question_number_helper number
     %fieldset
       %legend{:style => "display:inline;"}
@@ -16,7 +18,7 @@
   .image
     %img{:src => image_path(question.text)}
 - when :inline
-  .question{:id => question_id_helper(question), :class => "#{'hidden' unless show_question} #{'dependent' if question.has_dependency?}"}
+  .question{:id => question_id_helper(question), :class => question_class}
     .number= question_number_helper number
     %fieldset
       %legend
@@ -29,7 +31,7 @@
           %li.answer 
             =render(:partial => "/partials/answer", :locals => {:answer => answer, :response_obj => @response_set.response_for(question.id, answer.id)})
 - when :label
-  .label{:id => question_id_helper(question), :class => "#{'hidden' unless show_question}"}
+  .label{:id => question_id_helper(question), :class => question_class}
     .text
       = question.text
       %span.help= question.help_text
@@ -39,7 +41,7 @@
     //demo 1
     ="$('#slider_#{question.id}').accessibleUISlider({width: 400, labels:#{question.answers.size} }).hide();"
     });
-  .question{:id => question_id_helper(question), :class => "#{'hidden' unless show_question} #{'dependent' if question.has_dependency?}"}
+  .question{:id => question_id_helper(question), :class => question_class}
     .number= question_number_helper number
     %fieldset
       %legend{:style => "display:inline;"}
@@ -119,7 +121,7 @@
     - options= question.answers.collect{|a| "<option #{ (response_set.response_for(question.id, a.id, response_group).selected?)? "selected='selected'" : nil } value ='#{a.id}'>#{a.text}</option>" }
     = select_tag("response_groups[#{question.id}][#{response_group}][answer_id]", ["<option value=''>Select one...</option>"].concat(options), :disabled => disabled)
 - else
-  .question{:id => question_id_helper(question), :class => "#{'hidden' unless show_question} #{'dependent' if question.has_dependency?}"}
+  .question{:id => question_id_helper(question), :class => question_class}
     .number= question_number_helper number
     %fieldset
       %legend

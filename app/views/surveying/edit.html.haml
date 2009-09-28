@@ -1,39 +1,36 @@
 #content
   - form_tag(update_my_survey_path, :method => :put, :id => "survey_form") do
-    -unless @survey.sections.size < 3
+    - unless @survey.sections.size < 3
       #menu
         Sections:
         %ul
           - @survey.sections.each do |survey_section|
-            - if (survey_section == @section)
-              %li{:class => "active"}= section_submit_helper(survey_section)
-            - else
-              %li= section_submit_helper(survey_section)
+            %li{:class => ("active" if survey_section == @section)}
+              = section_submit_helper(survey_section)
     #header
       .title= @survey.title
-    .previous_section
-      - unless @section.previous == nil
-        = section_previous_helper(@section.previous) unless @section.previous == nil
+      
+    .previous_section= section_previous_helper(@section)
     - unless @dependents.empty?
       #dependents
-        .title
-          Follow-up questions from your answers on the previous page
+        .title Follow-up questions from your answers on the previous page
         - @dependents.each_with_index do |question, index|
           = dependency_explanation_helper(question, @response_set)
-          = render(:partial => "/partials/question", :locals => {:question => question, :response_set => @response_set, :number => "D#{index+1}", :show_question => true})
+          = render(:partial => "/partials/question", :locals => {:question => question, :response_set => @response_set, :number => "D#{index+1}"})
     .section{:id => section_id_helper(@section)}
       %span.title= @section.title
       .questions
         - number_counter = 1
         - @section.questions.each_with_index do |question, index|
           - unless question.part_of_group?
-            - show_question = (question.dependency_satisfied?(@response_set) or !question.has_dependency?)
-            = render(:partial => "/partials/question", :locals => {:question => question, :show_question => show_question, :response_set => @response_set, :number => !question.has_dependency? ? number_counter : nil, :show_question => show_question})
+          
+            = render(:partial => "/partials/question", :locals => {:question => question, :response_set => @response_set, :number => !question.has_dependency? ? number_counter : nil})
             - number_counter += 1 if question.display_type != "label" and question.display_type != "image" and !question.has_dependency?
+          
           - else
+            
             - if (index + 1 >= @section.questions.size) or (question.question_group_id != @section.questions[index + 1].question_group_id) #looking ahead
-              = render(:partial => "/partials/question_group", :locals => {:question_group => question.question_group, :show_question => show_question, :response_set => @response_set, :number => number_counter})
+              = render(:partial => "/partials/question_group", :locals => {:question_group => question.question_group, :response_set => @response_set, :number => number_counter})
               - number_counter += 1
-    .next_section
-      = @section.next ? section_next_helper(@section.next) : submit_tag("Click here to finish", :name => "finish")
+    .next_section= section_next_helper(@section)
       

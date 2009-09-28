@@ -83,11 +83,11 @@ module SurveyingHelper
   end
 
   def section_next_helper(section)
-    submit_tag("Next section &gt;&gt;", :name => section_submit_name_helper(section))
+    section.next.nil? ? submit_tag("Click here to finish", :name => "finish") : submit_tag("Next section &raquo;", :name => section_submit_name_helper(section.next))
   end
 
   def section_previous_helper(section)
-    submit_tag("&lt;&lt; Previous section", :name => section_submit_name_helper(section))
+    submit_tag("&laquo; Previous section", :name => section_submit_name_helper(section.previous)) unless section.previous.nil?
   end
 
   def section_submit_name_helper(section, anchor_id = nil)
