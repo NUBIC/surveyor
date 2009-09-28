@@ -35,4 +35,5 @@
               = render(:partial => "/question_group_display_types/#{(!question.question_group.display_type.empty?)? question.question_group.display_type : "default"}", :locals => {:group => question.question_group, :response_set => @response_set, :number => number_counter})
               - number_counter += 1
     .next_section
-      = @section.next ? section_next_helper(@section.next) : submit_tag("Click here to finish", :name => "0")
+      = @section.next ? section_next_helper(@section.next) : submit_tag("Click here to finish", :name => "finish")
+      

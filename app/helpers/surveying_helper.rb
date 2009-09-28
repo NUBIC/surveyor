@@ -10,7 +10,12 @@ module SurveyingHelper
   def surveyor_javascripts
     javascript_include_tag 'surveyor/jquery-1.2.6.js', 'surveyor/jquery-ui-personalized-1.5.3.js', 'surveyor/accessibleUISlider.jQuery.js','surveyor/jquery.form.js', 'surveyor/surveyor.js'
   end
-  
+  def surveyor_default_finish
+    surveyor_config['default.finish'].is_a?(Proc) ? surveyor_config['default.finish'].call : surveyor_config['default.finish']
+  end
+  def surveyor_config
+    Surveyor::Config
+  end
   # Formats the question number the way we want, or not at all if number is nil
   def question_number_helper(number)
     if number
