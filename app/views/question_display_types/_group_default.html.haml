@@ -1,8 +1,0 @@
-.question
-  %span.text= question.text
-  %span.help= question.help_text
-  = hidden_field_tag("responses[#{question.id}][question_id]", question.id)
-  %ol.answers
-    - question.answers.each do |answer|
-      %li.answer 
-        =render(:partial => "/answer_display_types/#{answer.partial_name}", :locals => {:answer => answer, :response_obj => response_set.response_for(question.id, answer.id), :hide_label => true})

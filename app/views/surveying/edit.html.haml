@@ -20,7 +20,7 @@
           Follow-up questions from your answers on the previous page
         - @dependents.each_with_index do |question, index|
           = dependency_explanation_helper(question, @response_set)
-          = render(:partial => "/question_display_types/#{question.display_type}", :locals => {:question => question, :response_set => @response_set, :number => "D#{index+1}", :show_question => true})
+          = render(:partial => "/partials/question", :locals => {:question => question, :response_set => @response_set, :number => "D#{index+1}", :show_question => true})
     .section{:id => section_id_helper(@section)}
       %span.title= @section.title
       .questions
@@ -28,11 +28,11 @@
         - @section.questions.each_with_index do |question, index|
           - unless question.part_of_group?
             - show_question = (question.dependency_satisfied?(@response_set) or !question.has_dependency?)
-            = render(:partial => "/question_display_types/#{(!question.display_type.empty?)? question.display_type : "default"}", :locals => {:question => question, :response_set => @response_set, :number => !question.has_dependency? ? number_counter : nil, :show_question => show_question})
+            = render(:partial => "/partials/question", :locals => {:question => question, :show_question => show_question, :response_set => @response_set, :number => !question.has_dependency? ? number_counter : nil, :show_question => show_question})
             - number_counter += 1 if question.display_type != "label" and question.display_type != "image" and !question.has_dependency?
           - else
             - if (index + 1 >= @section.questions.size) or (question.question_group_id != @section.questions[index + 1].question_group_id) #looking ahead
-              = render(:partial => "/question_group_display_types/#{(!question.question_group.display_type.empty?)? question.question_group.display_type : "default"}", :locals => {:group => question.question_group, :response_set => @response_set, :number => number_counter})
+              = render(:partial => "/partials/question_group", :locals => {:question_group => question.question_group, :show_question => show_question, :response_set => @response_set, :number => number_counter})
               - number_counter += 1
     .next_section
       = @section.next ? section_next_helper(@section.next) : submit_tag("Click here to finish", :name => "finish")

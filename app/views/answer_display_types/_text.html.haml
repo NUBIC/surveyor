@@ -1,6 +1,0 @@
-- hide_label ||= false
-- fields_for_response(response_obj) do |response_form|
-  = response_form.label(:text_value, answer_text_prefix_helper(answer.text)) unless hide_label
-  = response_form.text_area(:text_value, :cols => 80, :rows => 10)
-  = response_form.label(:text_value, answer_text_postfix_helper(answer.text)) unless hide_label
-  

@@ -1,8 +1,0 @@
--disabled ||= false
-.question{ :class => "#{(disabled)? 'disabled' : 'enabled'}"}
-  %span.text= question.text
-  %span.help= question.help_text
-  = hidden_field_tag("response_groups[#{question.id}][#{response_group}][response_group]", response_group)
-  = hidden_field_tag("response_groups[#{question.id}][#{response_group}][question_id]", question.id)
-  - options= question.answers.collect{|a| "<option #{ (response_set.response_for(question.id, a.id, response_group).selected?)? "selected='selected'" : nil } value ='#{a.id}'>#{a.text}</option>" }
-  = select_tag("response_groups[#{question.id}][#{response_group}][answer_id]", ["<option value=''>Select one...</option>"].concat(options), :disabled => disabled)

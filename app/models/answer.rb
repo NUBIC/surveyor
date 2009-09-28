@@ -1,5 +1,5 @@
 class Answer < ActiveRecord::Base
-  
+
   # Scopes
   default_scope :order => "display_order ASC"
   
@@ -13,8 +13,8 @@ class Answer < ActiveRecord::Base
   #validates_uniqueness_of :reference_identifier
   
   # Methods
-  def partial_name
-    [(self.question.pick == "none")? nil : self.question.pick.downcase, self.response_class.downcase].compact.join("_")
+  def renderer
+    [(self.question.pick == "none")? nil : self.question.pick.downcase, self.response_class.downcase].compact.join("_").to_sym
   end
 
   

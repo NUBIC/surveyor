@@ -40,5 +40,9 @@ class Question < ActiveRecord::Base
   def part_of_group?
     !self.question_group.nil?
   end
+
+  def renderer
+    [(question_group ? question_group.renderer.to_s : nil), display_type].compact.join("_").to_sym
+  end
   
 end
