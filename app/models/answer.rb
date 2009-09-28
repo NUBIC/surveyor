@@ -13,9 +13,12 @@ class Answer < ActiveRecord::Base
   #validates_uniqueness_of :reference_identifier
   
   # Methods
-  def renderer
-    [(self.question.pick == "none")? nil : self.question.pick.downcase, self.response_class.downcase].compact.join("_").to_sym
+  def pick
+    self.question.pick == "none" ? nil : self.question.pick
   end
-
+  
+  def renderer
+    [self.pick, self.response_class].compact.empty? ? :default : [self.pick, self.response_class].compact.map(&:downcase).join("_").to_sym
+  end
   
 end
