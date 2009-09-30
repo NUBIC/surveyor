@@ -36,6 +36,10 @@ module Surveyor
       def to_hash
         @@config_hash
       end
+      
+      def run
+        yield self if block_given?
+      end
     end
   end
 end
