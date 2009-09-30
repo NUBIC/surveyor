@@ -2,57 +2,16 @@ require File.expand_path(File.dirname(__FILE__) + '/../spec_helper')
 
 describe ResponseSet, "class methods" do
   before(:each) do
-    @survey = mock_model(Survey, :access_code => "XYZ")
-    @response_set = ResponseSet.new(:access_code => "PDQ", :survey => @survey)
-    ResponseSet.stub!(:find_by_access_code).with("PDQ").and_return(@response_set)
+    @response_set = Factory(:response_set, :access_code => "PDQ")
   end
   it "should find a response set by response_set.access_code or return false" do
     ResponseSet.find_by_access_code("PDQ").should == @response_set
     ResponseSet.find_by_access_code("Different").should be_nil
   end
 end
-describe ResponseSet, "when saving" do
-  before(:each) do
-    @valid_attributes = {
-      :user_id => 1,
-      :survey_id => 1,
-    }
-    @response_set = ResponseSet.new(@valid_attributes)
-  end
-  
-  it "should be valid" do
-    @response_set.should be_valid
-  end
-  it "should be invalid without a parent user and survey" do
-    @response_set.user_id = nil
-    @response_set.survey_id = nil
-    @response_set.should have(1).error_on(:user_id)
-    @response_set.should have(1).error_on(:survey_id)
-  end
-
-  it "should have a default started at date/time" do
-    @response_set.started_at.blank?.should_not == true
-    @response_set.started_at.localtime.to_date.should == Date.today
-  end
-
-  it "should have no errors after save" do
-    user = mock_model(User)
-    survey = mock_model(Survey)
-
-    @response_set.user = user #User.find(1)
-    @response_set.survey = survey #Survey.find(1)
-    @response_set.save.should be_true
-    @response_set.errors.should be_empty
-  end
-
-end
 describe ResponseSet, "with responses" do
   before(:each) do
-    @valid_attributes = {
-      :user_id => 1,
-      :survey_id => 1,
-    }
-    @response_set = ResponseSet.new(@valid_attributes)
+    @response_set = Factory(:response_set)
   end
 
   it "can tell you its responses" do
@@ -67,7 +26,7 @@ describe ResponseSet, "with responses" do
     @response_set.completed_at.is_a?(Time).should be_true
   end
 
-  it "allows completion through mass assignment" do
+  it "does not allow completion through mass assignment" do
     @response_set.completed_at.should be_nil
     @response_set.update_attributes(:completed_at => Time.now)
     @response_set.completed_at.should be_nil
@@ -76,11 +35,7 @@ describe ResponseSet, "with responses" do
 end
 describe ResponseSet, "Creating new set for user" do
   before(:each) do
-    @valid_attributes = {
-      :user_id => 1,
-      :survey_id => 1,
-    }
-    @response_set = ResponseSet.new(@valid_attributes)
+    @response_set = Factory(:response_set)
   end
   it "should have a unique code with length 10 that identifies the survey" do
     @response_set.access_code.should_not be_nil
@@ -89,10 +44,7 @@ describe ResponseSet, "Creating new set for user" do
 end
 describe ResponseSet, "Updating the response set" do
   before(:each) do
-    @valid_attributes = {
-      :user_id => 1,
-      :survey_id => 1,
-    }
+    @response_set = Factory(:response_set)
     # {"responses"=>{
     #   "6"=>{"question_id"=>"6", "20"=>{"string_value"=>""}}, 
     #   "7"=>{"question_id"=>"7", "21"=>{"text_value"=>"Brian is tired"}}, 
@@ -121,7 +73,6 @@ describe ResponseSet, "Updating the response set" do
       "7"=>{"question_id"=>"7", "21"=>{"text_value"=>"Brian is tired"}}, 
       "5"=>{"question_id"=>"5", "19"=>{"string_value"=>""}}   
     })
-    @response_set = ResponseSet.new(@valid_attributes)
   end
 
   it "should delete existing responses corresponding to every question key that comes in" do
@@ -158,15 +109,45 @@ describe ResponseSet, "Updating the response set" do
 end
 
 describe ResponseSet, "knowing internal status" do
-
+  before(:each) do
+    @response_set = Factory(:response_set)
+  end
   it "knows when it is empty"  do
-    @response_set = ResponseSet.new
     @response_set.empty?.should be_true
   end
 
   it "knows when it is not empty" do
-    @response_set = ResponseSet.new
     @response_set.responses.build({:question_id => 1, :answer_id => 8})
     @response_set.empty?.should be_false
   end
+end
+describe ResponseSet, "with dependencies" do
+  before(:each) do
+    # Questions
+    @do_you_like_pie = Factory(:question, :text => "Do you like pie?")
+    @what_flavor = Factory(:question, :text => "What flavor?")
+    @what_bakery = Factory(:question, :text => "What bakery?")
+    # Answers
+    @do_you_like_pie.answers << Factory(:answer, :text => "yes", :question_id => @do_you_like_pie.id)
+    @do_you_like_pie.answers << Factory(:answer, :text => "no", :question_id => @do_you_like_pie.id)
+    @what_flavor.answers << Factory(:answer, :response_class => :string, :question_id => @what_flavor.id)
+    @what_bakery.answers << Factory(:answer, :response_class => :string, :question_id => @what_bakery.id)
+    # Dependency
+    @what_flavor_dep = Factory(:dependency, :rule => "1", :question_id => @what_flavor.id)
+    @what_flavor_dep.dependency_conditions << Factory(:dependency_condition, :rule_key => "1", :question_id => @do_you_like_pie.id, :operator => "==", :answer_id => @do_you_like_pie.answers.first.id, :dependency_id => @what_flavor_dep.id)
+    @what_bakery_dep = Factory(:dependency, :rule => "2", :question_id => @what_bakery.id)
+    @what_bakery_dep.dependency_conditions << Factory(:dependency_condition, :rule_key => "2", :question_id => @do_you_like_pie.id, :operator => "==", :answer_id => @do_you_like_pie.answers.first.id, :dependency_id => @what_bakery_dep.id)
+    # Responses
+    @response_set = Factory(:response_set)
+    @response_set.responses << Factory(:response, :question_id => @do_you_like_pie.id, :answer_id => @do_you_like_pie.answers.first.id, :response_set_id => @response_set.id)
+    @response_set.responses << Factory(:response, :string_value => "pecan pie", :question_id => @what_flavor.id, :answer_id => @what_flavor.answers.first.id, :response_set_id => @response_set.id)
+  end
+  
+  it "should list unanswered dependencies to show at the top of the next page (javascript turned off)" do
+    @response_set.unanswered_dependencies.should == [@what_bakery]
+  end
+  it "should list answered and unanswered dependencies to show inline (javascript turned on)" do
+    @response_set.all_dependencies[:show].should == [@what_flavor, @what_bakery]
+  end
+  
 end

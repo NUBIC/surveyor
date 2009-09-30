@@ -52,13 +52,14 @@ class SurveyingController < ApplicationController
 
   def edit
     # Checking from the questions on the page (which are in the response hash) if there are any dependent questions to show
-    dependent_hash = dependents(@response_set)
-    @dependents = dependent_hash[:show]
     respond_to do |format|
       format.html do
+        # with js turned off - show unanswered dependencies, but if they are questions on the current page, don't show them twice
+        @dependents = @response_set.unanswered_dependencies - @section.questions
         render
       end
       format.json do
+        dependent_hash = @response_set.all_dependencies
         render :json => {:show => dependent_hash[:show].map{|q| question_id_helper(q)}, :hide => dependent_hash[:hide].map{|q| question_id_helper(q)} }.to_json
       end
     end
@@ -86,30 +87,10 @@ class SurveyingController < ApplicationController
       end
       # No redirect needed if we're talking to the page via json
       format.js do
-        dependent_hash = dependents(@response_set)
-        @dependents = dependent_hash[:show]
+        dependent_hash = @response_set.all_dependencies
         render :json => {:show => dependent_hash[:show].map{|q| question_id_helper(q)}, :hide => dependent_hash[:hide].map{|q| question_id_helper(q)} }.to_json
       end
     end
-  end
-
-  private
-  
-  # Returns the dependent questions that need to be answered based on the current progress of the response set
-  # it also returns the dependent questions that need to be hidden
-  def dependents(response_set)
-    show = []
-    hide = []
-    question_ids = response_set.responses.map(&:question_id).uniq # returning a list of all answered questions (only the ids)
-    dependencies = DependencyCondition.find_all_by_question_id(question_ids).map(&:dependency).uniq
-    dependencies.each do |dep|
-      if dep.met?(response_set) # and response_set.has_not_answered_question?(dep.question)
-        show << dep.question
-      else
-        hide << dep.question
-      end
-    end
-    {:show => show, :hide => hide}
   end
 
   protected
@@ -126,9 +107,7 @@ class SurveyingController < ApplicationController
         section_id = (params[:section].respond_to?(:keys))? params[:section].keys.first.split("_").first.to_i : params[:section]
         found = @survey.sections.find_by_id(section_id)
         @anchor = (params[:section].respond_to?(:keys) and params[:section].keys.first.split("_").size > 1)? params[:section].keys.first.split("_").last : nil
-
       end
-
       @section = found || @survey.sections.first
       @dependents = []
     else

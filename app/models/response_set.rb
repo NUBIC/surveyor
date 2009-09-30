@@ -7,7 +7,7 @@ class ResponseSet < ActiveRecord::Base
   has_many :responses, :dependent => :destroy
   
   # Validations
-  validates_presence_of :survey_id, :user_id
+  validates_presence_of :survey_id
   validates_associated :responses
   
   # Attributes
@@ -172,4 +172,17 @@ class ResponseSet < ActiveRecord::Base
     counts.max #since response groups can be partially filled, such that for one response group the user may have answered only one of the questions in the group. We want to still count the partially complete group response.
   end
   
+  def unanswered_dependencies
+    dependencies.select{|d| d.met?(self) and self.has_not_answered_question?(d.question)}.map(&:question)
+  end
+  def all_dependencies
+    arr = dependencies.partition{|d| d.met?(self) }
+    {:show => arr[0].map(&:question), :hide => arr[1].map(&:question)}
+  end
+  
+  protected
+  def dependencies
+    question_ids = self.responses.map(&:question_id).uniq # returning a list of all answered questions (only the ids)
+    DependencyCondition.find_all_by_question_id(question_ids).map(&:dependency).uniq
+  end
 end
