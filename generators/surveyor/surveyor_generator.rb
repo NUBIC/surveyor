@@ -4,7 +4,7 @@ class SurveyorGenerator < Rails::Generator::Base
       
       # Gem plugin rake tasks
       m.file "tasks/surveyor.rb", "lib/tasks/surveyor.rb"
-      append_file 'Rakefile', "require 'tasks/surveyor'"
+      m.send(:append_file, 'Rakefile', "require 'tasks/surveyor'")
       
       # HAML
       m.file "initializers/surveyor.rb", "config/initializers/surveyor.rb"
@@ -20,8 +20,8 @@ class SurveyorGenerator < Rails::Generator::Base
       end
       
       # Generate CSS
-      root = File.join(File.dirname(__FILE__), "templates", "assets", "stylesheets")
-      `sass #{root}/sass/surveyor.sass #{root}/surveyor.css`
+      css_root = File.join(File.dirname(__FILE__), "templates", "assets", "stylesheets")
+      `sass #{css_root}/sass/surveyor.sass #{css_root}/surveyor.css`
 
       # Assets
       ["images", "javascripts", "stylesheets"].each do |asset_type|
