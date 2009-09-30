@@ -2,6 +2,10 @@ class SurveyorGenerator < Rails::Generator::Base
   def manifest
     record do |m|
       
+      # Gem plugin rake tasks
+      m.file "tasks/surveyor.rb", "lib/tasks/surveyor.rb"
+      append_file 'Rakefile', "require 'tasks/surveyor'"
+      
       # HAML
       m.file "initializers/surveyor.rb", "config/initializers/surveyor.rb"
       m.file "initializers/haml.rb", "config/initializers/haml.rb"
