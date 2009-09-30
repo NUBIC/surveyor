@@ -2,11 +2,11 @@
 
 Gem::Specification.new do |s|
   s.name = %q{surveyor}
-  s.version = "0.3.0"
+  s.version = "0.4.0"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Brian Chamberlain", "Mark Yoon"]
-  s.date = %q{2009-09-28}
+  s.date = %q{2009-09-30}
   s.email = %q{yoon@northwestern.edu}
   s.extra_rdoc_files = [
     "README.md"
@@ -29,45 +29,11 @@ Gem::Specification.new do |s|
      "app/models/response_set.rb",
      "app/models/survey.rb",
      "app/models/survey_section.rb",
-     "app/views/answer_display_types/_any_answer.html.haml",
-     "app/views/answer_display_types/_any_other_and_string.html.haml",
-     "app/views/answer_display_types/_any_string.html.haml",
-     "app/views/answer_display_types/_date.html.haml",
-     "app/views/answer_display_types/_datetime.html.haml",
-     "app/views/answer_display_types/_default.html.haml",
-     "app/views/answer_display_types/_float.html.haml",
-     "app/views/answer_display_types/_grid_any_answer.html.haml",
-     "app/views/answer_display_types/_grid_default.html.haml",
-     "app/views/answer_display_types/_grid_float.html.haml",
-     "app/views/answer_display_types/_grid_integer.html.haml",
-     "app/views/answer_display_types/_grid_one_answer.html.haml",
-     "app/views/answer_display_types/_grid_string.html.haml",
-     "app/views/answer_display_types/_integer.html.haml",
-     "app/views/answer_display_types/_one_answer.html.haml",
-     "app/views/answer_display_types/_one_string.html.haml",
-     "app/views/answer_display_types/_repeater_integer.html.haml",
-     "app/views/answer_display_types/_repeater_string.html.haml",
-     "app/views/answer_display_types/_string.html.haml",
-     "app/views/answer_display_types/_text.html.haml",
-     "app/views/answer_display_types/_time.html.haml",
      "app/views/layouts/surveyor_default.html.erb",
-     "app/views/question_display_types/_default.html.haml",
-     "app/views/question_display_types/_dropdown.html.haml",
-     "app/views/question_display_types/_grid_default.html.haml",
-     "app/views/question_display_types/_grid_dropdown.html.haml",
-     "app/views/question_display_types/_group_default.html.haml",
-     "app/views/question_display_types/_group_dropdown.html.haml",
-     "app/views/question_display_types/_image.html.haml",
-     "app/views/question_display_types/_inline.html.haml",
-     "app/views/question_display_types/_label.html.haml",
-     "app/views/question_display_types/_repeater_default.html.haml",
-     "app/views/question_display_types/_repeater_dropdown.html.haml",
-     "app/views/question_display_types/_slider.html.haml",
-     "app/views/question_group_display_types/_default.html.haml",
-     "app/views/question_group_display_types/_grid.html.haml",
-     "app/views/question_group_display_types/_repeater.html.haml",
+     "app/views/partials/_answer.html.haml",
+     "app/views/partials/_question.html.haml",
+     "app/views/partials/_question_group.html.haml",
      "app/views/surveying/edit.html.haml",
-     "app/views/surveying/index.html.erb",
      "app/views/surveying/new.html.haml",
      "app/views/surveying/show.html.haml",
      "config/routes.rb",
