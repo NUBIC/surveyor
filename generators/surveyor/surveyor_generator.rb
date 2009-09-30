@@ -3,8 +3,8 @@ class SurveyorGenerator < Rails::Generator::Base
     record do |m|
       
       # Gem plugin rake tasks
-      m.file "tasks/surveyor.rb", "lib/tasks/surveyor.rb"
-      m.send(:append_file, 'Rakefile', "require 'tasks/surveyor'")
+      m.file "tasks/surveyor.rb", "lib/tasks/surveyor.rb"    
+      File.open(File.join(root, 'Rakefile'), 'ab') { |file| file.write("require 'tasks/surveyor'") }
       
       # HAML
       m.file "initializers/surveyor.rb", "config/initializers/surveyor.rb"
