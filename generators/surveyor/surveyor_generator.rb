@@ -4,7 +4,7 @@ class SurveyorGenerator < Rails::Generator::Base
       
       # Gem plugin rake tasks
       m.file "tasks/surveyor.rb", "lib/tasks/surveyor.rb"    
-      File.open(File.join(m.send(:root), 'Rakefile'), 'ab') { |file| file.write("require 'tasks/surveyor'") }
+      File.open(destination_path('Rakefile'), 'ab') { |file| file.write("require 'tasks/surveyor'") }
       
       # HAML
       m.file "initializers/surveyor.rb", "config/initializers/surveyor.rb"
