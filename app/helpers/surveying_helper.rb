@@ -11,7 +11,16 @@ module SurveyingHelper
     javascript_include_tag 'surveyor/jquery-1.2.6.js', 'surveyor/jquery-ui-personalized-1.5.3.js', 'surveyor/accessibleUISlider.jQuery.js','surveyor/jquery.form.js', 'surveyor/surveyor.js'
   end
   def surveyor_default_finish
-    surveyor_config['default.finish'].is_a?(Proc) ? surveyor_config['default.finish'].call : surveyor_config['default.finish']
+    case (finish = surveyor_config['default.finish']).class
+    when String
+      finish
+    when Symbol
+      ApplicationController.send(finish)
+    when Proc
+      finish.call
+    else
+      '/surveys'
+    end
   end
   def surveyor_config
     Surveyor::Config
