@@ -1,14 +1,21 @@
 # Survey On Rails
 
-Surveyor is a rails (gem) plugin, that brings surveys to your rails app. Before Rails 2.3, it was implemented as a Rails Engine.
-
-Surveys are written in a DSL (Domain Specific Language), with examples available in the "kitchen sink" survey.
+Surveyor is a rails (gem) plugin, that brings surveys to your rails app. Before Rails 2.3, it was implemented as a Rails Engine. Surveys are written in a DSL (Domain Specific Language), with examples available in the "kitchen sink" survey.
 
 # Installation
 
+As a plugin:
+
     script/plugin install git://github.com/breakpointer/surveyor.git
 
-Generate assets, migrations, and run migrations
+Or as a gem plugin:
+  
+  # environment.rb
+  config.gem "surveyor", :version => '>=0.4.1', :lib => false
+  
+    sudo rake gems:install
+
+Generate assets, run migrations
     
     script/generate surveyor
     rake db:migrate

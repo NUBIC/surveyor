@@ -7,3 +7,4 @@ Try out the "kitchen sink" survey:
 
     rake surveyor:bootstrap FILE=surveys/kitchen_sink_survey.rb
     
+Or see README.md for configuration and customization details
