@@ -7,9 +7,14 @@ class SurveyorGenerator < Rails::Generator::Base
           
       # Gem plugin rake tasks
       m.file "tasks/surveyor.rb", "lib/tasks/surveyor.rb"
-      File.open(destination_path('Rakefile'), 'ab') { |file| file.write("\nrequire 'tasks/surveyor'\n") }
-      # http://ggr.com/how-to-include-a-gems-rake-tasks-in-your-rails-app.html
-      
+      if file_has_line(destination_path('Rakefile'), /^require 'tasks\/surveyor'$/ )
+        logger.skipped 'Rakefile'
+      else
+        File.open(destination_path('Rakefile'), 'ab') {|file| file.write("\nrequire 'tasks/surveyor'\n") }
+        # http://ggr.com/how-to-include-a-gems-rake-tasks-in-your-rails-app.html
+        logger.appended 'Rakefile'
+      end
+                  
       # HAML
       m.file "initializers/surveyor.rb", "config/initializers/surveyor.rb"
       m.file "initializers/haml.rb", "config/initializers/haml.rb"
@@ -19,8 +24,11 @@ class SurveyorGenerator < Rails::Generator::Base
       # coped functionality from RAILS_GEM_PATH/lib/rails_generator/commands.rb
       m.directory "db/migrate"
       ["surveys", "survey_sections", "questions", "answers", "response_sets", "responses", "dependencies", "question_groups", "dependency_conditions"].each_with_index do |model, i|
-        raise "Another migration is already named create_#{model}" if not Dir.glob("db/migrate/[0-9]*_*.rb").grep(/[0-9]+_create_#{model}.rb$/).empty?
-        m.template("migrate/create_#{model}.rb", "db/migrate/#{(Time.now.utc.strftime("%Y%m%d%H%M%S").to_i + i).to_s}_create_#{model}.rb")
+        unless (prev_migrations = Dir.glob("db/migrate/[0-9]*_*.rb").grep(/[0-9]+_create_#{model}.rb$/)).empty?
+          prev_migration_timestamp = prev_migrations[0].match(/([0-9]+)_create_#{model}.rb$/)[1]
+        end
+        # raise "Another migration is already named create_#{model}" if not Dir.glob("db/migrate/[0-9]*_*.rb").grep(/[0-9]+_create_#{model}.rb$/).empty?
+        m.template("migrate/create_#{model}.rb", "db/migrate/#{(prev_migration_timestamp || Time.now.utc.strftime("%Y%m%d%H%M%S").to_i + i).to_s}_create_#{model}.rb")
       end
       
       # Generate CSS
@@ -44,7 +52,8 @@ class SurveyorGenerator < Rails::Generator::Base
       
     end
   end
-  def self.next_migration_string(i)
-    Time.now.utc.strftime("%Y%m%d%H%M%S")
+  def file_has_line(filename, rxp)
+    File.readlines(filename).each{ |line| return true if line =~ rxp }
+    false
   end
 end
