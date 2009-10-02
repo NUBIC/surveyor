@@ -1,4 +1,4 @@
-module SurveyingHelper
+module SurveyorHelper
   
   # stylsheets and javascripts for surveyor layout
   def surveyor_includes

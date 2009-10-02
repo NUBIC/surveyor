@@ -1,9 +1,9 @@
-# The Surveying controller handles the process of a user taking a survey.
+# The Surveyor controller handles the process of a user taking a survey.
 # It is semi-restful since it does not have a concrete representation model.
 # The "resource" could be considered a survey attempt or survey session.
 # It is actually the union of a user filling out a survey and populating a response set.
 
-class SurveyingController < ApplicationController
+class SurveyorController < ApplicationController
   unloadable # http://dev.rubyonrails.org/ticket/6001#comment:12
   
   layout Surveyor::Config['default.layout'] || 'surveyor_default'
