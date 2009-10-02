@@ -53,6 +53,31 @@ To look at the current surveyor configuration:
     
     Surveyor::Config.to_hash.inspect
 
+
+# Sample layout
+
+    <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+      "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+    <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+    <head>
+      <meta http-equiv="content-type" content="text/html;charset=UTF-8" />
+      <title>Survey: <%= controller.action_name %></title>
+      <%= surveyor_includes %>
+    </head>
+    <body>
+      <div id="flash"><%= flash[:notice] %></div>
+      <div id="survey_with_menu">
+        <%= yield %>
+      </div>
+    </body>
+    </html>
+  
+The <code>surveyor\_includes</code> helper just calls <code>surveyor\_stylsheets + surveyor\_javascripts</code> which in turn call:
+
+    stylesheet_link_tag 'surveyor/reset', 'surveyor/surveyor', 'surveyor/ui.theme.css','surveyor/jquery-ui-slider-additions'
+
+    javascript_include_tag 'surveyor/jquery-1.2.6.js', 'surveyor/jquery-ui-personalized-1.5.3.js', 'surveyor/accessibleUISlider.jQuery.js','surveyor/jquery.form.js', 'surveyor/surveyor.js'
+    
 # Dependencices
 
 Surveyor depends on Rails 2.3 and the SASS style sheet language, part of HAML (http://haml.hamptoncatlin.com/download)
