@@ -5,9 +5,14 @@
 
 class SurveyingController < ApplicationController
   unloadable # http://dev.rubyonrails.org/ticket/6001#comment:12
-
+  
   layout Surveyor::Config['default.layout'] || 'surveyor_default'
-  include SurveyingHelper
+
+  if Surveyor::Config['use_restful_authentication']
+    include AuthenticatedSystem
+    before_filter :login_required
+  end
+
   before_filter :get_response_set, :except => [:new, :create]
 
   def index

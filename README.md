@@ -33,7 +33,7 @@ The surveyor generator creates config/initializers/config.rb. There, you can spe
 - your own custom title (string) for the survey list page
 - your own custom layout file name, in your app/views/layouts folder
 - your own custom finish url for all surveys. you can give a string (a path), a symbol (the name of a method in ApplicationController)
-
+- if you would like surveys to require authorization via the restful_authentication plugin
 
 The initializer runs once, when the app starts. The block style is used to keep multiple options DRY (defaults below):
 
