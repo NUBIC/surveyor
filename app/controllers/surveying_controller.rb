@@ -116,4 +116,19 @@ class SurveyingController < ApplicationController
     end
   end
 
+  def surveyor_default_finish
+    # http://www.postal-code.com/mrhappy/blog/2007/02/01/ruby-comparing-an-objects-class-in-a-case-statement/
+    # http://www.skorks.com/2009/08/how-a-ruby-case-statement-works-and-what-you-can-do-with-it/
+    case finish = Surveyor::Config['default.finish']
+    when String
+      return finish
+    when Symbol
+      return self.send(finish)
+    when Proc
+      return finish.call
+    else
+      return '/surveys'
+    end
+  end
+
 end

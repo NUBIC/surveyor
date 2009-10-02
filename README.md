@@ -29,16 +29,20 @@ Try out the "kitchen sink" survey:
 
 The surveyor generator creates config/initializers/config.rb. There, you can specify:
 
+- your own relative root for surveys ('/' is not recommended as any path will be interpreted as a survey name)
 - your own custom title (string) for the survey list page
 - your own custom layout file name, in your app/views/layouts folder
-- your own custom finish url for all surveys. you can give a string (a path), a symbol (the name of a method in ApplicationController), or a Proc (will be called in the context of SurveyingController)
+- your own custom finish url for all surveys. you can give a string (a path), a symbol (the name of a method in ApplicationController)
+
 
 The initializer runs once, when the app starts. The block style is used to keep multiple options DRY (defaults below):
 
     Surveyor::Config.run do |config|
+      config['default.relative_url_root'] = "surveys/" # should end with '/'
       config['default.title'] = "You can take these surveys:"
       config['default.layout'] = "surveyor_default"
       config['default.finish'] =  "/surveys"
+      config['use_restful_authentication'] = false
     end
     
 You can update surveyor's at any time. Use the block style (above), or the individual style:
