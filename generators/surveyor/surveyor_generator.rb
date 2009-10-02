@@ -2,6 +2,9 @@ class SurveyorGenerator < Rails::Generator::Base
   def manifest
     record do |m|
       
+      # Copy README to your app
+      m.file "../../../README.md", "surveys/README.md"
+          
       # Gem plugin rake tasks
       m.file "tasks/surveyor.rb", "lib/tasks/surveyor.rb"
       File.open(destination_path('Rakefile'), 'ab') { |file| file.write("\nrequire 'tasks/surveyor'\n") }
