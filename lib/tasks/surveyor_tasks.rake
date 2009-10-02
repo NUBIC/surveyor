@@ -1,14 +1,16 @@
 require File.join(File.dirname(__FILE__), "../../script/surveyor/survey_parser")
 require 'active_record/fixtures'
 
+desc "generate and load survey (specify FILE=surveys/your_survey.rb)"
+task :surveyor => :"surveyor:default"
+
 namespace :surveyor do
 
-  desc "generate and load survey fixtures from survey file (shortcut for rake surveyor:generate and rake surveyor:load)"
-  task :import => [:generate_fixtures, :load_fixtures]
+  task :default => [:generate_fixtures, :load_fixtures]
   
   desc "generate survey fixtures from survey file"
   task :generate_fixtures => :environment do
-    raise "usage: file name required e.g. 'FILE=surveys/kitchen_sink_survey.rb'" if ENV["FILE"].blank?
+    raise "USAGE: file name required e.g. 'FILE=surveys/kitchen_sink_survey.rb'" if ENV["FILE"].blank?
     SurveyParser.parse(File.join(RAILS_ROOT, ENV["FILE"]))
   end
 
