@@ -29,12 +29,13 @@ class SurveyorController < ApplicationController
   end
 
   def create
+    @current_user = self.respond_to?(:current_user) ? self.current_user : nil
     @survey = Survey.find_by_access_code(params[:survey_code])
     unless @survey
       flash[:notice] = "Unable to find that survey"
       redirect_to(available_surveys_path)
     else
-      @response_set = ResponseSet.new(:survey => @survey, :user_id => 123)
+      @response_set = ResponseSet.new(:survey => @survey, :user_id => @current_user)
       respond_to do |format|
         if @response_set.save!
           flash[:notice] = 'Survey was successfully created.'
