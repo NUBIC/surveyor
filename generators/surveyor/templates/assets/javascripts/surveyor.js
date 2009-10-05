@@ -19,7 +19,7 @@ jQuery(document).ready(function(){
 	jQuery("#dependents").remove();
 
 	function successfulSave(responseText){ // for(key in responseText) { console.log("key is "+[key]+", value is "+responseText[key]); }
-		// surveying_controller returns a json object to show/hide elements e.g. {"hide":["question_12","question_13"],"show":["question_14"]}
+		// surveyor_controller returns a json object to show/hide elements e.g. {"hide":["question_12","question_13"],"show":["question_14"]}
 		jQuery.each(responseText.show, function(){ jQuery('#' + this).show("fast");	});
 		jQuery.each(responseText.hide, function(){ jQuery('#' + this).hide("fast");	});
 		return false;

@@ -4,15 +4,22 @@
 # It is actually the union of a user filling out a survey and populating a response set.
 
 class SurveyorController < ApplicationController
-  unloadable # http://dev.rubyonrails.org/ticket/6001#comment:12
+  # unloadable # http://dev.rubyonrails.org/ticket/6001#comment:12
   
+  # Layout
   layout Surveyor::Config['default.layout'] || 'surveyor_default'
-
+  
+  # Extend controller and actions
+  include SurveyorControllerExtensions if Surveyor::Config['extend_controller'] && defined? SurveyorControllerExtensions
+  before_filter :extend_actions
+  
+  # Restful authentication
   if Surveyor::Config['use_restful_authentication']
     include AuthenticatedSystem
     before_filter :login_required
   end
-
+  
+  # Get the response set
   before_filter :get_response_set, :except => [:new, :create]
 
   def index
@@ -135,6 +142,13 @@ class SurveyorController < ApplicationController
     else
       return '/surveys'
     end
+  end
+  
+  private
+  
+  def extend_actions
+    # http://blog.mattwynne.net/2009/07/11/rails-tip-use-polymorphism-to-extend-your-controllers-at-runtime/
+    self.extend SurveyorControllerExtensions::Actions if Surveyor::Config['extend_controller'] && defined? SurveyorControllerExtensions::Actions
   end
 
 end

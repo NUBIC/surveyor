@@ -1,0 +1,12 @@
+
+Any of surveyor's models class_eval, class methods, and instance methods can be modified. Include the following in config/initializers/surveyor.rb:
+
+    require 'models/survey_extensions' # Extended the survey model
+    
+SurveyorHelper class_eval and instance methods can be modified. Include the following in config/initializers/surveyor.rb:
+
+    require 'helpers/surveyor_helper_extensions' # Extend the surveyor helper
+
+SurveyorController class_eval, class methods, instance methods, and actions can be modified. Action methods should be specified separately in the Actions submodule. Set the following option in config/initializers/surveyor.rb Surveyor::Config block:
+
+    config['extend_controller'] = true
