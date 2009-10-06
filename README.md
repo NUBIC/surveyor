@@ -23,7 +23,7 @@ Generate assets, run migrations:
 
 Try out the "kitchen sink" survey:
 
-    rake surveyor:bootstrap FILE=surveys/kitchen_sink_survey.rb
+    rake surveyor FILE=surveys/kitchen_sink_survey.rb
 
 # Configuration
 
