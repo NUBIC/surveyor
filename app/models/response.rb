@@ -47,12 +47,11 @@ class Response < ActiveRecord::Base
   end
   
   def to_s
-    if self.answer_id
-      self.answer.text
+    if self.answer.response_class == "answer" and self.answer_id
+      return self.answer.text
     else
-      "#{(self.string_value || self.text_value || self.integer_value || self.float_value).to_s}"
+      return "#{(self.string_value || self.text_value || self.integer_value || self.float_value || nil).to_s}"
     end
-    
   end
   
 end

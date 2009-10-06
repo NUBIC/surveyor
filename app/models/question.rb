@@ -1,5 +1,8 @@
 class Question < ActiveRecord::Base
   
+  # Scopes
+  default_scope :order => "display_order ASC"
+  
   # Associations
   belongs_to :survey_section
   belongs_to :question_group

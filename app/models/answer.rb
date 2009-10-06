@@ -18,7 +18,8 @@ class Answer < ActiveRecord::Base
   end
   
   def renderer
-    [self.pick, self.response_class].compact.empty? ? :default : [self.pick, self.response_class].compact.map(&:downcase).join("_").to_sym
+    group = question.question_group ? question.question_group.renderer.to_s : nil
+    [group, self.pick, self.response_class].compact.empty? ? :default : [group, self.pick, self.response_class].compact.map(&:downcase).join("_").to_sym
   end
   
 end
