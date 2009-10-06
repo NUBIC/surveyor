@@ -2,6 +2,8 @@ class SurveyorGenerator < Rails::Generator::Base
   def manifest
     record do |m|
       
+      m.directory "surveys"
+      
       # Copy README to your app
       m.file "../../../README.md", "surveys/README.md"
           
@@ -44,7 +46,6 @@ class SurveyorGenerator < Rails::Generator::Base
       end
       
       # Surveys
-      m.directory "surveys"
       m.directory "surveys/fixtures"
       m.file "surveys/kitchen_sink_survey.rb", "surveys/kitchen_sink_survey.rb"
       
