@@ -4,7 +4,7 @@ class SurveyFormBuilder < ActionView::Helpers::FormBuilder
     fields[1]
   end
 end
-  
+
 module ActionView
   module Helpers
     module FormHelper
@@ -18,7 +18,6 @@ module ActionView
     end
 
     class InstanceTag
-    
       def to_survey_check_box_tag(options = {}, checked_value = "1", unchecked_value = "0")
         options = options.stringify_keys
         options["type"]     = "checkbox"

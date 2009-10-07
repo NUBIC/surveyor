@@ -1,36 +1,29 @@
-#content
+#surveyor
   - form_tag(update_my_survey_path, :method => :put, :id => "survey_form") do
     - unless @survey.sections.size < 3
       #menu
         Sections:
         %ul
-          - @survey.sections.each do |survey_section|
-            %li{:class => ("active" if survey_section == @section)}
-              = section_submit_helper(survey_section)
+          - @survey.sections.each do |s|
+            %li{:class => ("active" if s == @section)}= menu_button_for(s)
     #header
       .title= @survey.title
-      
-    .previous_section= section_previous_helper(@section)
+    .previous_section= previous_section
     - unless @dependents.empty?
       #dependents
         .title Follow-up questions from your answers on the previous page
         - @dependents.each_with_index do |question, index|
           = dependency_explanation_helper(question, @response_set)
           = render(:partial => "/partials/question", :locals => {:question => question, :response_set => @response_set, :number => "D#{index+1}"})
-    .section{:id => section_id_helper(@section)}
+    - div_for @section do
       %span.title= @section.title
       .questions
-        - number_counter = 1
         - @section.questions.each_with_index do |question, index|
-          - unless question.part_of_group?
-          
-            = render(:partial => "/partials/question", :locals => {:question => question, :response_set => @response_set, :number => !question.has_dependency? ? number_counter : nil})
-            - number_counter += 1 if question.display_type != "label" and question.display_type != "image" and !question.has_dependency?
-          
+          - if question.part_of_group?
+            - if (index + 1 >= @section.questions.size) or (question.question_group_id != @section.questions[index + 1].question_group_id)
+              - # skip to the last question of the section, or the last question of the group
+              = render(:partial => "/partials/question_group", :locals => {:question_group => question.question_group, :response_set => @response_set})
           - else
-            
-            - if (index + 1 >= @section.questions.size) or (question.question_group_id != @section.questions[index + 1].question_group_id) #looking ahead
-              = render(:partial => "/partials/question_group", :locals => {:question_group => question.question_group, :response_set => @response_set, :number => number_counter})
-              - number_counter += 1
-    .next_section= section_next_helper(@section)
+            = render(:partial => "/partials/question", :locals => {:question => question, :response_set => @response_set})
+    .next_section= next_section
       

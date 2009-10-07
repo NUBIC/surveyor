@@ -5,11 +5,11 @@
 !menus_text_color = #666666
 !headings_color = #213E00
 !headings_text_color = #B1AF03
+!flash_color = #FF0000
 !text_field_color = #fafafa
 !subtle_shift = 16
 !border_shift = 32
 !emphasis_shift = 64
-
 body
   :background-color= !main_background_color
   :font-family Helvetica
@@ -18,304 +18,227 @@ body
   :letter-spacing 0
   :line-height 1.1em
   :font-size 1em
-  :margin 0
-  :padding 0
-
-p
-  :padding 0.3em
-  :margin 0.5em
-  :margin 0.55em
-  
-input[type="submit"]
-  :font-size 1.0em
-  :border 0px
-  :padding 0.2em
-  :margin 0.2em
-  :cursor pointer
-  :background-color= !main_background_color
-  :color= !menus_text_color - !border_shift
-  
-  
-input[type="text"], textarea
-  :border 2px inset #333
-  :border-color= !main_background_color - !border_shift
-  :background-color= !text_field_color
-  :padding 0.1em
-  :margin 0.1em
-  :font-size 0.8em
-    
-  
-.disabled
-  :color= !page_color - !border_shift
-  
-  input[type="text"], textarea
-    :border 2px inset #333
-    :border-color= !main_background_color - !border_shift
-    :background-color= !page_color - !subtle_shift
-    
-input[type="submit"].add_row
-  :padding 0.1em
-  :margin 0em
-  :margin-left -1em
-  :font-size 0.7em
-  :border 1px solid #333
-  :border-color= !main_background_color - !border_shift
-
 #flash
   :background-color transparent
-  :color= !headings_color
+  :color= !flash_color
   :width 98%
-  :margin 0.3em
   :position absolute
   :top 0
   :left 0
   :z-index 1000
-  :color #f00
   :text-align center
-  
-#survey_with_menu
-  :background-color= !main_background_color
+#surveyor
+  :width 960px
+  :padding 1em
+  :margin 0 auto
+  :background-color= !page_color
   :color= !page_text_color
-  :margin 0
-  :padding 0
-
-  #header
-    :font-family "Century Gothic"
-    :padding 0.5em 1em 1em 0.3em
-    :margin 0
-    :font-size 2em
-    :font-weight bolid
-
-  #content
-    :width 960px
-    :padding 1em
-    :margin 0
-    :margin-left auto
-    :margin-right auto
-    :background-color= !page_color
-    :color= !page_text_color
-
-    .section
-      :margin 0.5em 0.5em 0.5em -1em
-      :padding 0.5em 0 0 0 
-      
-      .title
-        :font-weight bold
-        :font-size 1.2em
-        :margin 0
-        :padding 0.3em 0.5em 0.1em 1.4em
-        :background-color= !menus_color
-        
-  .previous_section
-    :font-size 0.8em
-    :margin -0.6em 0 0.5em -1em
-    :padding 0
-    input
-      :background-color= !page_color
-    
-  .next_section
-    :float right
-    :margin -2em 1em 0 0
-  
+  #survey_list
+    ul
+      :padding-left 2em
+      :margin-top -2em
   #menu
-    :width 11.9em 
-    :padding 0
+    :width 11.9em
     :margin 0.65em -1em 0 0
     :float right
-    
     ul
       :padding 0
       :margin 0
       :list-style-type none
-      :border-style solid
+       :border-style solid
       :border-width 1px
       :border-color= !main_background_color - !border_shift
       :border-bottom-width 0
       :border-right-width 0
       :background-color= !main_background_color
       :color= !menus_text_color
-      
       li
         :border-bottom-style solid
         :border-bottom-width 1px
         :border-color= !main_background_color - !border_shift
-        
-      li.active
+      li.active, li.active input[type="submit"]
         :background-color= !menus_color
         :color= !menus_text_color - !emphasis_shift
-        
-        input[type="submit"]
-          :background-color= !menus_color
-          :color= !menus_text_color - !emphasis_shift
-          
-  #survey_list
-    ul
-      :padding-left 2em
-      :margin-top -2em
-          
-.questions
-  :margin 0
-  :padding 1em 0.3em
-  
-.question
-  :margin 0 0 0.6em 0
-  :padding 0.2em
-  
-  legend
-    :width 940px
-    :white-space normal 
-    span
-      :display block
-  
-  .number
-    :padding 0.2em
-    :font-weight bold
-    :font-size 1.2em
-    :letter-spacing 0
-    :float left
-  
-  .text
-    :padding-top 0.2em
-    :font-size 1.1em
-    :line-height 1.2em    
-  
-  .help
+  #header
+    :font-family "Century Gothic"
+    :padding 0.5em 1em 1em 0.3em
+    :margin 0
+    :font-size 2em
+    :font-weight bolid
+  .previous_section
     :font-size 0.8em
-    :font-style italic
-    :color= !page_text_color - !emphasis_shift
-    :display none
-
-ol.answers
-  :list-style-type none
-  :padding 0.2em
-  :margin 0 0 0.3em 1.5em
-  
-  li.answer
-    :margin 0.2em
-  
-ol.answers_inline
-  :margin-left 1.8em
-  :list-style-type none
-    
-  li
-    :display inline 
-    :padding-right 1.5em
-    
-.label
-  :padding 0.5em 1em
-  :margin 0.5em 1em
-  :line-height 1.4em
-    
-#dependents
-  :background-color= !page_color - !border_shift
-  
-  .title
-    :padding 0.5em
-    :font-weight bold
-
-.dependent
-  :background-color= !page_color - !border_shift
-  :margin-left 1.2em
-    
-.hidden
-  :display none
-  
-.column_highlight
-  :background-color= !page_color - !subtle_shift
-  
-// Question group related styles
-
-table.grid
-  :margin 0.5em 0.2em 0.5em 1em 
-  
-  th
-    :padding 0.2em 0.5em
-    :text-align center
-    
-  td
-    :padding 0.2em 0.5em
-    :border-bottom 2px dotted #999
-    :border-color= !page_color - !emphasis_shift
-    :text-align center
-    
-  td.question_prefix
-    :text-align left
-    :padding 0.2em
-    
-  td.question_postfix
-    :text-align left
-    :padding 0.2em
-
-.question_group
-  :margin 0 0 0.6em 0
-  :padding 0.2em 0.2em 1em 0.2em
-
-  .head
-    :padding-bottom 0.5em
-    
-    .number
-      :padding 0.2em 0.2em 4em 0.2em
+    :margin -0.6em 0 0.5em -1em
+    :padding 0
+    input
+      :background-color= !page_color
+  .next_section
+    :float right
+    :margin -2em 1em 0 0
+  .survey_section
+    :margin 0.5em 0.5em 0.5em -1em
+    :padding 0.5em 0 0 0      
+    .title
       :font-weight bold
       :font-size 1.2em
-      :letter-spacing 0       
+      :margin 0
+      :padding 0.3em 0.5em 0.1em 1.4em
+      :background-color= !menus_color      
+  p
+    :padding 0.3em
+    :margin 0.5em
+    :margin 0.55em
+  input[type="submit"]
+    :font-size 1.0em
+    :border 0px
+    :padding 0.2em
+    :margin 0.2em
+    :cursor pointer
+    :background-color= !main_background_color
+    :color= !menus_text_color - !border_shift
+  input[type="text"], textarea
+    :border 2px inset #333
+    :border-color= !main_background_color - !border_shift
+    :background-color= !text_field_color
+    :padding 0.1em
+    :margin 0.1em
+    :font-size 0.8em
+  .disabled
+    :color= !page_color - !border_shift
+    input[type="text"], textarea
+      :background-color= !page_color - !subtle_shift
+  input[type="submit"].add_row
+    :padding 0.1em
+    :margin 0em
+    :margin-left -1em
+    :font-size 0.7em
+    :border 1px solid #333
+    :border-color= !main_background_color - !border_shift
+  .questions
+    :margin 0
+    :padding 1em 0.3em
+  .question
+    :margin 0 0 0.6em 0
+    :padding 0.2em
+    legend
+      :width 940px
+      :white-space normal 
+      span
+        :display block
+    .number
+      :padding 0.2em
+      :font-weight bold
+      :font-size 1.2em
+      :letter-spacing 0
       :float left
-    
     .text
       :padding-top 0.2em
       :font-size 1.1em
-      :line-height 1.2em
-    
+      :line-height 1.2em    
     .help
       :font-size 0.8em
       :font-style italic
       :color= !page_text_color - !emphasis_shift
-  
-  ul
-    :padding 0.3em
+      :display none
+  ol.answers
+    :list-style-type none
+    :padding 0.2em
+    :margin 0 0 0.3em 1.5em
+    li.answer
+      :margin 0.2em
+  ol.answers_inline
+    :margin-left 1.8em
     :list-style-type none
     li
-      :display inline
-      .question
+      :display inline 
+      :padding-right 1.5em
+  .label
+    :padding 0.5em 1em
+    :margin 0.5em 1em
+    :line-height 1.4em
+  #dependents
+    :background-color= !page_color - !border_shift
+    .title
+      :padding 0.5em
+      :font-weight bold
+  .dependent
+    :background-color= !page_color - !border_shift
+    :margin-left 1.2em
+  .hidden
+    :display none
+  .column_highlight
+    :background-color= !page_color - !subtle_shift
+  table.grid
+    :margin 0.5em 0.2em 0.5em 1em 
+    th
+      :padding 0.2em 0.5em
+      :text-align center
+    td
+      :padding 0.2em 0.5em
+      :border-bottom 2px dotted #999
+      :border-color= !page_color - !emphasis_shift
+      :text-align center
+    td.question_prefix
+      :text-align left
+      :padding 0.2em
+    td.question_postfix
+      :text-align left
+      :padding 0.2em
+  .question_group
+    :margin 0 0 0.6em 0
+    :padding 0.2em 0.2em 1em 0.2em
+    .head
+      :padding-bottom 0.5em
+      .number
+        :padding 0.2em 0.2em 4em 0.2em
+        :font-weight bold
+        :font-size 1.2em
+        :letter-spacing 0       
+        :float left
+      .text
+        :padding-top 0.2em
+        :font-size 1.1em
+        :line-height 1.2em
+      .help
+        :font-size 0.8em
+        :font-style italic
+        :color= !page_text_color - !emphasis_shift
+    ul
+      :padding 0.3em
+      :list-style-type none
+      li
         :display inline
-        ol.answers
+        .question
           :display inline
-          :margin 0.2em
+          ol.answers
+            :display inline
+            :margin 0.2em
+    ul.repeater
+      :list-style-type none
+    li.repeater
+      :display block
+      ol
+        :margin 0
+        :padding 0
   
-  ul.repeater
-    :list-style-type none
+      .question
+        :padding-left 1.2em
     
-  li.repeater
-    :display block
-    
-    ol
-      :margin 0
-      :padding 0
-    
+  //Reducing the question size for questions under a group
+  .group_questions
+    :margin 0.5em 0.2em 0.5em 1em 
     .question
-      :padding-left 1.2em
-      
-//Reducing the question size for questions under a group
-
-  .question
-    :margin 0
-    :padding 0em 0.3em    
-    
+      :margin 0
+      :padding 0em 0.3em    
+  
     .text
       :font-size 0.9em
-
     .help
       :font-size 0.7em
       :font-style italic
       :color= !page_text_color - !emphasis_shift
-
     .number
       :padding 0.2em 0 0.2em 0.2em
       :margin 0 0 0.3em 0
       :font-weight bold
       :font-size 1em
       :letter-spacing 0
-  
-  .group_questions
-    :margin 0.5em 0.2em 0.5em 1em 
-    
-    

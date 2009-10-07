@@ -17,7 +17,7 @@
 - when :one_answer
   - fields_for_radio(response_obj) do |response_form|
     = response_form.radio_button(:answer_id, answer.id, :checked => response_obj.selected?)
-    = response_form.label(answer_id_helper(answer), answer.text)
+    = response_form.label("answer_#{answer.id}", answer.text)
 - when :one_string
   - fields_for_radio(response_obj) do |response_form|
     -# response_form.hidden_field(:answer_id, :value => 0, :index => nil)
@@ -34,27 +34,27 @@
 - when :float
   - hide_label ||= false
   - fields_for_response(response_obj) do |response_form|
-    = response_form.label(:float_value, answer_text_prefix_helper(answer.text)) unless hide_label
+    = response_form.label(:float_value, split_text(answer.text)[:prefix]) unless hide_label
     = response_form.text_field(:float_value, :size => 5, :maxlength => 10, :autocomplete => "off")
-    = response_form.label(:float_value, answer_text_postfix_helper(answer.text)) unless hide_label
+    = response_form.label(:float_value, split_text(answer.text)[:postfix]) unless hide_label
 - when :integer
   - hide_label ||= false
   - fields_for_response(response_obj) do |response_form|
-    = response_form.label(:integer_value, answer_text_prefix_helper(answer.text)) unless hide_label
+    = response_form.label(:integer_value, split_text(answer.text)[:prefix]) unless hide_label
     = response_form.text_field(:integer_value, :size => 5, :maxlength => 10, :autocomplete => "off")
-    = response_form.label(:integer_value, answer_text_postfix_helper(answer.text)) unless hide_label
+    = response_form.label(:integer_value, split_text(answer.text)[:postfix]) unless hide_label
 - when :string
   - hide_label ||= false
   - fields_for_response(response_obj) do |response_form|
-    = response_form.label(:string_value, answer_text_prefix_helper(answer.text)) unless hide_label
+    = response_form.label(:string_value, split_text(answer.text)[:prefix]) unless hide_label
     = response_form.text_field(:string_value, :size => 25, :maxlength => 250, :autocomplete => "off")
-    = response_form.label(:string_value, answer_text_postfix_helper(answer.text)) unless hide_label
+    = response_form.label(:string_value, split_text(answer.text)[:postfix]) unless hide_label
 - when :text
   - hide_label ||= false
   - fields_for_response(response_obj) do |response_form|
-    = response_form.label(:text_value, answer_text_prefix_helper(answer.text)) unless hide_label
+    = response_form.label(:text_value, split_text(answer.text)[:prefix]) unless hide_label
     = response_form.text_area(:text_value, :cols => 80, :rows => 10)
-    = response_form.label(:text_value, answer_text_postfix_helper(answer.text)) unless hide_label
+    = response_form.label(:text_value, split_text(answer.text)[:postfix]) unless hide_label
 - when :time
   - fields_for_response(response_obj) do |response_form|
     = response_form.time_select(:datetime_value,{ :include_blank => true })
@@ -80,16 +80,16 @@
   - hide_label ||= false
   - disabled ||= false
   - fields_for_repeater_response(response_obj, response_group) do |response_form|
-    = response_form.label(:integer_value, answer_text_prefix_helper(answer.text), :class => "#{(disabled)? 'disabled' : 'enabled'}") unless hide_label
+    = response_form.label(:integer_value, split_text(answer.text)[:prefix], :class => "#{(disabled)? 'disabled' : 'enabled'}") unless hide_label
     = response_form.text_field(:integer_value, :size => 5, :maxlength => 10, :autocomplete => "off", :disabled => disabled)
-    = response_form.label(:integer_value, answer_text_postfix_helper(answer.text), :class => "#{(disabled)? 'disabled' : 'enabled'}") unless hide_label
+    = response_form.label(:integer_value, split_text(answer.text)[:postfix], :class => "#{(disabled)? 'disabled' : 'enabled'}") unless hide_label
 - when :repeater_string
   - hide_label ||= false
   - disabled ||= false
   - fields_for_repeater_response(response_obj, response_group) do |response_form|
-    = response_form.label(:string_value, answer_text_prefix_helper(answer.text), :class => "#{(disabled)? 'disabled' : 'enabled'}") unless hide_label
+    = response_form.label(:string_value, split_text(answer.text)[:prefix], :class => "#{(disabled)? 'disabled' : 'enabled'}") unless hide_label
     = response_form.text_field(:string_value, :size => 25, :maxlength => 250, :autocomplete => "off", :disabled => disabled)
-    = response_form.label(:string_value, answer_text_postfix_helper(answer.text), :class => "#{(disabled)? 'disabled' : 'enabled'}") unless hide_label
+    = response_form.label(:string_value, split_text(answer.text)[:postfix], :class => "#{(disabled)? 'disabled' : 'enabled'}") unless hide_label
 - else
   = answer.text
   

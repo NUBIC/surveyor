@@ -32,10 +32,15 @@ class Question < ActiveRecord::Base
     super || "default"
   end
   
-  def has_dependency?
+  def dependent?
     self.dependency != nil
   end
-  
+  def triggered?(response_set)
+    dependent? and self.dependency.met?(response_set)
+  end
+  def dep_class(response_set)
+    dependent? ? triggered?(response_set) ? "dependent" : "hidden dependent" : nil
+  end
   def dependency_satisfied?(response_set)
     self.has_dependency? and self.dependency.met?(response_set)
   end
