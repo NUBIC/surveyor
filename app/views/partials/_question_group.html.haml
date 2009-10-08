@@ -1,5 +1,7 @@
+%p= "question_group renderer: #{question_group.renderer}"
+
 - locals = {:question_group => question_group, :response_set => response_set, :hide_label => true}
-= "question_group renderer: #{question_group.renderer}"
+
 - case question_group.renderer
 - when :grid
   - div_for question_group do

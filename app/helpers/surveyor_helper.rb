@@ -46,7 +46,7 @@ module SurveyorHelper
     "#{@n += 1}<span style='padding-left:0.1em;'>)</span>"
   end
   def split_text(text = "") # Split text into with "|" delimiter - parts to go before/after input element
-    {:prefix => text.split("|")[0].blank? ? "&nbsp;" : text.split("|")[0], :post_fix => text.split("|")[1] || "&nbsp;"}
+    {:prefix => text.split("|")[0].blank? ? "&nbsp;" : text.split("|")[0], :postfix => text.split("|")[1] || "&nbsp;"}
   end
   def question_help_helper(question)
     question.help_text.blank? ? "" : %Q(<span class="question-help">#{question.help_text}</span>)

@@ -1,7 +1,9 @@
+-# %p= "answer renderer: #{answer.renderer(question)}"
+
 - hide_label ||= false
 - disabled ||= false
+
 - fields_for_response(response_obj) do |response_form|
-  -#%p= "answer renderer: #{answer.renderer(question)}"
   - case answer.renderer(question)
   - when :any_answer
     = response_form.survey_check_box(:selected)

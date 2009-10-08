@@ -1,11 +1,17 @@
--# %p= "question renderer: #{question.renderer(question_group ||= nil)}"
+- renderer = question.renderer(question_group ||= nil)
+-# %p= "question renderer: #{renderer}"
 - dep_class = question.dep_class(response_set)
-- case question.renderer(question_group ||= nil)
+
+- case renderer
 - when :label
   - div_for question, :class => "label #{dep_class}" do
     %span.text= question.text
     %span.help= question.help_text
-- when :dropdown
+- when :image
+  .image= image_tag(question.text)
+- when :dropdown, :slider
+  - if renderer == :slider
+    %script{:type => "text/javascript"}= "$(function(){$('#slider_#{question.id}').accessibleUISlider({width: 400, labels:#{question.answers.size} }).hide();});"
   - div_for question, :class => dep_class do
     .number= next_number unless question.dependent?
     %fieldset
@@ -16,22 +22,7 @@
       %ol.answers
         %li.answer
           - options = question.answers.collect{|a| "<option #{ (response_set.response_for(question.id, a.id).selected?)? "selected='selected'" : nil } value ='#{a.id}'>#{a.text}</option>" }
-          = select_tag("responses[#{question.id}][answer_id]", ["<option value=''>Select one...</option>"].concat(options))
-- when :image
-  .image= image_tag(question.text)
-- when :slider
-  %script{:type => "text/javascript"}= "$(function(){$('#slider_#{question.id}').accessibleUISlider({width: 400, labels:#{question.answers.size} }).hide();});"
-  - div_for question, :class => dep_class do
-    .number= next_number unless question.dependent?
-    %fieldset
-      %legend{:style => "display:inline;"}
-        %span.text= question.text
-        %span.help= question.help_text
-        = hidden_field_tag("responses[#{question.id}][question_id]", question.id)
-      %ol.answers
-        %li.answer
-          - options= question.answers.collect{|a| "<option #{ (response_set.response_for(question.id, a.id).selected?)? "selected='selected'" : nil } value ='#{a.id}'>#{a.text}</option>" }
-          = select_tag("responses[#{question.id}][answer_id]", options, {:id => "slider_#{question.id}"})
+          = renderer == :slider ? select_tag("responses[#{question.id}][answer_id]", options, {:id => "slider_#{question.id}"}) : select_tag("responses[#{question.id}][answer_id]", ["<option value=''>Select one...</option>"].concat(options))
 - when :grid_default
   - reset_cycle("col")
   - content_tag_for :tr, question, :class => dep_class do
@@ -44,7 +35,7 @@
         .answer= render(:partial => "/partials/answer", :locals => {:answer => answer, :question => question, :response_obj => @response_set.response_for(question.id, answer.id), :hide_label => true})
     %td.question_postfix
       %span.text= split_text(question.text)[:postfix]
-- when :repeater_default
+- when :repeater_default, :repeater_dropdown
   - disabled ||= false
   - div_for question, :class => "#{disabled ? 'dis' : 'en'}abled #{dep_class}" do
     %span.text= question.text
@@ -52,19 +43,23 @@
     = hidden_field_tag("response_groups[#{question.id}][#{response_group}][response_group]", response_group)
     = hidden_field_tag("response_groups[#{question.id}][#{response_group}][question_id]", question.id)
     %ol.answers
+      - if renderer == :repeater_default  
+        - question.answers.each do |answer|
+          - content_tag_for :li, answer do
+            = render(:partial => "/partials/answer", :locals => {:answer => answer, :question => question, :response_obj => @response_set.response_for(question.id, answer.id), :response_group => response_group, :hide_label => true, :disabled => disabled})
+      - else
+        %li.answer
+          - options = question.answers.collect{|a| "<option #{ (response_set.response_for(question.id, a.id).selected?)? "selected='selected'" : nil } value ='#{a.id}'>#{a.text}</option>" }
+          = select_tag("responses[#{question.id}][answer_id]", ["<option value=''>Select one...</option>"].concat(options))
+- when :inline_default, :inline_dropdown
+  - div_for question, :class => "inline #{dep_class}" do
+    = hidden_field_tag("responses[#{question.id}][question_id]", question.id)
+    - if renderer == :inline_default
       - question.answers.each do |answer|
-        - content_tag_for :li, answer do
-          = render(:partial => "/partials/answer", :locals => {:answer => answer, :question => question, :response_obj => @response_set.response_for(question.id, answer.id)}.merge({:response_obj => response_set.response_for(question.id, answer.id, response_group), :response_group => response_group, :hide_label => true, :disabled => disabled}))
-- when :inline_default
-  - div_for question, :class => "inline #{dep_class}" do
-    = hidden_field_tag("responses[#{question.id}][question_id]", question.id)
-    - question.answers.each do |answer|
-      .answer= render(:partial => "/partials/answer", :locals => {:answer => answer, :question => question, :response_obj => @response_set.response_for(question.id, answer.id), :hide_label => answer.hide_label})
-- when :inline_dropdown
-  - div_for question, :class => "inline #{dep_class}" do
-    = hidden_field_tag("responses[#{question.id}][question_id]", question.id)
-    - options = question.answers.collect{|a| "<option #{ (response_set.response_for(question.id, a.id).selected?)? "selected='selected'" : nil } value ='#{a.id}'>#{a.text}</option>" }
-    = select_tag("responses[#{question.id}][answer_id]", ["<option value=''>Select one...</option>"].concat(options))
+        .answer= render(:partial => "/partials/answer", :locals => {:answer => answer, :question => question, :response_obj => @response_set.response_for(question.id, answer.id), :hide_label => answer.hide_label})
+    - else
+      - options = question.answers.collect{|a| "<option #{ (response_set.response_for(question.id, a.id).selected?)? "selected='selected'" : nil } value ='#{a.id}'>#{a.text}</option>" }
+      = select_tag("responses[#{question.id}][answer_id]", ["<option value=''>Select one...</option>"].concat(options))
 - else # :default, :inline
   - div_for question, :class => dep_class do
     .number= next_number unless question.dependent?
@@ -73,7 +68,7 @@
         %span.text= question.text
         %span.help= question.help_text
         = hidden_field_tag("responses[#{question.id}][question_id]", question.id)
-      %ol.answers{:class => question.renderer(question_group ||= nil) != :inline ? "inline" : nil}
+      %ol.answers{:class => renderer == :inline ? "inline" : nil}
         - question.answers.each do |answer|
           - content_tag_for :li, answer do
             = render(:partial => "/partials/answer", :locals => {:answer => answer, :question => question, :response_obj => @response_set.response_for(question.id, answer.id), :hide_label => answer.hide_label})
