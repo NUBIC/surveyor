@@ -1,10 +1,9 @@
--# %p= "answer renderer: #{answer.renderer(question)}"
-
+- renderer = answer.renderer(question)
 - hide_label ||= false
 - disabled ||= false
 
 - fields_for_response(response_obj) do |response_form|
-  - case answer.renderer(question)
+  - case renderer
   - when :any_answer
     = response_form.survey_check_box(:selected)
     = response_form.label("selected", answer.text) unless hide_label # This is a temp fix til I figure out why the id of the checkbox is all jacked up

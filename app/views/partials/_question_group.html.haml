@@ -1,14 +1,14 @@
-%p= "question_group renderer: #{question_group.renderer}"
-
+- renderer = question_group.renderer
 - locals = {:question_group => question_group, :response_set => response_set, :hide_label => true}
 
-- case question_group.renderer
-- when :grid
-  - div_for question_group do
-    .head
-      .number= next_number
-      %span.text= question_group.text
-      %span.help= question_group.help_text
+- div_for question_group do
+  .head
+    .number= next_number
+    %span.text= question_group.text
+    %span.help= question_group.help_text
+
+  - case question_group.renderer
+  - when :grid
     %table.grid
       %thead
         %tr
@@ -25,12 +25,7 @@
       %tbody
         - question_group.questions.each do |question|
           = render(:partial => "/partials/question", :locals => locals.merge({:question => question}))
-- when :repeater
-  - div_for question_group do
-    .head
-      .number= next_number
-      %span.text= question_group.text
-      %span.help= question_group.help_text
+  - when :repeater
     %ul.repeater
       - (response_set.count_group_responses(question_group) + 1).times do |group_number|
         %li.repeater
@@ -40,21 +35,7 @@
         - question_group.questions.each do |question|
           = render(:partial => "/partials/question", :locals => locals.merge({:question => question, :response_group => 9999, :disabled => true}))
         = submit_tag("&lt;= add row", :name => "section[#{question_group.questions.first.survey_section.id}]question_group_#{question_group.id}", :class => "add_row")
-- when :inline
-  - div_for question_group do
-    .head
-      .number= next_number
-      %span.text= question_group.text
-      %span.help= question_group.help_text
+  - else # :inline
     %ul
       - question_group.questions.each do |question|
-        %li.inline= render(:partial => "/partials/question", :locals => locals.merge({:question => question}))
-- else
-  - div_for question_group do
-    .head
-      .number= next_number
-      %span.text= question_group.text
-      %span.help= question_group.help_text
-    %ul
-      - question_group.questions.each do |question|
-        %li= render(:partial => "/partials/question", :locals => locals.merge({:question => question}))
+        %li{:class => question_group.renderer == :inline ? "inline" : nil}= render(:partial => "/partials/question", :locals => locals.merge({:question => question}))
