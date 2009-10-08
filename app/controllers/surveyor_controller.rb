@@ -71,9 +71,10 @@ class SurveyorController < ApplicationController
     @current_user = self.respond_to?(:current_user) ? self.current_user : nil
   end
   def get_response_set
-    if @response_set = ResponseSet.find_by_access_code(params[:response_set_code])
-      @survey = @response_set.survey
-      @section = @survey.sections.find_by_id(section_id_from(params[:section])) || @survey.sections.first
+    if @response_set = ResponseSet.find_by_access_code(params[:response_set_code], :include => {:responses => [:question, :answer]})
+      @survey = Survey.with_sections.find_by_id(@response_set.survey_id)
+      @sections = @survey.sections
+      @section = params[:section] ? @sections.with_includes.find(section_id_from(params[:section])) || @sections.with_includes.first : @sections.with_includes.first
     else
       flash[:notice] = "Unable to find your responses to the survey"
       redirect_to(available_surveys_path)

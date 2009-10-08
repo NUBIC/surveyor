@@ -1,50 +1,58 @@
+- locals = {:question_group => question_group, :response_set => response_set, :hide_label => true}
+= "question_group renderer: #{question_group.renderer}"
 - case question_group.renderer
 - when :grid
-  .question_group
+  - div_for question_group do
     .head
       .number= next_number
       %span.text= question_group.text
       %span.help= question_group.help_text
     %table.grid
       %thead
-        %th= "&nbsp;"
-        - reset_cycle("column_highlight")
-        - question_group.questions.first.answers.each do |answer|
-          %th{:class => "#{cycle("column_highlight", "", :name => "column_highlight")}"}= answer.text
+        %tr
+          %th= "&nbsp;"
+          - reset_cycle("column_highlight")
+          - question_group.questions.first.answers.each do |answer|
+            %th{:class => "#{cycle("column_highlight", "", :name => "column_highlight")}"}= answer.text
       %tfoot
-        %th= "&nbsp;"
-        - reset_cycle("column_highlight")
-        - question_group.questions.first.answers.each do |answer|
-          %th{:class => "#{cycle("column_highlight","", :name => "column_highlight")}"}= answer.text
-      %tbody 
+        %tr
+          %th= "&nbsp;"
+          - reset_cycle("column_highlight")
+          - question_group.questions.first.answers.each do |answer|
+            %th{:class => "#{cycle("column_highlight","", :name => "column_highlight")}"}= answer.text
+      %tbody
         - question_group.questions.each do |question|
-          - if question.triggered?(response_set)
-            = render(:partial => "/partials/question", :locals => {:question => question, :response_set => response_set})
+          = render(:partial => "/partials/question", :locals => locals.merge({:question => question}))
 - when :repeater
   - div_for question_group do
     .head
       .number= next_number
-      .text
-        = question_group.text
-        %span.help= question_group.help_text
+      %span.text= question_group.text
+      %span.help= question_group.help_text
     %ul.repeater
       - (response_set.count_group_responses(question_group) + 1).times do |group_number|
         %li.repeater
           - question_group.questions.each do |question|
-            = render(:partial => "/partials/question", :locals => {:question => question, :response_set => response_set ,:hide_label => true, :response_group => group_number, :disabled => false})
+            = render(:partial => "/partials/question", :locals => locals.merge({:question => question, :response_group => group_number, :disabled => false}))
       %li.repeater
         - question_group.questions.each do |question|
-          = render(:partial => "/partials/question", :locals => {:question => question, :response_set => response_set, :hide_label => true, :response_group => 9999, :disabled => true})
+          = render(:partial => "/partials/question", :locals => locals.merge({:question => question, :response_group => 9999, :disabled => true}))
         = submit_tag("&lt;= add row", :name => "section[#{question_group.questions.first.survey_section.id}]question_group_#{question_group.id}", :class => "add_row")
-- else
-  .question_group
+- when :inline
+  - div_for question_group do
     .head
       .number= next_number
-      .text
-        = question_group.text
-        %span.help= question_group.help_text
+      %span.text= question_group.text
+      %span.help= question_group.help_text
     %ul
       - question_group.questions.each do |question|
-        - if question.triggered?(@response_set)
-          %li
-            = render(:partial => "/partials/question", :locals => {:question => question, :response_set => @response_set, :hide_label => true})
+        %li.inline= render(:partial => "/partials/question", :locals => locals.merge({:question => question}))
+- else
+  - div_for question_group do
+    .head
+      .number= next_number
+      %span.text= question_group.text
+      %span.help= question_group.help_text
+    %ul
+      - question_group.questions.each do |question|
+        %li= render(:partial => "/partials/question", :locals => locals.merge({:question => question}))

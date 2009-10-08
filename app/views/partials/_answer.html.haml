@@ -1,95 +1,52 @@
-- case answer.renderer
-- when :any_answer
-  - fields_for_response(response_obj) do |response_form|
+- hide_label ||= false
+- disabled ||= false
+- fields_for_response(response_obj) do |response_form|
+  -#%p= "answer renderer: #{answer.renderer(question)}"
+  - case answer.renderer(question)
+  - when :any_answer
     = response_form.survey_check_box(:selected)
-    = response_form.label("selected", answer.text) # This is a temp fix til I figure out why the id of the checkbox is all jacked up
-- when :any_other_and_string
-  - fields_for_response(response_obj) do |response_form|
+    = response_form.label("selected", answer.text) unless hide_label # This is a temp fix til I figure out why the id of the checkbox is all jacked up
+  - when :any_other_and_string
     = response_form.survey_check_box(:selected)
     %label Other
     = response_form.text_field(:other_value)
     = response_form.text_field(:string_value)
-- when :any_string
-  - fields_for_response(response_obj) do |response_form|
+  - when :any_string
     = response_form.survey_check_box(:selected)
     = response_form.label(:answer_id, answer.text)
     = response_form.text_field(:string_value, :size => 25, :maxlength => 250)
-- when :one_answer
-  - fields_for_radio(response_obj) do |response_form|
-    = response_form.radio_button(:answer_id, answer.id, :checked => response_obj.selected?)
-    = response_form.label("answer_#{answer.id}", answer.text)
-- when :one_string
-  - fields_for_radio(response_obj) do |response_form|
-    -# response_form.hidden_field(:answer_id, :value => 0, :index => nil)
-    = response_form.radio_button(:answer_id, answer.id, :checked => response_obj.selected?)
-    = response_form.label(:answer_id, answer.text)
-  - fields_for_response(response_obj) do |second_form|
-    = second_form.text_field(:string_value, :size => 25, :maxlength => 250, :autocomplete => "off")
-- when :date
-  - fields_for_response(response_obj) do |response_form|
-    = response_form.text_field(:datetime_value,{ :include_blank => true })
-- when :datetime
-  - fields_for_response(response_obj) do |response_form|
-    = response_form.datetime_select(:datetime_value,{ :include_blank => true })
-- when :float
-  - hide_label ||= false
-  - fields_for_response(response_obj) do |response_form|
+  - when :one_answer
+    - fields_for_radio(response_obj) do |radio_form|
+      = radio_form.radio_button(:answer_id, answer.id, :checked => response_obj.selected?)
+      = radio_form.label("answer_#{answer.id}", answer.text) unless hide_label
+  - when :one_string
+    - fields_for_radio(response_obj) do |radio_form|
+      -# response_form.hidden_field(:answer_id, :value => 0, :index => nil)
+      = radio_form.radio_button(:answer_id, answer.id, :checked => response_obj.selected?)
+      = radio_form.label(:answer_id, answer.text) unless hide_label
+    = response_form.text_field(:string_value, :size => 25, :maxlength => 250, :autocomplete => "off")
+  - when :none_date
+    = response_form.text_field(:datetime_value, {:include_blank => true})
+  - when :none_datetime
+    = response_form.datetime_select(:datetime_value, {:include_blank => true})
+  - when :none_float
     = response_form.label(:float_value, split_text(answer.text)[:prefix]) unless hide_label
     = response_form.text_field(:float_value, :size => 5, :maxlength => 10, :autocomplete => "off")
     = response_form.label(:float_value, split_text(answer.text)[:postfix]) unless hide_label
-- when :integer
-  - hide_label ||= false
-  - fields_for_response(response_obj) do |response_form|
-    = response_form.label(:integer_value, split_text(answer.text)[:prefix]) unless hide_label
-    = response_form.text_field(:integer_value, :size => 5, :maxlength => 10, :autocomplete => "off")
-    = response_form.label(:integer_value, split_text(answer.text)[:postfix]) unless hide_label
-- when :string
-  - hide_label ||= false
-  - fields_for_response(response_obj) do |response_form|
-    = response_form.label(:string_value, split_text(answer.text)[:prefix]) unless hide_label
-    = response_form.text_field(:string_value, :size => 25, :maxlength => 250, :autocomplete => "off")
-    = response_form.label(:string_value, split_text(answer.text)[:postfix]) unless hide_label
-- when :text
-  - hide_label ||= false
-  - fields_for_response(response_obj) do |response_form|
-    = response_form.label(:text_value, split_text(answer.text)[:prefix]) unless hide_label
-    = response_form.text_area(:text_value, :cols => 80, :rows => 10)
-    = response_form.label(:text_value, split_text(answer.text)[:postfix]) unless hide_label
-- when :time
-  - fields_for_response(response_obj) do |response_form|
-    = response_form.time_select(:datetime_value,{ :include_blank => true })
-- when :grid_any_answer
-  - fields_for_response(response_obj) do |response_form|
-    = response_form.survey_check_box(:selected)
-- when :grid_default
-  - fields_for_response(response_obj) do |response_form|
-    = response_form.survey_check_box(:selected)
-- when :grid_float
-  - fields_for_response(response_obj) do |response_form|
-    = response_form.text_field(:float_value, :size => 5, :maxlength => 10, :autocomplete => "off")
-- when :grid_integer
-  - fields_for_response(response_obj) do |response_form|
-    = response_form.text_field(:integer_value, :size => 5, :maxlength => 10, :autocomplete => "off")
-- when :grid_one_answer
-  - fields_for_radio(response_obj) do |response_form|
-    = response_form.radio_button(:answer_id, answer.id, :checked => response_obj.selected?)
-- when :grid_string
-  - fields_for_response(response_obj) do |response_form|
-    = response_form.text_field(:string_value, :size => 25, :maxlength => 250, :autocomplete => "off")
-- when :repeater_integer
-  - hide_label ||= false
-  - disabled ||= false
-  - fields_for_repeater_response(response_obj, response_group) do |response_form|
+  - when :none_integer
     = response_form.label(:integer_value, split_text(answer.text)[:prefix], :class => "#{(disabled)? 'disabled' : 'enabled'}") unless hide_label
     = response_form.text_field(:integer_value, :size => 5, :maxlength => 10, :autocomplete => "off", :disabled => disabled)
     = response_form.label(:integer_value, split_text(answer.text)[:postfix], :class => "#{(disabled)? 'disabled' : 'enabled'}") unless hide_label
-- when :repeater_string
-  - hide_label ||= false
-  - disabled ||= false
-  - fields_for_repeater_response(response_obj, response_group) do |response_form|
+  - when :none_string
     = response_form.label(:string_value, split_text(answer.text)[:prefix], :class => "#{(disabled)? 'disabled' : 'enabled'}") unless hide_label
     = response_form.text_field(:string_value, :size => 25, :maxlength => 250, :autocomplete => "off", :disabled => disabled)
     = response_form.label(:string_value, split_text(answer.text)[:postfix], :class => "#{(disabled)? 'disabled' : 'enabled'}") unless hide_label
-- else
-  = answer.text
+  - when :none_text
+    = response_form.label(:text_value, split_text(answer.text)[:prefix]) unless hide_label
+    = response_form.text_area(:text_value, :cols => 80, :rows => 10)
+    = response_form.label(:text_value, split_text(answer.text)[:postfix]) unless hide_label
+  - when :none_time
+    = response_form.time_select(:datetime_value,{ :include_blank => true })
+  - else
+    = answer.text
   

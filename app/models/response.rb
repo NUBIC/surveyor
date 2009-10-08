@@ -11,7 +11,7 @@ class Response < ActiveRecord::Base
   
   # Named scopes
   named_scope :in_section, lambda {|section_id| {:include => :question, :conditions => ['questions.survey_section_id =?', section_id.to_i ]}}
-
+  
   def selected
     !self.new_record?
   end

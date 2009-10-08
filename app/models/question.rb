@@ -1,13 +1,13 @@
 class Question < ActiveRecord::Base
   
-  # Scopes
-  default_scope :order => "display_order ASC"
-  
   # Associations
   belongs_to :survey_section
   belongs_to :question_group
   has_many :answers # it might not always have answers
   has_one :dependency
+
+  # Scopes
+  default_scope :order => "display_order ASC"
   
   # Validations
   validates_presence_of :text, :survey_section_id, :display_order
@@ -20,23 +20,20 @@ class Question < ActiveRecord::Base
   end
   
   def default_args
-    # self.is_active ||= false
     self.is_mandatory ||= true
+    self.display_type = "default"
+    self.pick = "none"
   end
   
   def mandatory?
     self.is_mandatory == true
   end
   
-  def display_type
-    super || "default"
-  end
-  
   def dependent?
     self.dependency != nil
   end
   def triggered?(response_set)
-    dependent? and self.dependency.met?(response_set)
+    dependent? ? self.dependency.met?(response_set) : true
   end
   def dep_class(response_set)
     dependent? ? triggered?(response_set) ? "dependent" : "hidden dependent" : nil
@@ -49,8 +46,9 @@ class Question < ActiveRecord::Base
     !self.question_group.nil?
   end
 
-  def renderer
-    [(question_group ? question_group.renderer.to_s : nil), display_type].compact.join("_").to_sym
+  def renderer(g = question_group)
+    r = [g ? g.renderer.to_s : nil, display_type].compact.join("_")
+    r.blank? ? :default : r.to_sym
   end
   
 end

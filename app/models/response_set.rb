@@ -30,7 +30,8 @@ class ResponseSet < ActiveRecord::Base
   
   def response_for(question_id, answer_id, group = nil)
     response_group = group.nil? ? nil : group.to_s # for PostgreSql 8.3 compatibility - response_group is a string
-    found = responses.find_by_question_id_and_answer_id_and_response_group(question_id, answer_id, response_group)
+    # found = responses.find_by_question_id_and_answer_id_and_response_group(question_id, answer_id, response_group)
+    found = responses.detect{|r| r.question_id == question_id && r.answer_id == answer_id && r.response_group == response_group}
     found.blank? ? responses.new(:question_id => question_id, :answer_id => answer_id, :response_group => response_group) : found
   end
   

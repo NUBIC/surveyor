@@ -1,10 +1,10 @@
 #surveyor
   - form_tag(update_my_survey_path, :method => :put, :id => "survey_form") do
-    - unless @survey.sections.size < 3
+    - unless @sections.size < 3
       #menu
         Sections:
         %ul
-          - @survey.sections.each do |s|
+          - @sections.each do |s|
             %li{:class => ("active" if s == @section)}= menu_button_for(s)
     #header
       .title= @survey.title
@@ -12,7 +12,7 @@
     - unless @dependents.empty?
       #dependents
         .title Follow-up questions from your answers on the previous page
-        - @dependents.each_with_index do |question, index|
+        -# @dependents.each_with_index do |question, index|
           = dependency_explanation_helper(question, @response_set)
           = render(:partial => "/partials/question", :locals => {:question => question, :response_set => @response_set, :number => "D#{index+1}"})
     - div_for @section do

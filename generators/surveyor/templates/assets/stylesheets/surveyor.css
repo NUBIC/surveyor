@@ -9,14 +9,12 @@ body {
 
 #flash {
   background-color: transparent;
-  color: #213e00;
+  color: red;
   width: 98%;
-  margin: 0.3em;
   position: absolute;
   top: 0;
   left: 0;
   z-index: 1000;
-  color: #f00;
   text-align: center; }
 
 #surveyor {
@@ -30,7 +28,6 @@ body {
     margin-top: -2em; }
   #surveyor #menu {
     width: 11.9em;
-    padding: 0;
     margin: 0.65em -1em 0 0;
     float: right; }
     #surveyor #menu ul {
@@ -213,6 +210,8 @@ body {
         padding: 0; }
       #surveyor .question_group li.repeater .question {
         padding-left: 1.2em; }
+  #surveyor .inline {
+    display: inline; }
   #surveyor .group_questions {
     margin: 0.5em 0.2em 0.5em 1em; }
     #surveyor .group_questions .question {

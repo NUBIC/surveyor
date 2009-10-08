@@ -6,6 +6,9 @@ class Survey < ActiveRecord::Base
   has_many :sections_with_questions, :include => :questions, :class_name => "SurveySection", :order => 'display_order'
   has_many :response_sets
   
+  # Scopes
+  named_scope :with_sections, {:include => :sections}
+  
   # Validations
   validates_presence_of :title
   

@@ -93,11 +93,11 @@ survey "&#8220;Kitchen Sink&#8221; survey" do
     q "How much money do you want?"
     a "$|USD", :float, :unit => "F"  
 
-    group "How much oil do yo use per day?" do
+    group "How much oil do you use per day?", :display_type => :inline do
       q "Quantity"
       a "Quantity", :float
 
-      q "Unit", :pick => :one, :display_type => :dropdown
+      q "Unit", :pick => :one, :display_type => :dropdown, :hide_label => true
       a "Barrels"
       a "Gallons"
       a "Quarts"
