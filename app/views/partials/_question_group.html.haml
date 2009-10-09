@@ -14,28 +14,28 @@
         %tr
           %th= "&nbsp;"
           - reset_cycle("column_highlight")
-          - question_group.questions.first.answers.each do |answer|
+          - group_questions.first.answers.each do |answer|
             %th{:class => "#{cycle("column_highlight", "", :name => "column_highlight")}"}= answer.text
       %tfoot
         %tr
           %th= "&nbsp;"
           - reset_cycle("column_highlight")
-          - question_group.questions.first.answers.each do |answer|
+          - group_questions.first.answers.each do |answer|
             %th{:class => "#{cycle("column_highlight","", :name => "column_highlight")}"}= answer.text
       %tbody
-        - question_group.questions.each do |question|
+        - group_questions.each do |question|
           = render(:partial => "/partials/question", :locals => locals.merge({:question => question}))
   - when :repeater
     %ul.repeater
-      - (response_set.count_group_responses(question_group) + 1).times do |group_number|
+      - (response_set.count_group_responses(group_questions) + 1).times do |group_number|
         %li.repeater
-          - question_group.questions.each do |question|
+          - group_questions.each do |question|
             = render(:partial => "/partials/question", :locals => locals.merge({:question => question, :response_group => group_number, :disabled => false}))
       %li.repeater
-        - question_group.questions.each do |question|
+        - group_questions.each do |question|
           = render(:partial => "/partials/question", :locals => locals.merge({:question => question, :response_group => 9999, :disabled => true}))
-        = submit_tag("&lt;= add row", :name => "section[#{question_group.questions.first.survey_section.id}]question_group_#{question_group.id}", :class => "add_row")
+        = submit_tag("&lt;= add row", :name => "section[#{group_questions.first.survey_section_id}]question_group_#{question_group.id}", :class => "add_row")
   - else # :inline
     %ul
-      - question_group.questions.each do |question|
+      - group_questions.each do |question|
         %li{:class => question_group.renderer == :inline ? "inline" : nil}= render(:partial => "/partials/question", :locals => locals.merge({:question => question}))

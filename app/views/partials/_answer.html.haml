@@ -16,16 +16,12 @@
     = response_form.survey_check_box(:selected)
     = response_form.label(:answer_id, answer.text)
     = response_form.text_field(:string_value, :size => 25, :maxlength => 250)
-  - when :one_answer
+  - when :one_answer, :one_string
     - fields_for_radio(response_obj) do |radio_form|
       = radio_form.radio_button(:answer_id, answer.id, :checked => response_obj.selected?)
       = radio_form.label("answer_#{answer.id}", answer.text) unless hide_label
-  - when :one_string
-    - fields_for_radio(response_obj) do |radio_form|
-      -# response_form.hidden_field(:answer_id, :value => 0, :index => nil)
-      = radio_form.radio_button(:answer_id, answer.id, :checked => response_obj.selected?)
-      = radio_form.label(:answer_id, answer.text) unless hide_label
-    = response_form.text_field(:string_value, :size => 25, :maxlength => 250, :autocomplete => "off")
+    - if renderer == :one_string
+      = response_form.text_field(:string_value, :size => 25, :maxlength => 250, :autocomplete => "off")
   - when :none_date
     = response_form.text_field(:datetime_value, {:include_blank => true})
   - when :none_datetime

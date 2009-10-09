@@ -1,5 +1,6 @@
 #surveyor
   - form_tag(update_my_survey_path, :method => :put, :id => "survey_form") do
+    = hidden_field_tag :current_section_id, @section.id
     - unless @sections.size < 3
       #menu
         Sections:
@@ -19,11 +20,13 @@
       %span.title= @section.title
       .questions
         - @section.questions.each_with_index do |question, index|
-          - if question.part_of_group?
-            - if (index + 1 >= @section.questions.size) or (question.question_group_id != @section.questions[index + 1].question_group_id)
-              - # skip to the last question of the section, or the last question of the group
-              = render(:partial => "/partials/question_group", :locals => {:question_group => question.question_group, :response_set => @response_set})
-          - else
+          - unless question.part_of_group?
             = render(:partial => "/partials/question", :locals => {:question => question, :response_set => @response_set})
+          - else # gather up the group questions
+            - (group_questions ||= []) << question
+            - if (index + 1 >= @section.questions.size) or (question.question_group_id != @section.questions[index + 1].question_group_id)
+              - # this is the last question of the section, or the group
+              = render(:partial => "/partials/question_group", :locals => {:question_group => question.question_group, :response_set => @response_set, :group_questions => group_questions})
+              - group_questions = []
     .next_section= next_section
       

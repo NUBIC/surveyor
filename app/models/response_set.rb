@@ -35,6 +35,14 @@ class ResponseSet < ActiveRecord::Base
     found.blank? ? responses.new(:question_id => question_id, :answer_id => answer_id, :response_group => response_group) : found
   end
   
+  def clear_responses
+    question_ids = Question.find_all_by_survey_section_id(current_section_id).map(&:id)
+    logger.warn "responses: #{responses.inspect}\n"
+    responses.select{|r| question_ids.include? r.question_id}.map(&:destroy)
+    responses.reload
+    logger.warn "responses: #{responses.inspect}\n"
+  end
+  
   # "responses"=>{
   #string   "6"=>{"question_id"=>"6", "20"=>{"string_value"=>"saf"}}, 
   #text   "7"=>{"question_id"=>"7", "21"=>{"text_value"=>""}}, 
@@ -55,7 +63,7 @@ class ResponseSet < ActiveRecord::Base
 
   def response_attributes=(response_attributes)
     response_attributes.each do |question_id, responses_hash|
-      Response.delete_all(["response_set_id =? AND question_id =?", self.id, question_id])
+      # Response.delete_all(["response_set_id =? AND question_id =?", self.id, question_id])
       if (answer_id = responses_hash[:answer_id]) 
         if (!responses_hash[:answer_id].empty?) # Dropdowns return answer id but have an empty value if they are not set... ignoring those.
           #radio or dropdown - only one response
@@ -107,7 +115,7 @@ class ResponseSet < ActiveRecord::Base
   # method to process responses in response groups
   def response_group_attributes=(response_attributes)
     response_attributes.each do |question_id, responses_group_hash|
-      Response.delete_all(["response_set_id =? AND question_id =?", self.id, question_id])
+      # Response.delete_all(["response_set_id =? AND question_id =?", self.id, question_id])
       responses_group_hash.each do |response_group_number, group_hash|
         if (answer_id = group_hash[:answer_id]) # if group_hash has an answer_id key we treat it differently 
           if (!group_hash[:answer_id].empty?) # dropdowns return empty values in answer_ids if they are not selected
@@ -128,6 +136,9 @@ class ResponseSet < ActiveRecord::Base
     end
   end
   
+  def find_response(answer_id)
+     self.responses.find_by_answer_id(answer_id)
+  end
   
   def save_responses
     responses.each do |response|
@@ -151,26 +162,10 @@ class ResponseSet < ActiveRecord::Base
   def has_not_answered_question?(question)
     self.responses.find_all_by_question_id(question.id).empty?
   end
-  
-  # ResponseSet knows if certain answers are contained in this response set
-  # This method acts as an interface for the dependency analysis
-  def find_response(answer_id)
-     self.responses.find_by_answer_id(answer_id)
-  end
-  
-  # Counts the number of responses for the current user for this question
-  def count_question_responses(question)
-    Response.count(:conditions => ["response_set_id =? AND question_id=?", self.id, question.id])
-  end
-  
-  # Returns the number of response groups (count of group responses enterted) for this question group
-  def count_group_responses(group)
-    counts = []
-    group.questions.each do |question|
-      counts << Response.count("response_group",:conditions => ["response_set_id =? AND question_id=? AND response_group IS NOT NULL", self.id, question.id], :distinct => true)
-    end
     
-    counts.max #since response groups can be partially filled, such that for one response group the user may have answered only one of the questions in the group. We want to still count the partially complete group response.
+  # Returns the number of response groups (count of group responses enterted) for this question group
+  def count_group_responses(questions)
+    questions.map{|q| responses.select{|r| r.question_id == q.id && !r.response_group.nil?}.size }.max
   end
   
   def unanswered_dependencies
@@ -178,12 +173,13 @@ class ResponseSet < ActiveRecord::Base
   end
   def all_dependencies
     arr = dependencies.partition{|d| d.met?(self) }
-    {:show => arr[0].map(&:question), :hide => arr[1].map(&:question)}
+    {:show => arr[0].map{|d| "question_#{d.question_id}"}, :hide => arr[1].map{|d| "question_#{d.question_id}"}}
   end
   
   protected
+  
   def dependencies
-    question_ids = self.responses.map(&:question_id).uniq # returning a list of all answered questions (only the ids)
-    DependencyCondition.find_all_by_question_id(question_ids).map(&:dependency).uniq
+    question_ids = Question.find_all_by_survey_section_id(current_section_id).map(&:id)
+    Dependency.depending_on_questions(question_ids)
   end
 end
