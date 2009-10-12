@@ -37,10 +37,10 @@ class ResponseSet < ActiveRecord::Base
   
   def clear_responses
     question_ids = Question.find_all_by_survey_section_id(current_section_id).map(&:id)
-    logger.warn "responses: #{responses.inspect}\n"
+    # logger.warn "responses: #{responses.inspect}\n"
     responses.select{|r| question_ids.include? r.question_id}.map(&:destroy)
     responses.reload
-    logger.warn "responses: #{responses.inspect}\n"
+    # logger.warn "responses: #{responses.inspect}\n"
   end
   
   # "responses"=>{

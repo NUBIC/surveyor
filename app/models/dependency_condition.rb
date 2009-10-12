@@ -22,9 +22,8 @@ class DependencyCondition < ActiveRecord::Base
   
   # The hash used in the dependency parent object to evaluate its rule string
   def to_evaluation_hash(response_set)
-    
     x = {rule_key.to_sym => self.evaluation_of(response_set)}
-    logger.warn "to_evaluation_hash #{x.inspect}"
+    # logger.warn "to_evaluation_hash #{x.inspect}"
     return x
   end
 
@@ -37,7 +36,7 @@ class DependencyCondition < ActiveRecord::Base
   def evaluation_of(response_set)
     # response = response_set.find_response(self.answer_id) || false # turns out eval("nil and false") => nil so we need to return false if no response is found
     response = response_set.responses.detect{|r| r.answer_id.to_i == self.answer_id.to_i} || false # turns out eval("nil and false") => nil so we need to return false if no response is found
-    logger.warn "evaluation_of_response #{response.inspect}"
+    # logger.warn "evaluation_of_response #{response.inspect}"
     return(response and self.is_satisfied_by?(response))
   end
 
