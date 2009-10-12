@@ -1,6 +1,5 @@
 - renderer = question.renderer(question_group ||= nil)
 - dep_class = question.dep_class(response_set)
-
 - case renderer
 - when :label
   - div_for question, :class => "label #{dep_class}" do
@@ -45,11 +44,11 @@
       - if renderer == :repeater_default  
         - question.answers.each do |answer|
           - content_tag_for :li, answer do
-            = render(:partial => "/partials/answer", :locals => {:answer => answer, :question => question, :response_obj => @response_set.response_for(question.id, answer.id), :response_group => response_group, :hide_label => true, :disabled => disabled})
+            = render(:partial => "/partials/answer", :locals => {:answer => answer, :question => question, :response_obj => @response_set.response_for(question.id, answer.id, response_group), :response_group => response_group, :hide_label => true, :disabled => disabled})
       - else
         %li.answer
-          - options = question.answers.collect{|a| "<option #{ (response_set.response_for(question.id, a.id).selected?)? "selected='selected'" : nil } value ='#{a.id}'>#{a.text}</option>" }
-          = select_tag("responses[#{question.id}][answer_id]", ["<option value=''>Select one...</option>"].concat(options))
+          - options = question.answers.collect{|a| "<option #{ (response_set.response_for(question.id, a.id, response_group).selected?)? "selected='selected'" : nil } value ='#{a.id}'>#{a.text}</option>" }
+          = select_tag("response_groups[#{question.id}][#{response_group}][answer_id]", ["<option value=''>Select one...</option>"].concat(options), :disabled => disabled)
 - when :inline_default, :inline_dropdown
   - div_for question, :class => "inline #{dep_class}" do
     = hidden_field_tag("responses[#{question.id}][question_id]", question.id)

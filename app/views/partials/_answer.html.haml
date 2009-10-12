@@ -1,8 +1,8 @@
 - renderer = answer.renderer(question)
+- response_group ||= nil
 - hide_label ||= false
 - disabled ||= false
-
-- fields_for_response(response_obj) do |response_form|
+- fields_for_response(response_obj, response_group) do |response_form|
   - case renderer
   - when :any_answer
     = response_form.survey_check_box(:selected)

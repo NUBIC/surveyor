@@ -53,11 +53,9 @@ module SurveyorHelper
   end
 
   # Answers
-  def fields_for_response(response, &block)
-    fields_for("responses[#{response.question_id}][#{response.answer_id}]", response, :builder => SurveyFormBuilder, &block)
-  end
-  def fields_for_repeater_response(response, response_group, &block) # Changes the response hash to accept response groups for repeater elements
-    fields_for("response_groups[#{response.question_id}][#{response_group}][#{response.answer_id}]", response, :builder => SurveyFormBuilder, &block)
+  def fields_for_response(response, response_group = nil, &block)
+    name = response_group.nil? ? "responses[#{response.question_id}][#{response.answer_id}]" : "response_groups[#{response.question_id}][#{response_group}][#{response.answer_id}]"
+    fields_for(name, response, :builder => SurveyFormBuilder, &block)
   end
   def fields_for_radio(response, &block)
     fields_for("responses[#{response.question_id}]", response, :builder => SurveyFormBuilder, &block)
