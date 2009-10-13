@@ -1,4 +1,4 @@
-class SurveyorGenerator < Rails::Generator::Base
+class ExtendSurveyorGenerator < Rails::Generator::Base
   def manifest
     record do |m|
       
