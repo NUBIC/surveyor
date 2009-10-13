@@ -7,7 +7,7 @@ class SurveyorController < ApplicationController
   layout Surveyor::Config['default.layout'] || 'surveyor_default'
   
   # Extending surveyor
-  include SurveyorControllerExtensions if Surveyor::Config['extend_controller'] && defined? SurveyorControllerExtensions
+  include SurveyorControllerExtensions if Surveyor::Config['extend_controller']
   before_filter :extend_actions
   
   # RESTful authentication
