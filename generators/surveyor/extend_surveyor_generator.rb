@@ -3,7 +3,7 @@ class ExtendSurveyorGenerator < Rails::Generator::Base
     record do |m|
       
       # Copy README to your app
-      m.file "EXTENDING_SURVEYOR", "surveyor/EXTENDING_SURVEYOR"
+      m.file "EXTENDING_SURVEYOR", "surveys/EXTENDING_SURVEYOR"
           
       # Custom layout
       m.file "extensions/surveyor_custom.html.erb", "app/views/layouts/surveyor_custom.html.erb"
