@@ -27,7 +27,7 @@
           = render(:partial => "/partials/question", :locals => locals.merge({:question => question}))
   - when :repeater
     %ul.repeater
-      - (response_set.count_group_responses(group_questions) + 1).times do |group_number|
+      - (response_set.count_group_responses(group_questions) + 3).times do |group_number|
         %li.repeater
           - group_questions.each do |question|
             = render(:partial => "/partials/question", :locals => locals.merge({:question => question, :response_group => group_number, :disabled => false}))

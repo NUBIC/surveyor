@@ -2,8 +2,8 @@ class CreateQuestionGroups < ActiveRecord::Migration
   def self.up
     create_table :question_groups do |t|
       # Content
-      t.string :text
-      t.string :help_text
+      t.text :text
+      t.text :help_text
       
       # Display
       t.string :display_type

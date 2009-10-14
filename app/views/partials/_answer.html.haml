@@ -18,7 +18,7 @@
     = response_form.text_field(:string_value, :size => 25, :maxlength => 250)
   - when :one_answer, :one_string
     - fields_for_radio(response_obj) do |radio_form|
-      = radio_form.radio_button(:answer_id, answer.id, :checked => response_obj.selected?)
+      = radio_form.radio_button(:answer_id, answer.id, :checked => response_obj.selected?, :title => answer.text)
       = radio_form.label("answer_#{answer.id}", answer.text) unless hide_label
     - if renderer == :one_string
       = response_form.text_field(:string_value, :size => 25, :maxlength => 250, :autocomplete => "off")
