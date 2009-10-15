@@ -5,11 +5,11 @@
 
 Gem::Specification.new do |s|
   s.name = %q{surveyor}
-  s.version = "0.6.7"
+  s.version = "0.6.8"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Brian Chamberlain", "Mark Yoon"]
-  s.date = %q{2009-10-13}
+  s.date = %q{2009-10-15}
   s.email = %q{yoon@northwestern.edu}
   s.extra_rdoc_files = [
     "README.md"
@@ -40,9 +40,18 @@ Gem::Specification.new do |s|
      "app/views/surveyor/new.html.haml",
      "app/views/surveyor/show.html.haml",
      "config/routes.rb",
-     "generators/surveyor/extend_surveyor_generator.rb",
+     "features/step_definitions/surveyor_steps.rb",
+     "features/step_definitions/webrat_steps.rb",
+     "features/support/env.rb",
+     "features/support/paths.rb",
+     "features/surveyor.feature",
+     "generators/extend_surveyor/extend_surveyor_generator.rb",
+     "generators/extend_surveyor/templates/EXTENDING_SURVEYOR",
+     "generators/extend_surveyor/templates/extensions/survey_extensions.rb",
+     "generators/extend_surveyor/templates/extensions/surveyor_controller_extensions.rb",
+     "generators/extend_surveyor/templates/extensions/surveyor_custom.html.erb",
+     "generators/extend_surveyor/templates/extensions/surveyor_helper_extensions.rb",
      "generators/surveyor/surveyor_generator.rb",
-     "generators/surveyor/templates/EXTENDING_SURVEYOR",
      "generators/surveyor/templates/README",
      "generators/surveyor/templates/assets/images/222222_11x11_icon_arrows_leftright.gif",
      "generators/surveyor/templates/assets/images/222222_11x11_icon_arrows_updown.gif",
@@ -96,10 +105,6 @@ Gem::Specification.new do |s|
      "generators/surveyor/templates/assets/stylesheets/sass/surveyor.sass",
      "generators/surveyor/templates/assets/stylesheets/surveyor.css",
      "generators/surveyor/templates/assets/stylesheets/ui.theme.css",
-     "generators/surveyor/templates/extensions/survey_extensions.rb",
-     "generators/surveyor/templates/extensions/surveyor_controller_extensions.rb",
-     "generators/surveyor/templates/extensions/surveyor_custom.html.erb",
-     "generators/surveyor/templates/extensions/surveyor_helper_extensions.rb",
      "generators/surveyor/templates/initializers/haml.rb",
      "generators/surveyor/templates/initializers/surveyor.rb",
      "generators/surveyor/templates/migrate/create_answers.rb",
@@ -113,6 +118,9 @@ Gem::Specification.new do |s|
      "generators/surveyor/templates/migrate/create_surveys.rb",
      "generators/surveyor/templates/surveys/kitchen_sink_survey.rb",
      "generators/surveyor/templates/tasks/surveyor.rb",
+     "generators/test_surveyor/templates/TESTING_SURVEYOR",
+     "generators/test_surveyor/templates/environments/cucumber.rb",
+     "generators/test_surveyor/test_surveyor_generator.rb",
      "init.rb",
      "install.rb",
      "lib/surveyor.rb",
@@ -155,7 +163,7 @@ Gem::Specification.new do |s|
   s.homepage = %q{http://github.com/breakpointer/surveyor}
   s.rdoc_options = ["--charset=UTF-8"]
   s.require_paths = ["lib"]
-  s.rubygems_version = %q{1.3.4}
+  s.rubygems_version = %q{1.3.5}
   s.summary = %q{A rails (gem) plugin to enable surveys in your application}
   s.test_files = [
     "spec/controllers/surveyor_controller_spec.rb",
