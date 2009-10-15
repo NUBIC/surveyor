@@ -16,15 +16,14 @@
           - reset_cycle("column_highlight")
           - group_questions.first.answers.each do |answer|
             %th{:class => "#{cycle("column_highlight", "", :name => "column_highlight")}"}= answer.text
-      %tfoot
-        %tr
-          %th= "&nbsp;"
-          - reset_cycle("column_highlight")
-          - group_questions.first.answers.each do |answer|
-            %th{:class => "#{cycle("column_highlight","", :name => "column_highlight")}"}= answer.text
       %tbody
-        - group_questions.each do |question|
+        - group_questions.each_with_index do |question, i|
           = render(:partial => "/partials/question", :locals => locals.merge({:question => question}))
+          - if i%10 == 9
+            %th= "&nbsp;"
+            - reset_cycle("column_highlight")
+            - group_questions.first.answers.each do |answer|
+              %th{:class => "#{cycle("column_highlight", "", :name => "column_highlight")}"}= answer.text
   - when :repeater
     %ul.repeater
       - (response_set.count_group_responses(group_questions) + 3).times do |group_number|

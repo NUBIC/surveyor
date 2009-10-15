@@ -24,14 +24,14 @@
 - when :grid_default
   - reset_cycle("col")
   - content_tag_for :tr, question, :class => dep_class do
-    %td.question_prefix
+    %th.question_prefix
       %span.text= split_text(question.text)[:prefix]
       %span.help= question.help_text
       = hidden_field_tag("responses[#{question.id}][question_id]", question.id)
     - question.answers.each do |answer|
       %td{:class => "#{cycle("column_highlight", "", :name => "col")}"}
         .answer= render(:partial => "/partials/answer", :locals => {:answer => answer, :question => question, :response_obj => @response_set.response_for(question.id, answer.id), :hide_label => true})
-    %td.question_postfix
+    %th.question_postfix
       %span.text= split_text(question.text)[:postfix]
 - when :repeater_default, :repeater_dropdown
   - disabled ||= false
