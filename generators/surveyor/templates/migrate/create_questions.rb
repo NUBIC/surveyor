@@ -14,8 +14,8 @@ class CreateQuestions < ActiveRecord::Migration
       # Reference
       t.string :reference_identifier # from paper
       t.string :data_export_identifier # data export
-      t.string :common_data_namespace # maping to a common vocab
-      t.string :common_data_identitier # maping to a common vocab
+      t.string :common_namespace # maping to a common vocab
+      t.string :common_identitier # maping to a common vocab
       
       # Display
       t.integer :display_order
