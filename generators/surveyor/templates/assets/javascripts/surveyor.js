@@ -24,5 +24,17 @@ jQuery(document).ready(function(){
 		jQuery.each(responseText.hide, function(){ jQuery('#' + this).hide("fast");	});
 		return false;
 	}
+	
+	// is_exclusive checkboxes should disble sibling checkboxes
+	$('input.exclusive:checked').parents('.answer').siblings().find(':checkbox').attr('checked', false).attr('disabled', true);
+	$('input.exclusive:checkbox').click(function(){
+    var e = $(this);
+    var others = e.parents('.answer').siblings().find(':checkbox');
+    if(e.is(':checked')){
+      others.attr('checked', false).attr('disabled', true);
+    }else{
+      others.attr('disabled', false);
+    }
+  });
 
 });

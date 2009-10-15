@@ -5,15 +5,15 @@
 - fields_for_response(response_obj, response_group) do |response_form|
   - case renderer
   - when :any_answer
-    = response_form.survey_check_box(:selected)
+    = response_form.survey_check_box(:selected, :class => (answer.is_exclusive? ? "exclusive" : ""))
     = response_form.label("selected", answer.text) unless hide_label # This is a temp fix til I figure out why the id of the checkbox is all jacked up
   - when :any_other_and_string
-    = response_form.survey_check_box(:selected)
+    = response_form.survey_check_box(:selected, :class => (answer.is_exclusive? ? "exclusive" : ""))
     %label Other
     = response_form.text_field(:other_value)
     = response_form.text_field(:string_value)
   - when :any_string
-    = response_form.survey_check_box(:selected)
+    = response_form.survey_check_box(:selected, :class => (answer.is_exclusive? ? "exclusive" : ""))
     = response_form.label(:answer_id, answer.text)
     = response_form.text_field(:string_value, :size => 25, :maxlength => 250)
   - when :one_answer, :one_string
