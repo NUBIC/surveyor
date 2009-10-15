@@ -158,18 +158,14 @@ body {
     background-color: #efefe4; }
   #surveyor table.grid {
     margin: 0.5em 0.2em 0.5em 1em; }
-    #surveyor table.grid th {
+    #surveyor table.grid th, #surveyor table.grid td {
       padding: 0.2em 0.5em;
       text-align: center; }
     #surveyor table.grid td {
-      padding: 0.2em 0.5em;
       border-bottom: 2px dotted #999;
-      border-color: #bfbfb4;
-      text-align: center; }
-    #surveyor table.grid td.question_prefix {
-      text-align: left;
-      padding: 0.2em; }
-    #surveyor table.grid td.question_postfix {
+      border-color: #bfbfb4; }
+    #surveyor table.grid th.question_prefix, #surveyor table.grid th.question_postfix {
+      padding: 0.2em 0.5em;
       text-align: left;
       padding: 0.2em; }
   #surveyor .question_group {

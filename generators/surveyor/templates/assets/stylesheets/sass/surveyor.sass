@@ -169,18 +169,14 @@ body
     :background-color= !page_color - !subtle_shift
   table.grid
     :margin 0.5em 0.2em 0.5em 1em 
-    th
+    th, td
       :padding 0.2em 0.5em
       :text-align center
     td
-      :padding 0.2em 0.5em
       :border-bottom 2px dotted #999
       :border-color= !page_color - !emphasis_shift
-      :text-align center
-    td.question_prefix
-      :text-align left
-      :padding 0.2em
-    td.question_postfix
+    th.question_prefix, th.question_postfix
+      :padding 0.2em 0.5em
       :text-align left
       :padding 0.2em
   .question_group
