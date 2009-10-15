@@ -1,12 +1,13 @@
 require File.dirname(__FILE__) + '/survey_section'
 
 class Survey
-    include Columnizer
-  # Content, Reference, Expiry, Children
+  include Columnizer
+  # Context, Content, Reference, Expiry, Display, Children
   attr_accessor :id, :parser
   attr_accessor :title, :description
-  attr_accessor :access_code
+  attr_accessor :access_code, :reference_identifier, :data_export_identifier, :common_namespace, :common_identitier
   attr_accessor :active_at, :inactive_at
+  attr_accessor :css_url, :custom_class
   attr_accessor :survey_sections
   
   @@current_survey = nil
@@ -78,24 +79,27 @@ class Survey
   
   
   def reconcile_dependencies
-    
     @survey_sections.each do |section|
       section.questions.each do |question| 
         question.dependency.dependency_conditions.each { |con| con.reconcile_dependencies} unless question.dependency.nil?
-    
       end
-    end
-    
+    end  
   end
-  
+
   def to_yml
     out =[ %(survey_#{@id}:) ]
     out << %(  id: #{@id})
     out << %(  title: "#{@title}")
     out << %(  description: "#{@description}")
-    out << %(  access_code: #{@access_code})
+    out << %(  access_code: "#{@access_code}")
+    out << %(  reference_identifier: "#{@reference_identifier}")
+    out << %(  data_export_identifier: "#{@data_export_identifier}")
+    out << %(  common_namespace: "#{@common_namespace}")
+    out << %(  common_identitier: "#{@common_identitier}")
     out << %(  active_at: #{@active_at})
     out << %(  inactive_at: #{@inactive_at})
+    out << %(  css_url: "#{@css_url}")
+    out << %(  custom_class: "#{@custom_class}")
     (out << nil ).join("\r\n")
   end
 

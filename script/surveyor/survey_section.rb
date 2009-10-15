@@ -11,13 +11,12 @@ class SurveySection
   include Columnizer
 
   # Context, Content, Display, Reference, Children, Placeholders
-  attr_accessor :id, :survey_id, :parser
+  attr_accessor :id, :parser, :survey_id
   attr_accessor :title, :description
-  attr_accessor :display_order
-  attr_accessor :reference_identifier, :data_export_identifier
+  attr_accessor :reference_identifier, :data_export_identifier, :common_namespace, :common_identitier
+  attr_accessor :display_order, :custom_class
   attr_accessor :question_groups, :questions, :grid_answers
   attr_accessor :current_question_group, :current_question, :current_dependency
-
 
   # id, survey, and title required
   def initialize(id, survey, title, options = {})
@@ -131,16 +130,19 @@ class SurveySection
     question
   end
   
-
   def to_yml
     out =[ %(#{@data_export_identifier}_#{@id}:) ]
     out << %(  id: #{@id})
     out << %(  survey_id: #{@survey_id})
     out << %(  title: "#{@title}")
     out << %(  description: "#{@description}")
-    out << %(  display_order: #{display_order})
-    out << %(  reference_identifier: #{@reference_identifier})
+    out << %(  reference_identifier: "#{@reference_identifier}")
     out << %(  data_export_identifier: "#{@data_export_identifier}")
+    out << %(  common_namespace: "#{@common_namespace}")
+    out << %(  common_identitier: "#{@common_identitier}")
+    out << %(  display_order: #{@display_order})
+    out << %(  custom_class: "#{@custom_class}")
+    
     (out << nil ).join("\r\n")
   end
 

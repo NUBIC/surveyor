@@ -3,11 +3,11 @@ require File.dirname(__FILE__) + '/columnizer'
 class Answer  
   include Columnizer
 
-  # Context, Content, Display, Reference
-  attr_accessor :id, :question_id, :parser
-  attr_accessor :text, :short_text, :help_text, :numerical_value
-  attr_accessor :response_class, :display_order, :is_exclusive, :is_a_disabler, :hide_label
-  attr_accessor :reference_identifier, :data_export_identifier
+  # Context, Content, Reference, Display
+  attr_accessor :id, :parser, :question_id
+  attr_accessor :text, :short_text, :help_text, :weight, :response_class
+  attr_accessor :reference_identifier, :data_export_identifier, :common_namespace, :common_identitier
+  attr_accessor :display_order, :is_exclusive, :hide_label, :display_length, :custom_class, :custom_renderer
   
   def initialize(question, args, options)
     self.parser = question ? question.parser : nil
@@ -69,11 +69,16 @@ class Answer
     out << %(  help_text: "#{@help_text}")
     out << %(  weight: #{@weight})
     out << %(  response_class: "#{@response_class}")
-    out << %(  display_order: #{display_order} )
+    out << %(  reference_identifier: "#{@reference_identifier}")
+    out << %(  data_export_identifier: "#{@data_export_identifier}")
+    out << %(  common_namespace: "#{@common_namespace}")
+    out << %(  common_identitier: "#{@common_identitier}")
+    out << %(  display_order: #{@display_order} )
     out << %(  is_exclusive: #{@is_exclusive})
     out << %(  hide_label: #{@hide_label})
-    out << %(  reference_identifier: #{@reference_identifier})
-    out << %(  data_export_identifier: "#{@data_export_identifier}")
+    out << %(  display_length: #{@display_length} )
+    out << %(  custom_class: "#{@custom_class}")
+    out << %(  custom_renderer: "#{@custom_renderer}")
     (out << nil ).join("\r\n")
   end
 

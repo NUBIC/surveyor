@@ -16,17 +16,7 @@ class CreateAnswers < ActiveRecord::Migration
       t.string :data_export_identifier # data export
       t.string :common_namespace # maping to a common vocab
       t.string :common_identitier # maping to a common vocab
-
-      # Validations
-      # the response_class attr also has validation implications (int, string, float,etc..) but these attrs below give fine grain control over responses
-      t.integer :max_value
-      t.integer :min_value
-      t.integer :length # number of chars/ints accepted
-      t.integer :decimal_precision # only for floats
-      t.boolean :allow_negative # only for numeric values
-      t.boolean :allow_blank
-      t.string :unit # a string representation of the unit (lbs. USD, oz.) - Context is from the survey domain and question
-      
+    
       # Display
       t.integer :display_order
       t.boolean :is_exclusive # If set it causes some UI trigger to remove (and disable) all the other answer choices selected for a question (needed for the WHR)
