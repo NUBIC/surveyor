@@ -7,13 +7,17 @@ class CreateSurveySections < ActiveRecord::Migration
       # Content
       t.string :title
       t.text :description
-
+      
+      # Reference
+      t.string :reference_identifier # from paper
+      t.string :data_export_identifier # data export
+      t.string :common_data_namespace # maping to a common vocab
+      t.string :common_data_identitier # maping to a common vocab
+      
       # Display
       t.integer :display_order
-
-      # Reference
-      t.string :reference_identifier # Used to relate this question object to questions imported from a paper questionnaire 
-      t.string :data_export_identifier # Used when referencing this quesiton in data export. Usually a shortend/cryptic version of the question text
+      
+      t.string :custom_class
 
       t.timestamps
     end

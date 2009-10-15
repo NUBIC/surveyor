@@ -3,25 +3,28 @@ class CreateQuestions < ActiveRecord::Migration
     create_table :questions do |t|
       # Context
       t.integer :survey_section_id
+      t.integer :question_group_id
 
       # Content
       t.text :text
       t.text :short_text # For experts (ie non-survey takers). Short version of text
       t.text :help_text
-      
-      # Display
       t.string :pick
-      t.string :display_type
-      t.integer :display_order
-      t.integer :question_group_id
-      t.boolean :is_mandatory
 
       # Reference
-      t.string :reference_identifier # For questions imported from a paper questionnaire 
-      t.string :data_export_identifier # For data export. Usually a short/cryptic version of text
+      t.string :reference_identifier # from paper
+      t.string :data_export_identifier # data export
+      t.string :common_data_namespace # maping to a common vocab
+      t.string :common_data_identitier # maping to a common vocab
       
-      # styling
+      # Display
+      t.integer :display_order
+      t.string :display_type
+      t.boolean :is_mandatory
       t.integer :display_width # used only for slider component (if needed)
+      
+      t.string :custom_class
+      t.string :custom_renderer
       
       t.timestamps
     end

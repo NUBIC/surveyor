@@ -7,14 +7,20 @@ class CreateSurveys < ActiveRecord::Migration
 
       # Reference
       t.string :access_code
+      t.string :reference_identifier # from paper
+      t.string :data_export_identifier # data export
+      t.string :common_data_namespace # maping to a common vocab
+      t.string :common_data_identitier # maping to a common vocab
 
       # Expiry
       t.datetime :active_at
       t.datetime :inactive_at
       
-      # Styling
+      # Display
       t.string :css_url
-            
+      
+      t.string :custom_class
+      
       t.timestamps
     end
   end
