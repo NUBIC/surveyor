@@ -8,6 +8,7 @@ class Question < ActiveRecord::Base
 
   # Scopes
   default_scope :order => "display_order ASC"
+  named_scope :in_order, {:order => "display_order ASC"}
   
   # Validations
   validates_presence_of :text, :survey_section_id, :display_order

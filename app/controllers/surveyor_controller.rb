@@ -40,6 +40,7 @@ class SurveyorController < ApplicationController
       @survey = Survey.with_sections.find_by_id(@response_set.survey_id)
       @sections = @survey.sections
       @section = params[:section] ? @sections.with_includes.find(section_id_from(params[:section])) || @sections.with_includes.first : @sections.with_includes.first
+      @questions = @section.questions.in_order
     else
       flash[:notice] = "Unable to find your responses to the survey"
       redirect_to(available_surveys_path)
