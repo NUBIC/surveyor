@@ -22,8 +22,8 @@ class Question < ActiveRecord::Base
   
   def default_args
     self.is_mandatory ||= true
-    self.display_type = "default"
-    self.pick = "none"
+    self.display_type ||= "default"
+    self.pick ||= "none"
   end
   
   def mandatory?
@@ -38,9 +38,6 @@ class Question < ActiveRecord::Base
   end
   def dep_class(response_set)
     dependent? ? triggered?(response_set) ? "dependent" : "hidden dependent" : nil
-  end
-  def dependency_satisfied?(response_set)
-    self.has_dependency? and self.dependency.met?(response_set)
   end
   
   def part_of_group?

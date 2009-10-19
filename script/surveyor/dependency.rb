@@ -1,7 +1,7 @@
 class Dependency
   
   # Context, Conditional, Children
-  attr_accessor :id, :question_id, :parser
+  attr_accessor :id, :question_id, :question_group_id, :parser
   attr_accessor :rule
   attr_accessor :dependency_conditions
 
@@ -9,7 +9,11 @@ class Dependency
   def initialize(question, args, options)
     self.parser = question.parser
     self.id = parser.new_dependency_id
-    self.question_id = question.id
+    if question.class == QuestionGroup
+      self.question_group_id = question.id
+    else
+      self.question_id = question.id
+    end
     self.rule = (args[0] || {})[:rule]
     self.dependency_conditions = []
     self.default_options().merge(options).merge(args[1] || {}).each{|key,value| self.instance_variable_set("@#{key}", value)}
@@ -29,6 +33,7 @@ class Dependency
     out =[ %(#{question_id}_#{@id}:) ]
     out << %(  id: #{@id})
     out << %(  question_id: #{@question_id})
+    out << %(  question_group_id: #{@question_group_id})
     out << %(  rule: "#{@rule}")
     (out << nil ).join("\r\n")
   end

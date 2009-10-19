@@ -1,6 +1,7 @@
 class Dependency < ActiveRecord::Base
   # Associations
   belongs_to :question
+  belongs_to :question_group
   has_many :dependency_conditions
   
   # Scopes
@@ -9,11 +10,21 @@ class Dependency < ActiveRecord::Base
   # Validations
   validates_presence_of :rule
   validates_format_of :rule, :with => /^(?:and|or|\)|\(|\d|\s)+$/ #TODO properly formed parenthesis etc.
-  validates_numericality_of :question_id
+  # validates_numericality_of :question_id
 
   # Attribute aliases
   alias_attribute :dependent_question_id, :question_id
-
+  
+  def question_group_id=(i)
+    write_attribute(:question_id, nil)
+    write_attribute(:question_group_id, i)
+  end
+  
+  def question_id=(i)
+    write_attribute(:question_group_id, nil)
+    write_attribute(:question_id, i)
+  end
+  
   # Is the method that determines if this dependency has been met within
   # the provided response set
   def met?(response_set)

@@ -41,6 +41,7 @@ class SurveySection
   # This method_missing magic does all the heavy lifting for the DSL
   def method_missing(missing_method, *args, &block)    
     method_name, reference_identifier = missing_method.to_s.split("_")
+    reference_identifier ||= args[:reference_identifier]
 
     case method_name
       
@@ -48,6 +49,7 @@ class SurveySection
       puts "    Group: #{reference_identifier}"
       raise "Error: A question group cannot be empty" unless block_given?
       
+      clear_current_question
       options = {:reference_identifier => reference_identifier, :display_type => (method_name =~ /grid|repeater/)? method_name : nil }
       self.question_groups << (self.current_question_group = QuestionGroup.new(self, args, options))
       self.instance_eval(&block)
@@ -67,10 +69,10 @@ class SurveySection
     when "dependency", "d"
       puts "        Dependency: #{reference_identifier}"
       raise "Error: I'm dropping the block like it's hot" if block_given?
-      raise "Error: " unless self.current_question
+      raise "Error: " unless (d = self.current_question_group || self.current_question)
       
       options = {:reference_identifier => reference_identifier}
-      self.current_question.dependency = (self.current_dependency = Dependency.new(current_question, args, options))
+      d.dependency = (self.current_dependency = Dependency.new(d, args, options))
       
     when "condition", "c"
       puts "          Condition: #{reference_identifier}"
