@@ -35,8 +35,8 @@ class Question < ActiveRecord::Base
   def triggered?(response_set)
     dependent? ? self.dependency.met?(response_set) : true
   end
-  def dep_class(response_set)
-    dependent? ? triggered?(response_set) ? "dependent" : "hidden dependent" : nil
+  def css_class(response_set)
+    [(dependent? ? "dependent" : nil), (triggered?(response_set) ? nil : "hidden"), custom_class].compact.join(" ")
   end
   
   def part_of_group?

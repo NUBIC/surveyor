@@ -49,11 +49,14 @@ survey "&#8220;Kitchen Sink&#8221; survey" do
     # Various types of respones can be accepted
     q "How many pets do you own?"
     a :integer
-
-    q "What is your address?"
-    a :text
-
-    q "Pick your favorite date AND time"
+    
+    # Surveys, sections, questions, groups, and answers also take a custom css class for covenience in custom styling
+    q "What is your address?", :custom_class => 'address'
+    a :text, :custom_class => 'mapper'
+    
+    # Questions, groups, and answers take a custom renderer (a partial in the application's views dir)
+    # defaults are "/partials/question_group", "/partials/question", "/partials/answer", so the custom renderers should have a different name
+    q "Pick your favorite date AND time" #, :custom_renderer => "/partials/custom_question"
     a :datetime
     
     q "What time do you usually take a lunch break?"
