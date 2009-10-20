@@ -23,6 +23,7 @@ class SurveyorController < ApplicationController
   # Actions
   def new
     @surveys = Survey.find(:all)
+    redirect_to surveyor_default(:index) unless available_surveys_path == surveyor_default(:index)
   end
   def create
     if (@survey = Survey.find_by_access_code(params[:survey_code])) && (@response_set = ResponseSet.create(:survey => @survey, :user_id => @current_user))
@@ -68,7 +69,7 @@ class SurveyorController < ApplicationController
       format.html do
         if saved && params[:finish]
           flash[:notice] = "Completed survey"
-          redirect_to surveyor_default_finish
+          redirect_to surveyor_default(:finish)
         else
           flash[:notice] = "Unable to update survey" if !saved and !saved.nil? # saved.nil? is true if there are no questions on the page (i.e. if it only contains a label)
           redirect_to :action => "edit", :anchor => anchor_from(params[:section]), :params => {:section => section_id_from(params[:section])}
@@ -98,18 +99,19 @@ class SurveyorController < ApplicationController
   end
   
   # Extending surveyor
-  def surveyor_default_finish
+  def surveyor_default(type = :finish)
     # http://www.postal-code.com/mrhappy/blog/2007/02/01/ruby-comparing-an-objects-class-in-a-case-statement/
     # http://www.skorks.com/2009/08/how-a-ruby-case-statement-works-and-what-you-can-do-with-it/
-    case finish = Surveyor::Config['default.finish']
+    case arg = Surveyor::Config["default.#{type.to_s}"]
     when String
-      return finish
+      return arg
     when Symbol
-      return self.send(finish)
+      return self.send(arg)
     else
-      return '/surveys'
+      return available_surveys_path
     end
   end
+  
   def extend_actions
     # http://blog.mattwynne.net/2009/07/11/rails-tip-use-polymorphism-to-extend-your-controllers-at-runtime/
     self.extend SurveyorControllerExtensions::Actions if Surveyor::Config['extend_controller'] && defined? SurveyorControllerExtensions::Actions
