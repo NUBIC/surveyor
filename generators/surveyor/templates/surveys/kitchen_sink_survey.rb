@@ -40,8 +40,8 @@ survey "&#8220;Kitchen Sink&#8221; survey" do
     # :reference_identifier   # usually from paper
     # :data_export_identifier # data export
     # :common_namespace       # maping to a common vocab
-    # :common_identitier      # maping to a common vocab
-    q "Get me started on an improv sketch", :reference_identifier => "improv_start", :data_export_identifier => "i_s", :common_namespace => "sketch comedy questions", :common_identifer => "get me started"
+    # :common_identifier      # maping to a common vocab
+    q "Get me started on an improv sketch", :reference_identifier => "improv_start", :data_export_identifier => "i_s", :common_namespace => "sketch comedy questions", :common_identifier => "get me started"
     a "who", :string
     a "what", :string
     a "where", :string
