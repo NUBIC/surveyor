@@ -3,12 +3,11 @@ class Question < ActiveRecord::Base
   # Associations
   belongs_to :survey_section
   belongs_to :question_group
-  has_many :answers # it might not always have answers
+  has_many :answers, :order => "display_order ASC" # it might not always have answers
   has_one :dependency
 
   # Scopes
   default_scope :order => "display_order ASC"
-  named_scope :in_order, {:order => "display_order ASC"}
   
   # Validations
   validates_presence_of :text, :survey_section_id, :display_order

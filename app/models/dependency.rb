@@ -5,11 +5,11 @@ class Dependency < ActiveRecord::Base
   has_many :dependency_conditions
   
   # Scopes
-  named_scope :depending_on_questions, lambda {|question_ids| {:include => :dependency_conditions, :conditions => {:dependency_conditions => {:question_id => question_ids}} }}
+  named_scope :depending_on_questions, lambda {|question_ids| {:joins => :dependency_conditions, :conditions => {:dependency_conditions => {:question_id => question_ids}} }}
   
   # Validations
   validates_presence_of :rule
-  validates_format_of :rule, :with => /^(?:and|or|\)|\(|\d|\s)+$/ #TODO properly formed parenthesis etc.
+  validates_format_of :rule, :with => /^(?:and|or|\)|\(|[A-Z]|\s)+$/ #TODO properly formed parenthesis etc.
   # validates_numericality_of :question_id
 
   # Attribute aliases
@@ -40,6 +40,7 @@ class Dependency < ActiveRecord::Base
   # calling keyed_condition_pairs will return {:A => true, :B => false}
   def keyed_conditions(response_set)
     keyed_pairs = {}
+    # logger.debug dependency_conditions.inspect
     self.dependency_conditions.each do |dc|
       keyed_pairs.merge!(dc.to_evaluation_hash(response_set))
     end
@@ -49,8 +50,11 @@ class Dependency < ActiveRecord::Base
   # Does the substiution and evaluation of the dependency rule with the keyed pairs
   def rule_evaluation(keyed_pairs)
     # subtitute into rule for evaluation
-    rgx = Regexp.new(self.dependency_conditions.map{|dc| dc.rule_key}.join("|")) # Making a regexp to only look for the keys used in the child conditions
-    #logger.debug("rexp: #{rgx.inspect} FOO: #{keyed_pairs.inspect} --- subbed rules: #{rule.gsub(rgx){|m| keyed_pairs[m.to_sym]}} --> #{eval(self.rule.gsub(rgx){|m| keyed_pairs[m.to_sym]})}")
+    rgx = Regexp.new(self.dependency_conditions.map{|dc| ["a","o"].include?(dc.rule_key) ? "#{dc.rule_key}(?!nd|r)" : dc.rule_key}.join("|")) # Making a regexp to only look for the keys used in the child conditions
+    # logger.debug "rule: #{self.rule.inspect}"
+    # logger.debug "rexp: #{rgx.inspect}"
+    # logger.debug "keyp: #{keyed_pairs.inspect}"
+    # logger.debug "subd: #{self.rule.gsub(rgx){|m| keyed_pairs[m.to_sym]}}"
     eval(self.rule.gsub(rgx){|m| keyed_pairs[m.to_sym]}) # returns the evaluation of the rule and the conditions
   end
   
