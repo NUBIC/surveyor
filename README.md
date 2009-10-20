@@ -105,6 +105,10 @@ Surveyor depends on Rails 2.3 and the SASS style sheet language, part of HAML (h
 
 # Changes
 
+EDGE
+
+fixing typo in kitchen sink survey
+
 0.7.0
 
 * new kitchen sink survey with better documentation of DSL
