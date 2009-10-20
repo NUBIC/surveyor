@@ -23,7 +23,6 @@ class Answer
     { :short_text => text,
       :data_export_identifier => Columnizer.to_normalized_column(text),
       :is_exclusive => false,
-      :is_a_disabler => false,
       :hide_label => false,
       :response_class => "answer"
     }
@@ -36,11 +35,11 @@ class Answer
     if a0.is_a?(Hash)
       {:text => "Answer"}.merge(a0)
       
-    # String, Hash || String, Symbol, Hash
+    # (String, Hash) or (String, Symbol, Hash)
     elsif a0.is_a?(String)
       a1.is_a?(Symbol) ? {:text => a0, :response_class => a1.to_s}.merge(a2 || {}) : {:text => a0}.merge(a1 || {})
       
-    # Symbol, Hash || Symbol, Symbol, Hash
+    # (Symbol, Hash) or (Symbol, Symbol, Hash)
     elsif a0.is_a?(Symbol)
       shortcuts = case a0
       when :other
@@ -60,25 +59,12 @@ class Answer
     end
   end
 
+  def yml_attrs
+    instance_variables.sort - ["@parser"]
+  end
   def to_yml
-    out =[ %(#{@data_export_identifier}_#{@id}:) ]
-    out << %(  id: #{@id})
-    out << %(  question_id: #{@question_id})
-    out << %(  text: "#{@text}")
-    out << %(  short_text: "#{@short_text}")
-    out << %(  help_text: "#{@help_text}")
-    out << %(  weight: #{@weight})
-    out << %(  response_class: "#{@response_class}")
-    out << %(  reference_identifier: "#{@reference_identifier}")
-    out << %(  data_export_identifier: "#{@data_export_identifier}")
-    out << %(  common_namespace: "#{@common_namespace}")
-    out << %(  common_identitier: "#{@common_identitier}")
-    out << %(  display_order: #{@display_order} )
-    out << %(  is_exclusive: #{@is_exclusive})
-    out << %(  hide_label: #{@hide_label})
-    out << %(  display_length: #{@display_length} )
-    out << %(  custom_class: "#{@custom_class}")
-    out << %(  custom_renderer: "#{@custom_renderer}")
+    out = [ %(#{@data_export_identifier}_#{@id}:) ]
+    yml_attrs.each{|a| out << "  #{a[1..-1]}: #{instance_variable_get(a).is_a?(String) ? "\"#{instance_variable_get(a)}\"" : instance_variable_get(a) }"}
     (out << nil ).join("\r\n")
   end
 

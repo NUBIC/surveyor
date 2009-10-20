@@ -29,12 +29,12 @@ class Dependency
     self.dependency_conditions << dc_obj
   end
   
+  def yml_attrs
+    instance_variables.sort - ["@parser", "@dependency_conditions", "@reference_identifier"]
+  end
   def to_yml
-    out =[ %(#{question_id}_#{@id}:) ]
-    out << %(  id: #{@id})
-    out << %(  question_id: #{@question_id})
-    out << %(  question_group_id: #{@question_group_id})
-    out << %(  rule: "#{@rule}")
+    out = [ %(#{@data_export_identifier}_#{@id}:) ]
+    yml_attrs.each{|a| out << "  #{a[1..-1]}: #{instance_variable_get(a).is_a?(String) ? "\"#{instance_variable_get(a)}\"" : instance_variable_get(a) }"}
     (out << nil ).join("\r\n")
   end
 

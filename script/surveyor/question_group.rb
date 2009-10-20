@@ -1,10 +1,11 @@
 class QuestionGroup
 
-  # Context, Content, Display
-  attr_accessor :id, :section_id, :section, :parser
+  # Context, Content, Display, Children
+  attr_accessor :id, :parser
   attr_accessor :text, :help_text
   attr_accessor :reference_identifier, :data_export_identifier, :common_namespace, :common_identitier
   attr_accessor :display_type, :custom_class, :custom_renderer
+  attr_accessor :dependency
 
   # id, section and text required
   def initialize(section, args, options)
@@ -18,18 +19,12 @@ class QuestionGroup
     {:display_type => "default"}
   end
 
+  def yml_attrs
+    instance_variables.sort - ["@parser", "@dependency"]
+  end
   def to_yml
-    out =[ %(#{@id}:) ]
-    out << %(  id: #{@id})
-    out << %(  text: "#{@text}")
-    out << %(  help_text: "#{@help_text}")
-    out << %(  reference_identifier: "#{@reference_identifier}")
-    out << %(  data_export_identifier: "#{@data_export_identifier}")
-    out << %(  common_namespace: "#{@common_namespace}")
-    out << %(  common_identitier: "#{@common_identitier}")
-    out << %(  display_type: "#{@display_type}")
-    out << %(  custom_class: "#{@custom_class}")
-    out << %(  custom_renderer: "#{@custom_renderer}")    
+    out = [ %(#{@id}:) ]
+    yml_attrs.each{|a| out << "  #{a[1..-1]}: #{instance_variable_get(a).is_a?(String) ? "\"#{instance_variable_get(a)}\"" : instance_variable_get(a) }"}
     (out << nil ).join("\r\n")
   end
 

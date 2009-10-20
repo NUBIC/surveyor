@@ -86,20 +86,12 @@ class Survey
     end  
   end
 
+  def yml_attrs
+    instance_variables.sort - ["@parser", "@survey_sections"]
+  end
   def to_yml
-    out =[ %(survey_#{@id}:) ]
-    out << %(  id: #{@id})
-    out << %(  title: "#{@title}")
-    out << %(  description: "#{@description}")
-    out << %(  access_code: "#{@access_code}")
-    out << %(  reference_identifier: "#{@reference_identifier}")
-    out << %(  data_export_identifier: "#{@data_export_identifier}")
-    out << %(  common_namespace: "#{@common_namespace}")
-    out << %(  common_identitier: "#{@common_identitier}")
-    out << %(  active_at: #{@active_at})
-    out << %(  inactive_at: #{@inactive_at})
-    out << %(  css_url: "#{@css_url}")
-    out << %(  custom_class: "#{@custom_class}")
+    out = [ %(survey_#{@id}:) ]
+    yml_attrs.each{|a| out << "  #{a[1..-1]}: #{instance_variable_get(a).is_a?(String) ? "\"#{instance_variable_get(a)}\"" : instance_variable_get(a) }"}
     (out << nil ).join("\r\n")
   end
 

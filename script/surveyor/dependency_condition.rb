@@ -11,11 +11,8 @@ class DependencyCondition
     self.parser = dependency.parser
     self.id = parser.new_dependency_condition_id
     self.dependency_id = dependency.id
-    self.rule_key = options[:reference_identifier]
-    
     args_options = parse_args_options(args)
     self.default_options().merge(options).merge(args_options).each{|key,value| self.instance_variable_set("@#{key}", value)}
-    
   end
   
   def default_options()
@@ -28,29 +25,21 @@ class DependencyCondition
     a2.is_a?(Hash) ? options.merge(a2) : options.merge({:answer_reference => a2.to_s.gsub("a_", "")})
   end
   
+  def yml_attrs
+    instance_variables.sort - ["@parser", "@question_reference", "@answer_reference", "@reference_identifier"]
+  end
   def to_yml
-    out =[ %(#{@question_id}_#{@dependency_id}_#{id}:) ]
-    out << %(  id: #{@id})
-    out << %(  dependency_id: #{@dependency_id})
-    out << %(  rule_key: "#{@rule_key}")
-    out << %(  question_id: #{@question_id})
-    out << %(  operator: "#{@operator}")
-    out << %(  answer_id: #{@answer_id})
-    out << %(  datetime_value: #{@date_value})
-    out << %(  integer_value: #{@integer_value})
-    out << %(  float_value: #{@float_value})
-    out << %(  unit: "#{@unit}")
-    out << %(  text_value: "#{@text_value}")
-    out << %(  string_value: "#{@string_value}")
-    out << %(  response_other: "#{@response_other}")
+    out = [ %(#{@data_export_identifier}_#{@id}:) ]
+    yml_attrs.each{|a| out << "  #{a[1..-1]}: #{instance_variable_get(a).is_a?(String) ? "\"#{instance_variable_get(a)}\"" : instance_variable_get(a) }"}
     (out << nil ).join("\r\n")
   end
 
   def reconcile_dependencies
     # Looking up references to questions and answers for linking the dependency objects
-    puts "Looking up references for question: #{@question_reference} in Survey: #{Survey.current_survey.title}"
-    ref_question = Survey.current_survey.find_question_by_reference(@question_reference) # Argh. I can't think of a better way to get a hold of this reference here...
+    puts "Looking up references for question: #{@question_reference}"
+    ref_question = Survey.current_survey.find_question_by_reference(@question_reference) # TODO change this. Argh. I can't think of a better way to get a hold of this reference here...
     if ref_question
+      puts "  found question: #{ref_question.data_export_identifier} (id:#{ref_question.id})"
       @question_id = ref_question.id
       ref_answer = ref_question.find_answer_by_reference(@answer_reference)
       if ref_answer 

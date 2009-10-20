@@ -41,8 +41,7 @@ class SurveySection
   # This method_missing magic does all the heavy lifting for the DSL
   def method_missing(missing_method, *args, &block)    
     method_name, reference_identifier = missing_method.to_s.split("_")
-    reference_identifier ||= args[:reference_identifier]
-
+    
     case method_name
       
     when "group", "g", "grid", "repeater"
@@ -69,9 +68,9 @@ class SurveySection
     when "dependency", "d"
       puts "        Dependency: #{reference_identifier}"
       raise "Error: I'm dropping the block like it's hot" if block_given?
-      raise "Error: " unless (d = self.current_question_group || self.current_question)
+      raise "Error: No question or question group" unless (d = self.current_question_group || self.current_question)
       
-      options = {:reference_identifier => reference_identifier}
+      options = {}# {:reference_identifier => reference_identifier}
       d.dependency = (self.current_dependency = Dependency.new(d, args, options))
       
     when "condition", "c"
@@ -79,7 +78,7 @@ class SurveySection
       raise "Error, I'm dropping the block like it's hot" if block_given?
       raise "Error: No current dependency" unless self.current_dependency
       
-      options = {:reference_identifier => reference_identifier}
+      options = {:rule_key => reference_identifier}
       self.current_dependency.add_dependency_condition DependencyCondition.new(self, args, options)
       
     when "answer", "a"
@@ -123,28 +122,15 @@ class SurveySection
   
   # Used to find questions for dependency linking 
   def find_question_by_reference(ref_id)
-    question = nil
-    count = 0
-    while question.nil? and count < questions.size
-      question = self.questions[count] if self.questions[count].reference_identifier == ref_id
-      count +=1
-    end
-    question
+    self.questions.detect{|q| q.reference_identifier == ref_id}
   end
   
+  def yml_attrs
+    instance_variables.sort - ["@parser", "@question_groups", "@questions", "@grid_answers", "@current_question_group", "@current_question", "@current_dependency"]
+  end
   def to_yml
-    out =[ %(#{@data_export_identifier}_#{@id}:) ]
-    out << %(  id: #{@id})
-    out << %(  survey_id: #{@survey_id})
-    out << %(  title: "#{@title}")
-    out << %(  description: "#{@description}")
-    out << %(  reference_identifier: "#{@reference_identifier}")
-    out << %(  data_export_identifier: "#{@data_export_identifier}")
-    out << %(  common_namespace: "#{@common_namespace}")
-    out << %(  common_identitier: "#{@common_identitier}")
-    out << %(  display_order: #{@display_order})
-    out << %(  custom_class: "#{@custom_class}")
-    
+    out = [ %(#{@data_export_identifier}_#{@id}:) ]
+    yml_attrs.each{|a| out << "  #{a[1..-1]}: #{instance_variable_get(a).is_a?(String) ? "\"#{instance_variable_get(a)}\"" : instance_variable_get(a) }"}
     (out << nil ).join("\r\n")
   end
 

@@ -49,26 +49,13 @@ class Question
     puts "  found answer: '#{answer.text}' (id:#{answer.id})"  unless answer.nil?
     answer
   end
-
+  
+  def yml_attrs
+    instance_variables.sort - ["@parser", "@answers", "@dependency"]
+  end
   def to_yml
-    out =[ %(#{@data_export_identifier}_#{@id}:) ]
-    out << %(  id: #{@id})
-    out << %(  survey_section_id: #{@survey_section_id})
-    out << %(  question_group_id: #{@question_group_id})
-    out << %(  text: "#{@text}")
-    out << %(  short_text: "#{@short_text}")
-    out << %(  help_text: "#{@help_text}")
-    out << %(  pick: "#{pick}")
-    out << %(  reference_identifier: "#{@reference_identifier}")
-    out << %(  data_export_identifier: "#{@data_export_identifier}")
-    out << %(  common_namespace: "#{@common_namespace}")
-    out << %(  common_identitier: "#{@common_identitier}")
-    out << %(  display_order: #{@display_order})
-    out << %(  display_type: "#{@display_type}")
-    out << %(  is_mandatory: #{@is_mandatory})
-    out << %(  display_width: #{@display_width})
-    out << %(  custom_class: "#{@custom_class}")
-    out << %(  custom_renderer: "#{@custom_renderer}")
+    out = [ %(#{@data_export_identifier}_#{@id}:) ]
+    yml_attrs.each{|a| out << "  #{a[1..-1]}: #{instance_variable_get(a).is_a?(String) ? "\"#{instance_variable_get(a)}\"" : instance_variable_get(a) }"}
     (out << nil ).join("\r\n")
   end
   
