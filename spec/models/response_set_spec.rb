@@ -75,10 +75,6 @@ describe ResponseSet, "Updating the response set" do
     })
   end
 
-  it "should delete existing responses corresponding to every question key that comes in" do
-    Response.should_receive(:delete_all).exactly(3).times
-    @response_set.update_attributes(:response_attributes => @radio_response_attributes)
-  end
   it "should save new responses from radio buttons, ignoring blanks" do
     @response_set.update_attributes(:response_attributes => @radio_response_attributes)
     @response_set.responses.should have(2).items
@@ -108,37 +104,26 @@ describe ResponseSet, "Updating the response set" do
   end
 end
 
-describe ResponseSet, "knowing internal status" do
-  before(:each) do
-    @response_set = Factory(:response_set)
-  end
-  it "knows when it is empty"  do
-    @response_set.empty?.should be_true
-  end
-
-  it "knows when it is not empty" do
-    @response_set.responses.build({:question_id => 1, :answer_id => 8})
-    @response_set.empty?.should be_false
-  end
-end
 describe ResponseSet, "with dependencies" do
   before(:each) do
+    @section = Factory(:survey_section)
     # Questions
-    @do_you_like_pie = Factory(:question, :text => "Do you like pie?")
-    @what_flavor = Factory(:question, :text => "What flavor?")
-    @what_bakery = Factory(:question, :text => "What bakery?")
+    @do_you_like_pie = Factory(:question, :text => "Do you like pie?", :survey_section => @section)
+    @what_flavor = Factory(:question, :text => "What flavor?", :survey_section => @section)
+    @what_bakery = Factory(:question, :text => "What bakery?", :survey_section => @section)
     # Answers
     @do_you_like_pie.answers << Factory(:answer, :text => "yes", :question_id => @do_you_like_pie.id)
     @do_you_like_pie.answers << Factory(:answer, :text => "no", :question_id => @do_you_like_pie.id)
     @what_flavor.answers << Factory(:answer, :response_class => :string, :question_id => @what_flavor.id)
     @what_bakery.answers << Factory(:answer, :response_class => :string, :question_id => @what_bakery.id)
     # Dependency
-    @what_flavor_dep = Factory(:dependency, :rule => "1", :question_id => @what_flavor.id)
-    @what_flavor_dep.dependency_conditions << Factory(:dependency_condition, :rule_key => "1", :question_id => @do_you_like_pie.id, :operator => "==", :answer_id => @do_you_like_pie.answers.first.id, :dependency_id => @what_flavor_dep.id)
-    @what_bakery_dep = Factory(:dependency, :rule => "2", :question_id => @what_bakery.id)
-    @what_bakery_dep.dependency_conditions << Factory(:dependency_condition, :rule_key => "2", :question_id => @do_you_like_pie.id, :operator => "==", :answer_id => @do_you_like_pie.answers.first.id, :dependency_id => @what_bakery_dep.id)
+    @what_flavor_dep = Factory(:dependency, :rule => "A", :question_id => @what_flavor.id)
+    Factory(:dependency_condition, :rule_key => "A", :question_id => @do_you_like_pie.id, :operator => "==", :answer_id => @do_you_like_pie.answers.first.id, :dependency_id => @what_flavor_dep.id)
+    @what_bakery_dep = Factory(:dependency, :rule => "B", :question_id => @what_bakery.id)
+    Factory(:dependency_condition, :rule_key => "B", :question_id => @do_you_like_pie.id, :operator => "==", :answer_id => @do_you_like_pie.answers.first.id, :dependency_id => @what_bakery_dep.id)
     # Responses
     @response_set = Factory(:response_set)
+    @response_set.current_section_id = @section.id
     @response_set.responses << Factory(:response, :question_id => @do_you_like_pie.id, :answer_id => @do_you_like_pie.answers.first.id, :response_set_id => @response_set.id)
     @response_set.responses << Factory(:response, :string_value => "pecan pie", :question_id => @what_flavor.id, :answer_id => @what_flavor.answers.first.id, :response_set_id => @response_set.id)
   end
@@ -147,7 +132,7 @@ describe ResponseSet, "with dependencies" do
     @response_set.unanswered_dependencies.should == [@what_bakery]
   end
   it "should list answered and unanswered dependencies to show inline (javascript turned on)" do
-    @response_set.all_dependencies[:show].should == [@what_flavor, @what_bakery]
+    @response_set.all_dependencies[:show].should == ["question_#{@what_flavor.id}", "question_#{@what_bakery.id}"]
   end
   
 end
