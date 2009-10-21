@@ -59,35 +59,28 @@ describe DependencyCondition, "instance" do
     @response = Response.new(:question_id => 45, :response_set_id => 40, :answer_id => 23)
     @response.answer = Answer.new(:question_id => 45, :response_class => "answer")
     @response_set = ResponseSet.new()
-    @response_set.stub!(:find_response).and_return(@response)
+    @response_set.stub!(:responses).and_return([@response])
     @dependency_condition.evaluation_of(@response_set).should be_true
     # inversion
     @alt_response = Response.new(:question_id => 45, :response_set_id => 40, :answer_id => 55)
     @alt_response.answer = Answer.new(:question_id => 45, :response_class => "answer")
     @alt_resp_set = ResponseSet.new()
 
-    @alt_resp_set.stub!(:find_response).and_return(@alt_response)
+    @alt_resp_set.stub!(:responses).and_return([@alt_response])
     @dependency_condition.evaluation_of(@alt_resp_set).should be_false
 
   end
   
   it "should return false if there is no response set value that corresponds to the dependency condition" do
-    @empty_rs = mock(ResponseSet, :find_response => nil)
+    @empty_rs = mock(ResponseSet, :responses => [])
     @dependency_condition.evaluation_of(@empty_rs).should be_false
   end
   
-  describe "when helping the dependency object determine state" do
-    
-    it "returns its key as a symbol" do
-      @dependency_condition.symbol_key.should == @dependency_condition.rule_key.to_sym 
-    end
-    
-    it "converts to a hash for evaluation by the depedency object" do
-      @rs = mock(ResponseSet)
-      @dependency_condition.stub!(:evaluation_of).with(@rs)
-      @dependency_condition.to_evaluation_hash(@rs)
-    end
-    
+  
+  it "converts to a hash for evaluation by the depedency object" do
+    @rs = mock(ResponseSet)
+    @dependency_condition.stub!(:evaluation_of).with(@rs)
+    @dependency_condition.to_evaluation_hash(@rs)
   end
 end
 
