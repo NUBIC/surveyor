@@ -42,19 +42,18 @@ class SurveyorController < ApplicationController
       @sections = @survey.sections
       @section = params[:section] ? @sections.with_includes.find(section_id_from(params[:section])) || @sections.with_includes.first : @sections.with_includes.first
       @questions = @section.questions
+      @dependents = (@response_set.unanswered_dependencies - @section.questions) || []
     else
       flash[:notice] = "Unable to find your responses to the survey"
       redirect_to(available_surveys_path)
     end
-    
-    @dependents = (@response_set.unanswered_dependencies - @section.questions) || []
   end
   def update
     if @response_set = ResponseSet.find_by_access_code(params[:response_set_code], :include => {:responses => :answer})
       @response_set.current_section_id = params[:current_section_id]
     else
       flash[:notice] = "Unable to find your responses to the survey"
-      redirect_to(available_surveys_path)
+      redirect_to(available_surveys_path) and return
     end
     
     if params[:responses] or params[:response_groups]
@@ -71,7 +70,7 @@ class SurveyorController < ApplicationController
           flash[:notice] = "Completed survey"
           redirect_to surveyor_default(:finish)
         else
-          flash[:notice] = "Unable to update survey" if !saved and !saved.nil? # saved.nil? is true if there are no questions on the page (i.e. if it only contains a label)
+          flash[:notice] = "Unable to update survey" if !saved #and !saved.nil? # saved.nil? is true if there are no questions on the page (i.e. if it only contains a label)
           redirect_to :action => "edit", :anchor => anchor_from(params[:section]), :params => {:section => section_id_from(params[:section])}
         end
       end
