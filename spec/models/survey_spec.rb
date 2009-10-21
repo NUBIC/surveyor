@@ -3,8 +3,7 @@ require File.expand_path(File.dirname(__FILE__) + '/../spec_helper')
 # Validations
 describe Survey, "when saving a new one" do
   before(:each) do
-    @survey = Survey.new
-    @survey.title = "Foo"
+    @survey = Factory(:survey, :title => "Foo")
   end
   
   it "should be invalid without a title" do
@@ -16,14 +15,14 @@ end
 # Associations
 describe Survey, "that has sections" do
   before(:each) do
-    @survey = Survey.create(:title => "foo")
-    @s1 = @survey.sections.create(:title => "wise", :display_order => 2)
-    @s2 = @survey.sections.create(:title => "er", :display_order => 3)
-    @s3 = @survey.sections.create(:title => "bud", :display_order => 1)
-    @q1 = @s1.questions.create(:text => "what is wise?")
-    @q2 = @s2.questions.create(:text => "what is er?", :display_order => 2)
-    @q3 = @s2.questions.create(:text => "what is mill?", :display_order => 1)
-    @q4 = @s3.questions.create(:text => "what is bud?")
+    @survey = Factory(:survey, :title => "Foo")
+    @s1 = Factory(:survey_section, :survey => @survey, :title => "wise", :display_order => 2)
+    @s2 = Factory(:survey_section, :survey => @survey, :title => "er", :display_order => 3)
+    @s3 = Factory(:survey_section, :survey => @survey, :title => "bud", :display_order => 1)
+    @q1 = Factory(:question, :survey_section => @s1, :text => "what is wise?", :display_order => 2)
+    @q2 = Factory(:question, :survey_section => @s2, :text => "what is er?", :display_order => 4)
+    @q3 = Factory(:question, :survey_section => @s2, :text => "what is mill?", :display_order => 3)
+    @q4 = Factory(:question, :survey_section => @s3, :text => "what is bud?", :display_order => 1)
   end
 
   it "should return survey_sections in display order" do
