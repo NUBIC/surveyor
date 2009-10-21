@@ -2,7 +2,7 @@ require File.expand_path(File.dirname(__FILE__) + '/../spec_helper')
 
 describe Dependency do
   before(:each) do
-    @dependency = Dependency.new(:rule => "1 and 2 or 3", :question_id => 23)
+    @dependency = Factory(:dependency)
   end
 
   it "should be valid" do
@@ -19,6 +19,13 @@ describe Dependency do
   it "should be invalid without a question_id" do
     @dependency.question_id = nil
     @dependency.should have(1).error_on(:question_id)
+
+    @dependency.question_group_id = 1
+    @dependency.should be_valid
+
+    @dependency.question_id.should be_nil
+    @dependency.question_group_id = nil
+    @dependency.should have(1).error_on(:question_group_id)
   end
 
   it "should alias question_id as dependent_question_id" do

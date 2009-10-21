@@ -61,7 +61,8 @@ end
 Factory.define :dependency do |d|
   # the dependent question
   d.association       :question # d.question_id       {}
-  d.rule              {"1"}
+  d.question_group_id {}
+  d.rule              {"A and B"}
 end
 
 Factory.define :dependency_condition do |d|

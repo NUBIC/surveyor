@@ -10,19 +10,20 @@ class Dependency < ActiveRecord::Base
   # Validations
   validates_presence_of :rule
   validates_format_of :rule, :with => /^(?:and|or|\)|\(|[A-Z]|\s)+$/ #TODO properly formed parenthesis etc.
-  # validates_numericality_of :question_id
-
+  validates_numericality_of :question_id, :if => Proc.new { |d| d.question_group_id.nil? }
+  validates_numericality_of :question_group_id, :if => Proc.new { |d| d.question_id.nil? }
+  
   # Attribute aliases
   alias_attribute :dependent_question_id, :question_id
   
   def question_group_id=(i)
-    write_attribute(:question_id, nil)
+    write_attribute(:question_id, nil) unless i.nil?
     write_attribute(:question_group_id, i)
   end
   
   def question_id=(i)
-    write_attribute(:question_group_id, nil)
-    write_attribute(:question_id, i)
+    write_attribute(:question_group_id, nil) unless i.nil?
+    write_attribute(:question_id, i) 
   end
   
   # Is the method that determines if this dependency has been met within
