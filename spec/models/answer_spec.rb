@@ -9,7 +9,7 @@ describe Answer, "when creating a new answer" do
     @answer.should be_valid
   end
 
-  it "should be invalid without a unique reference identifier (within the scope of its parent)" do
+  it "should be invalid without a question_id" do
     @answer.question_id = nil
     @answer.should_not be_valid
   end

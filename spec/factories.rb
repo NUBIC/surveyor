@@ -46,20 +46,16 @@ Factory.define :answer do |a|
   a.help_text	              	{"Clear is the absense of color"}
   a.weight		                {}
   a.response_class        		{"String"}
-  a.display_order	        	  {}
-  a.is_exclusive	        	  {}
-  a.hide_label    		        {}
   a.reference_identifier		  {}
   a.data_export_identifier		{}
-  a.common_data_identitier		{}
-  a.max_value	              	{}
-  a.min_value	              	{}
-  a.length		                {}
-  a.decimal_precision     		{}
-  a.allow_negative	          {}
-  a.allow_blank		            {}
-  a.unit		                  {}
+  a.common_namespace          {}
+  a.common_identifier     		{}
+  a.display_order	        	  {Factory.next :answer_display_order}
+  a.is_exclusive	        	  {}
+  a.hide_label    		        {}
   a.display_length		        {}
+  a.custom_class              {}
+  a.custom_renderer           {}
 end
 
 Factory.define :dependency do |d|
