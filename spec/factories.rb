@@ -22,19 +22,31 @@ end
 
 Factory.sequence(:question_display_order){|n| n }
 
-Factory.define :question do |s|
-  s.association             :survey_section  # s.survey_section_id       {}
-  s.text		                {"What is your favorite color?"}
-  s.short_text		          {"favorite_color"}
-  s.help_text	        	    {"just write it in the box"}
-  s.pick	            	    {:none}
-  s.display_type	    	    {} # nil is default
-  s.display_order	    	    {Factory.next :question_display_order}
-  s.question_group_id		    {}
-  s.is_mandatory	    	    {false}
-  s.reference_identifier		{|me| "q_#{me.object_id}"}
-  s.data_export_identifier	{}
-  s.display_width       		{}
+Factory.define :question do |q|
+  q.association             :survey_section  # s.survey_section_id       {}
+  q.text		                {"What is your favorite color?"}
+  q.short_text		          {"favorite_color"}
+  q.help_text	        	    {"just write it in the box"}
+  q.pick	            	    {:none}
+  q.display_type	    	    {} # nil is default
+  q.display_order	    	    {Factory.next :question_display_order}
+  q.question_group_id		    {}
+  q.is_mandatory	    	    {false}
+  q.reference_identifier		{|me| "q_#{me.object_id}"}
+  q.data_export_identifier	{}
+  q.display_width       		{}
+end
+
+Factory.define :question_group do |g|
+  g.text                    {"Describe your family"}
+  g.help_text               {}
+  g.reference_identifier    {|me| "g_#{me.object_id}"}
+  g.data_export_identifier  {}
+  g.common_namespace        {}
+  g.common_identifier       {}
+  g.display_type            {}
+  g.custom_class            {}
+  g.custom_renderer         {}
 end
 
 Factory.sequence(:answer_display_order){|n| n }
