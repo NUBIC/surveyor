@@ -53,7 +53,7 @@ describe Question, "when interacting with an instance" do
 
   it "should return 'default' for nil display type" do
     @question.display_type = nil
-    @question.display_type.should == "default"
+    @question.renderer.should == :default
   end
   
 end
@@ -69,7 +69,7 @@ describe Question, "with dependencies" do
     @dependency = mock_model(Dependency)
     @dependency.stub!(:met?).with(@rs).and_return(true)
     @question.stub!(:dependency).and_return(@dependency)
-    @question.dependency_is_satisfied?(@rs).should == true
+    @question.triggered?(@rs).should == true
   end
   
 end

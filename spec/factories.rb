@@ -24,16 +24,18 @@ Factory.sequence(:question_display_order){|n| n }
 
 Factory.define :question do |q|
   q.association             :survey_section  # s.survey_section_id       {}
+  q.question_group_id		    {}
   q.text		                {"What is your favorite color?"}
   q.short_text		          {"favorite_color"}
   q.help_text	        	    {"just write it in the box"}
   q.pick	            	    {:none}
-  q.display_type	    	    {} # nil is default
+  q.reference_identifier    {|me| "q_#{me.object_id}"}
+  q.data_export_identifier  {}
+  q.common_namespace        {}
+  q.common_identifier       {}
   q.display_order	    	    {Factory.next :question_display_order}
-  q.question_group_id		    {}
+  q.display_type	    	    {} # nil is default
   q.is_mandatory	    	    {false}
-  q.reference_identifier		{|me| "q_#{me.object_id}"}
-  q.data_export_identifier	{}
   q.display_width       		{}
 end
 
