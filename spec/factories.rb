@@ -119,15 +119,15 @@ end
 
 Factory.define :validation do |v|
   v.association       :answer # v.answer_id         {}
-  v.rule              {}
+  v.rule              {"A"}
   v.message           {}
 end
 
 Factory.define :validation_condition do |v|
   v.association       :validation # v.validation_id     {}
-  v.rule_key          {}
+  v.rule_key          {"A"}
   v.question_id       {}
-  v.operator          {}
+  v.operator          {"=="}
   v.answer_id         {}
   v.datetime_value    {}
   v.integer_value     {}
