@@ -6,11 +6,13 @@ class CreateValidationConditions < ActiveRecord::Migration
       t.string :rule_key
       
       # Conditional    
-      t.integer :question_id
       t.string :operator
       
-      # Value
+      # Optional external reference
+      t.integer :question_id
       t.integer :answer_id
+
+      # Value
       t.datetime :datetime_value
       t.integer :integer_value
       t.float :float_value
