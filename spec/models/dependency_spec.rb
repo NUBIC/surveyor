@@ -54,9 +54,9 @@ describe Dependency, "when evaluating dependency conditions of a question in a r
     @dep3 = Dependency.new(:rule => "A or B", :question_id => 1)
     @dep4 = Dependency.new(:rule => "!(A and B) and C", :question_id => 1)
     
-    @dep_c = mock_model(DependencyCondition, :id => 1, :rule_key => "A", :to_evaluation_hash => {:A => true})
-    @dep_c2 = mock_model(DependencyCondition, :id => 2, :rule_key => "B", :to_evaluation_hash => {:B => false})
-    @dep_c3 = mock_model(DependencyCondition, :id => 3, :rule_key => "C", :to_evaluation_hash => {:C => true})
+    @dep_c = mock_model(DependencyCondition, :id => 1, :rule_key => "A", :to_hash => {:A => true})
+    @dep_c2 = mock_model(DependencyCondition, :id => 2, :rule_key => "B", :to_hash => {:B => false})
+    @dep_c3 = mock_model(DependencyCondition, :id => 3, :rule_key => "C", :to_hash => {:C => true})
 
     @dep.stub!(:dependency_conditions).and_return([@dep_c])
     @dep2.stub!(:dependency_conditions).and_return([@dep_c, @dep_c2])
@@ -84,6 +84,5 @@ describe Dependency, "when evaluating dependency conditions of a question in a r
     @dep3.rule_evaluation(@dep3.keyed_conditions(@response_set)).should be_true
     @dep4.rule_evaluation(@dep4.keyed_conditions(@response_set)).should be_true
   end
-  
   
 end

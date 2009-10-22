@@ -43,7 +43,7 @@ class Dependency < ActiveRecord::Base
     keyed_pairs = {}
     # logger.debug dependency_conditions.inspect
     self.dependency_conditions.each do |dc|
-      keyed_pairs.merge!(dc.to_evaluation_hash(response_set))
+      keyed_pairs.merge!(dc.to_hash(response_set))
     end
     return(keyed_pairs)
   end

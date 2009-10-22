@@ -13,58 +13,29 @@ class DependencyCondition < ActiveRecord::Base
   validates_inclusion_of :operator, :in => OPERATORS
   validates_uniqueness_of :rule_key, :scope => :dependency_id
 
+  acts_as_response # includes "as" instance method
+  
   # Class methods
   def self.operators
     OPERATORS
   end
 
   # Instance methods
-  
-  # The hash used in the dependency parent object to evaluate its rule string
-  def to_evaluation_hash(response_set)
-    x = {rule_key.to_sym => self.evaluation_of(response_set)}
-    # logger.warn "to_evaluation_hash #{x.inspect}"
-    return x
+  def to_hash(response_set)
+    response = response_set.responses.detect{|r| r.answer_id.to_i == self.answer_id.to_i} || false # eval("nil and false") => nil so return false if no response is found
+    {rule_key.to_sym => (response and self.is_met?(response))}
   end
 
-  # # Evaluates the condition on the response_set
-  # def evaluation_of(response_set)
-  #   response = response_set.responses.detect{|r| r.answer_id == answer_id} || false # turns out eval("nil and false") => nil so we need to return false if no response is found
-  #   return(response and self.is_satisfied_by?(response))
-  # end
-  # Evaluates the condition on the response_set
-  def evaluation_of(response_set)
-    # response = response_set.find_response(self.answer_id) || false # turns out eval("nil and false") => nil so we need to return false if no response is found
-    response = response_set.responses.detect{|r| r.answer_id.to_i == self.answer_id.to_i} || false # turns out eval("nil and false") => nil so we need to return false if no response is found
-    # logger.warn "evaluation_of_response #{response.inspect}"
-    return(response and self.is_satisfied_by?(response))
-  end
-
-  # Checks to see if the response passed in satisfies the dependency condition
-  def is_satisfied_by?(response)
-    response_class = response.answer.response_class
-    # response.as(response_class).send(operator.to_sym, self.as(response_class))
+  # Checks to see if the response passed in meets the dependency condition
+  def is_met?(response)
+    klass = response.answer.response_class
     return case self.operator
     when "==", "<", ">", "<=", ">="
-      response.as(response_class).send(self.operator, self.as(response_class))
+      response.as(klass).send(self.operator, self.as(klass))
     when "!="
-      !(response.as(response_class) == self.as(response_class))
+      !(response.as(klass) == self.as(klass))
     else
       false
-    end
-  end
-
-  # Method that returns the dependency as a particular response_class type
-  def as(type_symbol)
-    return case type_symbol.to_sym
-    when :string, :text, :integer, :float, :datetime
-      self.send("#{type_symbol}_value".to_sym)
-    when :date
-      self.datetime_value.nil? ? nil : self.datetime_value.to_date
-    when :time
-      self.datetime_value.nil? ? nil : self.datetime_value.to_time
-    else # :answer_id
-      self.answer_id
     end
   end
 
