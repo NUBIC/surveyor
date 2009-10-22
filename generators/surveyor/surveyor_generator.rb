@@ -25,7 +25,7 @@ class SurveyorGenerator < Rails::Generator::Base
       # not using m.migration_template because all migration timestamps end up the same, causing a collision when running rake db:migrate
       # coped functionality from RAILS_GEM_PATH/lib/rails_generator/commands.rb
       m.directory "db/migrate"
-      ["surveys", "survey_sections", "questions", "answers", "response_sets", "responses", "dependencies", "question_groups", "dependency_conditions"].each_with_index do |model, i|
+      ["surveys", "survey_sections", "questions", "question_groups", "answers", "response_sets", "responses", "dependencies", "dependency_conditions", "validations", "validation_conditions"].each_with_index do |model, i|
         unless (prev_migrations = Dir.glob("db/migrate/[0-9]*_*.rb").grep(/[0-9]+_create_#{model}.rb$/)).empty?
           prev_migration_timestamp = prev_migrations[0].match(/([0-9]+)_create_#{model}.rb$/)[1]
         end
