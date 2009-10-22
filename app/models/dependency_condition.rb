@@ -45,18 +45,10 @@ class DependencyCondition < ActiveRecord::Base
     response_class = response.answer.response_class
     # response.as(response_class).send(operator.to_sym, self.as(response_class))
     return case self.operator
-    when "=="
-      response.as(response_class) == self.as(response_class)
+    when "==", "<", ">", "<=", ">="
+      response.as(response_class).send(self.operator, self.as(response_class))
     when "!="
-      response.as(response_class) != self.as(response_class)
-    when "<"
-      response.as(response_class) < self.as(response_class)
-    when ">"
-      response.as(response_class) > self.as(response_class)
-    when "<="
-      response.as(response_class) <= self.as(response_class)
-    when ">="
-      response.as(response_class) >= self.as(response_class)
+      !(response.as(response_class) == self.as(response_class))
     else
       false
     end
