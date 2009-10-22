@@ -33,9 +33,25 @@ survey "&#8220;Kitchen Sink&#8221; survey" do
     condition_D :q_2, "==", :a_4
 
     # When :pick isn't specified, the default is :none (no checkbox or radio button)
-    q "What is your name?"
-    a :string
-
+    q_montypython3 "What... is your name? (e.g. It is 'Arthur', King of the Britons)"
+    a_1 :string
+    
+    # Dependency conditions can refer to any value, not just answer_id. An answer_reference still needs to be specified, to know which answer you would like to check
+    q_montypython4 "What... is your quest? (e.g. To seek the Holy Grail)"
+    a_1 :string
+    dependency :rule => "A"
+    condition_A :q_montypython3, "==", {:string_value => "It is 'Arthur', King of the Britons", :answer_reference => "1"}
+    
+    # http://www.imdb.com/title/tt0071853/quotes
+    q_montypython5 "What... is the air-speed velocity of an unladen swallow? (e.g. What do you mean? An African or European swallow?)"
+    a_1 :string
+    dependency :rule => "A"
+    condition_A :q_montypython4, "==", {:string_value => "To seek the Holy Grail", :answer_reference => "1"}
+    
+    label "Huh? I-- I don't know that! Auuuuuuuugh!"
+    dependency :rule => "A"
+    condition_A :q_montypython5, "==", {:string_value => "What do you mean? An African or European swallow?", :answer_reference => "1"}
+    
     # Surveys, sections, questions, groups, and answers all take the following reference arguments
     # :reference_identifier   # usually from paper
     # :data_export_identifier # data export
