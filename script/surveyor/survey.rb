@@ -83,6 +83,9 @@ class Survey
       section.questions.each do |question| 
         question.dependency.dependency_conditions.each { |con| con.reconcile_dependencies} unless question.dependency.nil?
       end
+      section.question_groups.each do |group|
+        group.dependency.dependency_conditions.each { |con| con.reconcile_dependencies} unless group.dependency.nil?
+      end
     end  
   end
 

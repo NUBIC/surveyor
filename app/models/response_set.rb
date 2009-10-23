@@ -105,7 +105,7 @@ class ResponseSet < ActiveRecord::Base
   
   def all_dependencies
     arr = dependencies.partition{|d| d.met?(self) }
-    {:show => arr[0].map{|d| d.question_group_id.nil? ? "question_#{d.question_id}" : "question_group#{d.question_group_id}"}, :hide => arr[1].map{|d| d.question_group_id.nil? ? "question_#{d.question_id}" : "question_group#{d.question_group_id}"}}
+    {:show => arr[0].map{|d| d.question_group_id.nil? ? "question_#{d.question_id}" : "question_group_#{d.question_group_id}"}, :hide => arr[1].map{|d| d.question_group_id.nil? ? "question_#{d.question_id}" : "question_group_#{d.question_group_id}"}}
   end
   
   protected

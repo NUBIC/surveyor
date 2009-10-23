@@ -30,6 +30,7 @@ class QuestionGroup
 
   def to_file
     File.open(self.parser.question_groups_yml, File::CREAT|File::APPEND|File::WRONLY){ |f| f << to_yml }
+    if self.dependency then self.dependency.to_file end
   end
 
 end
