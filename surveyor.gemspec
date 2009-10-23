@@ -5,11 +5,11 @@
 
 Gem::Specification.new do |s|
   s.name = %q{surveyor}
-  s.version = "0.7.1"
+  s.version = "0.8.0"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Brian Chamberlain", "Mark Yoon"]
-  s.date = %q{2009-10-20}
+  s.date = %q{2009-10-23}
   s.email = %q{yoon@northwestern.edu}
   s.extra_rdoc_files = [
     "README.md"
@@ -32,6 +32,8 @@ Gem::Specification.new do |s|
      "app/models/response_set.rb",
      "app/models/survey.rb",
      "app/models/survey_section.rb",
+     "app/models/validation.rb",
+     "app/models/validation_condition.rb",
      "app/views/layouts/surveyor_default.html.erb",
      "app/views/partials/_answer.html.haml",
      "app/views/partials/_question.html.haml",
@@ -116,6 +118,8 @@ Gem::Specification.new do |s|
      "generators/surveyor/templates/migrate/create_responses.rb",
      "generators/surveyor/templates/migrate/create_survey_sections.rb",
      "generators/surveyor/templates/migrate/create_surveys.rb",
+     "generators/surveyor/templates/migrate/create_validation_conditions.rb",
+     "generators/surveyor/templates/migrate/create_validations.rb",
      "generators/surveyor/templates/surveys/kitchen_sink_survey.rb",
      "generators/surveyor/templates/tasks/surveyor.rb",
      "generators/test_surveyor/templates/TESTING_SURVEYOR",
@@ -124,6 +128,7 @@ Gem::Specification.new do |s|
      "init.rb",
      "install.rb",
      "lib/surveyor.rb",
+     "lib/surveyor/acts_as_response.rb",
      "lib/surveyor/config.rb",
      "lib/tasks/surveyor_tasks.rake",
      "lib/tiny_code.rb",
@@ -154,6 +159,8 @@ Gem::Specification.new do |s|
      "spec/models/response_spec.rb",
      "spec/models/survey_section_spec.rb",
      "spec/models/survey_spec.rb",
+     "spec/models/validation_condition_spec.rb",
+     "spec/models/validation_spec.rb",
      "spec/rcov.opts",
      "spec/spec.opts",
      "spec/spec_helper.rb",
@@ -177,6 +184,8 @@ Gem::Specification.new do |s|
      "spec/models/response_spec.rb",
      "spec/models/survey_section_spec.rb",
      "spec/models/survey_spec.rb",
+     "spec/models/validation_condition_spec.rb",
+     "spec/models/validation_spec.rb",
      "spec/spec_helper.rb"
   ]
 
