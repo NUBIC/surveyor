@@ -26,37 +26,24 @@ class Dependency < ActiveRecord::Base
     write_attribute(:question_id, i) 
   end
   
-  # Is the method that determines if this dependency has been met within
-  # the provided response set
+  # Has this dependency has been met in the context of response_set?
+  # Substitutes the conditions hash into the rule and evaluates it
   def is_met?(response_set)
-    if keyed_pairs = keyed_conditions(response_set)
-      return(rule_evaluation(keyed_pairs))
-    else
-      return(false)
-    end
-  end
-
-  # Pairs up the substitution key with the evaluated condition result for substitution into the rule
-  # Example: If you have two dependency conditions with rule keys "A" and "B" in the rule "A or B"
-  # calling keyed_condition_pairs will return {:A => true, :B => false}
-  def keyed_conditions(response_set)
-    keyed_pairs = {}
-    # logger.debug dependency_conditions.inspect
-    self.dependency_conditions.each do |dc|
-      keyed_pairs.merge!(dc.to_hash(response_set))
-    end
-    return(keyed_pairs)
-  end
-
-  # Does the substiution and evaluation of the dependency rule with the keyed pairs
-  def rule_evaluation(keyed_pairs)
-    # subtitute into rule for evaluation
-    rgx = Regexp.new(self.dependency_conditions.map{|dc| ["a","o"].include?(dc.rule_key) ? "#{dc.rule_key}(?!nd|r)" : dc.rule_key}.join("|")) # Making a regexp to only look for the keys used in the child conditions
+    ch = conditions_hash(response_set)
+    return false if ch.blank?
     # logger.debug "rule: #{self.rule.inspect}"
     # logger.debug "rexp: #{rgx.inspect}"
-    # logger.debug "keyp: #{keyed_pairs.inspect}"
-    # logger.debug "subd: #{self.rule.gsub(rgx){|m| keyed_pairs[m.to_sym]}}"
-    eval(self.rule.gsub(rgx){|m| keyed_pairs[m.to_sym]}) # returns the evaluation of the rule and the conditions
+    # logger.debug "keyp: #{ch.inspect}"
+    # logger.debug "subd: #{self.rule.gsub(rgx){|m| ch[m.to_sym]}}"
+    rgx = Regexp.new(self.dependency_conditions.map{|dc| ["a","o"].include?(dc.rule_key) ? "#{dc.rule_key}(?!nd|r)" : dc.rule_key}.join("|")) # exclude and, or
+    eval(self.rule.gsub(rgx){|m| ch[m.to_sym]})
+  end
+  
+  # A hash of the conditions (keyed by rule_key) and their evaluation (boolean) in the context of response_set
+  def conditions_hash(response_set)
+    hash = {}
+    self.dependency_conditions.each{|dc| hash.merge!(dc.to_hash(response_set))}
+    return hash
   end
   
 end

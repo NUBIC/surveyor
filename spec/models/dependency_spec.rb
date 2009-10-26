@@ -72,17 +72,10 @@ describe Dependency, "when evaluating dependency conditions of a question in a r
   end
 
   it "returns the proper keyed pairs from the dependency conditions" do
-    @dep.keyed_conditions(@response_set).should == {:A => true}
-    @dep2.keyed_conditions(@response_set).should == {:A => true, :B => false}
-    @dep3.keyed_conditions(@response_set).should == {:A => true, :B => false}
-    @dep4.keyed_conditions(@response_set).should == {:A => true, :B => false, :C => true}
+    @dep.conditions_hash(@response_set).should == {:A => true}
+    @dep2.conditions_hash(@response_set).should == {:A => true, :B => false}
+    @dep3.conditions_hash(@response_set).should == {:A => true, :B => false}
+    @dep4.conditions_hash(@response_set).should == {:A => true, :B => false, :C => true}
   end
-  
-  it "evaluates the rule from the keyed pairs and return a boolean value" do
-    @dep.rule_evaluation(@dep.keyed_conditions(@response_set)).should be_true
-    @dep2.rule_evaluation(@dep2.keyed_conditions(@response_set)).should be_false
-    @dep3.rule_evaluation(@dep3.keyed_conditions(@response_set)).should be_true
-    @dep4.rule_evaluation(@dep4.keyed_conditions(@response_set)).should be_true
-  end
-  
+
 end
