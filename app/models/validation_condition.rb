@@ -13,27 +13,29 @@ class ValidationCondition < ActiveRecord::Base
   validates_inclusion_of :operator, :in => OPERATORS
   validates_uniqueness_of :rule_key, :scope => :validation_id
   
+  acts_as_response # includes "as" instance method
+  
   # Class methods
   def self.operators
     OPERATORS
   end
   
   # Instance Methods
-  # def to_hash(answer, response)
-  #   {rule_key.to_sym => self.is_valid?(response)}
-  # end
-  # 
-  # def is_valid?(response)
-  #   klass = response.answer.response_class
-  #   case self.operator
-  #   when "==", "<", ">", "<=", ">="
-  #     response.as(klass).send(self.operator, self.as(klass))
-  #   when "!="
-  #     !(response.as(klass) == self.as(klass))
-  #   when "=~"
-  #     response.as(klass).to_s =~ self.regexp
-  #   else
-  #     false
-  #   end
-  # end
+  def to_hash(response)
+    {rule_key.to_sym => self.is_valid?(response)}
+  end
+  
+  def is_valid?(response)
+    klass = response.answer.response_class
+    case self.operator
+    when "==", "<", ">", "<=", ">="
+      response.as(klass).send(self.operator, self.as(klass))
+    when "!="
+      !(response.as(klass) == self.as(klass))
+    when "=~"
+      !(response.as(klass).to_s =~ self.regexp).nil?
+    else
+      false
+    end
+  end
 end

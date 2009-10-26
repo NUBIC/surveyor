@@ -51,3 +51,32 @@ describe ValidationCondition do
   end
   
 end
+
+describe ValidationCondition, "validating responses" do
+  def test_var(vhash, ahash, rhash)
+    v = Factory(:validation_condition, vhash)
+    a = Factory(:answer, ahash)
+    r = Factory(:response, rhash.merge(:answer => a, :question => a.question))
+    return v.is_valid?(r)
+  end
+  
+  it "should validate a response by regexp" do
+    test_var({:operator => "=~", :regexp => /^[a-z]{1,6}$/}, {:response_class => "string"}, {:string_value => "clear"}).should be_true
+    test_var({:operator => "=~", :regexp => /^[a-z]{1,6}$/}, {:response_class => "string"}, {:string_value => "foobarbaz"}).should be_false
+  end
+  it "should validate a response by integer comparison" do
+    test_var({:operator => ">", :integer_value => 3}, {:response_class => "integer"}, {:integer_value => 4}).should be_true
+    test_var({:operator => "<=", :integer_value => 256}, {:response_class => "integer"}, {:integer_value => 512}).should be_false
+  end
+  it "should validate a response by (in)equality" do
+    test_var({:operator => "!=", :datetime_value => Date.today + 1}, {:response_class => "date"}, {:datetime_value => Date.today}).should be_true
+    test_var({:operator => "==", :answer_id => 2}, {:response_class => "answer"}, {:answer_id => 2}).should be_false
+  end
+  it "should represent itself as a hash" do
+    @v = Factory(:validation_condition, :rule_key => "A")
+    @v.stub!(:is_valid?).and_return(true)
+    @v.to_hash("foo").should == {:A => true}
+    @v.stub!(:is_valid?).and_return(false)
+    @v.to_hash("foo").should == {:A => false}
+  end
+end
