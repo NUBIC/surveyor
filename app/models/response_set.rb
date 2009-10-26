@@ -100,11 +100,11 @@ class ResponseSet < ActiveRecord::Base
   end
   
   def unanswered_dependencies
-    dependencies.select{|d| d.met?(self) and self.has_not_answered_question?(d.question)}.map(&:question)
+    dependencies.select{|d| d.is_met?(self) and self.has_not_answered_question?(d.question)}.map(&:question)
   end
   
   def all_dependencies
-    arr = dependencies.partition{|d| d.met?(self) }
+    arr = dependencies.partition{|d| d.is_met?(self) }
     {:show => arr[0].map{|d| d.question_group_id.nil? ? "question_#{d.question_id}" : "question_group_#{d.question_group_id}"}, :hide => arr[1].map{|d| d.question_group_id.nil? ? "question_#{d.question_id}" : "question_group_#{d.question_group_id}"}}
   end
   

@@ -28,7 +28,7 @@ class Dependency < ActiveRecord::Base
   
   # Is the method that determines if this dependency has been met within
   # the provided response set
-  def met?(response_set)
+  def is_met?(response_set)
     if keyed_pairs = keyed_conditions(response_set)
       return(rule_evaluation(keyed_pairs))
     else

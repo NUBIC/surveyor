@@ -33,7 +33,7 @@ class Question < ActiveRecord::Base
     self.dependency != nil
   end
   def triggered?(response_set)
-    dependent? ? self.dependency.met?(response_set) : true
+    dependent? ? self.dependency.is_met?(response_set) : true
   end
   def css_class(response_set)
     [(dependent? ? "dependent" : nil), (triggered?(response_set) ? nil : "hidden"), custom_class].compact.join(" ")

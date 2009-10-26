@@ -22,14 +22,14 @@ describe QuestionGroup do
   it "should return its dependency class" do
     @dependency = Factory(:dependency)
     @question_group.dependency = @dependency
-    @dependency.should_receive(:met?).and_return(true)
+    @dependency.should_receive(:is_met?).and_return(true)
     @question_group.css_class(Factory(:response_set)).should == "dependent"
 
-    @dependency.should_receive(:met?).and_return(false)
+    @dependency.should_receive(:is_met?).and_return(false)
     @question_group.css_class(Factory(:response_set)).should == "dependent hidden"
 
     @question_group.custom_class = "foo bar"
-    @dependency.should_receive(:met?).and_return(false)
+    @dependency.should_receive(:is_met?).and_return(false)
     @question_group.css_class(Factory(:response_set)).should == "dependent hidden foo bar"
   end
 end

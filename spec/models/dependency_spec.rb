@@ -65,10 +65,10 @@ describe Dependency, "when evaluating dependency conditions of a question in a r
   end
 
   it "knows if the dependencies are met" do
-    @dep.met?(@response_set).should be_true
-    @dep2.met?(@response_set).should be_false
-    @dep3.met?(@response_set).should be_true
-    @dep4.met?(@response_set).should be_true
+    @dep.is_met?(@response_set).should be_true
+    @dep2.is_met?(@response_set).should be_false
+    @dep3.is_met?(@response_set).should be_true
+    @dep4.is_met?(@response_set).should be_true
   end
 
   it "returns the proper keyed pairs from the dependency conditions" do

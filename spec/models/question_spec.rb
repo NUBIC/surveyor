@@ -67,7 +67,7 @@ describe Question, "with dependencies" do
 
   it "should check its dependency" do
     @dependency = mock_model(Dependency)
-    @dependency.stub!(:met?).with(@rs).and_return(true)
+    @dependency.stub!(:is_met?).with(@rs).and_return(true)
     @question.stub!(:dependency).and_return(@dependency)
     @question.triggered?(@rs).should == true
   end
