@@ -4,9 +4,6 @@ class Dependency < ActiveRecord::Base
   belongs_to :question_group
   has_many :dependency_conditions
   
-  # Scopes
-  named_scope :depending_on_questions, lambda {|question_ids| {:joins => :dependency_conditions, :conditions => {:dependency_conditions => {:question_id => question_ids}} }}
-  
   # Validations
   validates_presence_of :rule
   validates_format_of :rule, :with => /^(?:and|or|\)|\(|[A-Z]|\s)+$/ #TODO properly formed parenthesis etc.

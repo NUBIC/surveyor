@@ -8,10 +8,7 @@ class Response < ActiveRecord::Base
   
   # Validations
   validates_presence_of :response_set_id, :question_id, :answer_id
-  
-  # Named scopes
-  named_scope :in_section, lambda {|section_id| {:include => :question, :conditions => ['questions.survey_section_id =?', section_id.to_i ]}}
-
+      
   acts_as_response # includes "as" instance method
 
   def selected

@@ -112,7 +112,8 @@ class ResponseSet < ActiveRecord::Base
   
   def dependencies
     question_ids = Question.find_all_by_survey_section_id(current_section_id).map(&:id)
-    Dependency.depending_on_questions(question_ids)
+    depdendecy_ids = DependencyCondition.all(:conditions => {:question_id => question_ids}).map(&:dependency_id)
+    Dependency.find(depdendecy_ids, :include => :dependency_conditions)
   end
 end
 
