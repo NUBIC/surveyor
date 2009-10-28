@@ -22,7 +22,7 @@ class ValidationCondition < ActiveRecord::Base
   
   # Instance Methods
   def to_hash(response)
-    {rule_key.to_sym => self.is_valid?(response)}
+    {rule_key.to_sym => (response.nil? ? false : self.is_valid?(response))}
   end
   
   def is_valid?(response)
@@ -33,7 +33,7 @@ class ValidationCondition < ActiveRecord::Base
     when "!="
       !(response.as(klass) == self.as(klass))
     when "=~"
-      !(response.as(klass).to_s =~ self.regexp).nil?
+      !(response.as(klass).to_s =~ Regexp.new(self.regexp || "")).nil?
     else
       false
     end
