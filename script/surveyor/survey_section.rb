@@ -3,12 +3,10 @@ require File.dirname(__FILE__) + '/question'
 require File.dirname(__FILE__) + '/answer'
 require File.dirname(__FILE__) + '/dependency'
 require File.dirname(__FILE__) + '/dependency_condition'
-require File.dirname(__FILE__) + '/columnizer'
 require 'activesupport'
 #require 'activesupport/lib/active_support/core_ext/string/inflections'
 
 class SurveySection
-  include Columnizer
 
   # Context, Content, Display, Reference, Children, Placeholders
   attr_accessor :id, :parser, :survey_id
