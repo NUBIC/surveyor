@@ -1,8 +1,4 @@
-require File.dirname(__FILE__) + '/columnizer'
-
 class Question
-  include Columnizer
-  
   # Context, Content, Reference, Display, Children
   attr_accessor :id, :parser, :survey_section_id, :question_group_id
   attr_accessor :text, :short_text, :help_text, :pick
@@ -26,7 +22,7 @@ class Question
       :pick => :none,
       :display_type => :default,
       :is_mandatory => true,
-      :data_export_identifier => Columnizer.to_normalized_column(text)
+      :data_export_identifier => Surveyor.to_normalized_string(text)
     }
   end
   

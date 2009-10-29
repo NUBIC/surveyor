@@ -5,9 +5,8 @@ describe Answer, " when first created" do
 
   before do
     question = mock("Question", :id => 2, :parser => mock("Parser", :new_answer_id => 1))
-    args = {:text => "No / Rarely", :help_text => "Never or rarely ever", :reference_identifier => "b3a_1"}
-    options = {}
-    @ans = Answer.new(question, args, options)
+    options = {:help_text => "Never or rarely ever", :reference_identifier => "b3a_1"}
+    @ans = Answer.new(question, "No / Rarely", options)
   end
   
   it "should set inititalized variables to those passed in" do
