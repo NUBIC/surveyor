@@ -1,7 +1,6 @@
 require File.dirname(__FILE__) + '/survey_section'
 
 class Survey
-  include Columnizer
   # Context, Content, Reference, Expiry, Display, Children
   attr_accessor :id, :parser
   attr_accessor :title, :description

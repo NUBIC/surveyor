@@ -36,18 +36,17 @@ class DependencyCondition
 
   def reconcile_dependencies
     # Looking up references to questions and answers for linking the dependency objects
-    puts "Looking up references for question: #{@question_reference}"
-    ref_question = Survey.current_survey.find_question_by_reference(@question_reference) # TODO change this. Argh. I can't think of a better way to get a hold of this reference here...
-    if ref_question
-      puts "  found question: #{ref_question.data_export_identifier} (id:#{ref_question.id})"
+    puts "Looking up question: #{@question_reference}"
+    if (ref_question = Survey.current_survey.find_question_by_reference(@question_reference)) # TODO change this. Argh. I can't think of a better way to get a hold of this reference here...
+      puts "  found question: #{ref_question.text} (id:#{ref_question.id})"
       @question_id = ref_question.id
-      ref_answer = ref_question.find_answer_by_reference(@answer_reference)
-      if ref_answer 
+      puts "Looking up answer: #{@answer_reference}"
+      if (ref_answer = ref_question.find_answer_by_reference(@answer_reference))
+        puts "  found answer: '#{ref_answer.text}' (id:#{ref_answer.id})"
         @answer_id = ref_answer.id
       else
         raise "Could not find referenced answer #{@answer_reference}"
       end
-        
     else
       raise "Could not find referenced question #{@question_reference}"
     end

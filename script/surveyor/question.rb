@@ -35,15 +35,7 @@ class Question
   end
   
   def find_answer_by_reference(ref_id)
-    answer = nil
-    count = 0
-    puts "Looking up answer with ref: #{ref_id}"
-    while answer.nil? and count < self.answers.size
-      answer = self.answers[count] if self.answers[count].reference_identifier == ref_id
-      count += 1
-    end
-    puts "  found answer: '#{answer.text}' (id:#{answer.id})"  unless answer.nil?
-    answer
+    self.answers.detect{|a| a.reference_identifier == ref_id}
   end
   
   def yml_attrs
