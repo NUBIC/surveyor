@@ -1,5 +1,4 @@
 class Survey < ActiveRecord::Base
-  include TinyCode
   
   # Associations
   has_many :sections, :class_name => "SurveySection", :order => 'display_order'

@@ -1,6 +1,6 @@
-require File.expand_path(File.dirname(__FILE__) + '/../columnizer')
+require File.expand_path(File.dirname(__FILE__) + '/../../lib/surveyor')
 
-describe Columnizer do
+describe Surveyor do
   it "should create a normalized code from the answer text" do
     # The answer object should take the title of the text and convert it to a code that is more appropirate for a database entry
     
@@ -23,7 +23,7 @@ describe Columnizer do
               "temporary_disability_expect_return_job" ]
     
     strings.each_with_index do |s, i|
-      Columnizer.to_normalized_column(s).should == codes[i]
+      Surveyor.to_normalized_string(s).should == codes[i]
     end
   end
 end

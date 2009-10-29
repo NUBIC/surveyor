@@ -34,7 +34,7 @@ class SurveySection
   end
 
   def default_options(title)
-    { :data_export_identifier => Columnizer.to_normalized_column(title)
+    { :data_export_identifier => Surveyor.to_normalized_string(title)
     }
   end
 

@@ -1,8 +1,4 @@
-require File.dirname(__FILE__) + '/columnizer'
-
 class Answer  
-  include Columnizer
-
   # Context, Content, Reference, Display
   attr_accessor :id, :parser, :question_id
   attr_accessor :text, :short_text, :help_text, :weight, :response_class
@@ -21,7 +17,7 @@ class Answer
   
   def default_options(text)
     { :short_text => text,
-      :data_export_identifier => Columnizer.to_normalized_column(text),
+      :data_export_identifier => Surveyor.to_normalized_string(text),
       :is_exclusive => false,
       :hide_label => false,
       :response_class => "answer"

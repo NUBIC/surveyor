@@ -27,7 +27,7 @@ class Survey
     self.parser = parser
     self.title = title
     self.survey_sections = []
-    self.access_code = Columnizer.to_normalized_column(title)
+    self.access_code = Surveyor.to_normalized_string(title)
     # self.default_options(title).merge(options).each{|key,value| self.instance_variable_set("@#{key}", value)}
     Survey.current_survey = self
   end
