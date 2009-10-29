@@ -25,12 +25,16 @@ class SurveyorGenerator < Rails::Generator::Base
       # not using m.migration_template because all migration timestamps end up the same, causing a collision when running rake db:migrate
       # coped functionality from RAILS_GEM_PATH/lib/rails_generator/commands.rb
       m.directory "db/migrate"
-      ["surveys", "survey_sections", "questions", "question_groups", "answers", "response_sets", "responses", "dependencies", "dependency_conditions", "validations", "validation_conditions"].each_with_index do |model, i|
-        unless (prev_migrations = Dir.glob("db/migrate/[0-9]*_*.rb").grep(/[0-9]+_create_#{model}.rb$/)).empty?
-          prev_migration_timestamp = prev_migrations[0].match(/([0-9]+)_create_#{model}.rb$/)[1]
+      [ "create_surveys", "create_survey_sections", "create_questions", "create_question_groups", "create_answers", 
+        "create_response_sets", "create_responses", 
+        "create_dependencies", "create_dependency_conditions", 
+        "create_validations", "create_validation_conditions", 
+        "add_display_order_to_surveys"].each_with_index do |model, i|
+        unless (prev_migrations = Dir.glob("db/migrate/[0-9]*_*.rb").grep(/[0-9]+_#{model}.rb$/)).empty?
+          prev_migration_timestamp = prev_migrations[0].match(/([0-9]+)_#{model}.rb$/)[1]
         end
-        # raise "Another migration is already named create_#{model}" if not Dir.glob("db/migrate/[0-9]*_*.rb").grep(/[0-9]+_create_#{model}.rb$/).empty?
-        m.template("migrate/create_#{model}.rb", "db/migrate/#{(prev_migration_timestamp || Time.now.utc.strftime("%Y%m%d%H%M%S").to_i + i).to_s}_create_#{model}.rb")
+        # raise "Another migration is already named #{model}" if not Dir.glob("db/migrate/[0-9]*_*.rb").grep(/[0-9]+_#{model}.rb$/).empty?
+        m.template("migrate/#{model}.rb", "db/migrate/#{(prev_migration_timestamp || Time.now.utc.strftime("%Y%m%d%H%M%S").to_i + i).to_s}_#{model}.rb")
       end
       
       # Generate CSS
