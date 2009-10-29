@@ -38,7 +38,7 @@ class SurveySection
 
   # This method_missing magic does all the heavy lifting for the DSL
   def method_missing(missing_method, *args, &block)    
-    method_name, reference_identifier = missing_method.to_s.split("_")
+    method_name, reference_identifier = missing_method.to_s.split("_", 2)
     
     case method_name
       
