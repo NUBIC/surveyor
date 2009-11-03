@@ -1,12 +1,3 @@
-require File.dirname(__FILE__) + '/base'
-require File.dirname(__FILE__) + '/question_group'
-require File.dirname(__FILE__) + '/question'
-require File.dirname(__FILE__) + '/answer'
-require File.dirname(__FILE__) + '/dependency'
-require File.dirname(__FILE__) + '/dependency_condition'
-require 'activesupport'
-#require 'activesupport/lib/active_support/core_ext/string/inflections'
-
 class SurveySection
 
   # Context, Content, Display, Reference, Children, Placeholders
@@ -38,9 +29,6 @@ class SurveySection
   def method_missing(missing_method, *args, &block)
     method_name, reference_identifier = missing_method.to_s.split("_", 2)
     opts = {:method_name => method_name, :reference_identifier => reference_identifier}
-    
-    puts "#{method_name} "
-    
     case method_name
     when "group", "g", "grid", "repeater"
       self.current_question_group = QuestionGroup.new(self, args, opts)

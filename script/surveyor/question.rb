@@ -33,13 +33,9 @@ class Question < Surveyor::Base
   def find_answer_by_reference(ref_id)
     self.answers.detect{|a| a.reference_identifier == ref_id}
   end
-  
-  def yml_attrs
-    super - ["@answers", "@dependency"]
-  end
 
   def to_file
-    File.open(self.parser.questions_yml, File::CREAT|File::APPEND|File::WRONLY){ |f| f << to_yml }
+    super
     self.answers.compact.map(&:to_file)
     if self.dependency then self.dependency.to_file end
   end

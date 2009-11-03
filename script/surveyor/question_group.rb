@@ -9,7 +9,7 @@ class QuestionGroup < Surveyor::Base
 
   def initialize(section, args = [], opts = {})
     self.parser = section.parser
-    self.id = parser.new_question_group_id  
+    self.id = parser.new_question_group_id
     super
   end
   
@@ -23,12 +23,8 @@ class QuestionGroup < Surveyor::Base
     (name = opts.delete(:method_name)) =~ /grid|repeater/ ? opts.merge(:display_type => name) : opts
   end
 
-  def yml_attrs
-    super - ["@dependency"]
-  end
-
   def to_file
-    File.open(self.parser.question_groups_yml, File::CREAT|File::APPEND|File::WRONLY){ |f| f << to_yml }
+    super
     if self.dependency then self.dependency.to_file end
   end
 

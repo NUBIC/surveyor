@@ -1,5 +1,3 @@
-require File.dirname(__FILE__) + '/survey_section'
-
 class Survey
   # Context, Content, Reference, Expiry, Display, Children
   attr_accessor :id, :parser
@@ -17,7 +15,6 @@ class Survey
   
   def self.current_survey=(value)
     @@current_survey = value
-    puts "Assigning current survey #{@@current_survey.title}"
   end
   
   # id, parser, and title required
@@ -98,8 +95,7 @@ class Survey
   end
 
   def to_file
-    "survey -#{self.title}- written to file..."
-    File.open(self.parser.surveys_yml, File::CREAT|File::APPEND|File::WRONLY) {|f| f << to_yml}
+    File.open(self.parser.send("#{self.class.name.underscore.pluralize}_yml"), File::CREAT|File::APPEND|File::WRONLY) {|f| f << to_yml}
     self.survey_sections.compact.map(&:to_file)
   end
  

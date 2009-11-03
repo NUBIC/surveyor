@@ -25,19 +25,15 @@ class DependencyCondition < Surveyor::Base
     {:rule_key => opts[:reference_identifier]}
   end
   
-  def yml_attrs
-    super - ["@question_reference", "@answer_reference", "@reference_identifier"]
-  end
-
   def reconcile_dependencies
     # Looking up references to questions and answers for linking the dependency objects
-    puts "Looking up question: #{@question_reference}"
+    print "Lookup Q ref #{@question_reference}:"
     if (ref_question = Survey.current_survey.find_question_by_reference(@question_reference)) # TODO change this. Argh. I can't think of a better way to get a hold of this reference here...
-      puts "  found question: #{ref_question.text} (id:#{ref_question.id})"
+      print " found Q#{ref_question.id} "
       @question_id = ref_question.id
-      puts "Looking up answer: #{@answer_reference}"
+      print "Lookup A ref #{@answer_reference}"
       if (ref_answer = ref_question.find_answer_by_reference(@answer_reference))
-        puts "  found answer: '#{ref_answer.text}' (id:#{ref_answer.id})"
+        print " found A#{ref_answer.id} "
         @answer_id = ref_answer.id
       else
         raise "Could not find referenced answer #{@answer_reference}"
@@ -45,10 +41,6 @@ class DependencyCondition < Surveyor::Base
     else
       raise "Could not find referenced question #{@question_reference}"
     end
-  end
-
-  def to_file
-    File.open(self.parser.dependency_conditions_yml, File::CREAT|File::APPEND|File::WRONLY) {|f| f << to_yml}
   end
 
 end

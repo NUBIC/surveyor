@@ -21,13 +21,9 @@ class Dependency < Surveyor::Base
     dc_obj.dependency_id = self.id
     self.dependency_conditions << dc_obj
   end
-  
-  def yml_attrs
-    instance_variables.sort - ["@parser", "@dependency_conditions"]
-  end
 
   def to_file
-    File.open(self.parser.dependencies_yml, File::CREAT|File::APPEND|File::WRONLY) {|f| f << to_yml}
+    super
     self.dependency_conditions.compact.map(&:to_file)  
   end
 

@@ -20,14 +20,13 @@ class Answer < Surveyor::Base
   end
   
   def parse_args(args)
-    a, b, c = args
-    case a
+    case args[0]
     when Hash # Hash
-      text_args(a[:text]).merge(a)
+      text_args(args[0][:text]).merge(args[0])
     when String # (String, Hash) or (String, Symbol, Hash)
-      text_args(a).merge(hash_from b).merge(c || {})
+      text_args(args[0]).merge(hash_from args[1]).merge(args[2] || {})
     when Symbol # (Symbol, Hash) or (Symbol, Symbol, Hash)
-      symbol_args(a).merge(hash_from b).merge(c || {})
+      symbol_args(args[0]).merge(hash_from args[1]).merge(args[2] || {})
     else
       text_args(nil)
     end
@@ -50,10 +49,6 @@ class Answer < Surveyor::Base
     when :integer, :date, :time, :datetime, :text, :datetime, :string
       text_args(arg.to_s.humanize).merge({:response_class => arg.to_s, :hide_label => true})
     end
-  end
-  
-  def to_file
-     File.open(self.parser.answers_yml, File::CREAT|File::APPEND|File::WRONLY){ |f| f << to_yml }
   end
   
 end
