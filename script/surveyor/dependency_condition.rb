@@ -1,4 +1,4 @@
-class DependencyCondition
+class DependencyCondition < Surveyor::Base
 
   # Context, Conditional, Value
   attr_accessor :id, :dependency_id, :rule_key, :parser
@@ -11,27 +11,22 @@ class DependencyCondition
     self.parser = dependency.parser
     self.id = parser.new_dependency_condition_id
     self.dependency_id = dependency.id
-    args_options = parse_args_options(args)
-    self.default_options().merge(options).merge(args_options).each{|key,value| self.instance_variable_set("@#{key}", value)}
+    super
   end
-  
-  def default_options()
+
+  def default_options
     { :operator => "==" }
   end
-  
-  def parse_args_options(args)
+  def parse_args(args)
     a0, a1, a2 = args
-    options = {:question_reference => a0.to_s.gsub("q_", ""), :operator => a1}
-    a2.is_a?(Hash) ? options.merge(a2) : options.merge({:answer_reference => a2.to_s.gsub("a_", "")})
+    {:question_reference => a0.to_s.gsub("q_", ""), :operator => a1}.merge(a2.is_a?(Hash) ? a2 : {:answer_reference => a2.to_s.gsub("a_", "")})
+  end
+  def parse_opts(opts)
+    {:rule_key => opts[:reference_identifier]}
   end
   
   def yml_attrs
-    instance_variables.sort - ["@parser", "@question_reference", "@answer_reference", "@reference_identifier"]
-  end
-  def to_yml
-    out = [ %(#{@data_export_identifier}_#{@id}:) ]
-    yml_attrs.each{|a| out << "  #{a[1..-1]}: #{instance_variable_get(a).is_a?(String) ? "\"#{instance_variable_get(a)}\"" : instance_variable_get(a) }"}
-    (out << nil ).join("\r\n")
+    super - ["@question_reference", "@answer_reference", "@reference_identifier"]
   end
 
   def reconcile_dependencies
@@ -53,9 +48,6 @@ class DependencyCondition
   end
 
   def to_file
-    # Reconciling the references used in the dsl to actual object ids
-    #puts "Reconcile of dependency:"
-   # reconcile_dependencies    
     File.open(self.parser.dependency_conditions_yml, File::CREAT|File::APPEND|File::WRONLY) {|f| f << to_yml}
   end
 

@@ -1,4 +1,4 @@
-class Answer  
+class Answer < Surveyor::Base
   # Context, Content, Reference, Display
   attr_accessor :id, :parser, :question_id
   attr_accessor :text, :short_text, :help_text, :weight, :response_class
@@ -9,61 +9,49 @@ class Answer
     self.parser = question ? question.parser : nil
     self.id = parser ? parser.new_answer_id : nil
     self.question_id = question ? question.id : nil
-
-    #self.text is set in args
-    args_options = parse_args_options(args)
-    self.default_options(args_options[:text]).merge(options).merge(args_options).each{|key,value| self.instance_variable_set("@#{key}", value)}
+    super
   end
   
-  def default_options(text)
-    { :short_text => text,
-      :data_export_identifier => Surveyor.to_normalized_string(text),
-      :is_exclusive => false,
+  def default_options
+    { :is_exclusive => false,
       :hide_label => false,
       :response_class => "answer"
     }
   end
   
-  def parse_args_options(args)
-    a0, a1, a2 = args
-    
-    # Hash
-    if a0.is_a?(Hash)
-      {:text => "Answer"}.merge(a0)
-      
-    # (String, Hash) or (String, Symbol, Hash)
-    elsif a0.is_a?(String)
-      a1.is_a?(Symbol) ? {:text => a0, :response_class => a1.to_s}.merge(a2 || {}) : {:text => a0}.merge(a1 || {})
-      
-    # (Symbol, Hash) or (Symbol, Symbol, Hash)
-    elsif a0.is_a?(Symbol)
-      shortcuts = case a0
-      when :other
-        {:text => "Other"}
-      when :other_and_string
-        {:text => "Other", :response_class => "string"}
-      when :none, :omit #a disabler erases and disables all other answer options (text, checkbox, dropdowns, etc). Unchecking the omit box is the only way to enable other options (except in the case limit => :one)
-        {:text => a0.to_s.humanize, :is_exclusive => true} # "omit" is no longer a response class... it's treated as any other answer type 
-      when :integer, :date, :time, :datetime, :text, :datetime, :string
-        {:text => a0.to_s.humanize, :response_class => a0.to_s, :hide_label => true}
-      else
-        {:text => a0.to_s.humanize}
-      end
-      a1.is_a?(Symbol) ? shortcuts.merge({:response_class => a1.to_s}).merge(a2 || {}) : shortcuts.merge(a1 || {})
+  def parse_args(args)
+    a, b, c = args
+    case a
+    when Hash # Hash
+      text_args(a[:text]).merge(a)
+    when String # (String, Hash) or (String, Symbol, Hash)
+      text_args(a).merge(hash_from b).merge(c || {})
+    when Symbol # (Symbol, Hash) or (Symbol, Symbol, Hash)
+      symbol_args(a).merge(hash_from b).merge(c || {})
     else
-      {:text => "Answer"}
+      text_args(nil)
     end
   end
-
-  def yml_attrs
-    instance_variables.sort - ["@parser"]
+  
+  def text_args(text = "Answer")
+    {:text => text.to_s, :short_text => text, :data_export_identifier => Surveyor.to_normalized_string(text)}
   end
-  def to_yml
-    out = [ %(#{@data_export_identifier}_#{@id}:) ]
-    yml_attrs.each{|a| out << "  #{a[1..-1]}: #{instance_variable_get(a).is_a?(String) ? "\"#{instance_variable_get(a)}\"" : instance_variable_get(a) }"}
-    (out << nil ).join("\r\n")
+  def hash_from(arg)
+    arg.is_a?(Symbol) ? {:response_class => arg.to_s} : arg.is_a?(Hash) ? arg : {}
   end
-
+  def symbol_args(arg)
+    case arg
+    when :other
+      text_args("Other")
+    when :other_and_string
+      text_args("Other").merge({:response_class => "string"})
+    when :none, :omit # is_exclusive erases and disables other checkboxes and input elements
+      text_args(arg.to_s.humanize).merge({:is_exclusive => true})
+    when :integer, :date, :time, :datetime, :text, :datetime, :string
+      text_args(arg.to_s.humanize).merge({:response_class => arg.to_s, :hide_label => true})
+    end
+  end
+  
   def to_file
      File.open(self.parser.answers_yml, File::CREAT|File::APPEND|File::WRONLY){ |f| f << to_yml }
   end

@@ -1,4 +1,4 @@
-class QuestionGroup
+class QuestionGroup < Surveyor::Base
 
   # Context, Content, Display, Children
   attr_accessor :id, :parser
@@ -7,25 +7,24 @@ class QuestionGroup
   attr_accessor :display_type, :custom_class, :custom_renderer
   attr_accessor :dependency
 
-  # id, section and text required
-  def initialize(section, args, options)
+  def initialize(section, args = [], opts = {})
     self.parser = section.parser
-    self.id = parser.new_question_group_id
-    self.text = args[0]
-    self.default_options().merge(options).merge(args[1] || {}).each{|key,value| self.instance_variable_set("@#{key}", value)}
+    self.id = parser.new_question_group_id  
+    super
   end
   
-  def default_options()
+  def default_options
     {:display_type => "default"}
+  end
+  def parse_args(args)
+    {:text => args[0] || "Question Group"}.merge(args[1] || {})
+  end
+  def parse_opts(opts)
+    (name = opts.delete(:method_name)) =~ /grid|repeater/ ? opts.merge(:display_type => name) : opts
   end
 
   def yml_attrs
-    instance_variables.sort - ["@parser", "@dependency"]
-  end
-  def to_yml
-    out = [ %(#{@id}:) ]
-    yml_attrs.each{|a| out << "  #{a[1..-1]}: #{instance_variable_get(a).is_a?(String) ? "\"#{instance_variable_get(a)}\"" : instance_variable_get(a) }"}
-    (out << nil ).join("\r\n")
+    super - ["@dependency"]
   end
 
   def to_file
