@@ -1,5 +1,4 @@
 class QuestionGroup < Surveyor::Base
-
   # Context, Content, Display, Children
   attr_accessor :id, :parser
   attr_accessor :text, :help_text
@@ -7,12 +6,6 @@ class QuestionGroup < Surveyor::Base
   attr_accessor :display_type, :custom_class, :custom_renderer
   attr_accessor :dependency
 
-  def initialize(section, args = [], opts = {})
-    self.parser = section.parser
-    self.id = parser.new_question_group_id
-    super
-  end
-  
   def default_options
     {:display_type => "default"}
   end

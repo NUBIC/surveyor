@@ -1,8 +1,38 @@
 module Surveyor
   class Base
+    
+    # Class level instance variable, because class variable are shared with subclasses
+    class << self
+      attr_accessor :children
+    end
+    
+    @children = []
+    
+    # Class methods
+    def self.inherited(subclass)
+      # set the class level instance variable default on subclasses
+      subclass.instance_variable_set(:@children, self.instance_variable_get(:@children))
+    end
+    
+    def self.has_children(*args)
+      args.each{|model| attr_accessor model}
+      self.instance_variable_set(:@children, args)
+    end
+    
+    # Instance methods
     def initialize(obj, args, opts)
-      print "#{self.class.name.gsub(/[a-z]/, "")[-1,1]}#{self.id} "
+      # inherit the parser from parent (obj)
+      self.parser = (obj.nil? ? nil : obj.class == SurveyParser ? obj : obj.parser)
+      # get a new id from the parser
+      self.id = parser.nil? ? nil : parser.send("new_#{self.class.name.underscore}_id")
+      # set [parent]_id to obj.id, if we have that attribute
+      self.send("#{obj.class.name.underscore}_id=", obj.nil? ? nil : obj.id) if self.respond_to?("#{obj.class.name.underscore}_id=") 
+      # initialize descendant models
+      self.class.children.each{|model| self.send("#{model}=", [])}
+      # combine default options, parsed opts, parsed args, and initialize instance variables
       self.default_options.merge(parse_opts(opts)).merge(parse_args(args)).each{|k,v| self.send("#{k.to_s}=", v)}
+      # print to the log
+      print "#{self.class.name.gsub(/[a-z]/, "")[-1,1]}#{self.id} "
     end
     def default_options
       {}
@@ -13,8 +43,10 @@ module Surveyor
     def parse_args(args)
       args[0]
     end
+    
+    # Filter out attributes that shouldn't be in fixtures, including children, parser, placeholders
     def yml_attrs
-      instance_variables.sort - ["@parser", "@dependency", "@answers", "@dependency_conditions", "@question_reference", "@answer_reference"]
+      instance_variables.sort - self.class.children.map{|model| "@#{model.to_s}"} - %w(@parser @dependency @question_reference @answer_reference)
     end
     def to_yml
       out = [ %(#{@data_export_identifier}_#{@id}:) ]
@@ -23,6 +55,7 @@ module Surveyor
     end
     def to_file
       File.open(self.parser.send("#{self.class.name.underscore.pluralize}_yml"), File::CREAT|File::APPEND|File::WRONLY) {|f| f << to_yml}
+      self.class.children.each{|model| self.send(model).compact.map(&:to_file)}
     end
   end
 end

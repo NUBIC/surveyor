@@ -5,13 +5,6 @@ class Answer < Surveyor::Base
   attr_accessor :reference_identifier, :data_export_identifier, :common_namespace, :common_identitier
   attr_accessor :display_order, :is_exclusive, :hide_label, :display_length, :custom_class, :custom_renderer
   
-  def initialize(question, args, options)
-    self.parser = question ? question.parser : nil
-    self.id = parser ? parser.new_answer_id : nil
-    self.question_id = question ? question.id : nil
-    super
-  end
-  
   def default_options
     { :is_exclusive => false,
       :hide_label => false,

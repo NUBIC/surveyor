@@ -6,14 +6,6 @@ class DependencyCondition < Surveyor::Base
   attr_accessor :answer_id, :datetime_value, :integer_value, :float_value, :unit, :text_value, :string_value, :response_other
   attr_accessor :question_reference, :answer_reference
   
-  # id, dependency, and question_id required
-  def initialize(dependency, args, options)
-    self.parser = dependency.parser
-    self.id = parser.new_dependency_condition_id
-    self.dependency_id = dependency.id
-    super
-  end
-
   def default_options
     { :operator => "==" }
   end
@@ -28,7 +20,7 @@ class DependencyCondition < Surveyor::Base
   def reconcile_dependencies
     # Looking up references to questions and answers for linking the dependency objects
     print "Lookup Q ref #{@question_reference}:"
-    if (ref_question = Survey.current_survey.find_question_by_reference(@question_reference)) # TODO change this. Argh. I can't think of a better way to get a hold of this reference here...
+    if (ref_question = parser.current_survey.find_question_by_reference(@question_reference))
       print " found Q#{ref_question.id} "
       @question_id = ref_question.id
       print "Lookup A ref #{@answer_reference}"

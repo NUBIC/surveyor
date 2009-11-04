@@ -1,20 +1,12 @@
 class Question < Surveyor::Base
-  
   # Context, Content, Reference, Display, Children
   attr_accessor :id, :parser, :survey_section_id, :question_group_id
   attr_accessor :text, :short_text, :help_text, :pick
   attr_accessor :reference_identifier, :data_export_identifier, :common_namespace, :common_identifier
   attr_accessor :display_order, :display_type, :is_mandatory, :display_width, :custom_class, :custom_renderer
-  attr_accessor :answers, :dependency
+  attr_accessor :dependency
+  has_children :answers
 
-  def initialize(section, args = [], opts = {})
-    self.parser = section.parser
-    self.id = parser.new_question_id
-    self.survey_section_id = section.id
-    self.answers = []
-    super
-  end
-  
   def default_options
     { :pick => :none,
       :display_type => :default,
@@ -36,7 +28,6 @@ class Question < Surveyor::Base
 
   def to_file
     super
-    self.answers.compact.map(&:to_file)
     if self.dependency then self.dependency.to_file end
   end
 
