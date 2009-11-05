@@ -4,7 +4,7 @@ require 'survey_section'
 describe SurveySection, "when first created" do
 
   before(:each) do
-    @section = SurveySection.new(1, mock("Survey", :id => 2, :parser => mock("Parser")), "Demographics", {})
+    @section = SurveySection.new(mock("Survey", :id => 2, :parser => mock("Parser", :new_survey_section_id => 1)), ["Demographics"], {})
   end
   
   it "should generate a data export identifier" do

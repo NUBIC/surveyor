@@ -1,4 +1,4 @@
-class QuestionGroup < Surveyor::Base
+class QuestionGroup < SurveyParser::Base
   # Context, Content, Display, Children
   attr_accessor :id, :parser
   attr_accessor :text, :help_text

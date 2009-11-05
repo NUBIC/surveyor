@@ -1,4 +1,4 @@
-class Survey < Surveyor::Base
+class Survey < SurveyParser::Base
   # Context, Content, Reference, Expiry, Display
   attr_accessor :id, :parser
   attr_accessor :title, :description

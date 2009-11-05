@@ -4,6 +4,7 @@ require 'question'
 describe Question, " when first created" do
   before do    
     section = mock("SurveySection", :id => 2, :parser => mock("Parser", :new_question_id => 1))
+    section.stub!(:class => SurveySection)
     args = {:help_text => "Please give a rough estimate", :reference_identifier => "B3"}
     options = {}
     @ques = Question.new(section, ["In the past 12 months how many times have you been to a doctor?", args], options)

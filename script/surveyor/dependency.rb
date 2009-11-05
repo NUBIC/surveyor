@@ -1,4 +1,4 @@
-class Dependency < Surveyor::Base
+class Dependency < SurveyParser::Base
   # Context, Conditional, Children
   attr_accessor :id, :question_id, :question_group_id, :parser
   attr_accessor :rule

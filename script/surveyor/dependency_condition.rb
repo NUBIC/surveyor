@@ -1,4 +1,4 @@
-class DependencyCondition < Surveyor::Base
+class DependencyCondition < SurveyParser::Base
 
   # Context, Conditional, Value
   attr_accessor :id, :dependency_id, :rule_key, :parser

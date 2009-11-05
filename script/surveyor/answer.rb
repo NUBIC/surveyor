@@ -1,4 +1,4 @@
-class Answer < Surveyor::Base
+class Answer < SurveyParser::Base
   # Context, Content, Reference, Display
   attr_accessor :id, :parser, :question_id
   attr_accessor :text, :short_text, :help_text, :weight, :response_class

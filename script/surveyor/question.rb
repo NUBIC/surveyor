@@ -1,4 +1,4 @@
-class Question < Surveyor::Base
+class Question < SurveyParser::Base
   # Context, Content, Reference, Display, Children
   attr_accessor :id, :parser, :survey_section_id, :question_group_id
   attr_accessor :text, :short_text, :help_text, :pick

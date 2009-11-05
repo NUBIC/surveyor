@@ -1,4 +1,4 @@
-module Surveyor
+module SurveyParser
   class Base
     
     # Class level instance variable, because class variable are shared with subclasses
@@ -41,7 +41,7 @@ module Surveyor
       opts.reject{|k,v| k == :method_name} # toss the method name by default
     end
     def parse_args(args)
-      args[0]
+      args[0] || {}
     end
     
     # Filter out attributes that shouldn't be in fixtures, including children, parser, placeholders
