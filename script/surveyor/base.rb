@@ -1,4 +1,4 @@
-module SurveyParser
+class SurveyParser
   class Base
     
     # Class level instance variable, because class variable are shared with subclasses
