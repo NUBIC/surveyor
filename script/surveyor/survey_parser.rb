@@ -13,6 +13,7 @@ class SurveyParser
   
   # Class methods
   def self.parse(file_name)
+    self.define_counter_methods(@@models)
     puts "\n--- Parsing '#{file_name}' ---"
     parser = SurveyParser.new
     parser.instance_eval(File.read(file_name))
@@ -20,30 +21,31 @@ class SurveyParser
     puts "--- End of parsing ---\n\n"
   end
 
-  # Instance methods
-  # no more "ARRRGH, EVIL GLOBALS!!!"
-  def initialize
-    self.surveys = []
-    self.define_counter_methods(@@models)
-    self.initialize_fixtures(@@models.map(&:pluralize), File.join(RAILS_ROOT, "surveys", "fixtures"))
-  end
-  
   # new_survey_id, new_survey_section_id, etc.
-  def define_counter_methods(names)
+  def self.define_counter_methods(names)
     names.each do |name|
-      self.instance_variable_set("@last_#{name}_id", 0)
-      self.class.send(:define_method, "new_#{name}_id") do # self.class.send is a hack - define_method is private
-        self.instance_variable_set("@last_#{name}_id", self.instance_variable_get("@last_#{name}_id") + 1)
+      define_method("new_#{name}_id") do
+        instance_variable_set("@last_#{name}_id", instance_variable_get("@last_#{name}_id") + 1)
       end
     end
+  end
+  
+  # Instance methods
+  def initialize
+    self.surveys = []
+    self.grid_answers = []
+    initialize_counters(@@models)
+    initialize_fixtures(@@models.map(&:pluralize), File.join(RAILS_ROOT, "surveys", "fixtures"))
+  end
+  
+  # last_survey_id, last_survey_section_id, etc.
+  def initialize_counters(names)
+    names.each{|name| instance_variable_set("@last_#{name}_id", 0)}
   end
 
   # surveys_yml, survey_sections_yml, etc.
   def initialize_fixtures(names, path)
-    names.each do |name|
-      file = self.instance_variable_set("@#{name}_yml", "#{path}/#{name}.yml")
-      File.truncate(file, 0) if File.exist?(file)
-    end
+    names.each {|name| file = self.instance_variable_set("@#{name}_yml", "#{path}/#{name}.yml"); File.truncate(file, 0) if File.exist?(file) }
   end
 
   # This method_missing magic does all the heavy lifting for the DSL
@@ -99,7 +101,22 @@ class SurveyParser
   def evaluate_the(model, &block)
     raise "Error: A #{model.humanize} cannot be empty" unless block_given?
     self.instance_eval(&block)
-    self.send("clear_current_#{model}")
+    self.send("clear_current", model)
+  end
+  
+  def clear_current(model)
+    puts "clear_current #{model}"
+    case model
+    when "survey"
+      current_survey.reconcile_dependencies unless current_survey.nil?
+    when "question_group"
+      grid_answers = []
+      clear_current("question")
+    when "question"
+      @current_dependency = nil
+    end
+    instance_variable_set("@current_#{model}", nil)
+    model.classify.constantize.send(:children).each{|m| clear_current(m.to_s)}
   end
   
   def current_survey=(s)
@@ -107,44 +124,47 @@ class SurveyParser
     self.surveys << s
     @current_survey = s
   end
+  def clear_current_survey
+    current_survey.reconcile_dependencies unless current_survey.nil?
+    # @current_survey = nil
+    # clear_current_survey_section
+  end
+  
   def current_survey_section=(s)
     clear_current_survey_section
     self.current_survey.survey_sections << s
     @current_survey_section = s 
   end
+  def clear_current_survey_section
+    # @current_survey_section = nil
+    # clear_current_question_group
+  end
+  
   def current_question_group=(g)
     clear_current_question_group
     self.current_survey_section.question_groups << g
     @current_question_group = g
   end
+  def clear_current_question_group
+    @current_question_group = nil
+    self.grid_answers = []
+    # clear_current_question
+  end
+  
   def current_question=(q)
     clear_current_question
     self.current_survey_section.questions << q
     @current_question = q
   end
+  def clear_current_question
+    @current_question = nil
+    @current_dependency = nil
+  end
+  
   def current_dependency=(d)
     raise "Error: No question or question group" unless (dependent = self.current_question_group || self.current_question)
     dependent.dependency = d
     @current_dependency = d
-  end
-  
-  def clear_current_survey
-    current_survey.reconcile_dependencies unless current_survey.nil?
-    @current_survey = nil
-    clear_current_survey_section
-  end
-  def clear_current_survey_section
-    @current_survey_section = nil
-    clear_current_question_group
-  end
-  def clear_current_question_group
-    @current_question_group = nil
-    self.grid_answers = []
-    clear_current_question
-  end
-  def clear_current_question
-    @current_question = nil
-    @current_dependency = nil
   end
   
   def in_a_grid?
@@ -159,11 +179,6 @@ class SurveyParser
       my_answer.parser = self
       self.current_question.answers << my_answer
     end
-  end
-  
-  # Used to find questions for dependency linking 
-  def find_question_by_reference(ref_id)
-    self.questions.detect{|q| q.reference_identifier == ref_id}
   end
 
   def to_files
