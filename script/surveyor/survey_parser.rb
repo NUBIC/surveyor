@@ -3,13 +3,13 @@ require 'activesupport' # for pluralize, humanize in ActiveSupport::CoreExtensio
 class SurveyParser
   @@models = %w(survey survey_section question_group question answer dependency dependency_condition)
   
-  # Require all models
+  # Require base and all models
   (%w(base) + @@models).each{|m| require File.dirname(__FILE__) + "/#{m}"}
 
-  # Children, fixtures
-  attr_accessor :surveys
+  # Attributes
+  attr_accessor :surveys, :grid_answers
   @@models.each{|m| attr_accessor "#{m.pluralize}_yml".to_sym } # for fixtures
-  attr_accessor :current_survey, :current_survey_section, :current_question_group, :current_question, :current_dependency, :grid_answers
+  (@@models - ["answer", "dependency_condition"]).each {|m| attr_accessor "current_#{m}".to_sym} # for current_model caches
   
   # Class methods
   def self.parse(file_name)
@@ -38,17 +38,17 @@ class SurveyParser
     initialize_fixtures(@@models.map(&:pluralize), File.join(RAILS_ROOT, "surveys", "fixtures"))
   end
   
-  # last_survey_id, last_survey_section_id, etc.
+  # @last_survey_id, @last_survey_section_id, etc.
   def initialize_counters(names)
     names.each{|name| instance_variable_set("@last_#{name}_id", 0)}
   end
 
-  # surveys_yml, survey_sections_yml, etc.
+  # @surveys_yml, @survey_sections_yml, etc.
   def initialize_fixtures(names, path)
-    names.each {|name| file = self.instance_variable_set("@#{name}_yml", "#{path}/#{name}.yml"); File.truncate(file, 0) if File.exist?(file) }
+    names.each {|name| file = instance_variable_set("@#{name}_yml", "#{path}/#{name}.yml"); File.truncate(file, 0) if File.exist?(file) }
   end
 
-  # This method_missing magic does all the heavy lifting for the DSL
+  # This method_missing does all the heavy lifting for the DSL
   def method_missing(missing_method, *args, &block)
     method_name, reference_identifier = missing_method.to_s.split("_", 2)
     opts = {:method_name => method_name, :reference_identifier => reference_identifier}
@@ -105,61 +105,46 @@ class SurveyParser
   end
   
   def clear_current(model)
-    puts "clear_current #{model}"
+    # puts "clear_current #{model}"
     case model
     when "survey"
-      current_survey.reconcile_dependencies unless current_survey.nil?
+      self.current_survey.reconcile_dependencies unless current_survey.nil?
     when "question_group"
-      grid_answers = []
+      self.grid_answers = []
       clear_current("question")
     when "question"
       @current_dependency = nil
     end
     instance_variable_set("@current_#{model}", nil)
-    model.classify.constantize.send(:children).each{|m| clear_current(m.to_s)}
+    model.classify.constantize.send(:children).each{|m| clear_current(m.to_s.singularize)}
   end
   
   def current_survey=(s)
-    clear_current_survey
+    clear_current "survey"
     self.surveys << s
     @current_survey = s
   end
-  def clear_current_survey
-    current_survey.reconcile_dependencies unless current_survey.nil?
-    # @current_survey = nil
-    # clear_current_survey_section
-  end
-  
   def current_survey_section=(s)
-    clear_current_survey_section
+    clear_current "survey_section"
     self.current_survey.survey_sections << s
     @current_survey_section = s 
   end
-  def clear_current_survey_section
-    # @current_survey_section = nil
-    # clear_current_question_group
-  end
-  
   def current_question_group=(g)
-    clear_current_question_group
+    clear_current "question_group"
     self.current_survey_section.question_groups << g
     @current_question_group = g
-  end
-  def clear_current_question_group
-    @current_question_group = nil
-    self.grid_answers = []
-    # clear_current_question
-  end
-  
+  end  
   def current_question=(q)
-    clear_current_question
+    clear_current "question"
     self.current_survey_section.questions << q
     @current_question = q
   end
-  def clear_current_question
-    @current_question = nil
-    @current_dependency = nil
-  end
+  
+  # def current_answer=(a)
+  #   raise "Error: No current question" if self.current_question.nil?
+  #   self.current_question.answers << a
+  #   @current_answer = a
+  # end
   
   def current_dependency=(d)
     raise "Error: No question or question group" unless (dependent = self.current_question_group || self.current_question)
@@ -174,7 +159,7 @@ class SurveyParser
   def add_grid_answers
     self.grid_answers.each do |grid_answer|
       my_answer = grid_answer.dup
-      my_answer.id = self.new_answer_id
+      my_answer.id = new_answer_id
       my_answer.question_id = self.current_question.id
       my_answer.parser = self
       self.current_question.answers << my_answer
