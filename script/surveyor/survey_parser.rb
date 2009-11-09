@@ -1,7 +1,7 @@
 require 'activesupport' # for pluralize, humanize in ActiveSupport::CoreExtensions::String::Inflections
 
 class SurveyParser
-  @@models = %w(survey survey_section question_group question answer dependency dependency_condition)
+  @@models = %w(survey survey_section question_group question answer dependency dependency_condition validation validation_condition)
   
   # Require base and all models
   (%w(base) + @@models).each{|m| require File.dirname(__FILE__) + "/#{m}"}
@@ -9,7 +9,7 @@ class SurveyParser
   # Attributes
   attr_accessor :surveys, :grid_answers
   @@models.each{|m| attr_accessor "#{m.pluralize}_yml".to_sym } # for fixtures
-  (@@models - ["answer", "dependency_condition"]).each {|m| attr_accessor "current_#{m}".to_sym} # for current_model caches
+  (@@models - %w(dependency_condition validation_condition)).each {|m| attr_accessor "current_#{m}".to_sym} # for current_model caches
   
   # Class methods
   def self.parse(file_name)
@@ -76,8 +76,12 @@ class SurveyParser
       
     when "condition", "c"
       drop_the &block
-      raise "Error: No current dependency" if self.current_dependency.nil?
-      self.current_dependency.dependency_conditions << DependencyCondition.new(current_dependency, args, opts)
+      raise "Error: No current dependency or validation for this condition" if self.current_dependency.nil? && self.current_validation.nil?
+      if self.current_dependency.nil?
+        self.current_validation.validation_conditions << ValidationCondition.new(self.current_validation, args, opts)
+      else
+        self.current_dependency.dependency_conditions << DependencyCondition.new(self.current_dependency, args, opts)
+      end
       
     when "answer", "a"
       drop_the &block
@@ -85,9 +89,13 @@ class SurveyParser
         self.grid_answers << Answer.new(nil, args, opts.merge(:display_order => grid_answers.size + 1))
       else
         raise "Error: No current question" if self.current_question.nil?
-        self.current_question.answers << Answer.new(self.current_question, args, opts.merge(:display_order => current_question.answers.size + 1))
+        self.current_answer = Answer.new(self.current_question, args, opts.merge(:display_order => current_question.answers.size + 1))
       end
-      
+    
+    when "validation", "v"
+      drop_the &block
+      self.current_validation = Validation.new(self.current_answer, args, opts)
+
     else
       raise "  ERROR: '#{method_name}' not valid method"
     
@@ -114,6 +122,8 @@ class SurveyParser
       clear_current("question")
     when "question"
       @current_dependency = nil
+    when "answer"
+      @current_validation = nil
     end
     instance_variable_set("@current_#{model}", nil)
     model.classify.constantize.send(:children).each{|m| clear_current(m.to_s.singularize)}
@@ -139,19 +149,22 @@ class SurveyParser
     self.current_survey_section.questions << q
     @current_question = q
   end
-  
-  # def current_answer=(a)
-  #   raise "Error: No current question" if self.current_question.nil?
-  #   self.current_question.answers << a
-  #   @current_answer = a
-  # end
-  
   def current_dependency=(d)
     raise "Error: No question or question group" unless (dependent = self.current_question_group || self.current_question)
     dependent.dependency = d
     @current_dependency = d
   end
-  
+  def current_answer=(a)
+    raise "Error: No current question" if self.current_question.nil?
+    self.current_question.answers << a
+    @current_answer = a
+  end  
+  def current_validation=(v)
+    clear_current "validation"
+    self.current_answer.validation = v
+    @current_validation = v
+  end
+
   def in_a_grid?
     self.current_question_group and self.current_question_group.display_type == "grid"
   end
@@ -162,7 +175,7 @@ class SurveyParser
       my_answer.id = new_answer_id
       my_answer.question_id = self.current_question.id
       my_answer.parser = self
-      self.current_question.answers << my_answer
+      self.current_answer = my_answer
     end
   end
 

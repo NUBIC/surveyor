@@ -4,7 +4,8 @@ class Answer < SurveyParser::Base
   attr_accessor :text, :short_text, :help_text, :weight, :response_class
   attr_accessor :reference_identifier, :data_export_identifier, :common_namespace, :common_identitier
   attr_accessor :display_order, :is_exclusive, :hide_label, :display_length, :custom_class, :custom_renderer
-  
+  attr_accessor :validation
+
   def default_options
     { :is_exclusive => false,
       :hide_label => false,
@@ -42,6 +43,10 @@ class Answer < SurveyParser::Base
     when :integer, :date, :time, :datetime, :text, :datetime, :string
       text_args(arg.to_s.humanize).merge({:response_class => arg.to_s, :hide_label => true})
     end
+  end
+  def to_file
+    super
+    if self.validation then self.validation.to_file end
   end
   
 end

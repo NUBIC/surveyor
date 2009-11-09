@@ -17,7 +17,4 @@ describe Validation, " when first created" do
     @validation.rule.should == "C"
   end
 
-  it "should output current state to yml" do
-  end
-
 end

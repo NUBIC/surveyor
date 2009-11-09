@@ -46,7 +46,7 @@ class SurveyParser
     
     # Filter out attributes that shouldn't be in fixtures, including children, parser, placeholders
     def yml_attrs
-      instance_variables.sort - self.class.children.map{|model| "@#{model.to_s}"} - %w(@parser @dependency @question_reference @answer_reference)
+      instance_variables.sort - self.class.children.map{|model| "@#{model.to_s}"} - %w(@parser @dependency @validation @question_reference @answer_reference)
     end
     def to_yml
       out = [ %(#{@data_export_identifier}_#{@id}:) ]

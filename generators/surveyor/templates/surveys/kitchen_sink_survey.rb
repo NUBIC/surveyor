@@ -65,6 +65,8 @@ survey "&#8220;Kitchen Sink&#8221; survey" do
     # Various types of respones can be accepted
     q "How many pets do you own?"
     a :integer
+    validation :rule => "A"
+    condition_A ">=", :integer_value => 0
     
     # Surveys, sections, questions, groups, and answers also take a custom css class for covenience in custom styling
     q "What is your address?", :custom_class => 'address'
