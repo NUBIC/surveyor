@@ -5,11 +5,11 @@
 
 Gem::Specification.new do |s|
   s.name = %q{surveyor}
-  s.version = "0.8.0"
+  s.version = "0.9.0"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Brian Chamberlain", "Mark Yoon"]
-  s.date = %q{2009-10-23}
+  s.date = %q{2009-11-09}
   s.email = %q{yoon@northwestern.edu}
   s.extra_rdoc_files = [
     "README.md"
@@ -109,6 +109,7 @@ Gem::Specification.new do |s|
      "generators/surveyor/templates/assets/stylesheets/ui.theme.css",
      "generators/surveyor/templates/initializers/haml.rb",
      "generators/surveyor/templates/initializers/surveyor.rb",
+     "generators/surveyor/templates/migrate/add_display_order_to_surveys.rb",
      "generators/surveyor/templates/migrate/create_answers.rb",
      "generators/surveyor/templates/migrate/create_dependencies.rb",
      "generators/surveyor/templates/migrate/create_dependency_conditions.rb",
@@ -131,25 +132,28 @@ Gem::Specification.new do |s|
      "lib/surveyor/acts_as_response.rb",
      "lib/surveyor/config.rb",
      "lib/tasks/surveyor_tasks.rake",
-     "lib/tiny_code.rb",
      "lib/xml_formatter.rb",
      "script/surveyor/answer.rb",
-     "script/surveyor/columnizer.rb",
+     "script/surveyor/base.rb",
      "script/surveyor/dependency.rb",
      "script/surveyor/dependency_condition.rb",
      "script/surveyor/question.rb",
      "script/surveyor/question_group.rb",
      "script/surveyor/specs/answer_spec.rb",
-     "script/surveyor/specs/question_dependency_spec.rb",
-     "script/surveyor/specs/question_group_spec.rb",
      "script/surveyor/specs/question_spec.rb",
-     "script/surveyor/specs/section_spec.rb",
+     "script/surveyor/specs/spec_helper.rb",
+     "script/surveyor/specs/survey_section_spec.rb",
+     "script/surveyor/specs/validation_condition_spec.rb",
+     "script/surveyor/specs/validation_spec.rb",
      "script/surveyor/survey.rb",
      "script/surveyor/survey_parser.rb",
      "script/surveyor/survey_section.rb",
+     "script/surveyor/validation.rb",
+     "script/surveyor/validation_condition.rb",
      "script/surveyor/whr_dsl.tmproj",
      "spec/controllers/surveyor_controller_spec.rb",
      "spec/factories.rb",
+     "spec/lib/surveyor_spec.rb",
      "spec/models/answer_spec.rb",
      "spec/models/dependency_condition_spec.rb",
      "spec/models/dependency_spec.rb",
@@ -175,6 +179,7 @@ Gem::Specification.new do |s|
   s.test_files = [
     "spec/controllers/surveyor_controller_spec.rb",
      "spec/factories.rb",
+     "spec/lib/surveyor_spec.rb",
      "spec/models/answer_spec.rb",
      "spec/models/dependency_condition_spec.rb",
      "spec/models/dependency_spec.rb",
