@@ -23,7 +23,7 @@ survey "&#8220;Kitchen Sink&#8221; survey" do
 
     # A dependent question, with conditions and rule to logically join them  
     # the question's reference identifier is "2a", and the answer's reference_identifier is "1"
-    # question reference identifiers used in conditions need to be unique for the lookups to work
+    # question reference identifiers used in conditions need to be unique on a survey for the lookups to work
     q_2a "Please explain why you don't like this color?"
     a_1 "explanation", :text
     dependency :rule => "A or B or C or D"
@@ -62,7 +62,7 @@ survey "&#8220;Kitchen Sink&#8221; survey" do
     a "what", :string
     a "where", :string
     
-    # Various types of respones can be accepted
+    # Various types of responses can be accepted, and validated
     q "How many pets do you own?"
     a :integer
     validation :rule => "A"
@@ -71,15 +71,24 @@ survey "&#8220;Kitchen Sink&#8221; survey" do
     # Surveys, sections, questions, groups, and answers also take a custom css class for covenience in custom styling
     q "What is your address?", :custom_class => 'address'
     a :text, :custom_class => 'mapper'
+    # validations can use regexp values
+    validation :rule => "A"
+    condition_A "=~", :regexp => /[0-9a-zA-z\. #]/
     
     # Questions, groups, and answers take a custom renderer (a partial in the application's views dir)
     # defaults are "/partials/question_group", "/partials/question", "/partials/answer", so the custom renderers should have a different name
     q "Pick your favorite date AND time" #, :custom_renderer => "/partials/custom_question"
     a :datetime
     
-    q "What time do you usually take a lunch break?"
-    a :time
+    q_time_lunch "What time do you usually take a lunch break?"
+    a_1 :time
     
+    # # validation conditions can look up the response to another question/answer pair
+    # q_time_dinner "What time do you usually take a dinner break?"
+    # a :time
+    # validation :rule => "A"
+    # condition_A ">=", :question_reference => "time_lunch", :answer_reference => "1"
+        
     q "When would you like to meet for dinner?"
     a :date
     
