@@ -5,7 +5,7 @@
 
 Gem::Specification.new do |s|
   s.name = %q{surveyor}
-  s.version = "0.9.1"
+  s.version = "0.9.2"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Brian Chamberlain", "Mark Yoon"]
@@ -137,6 +137,7 @@ Gem::Specification.new do |s|
      "script/surveyor/base.rb",
      "script/surveyor/dependency.rb",
      "script/surveyor/dependency_condition.rb",
+     "script/surveyor/parser.rb",
      "script/surveyor/question.rb",
      "script/surveyor/question_group.rb",
      "script/surveyor/specs/answer_spec.rb",
@@ -146,7 +147,6 @@ Gem::Specification.new do |s|
      "script/surveyor/specs/validation_condition_spec.rb",
      "script/surveyor/specs/validation_spec.rb",
      "script/surveyor/survey.rb",
-     "script/surveyor/survey_parser.rb",
      "script/surveyor/survey_section.rb",
      "script/surveyor/validation.rb",
      "script/surveyor/validation_condition.rb",
