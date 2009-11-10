@@ -7,7 +7,7 @@ namespace :surveyor do
   
   desc "generate survey fixtures from survey file"
   task :generate_fixtures => :environment do
-    require File.join(File.dirname(__FILE__), "../../script/surveyor/survey_parser")
+    require File.join(File.dirname(__FILE__), "../../script/surveyor/parser")
     raise "USAGE: file name required e.g. 'FILE=surveys/kitchen_sink_survey.rb'" if ENV["FILE"].blank?
     fixture_dir = File.join(RAILS_ROOT, "surveys", "fixtures")
     mkdir fixture_dir unless File.exists?(fixture_dir)
