@@ -1,13 +1,13 @@
 require File.expand_path(File.dirname(__FILE__) + '/spec_helper')
 require 'answer'
 
-describe Answer, " when first created" do
+describe SurveyParser::Answer, " when first created" do
 
   before(:each) do
-    question = mock("Question", :id => 2, :parser => mock("Parser", :new_answer_id => 1))
-    question.stub!(:class => Question)
+    question = mock("Question", :id => 2, :parser => mock("SurveyParser::Parser", :new_answer_id => 1))
+    question.stub!(:class => SurveyParser::Question)
     options = {:help_text => "Never or rarely ever", :reference_identifier => "b3a_1"}
-    @ans = Answer.new(question, ["No / Rarely"], options)
+    @ans = SurveyParser::Answer.new(question, ["No / Rarely"], options)
   end
   
   it "should set inititalized variables to those passed in" do

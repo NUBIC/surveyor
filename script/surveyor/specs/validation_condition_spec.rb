@@ -1,13 +1,13 @@
 require File.expand_path(File.dirname(__FILE__) + '/spec_helper')
 require 'validation_condition'
 
-describe ValidationCondition, " when first created" do
+describe SurveyParser::ValidationCondition, " when first created" do
   before do    
-    validation = mock("Validation", :id => 29, :parser => mock("Parser", :new_validation_condition_id => 21))
-    validation.stub!(:class => Validation)
+    validation = mock("SurveyParser::Validation", :id => 29, :parser => mock("SurveyParser::Parser", :new_validation_condition_id => 21))
+    validation.stub!(:class => SurveyParser::Validation)
     args = [">=", {:integer_value => 0}]
     options = {}
-    @validation_condition = ValidationCondition.new(validation, args, options)
+    @validation_condition = SurveyParser::ValidationCondition.new(validation, args, options)
   end
   
   it "should set initialization parameters properly" do

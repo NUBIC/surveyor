@@ -1,13 +1,13 @@
 require File.expand_path(File.dirname(__FILE__) + '/spec_helper')
 require 'question'
 
-describe Question, " when first created" do
+describe SurveyParser::Question, " when first created" do
   before do    
-    section = mock("SurveySection", :id => 2, :parser => mock("Parser", :new_question_id => 1))
-    section.stub!(:class => SurveySection)
+    section = mock("SurveyParser::SurveySection", :id => 2, :parser => mock("SurveyParser::Parser", :new_question_id => 1))
+    section.stub!(:class => SurveyParser::SurveySection)
     args = {:help_text => "Please give a rough estimate", :reference_identifier => "B3"}
     options = {}
-    @ques = Question.new(section, ["In the past 12 months how many times have you been to a doctor?", args], options)
+    @ques = SurveyParser::Question.new(section, ["In the past 12 months how many times have you been to a doctor?", args], options)
   end
   
   it "should set initialization parameters properly" do
@@ -39,15 +39,15 @@ describe Question, " when first created" do
 
 end
 
-describe Question, "when it contains data" do
+describe SurveyParser::Question, "when it contains data" do
   before(:each) do
-    section = mock("SurveySection", :id => 2, :parser => mock("Parser", :new_question_id => 1))
+    section = mock("SurveyParser::SurveySection", :id => 2, :parser => mock("SurveyParser::Parser", :new_question_id => 1))
     args = {:help_text => "Please give a rough estimate", :reference_identifier => "B3"}
     options = {}
-    @ques = Question.new(section, ["In the past 12 months how many times have you been to a doctor?", args], options)
-    @ques.answers << mock("Answer", :reference_identifier => "1", :text => "foo")
-    @ques.answers << mock("Answer", :reference_identifier => "2", :text => "foo")
-    @ques.answers << mock("Answer", :reference_identifier => "3", :text => "foo")
+    @ques = SurveyParser::Question.new(section, ["In the past 12 months how many times have you been to a doctor?", args], options)
+    @ques.answers << mock("SurveyParser::Answer", :reference_identifier => "1", :text => "foo")
+    @ques.answers << mock("SurveyParser::Answer", :reference_identifier => "2", :text => "foo")
+    @ques.answers << mock("SurveyParser::Answer", :reference_identifier => "3", :text => "foo")
   end
 
   it "should have added the test answers correctly" do
