@@ -1,6 +1,5 @@
 class ResponseSet < ActiveRecord::Base
-  include TinyCode
-  
+
   # Associations
   belongs_to :survey
   belongs_to :user
@@ -25,7 +24,7 @@ class ResponseSet < ActiveRecord::Base
   
   def default_args
     self.started_at ||= Time.now
-    self.access_code = ResponseSet.make_tiny_code
+    self.access_code = Surveyor.make_tiny_code
   end
   
   def response_for(question_id, answer_id, group = nil)

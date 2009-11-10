@@ -97,7 +97,7 @@ class SurveyParser
       self.current_validation = Validation.new(self.current_answer, args, opts)
 
     else
-      raise "  ERROR: '#{method_name}' not valid method"
+      raise "  ERROR: '#{missing_method}' not valid method"
     
     end
   end
