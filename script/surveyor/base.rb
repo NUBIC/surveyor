@@ -1,4 +1,4 @@
-class SurveyParser
+module SurveyParser
   class Base
     
     # Class level instance variable, because class variable are shared with subclasses
@@ -22,17 +22,17 @@ class SurveyParser
     # Instance methods
     def initialize(obj, args, opts)
       # inherit the parser from parent (obj)
-      self.parser = (obj.nil? ? nil : obj.class == SurveyParser ? obj : obj.parser)
+      self.parser = (obj.nil? ? nil : obj.class == SurveyParser::Parser ? obj : obj.parser)
       # get a new id from the parser
-      self.id = parser.nil? ? nil : parser.send("new_#{self.class.name.underscore}_id")
+      self.id = parser.nil? ? nil : parser.send("new_#{self.class.name.demodulize.underscore}_id")
       # set [parent]_id to obj.id, if we have that attribute
-      self.send("#{obj.class.name.underscore}_id=", obj.nil? ? nil : obj.id) if self.respond_to?("#{obj.class.name.underscore}_id=") 
+      self.send("#{obj.class.name.demodulize.underscore}_id=", obj.nil? ? nil : obj.id) if self.respond_to?("#{obj.class.name.demodulize.underscore}_id=") 
       # initialize descendant models
       self.class.children.each{|model| self.send("#{model}=", [])}
       # combine default options, parsed opts, parsed args, and initialize instance variables
       self.default_options.merge(parse_opts(opts)).merge(parse_args(args)).each{|k,v| self.send("#{k.to_s}=", v)}
       # print to the log
-      print "#{self.class.name.gsub(/[a-z]/, "")[-1,1]}#{self.id} "
+      print "#{self.class.name.demodulize.gsub(/[a-z]/, "")[-1,1]}#{self.id} "
     end
     def default_options
       {}
@@ -54,7 +54,7 @@ class SurveyParser
       (out << nil ).join("\r\n")
     end
     def to_file
-      File.open(self.parser.send("#{self.class.name.underscore.pluralize}_yml"), File::CREAT|File::APPEND|File::WRONLY) {|f| f << to_yml}
+      File.open(self.parser.send("#{self.class.name.demodulize.underscore.pluralize}_yml"), File::CREAT|File::APPEND|File::WRONLY) {|f| f << to_yml}
       self.class.children.each{|model| self.send(model).compact.map(&:to_file)}
     end
   end

@@ -11,7 +11,7 @@ namespace :surveyor do
     raise "USAGE: file name required e.g. 'FILE=surveys/kitchen_sink_survey.rb'" if ENV["FILE"].blank?
     fixture_dir = File.join(RAILS_ROOT, "surveys", "fixtures")
     mkdir fixture_dir unless File.exists?(fixture_dir)
-    SurveyParser.parse(File.join(RAILS_ROOT, ENV["FILE"]))
+    SurveyParser::Parser.parse(File.join(RAILS_ROOT, ENV["FILE"]))
   end
 
   desc "load survey fixtures"
