@@ -5,10 +5,14 @@ require 'surveyor/config'
 require 'surveyor/acts_as_response'
 
 module Surveyor
-  RAND_CHARS = [('a'..'z'), ('A'..'Z'), (0..9)].map(&:to_a).flatten.to_s
+  RAND_CHARS = [('a'..'z'), ('A'..'Z'), (0..9)].map{|r| r.to_a}.flatten.to_s
 
   def self.make_tiny_code(len = 10)
-    len.times.map{|i| RAND_CHARS[rand(RAND_CHARS.size), 1] }.to_s
+    if RUBY_VERSION < "1.8.7"
+      (1..len).to_a.map{|i| RAND_CHARS[rand(RAND_CHARS.size), 1] }.to_s
+    else
+      len.times.map{|i| RAND_CHARS[rand(RAND_CHARS.size), 1] }.to_s
+    end
   end
 
   def self.to_normalized_string(text)
