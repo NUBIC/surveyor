@@ -5,7 +5,7 @@
 
 Gem::Specification.new do |s|
   s.name = %q{surveyor}
-  s.version = "0.9.5"
+  s.version = "0.9.6"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Brian Chamberlain", "Mark Yoon"]
@@ -109,6 +109,7 @@ Gem::Specification.new do |s|
      "generators/surveyor/templates/assets/stylesheets/ui.theme.css",
      "generators/surveyor/templates/initializers/haml.rb",
      "generators/surveyor/templates/initializers/surveyor.rb",
+     "generators/surveyor/templates/migrate/add_correct_answer_id_to_questions.rb",
      "generators/surveyor/templates/migrate/add_display_order_to_surveys.rb",
      "generators/surveyor/templates/migrate/create_answers.rb",
      "generators/surveyor/templates/migrate/create_dependencies.rb",
