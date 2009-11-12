@@ -77,12 +77,12 @@ Factory.define :dependency do |d|
   # the dependent question
   d.association       :question # d.question_id       {}
   d.question_group_id {}
-  d.rule              {"A and B"}
+  d.rule              {"A"}
 end
 
 Factory.define :dependency_condition do |d|
   d.association       :dependency # d.dependency_id    {}
-  d.rule_key          {"1"}
+  d.rule_key          {"A"}
   # the conditional question
   d.question_id       {}
   d.operator          {"=="}

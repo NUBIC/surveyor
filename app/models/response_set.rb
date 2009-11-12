@@ -93,15 +93,29 @@ class ResponseSet < ActiveRecord::Base
     responses.all?(&:correct?)
   end
   def correctness_hash
-    { :questions => @survey.sections_with_questions.map(&:questions).flatten.size, 
-      :correct => responses.find_all(&:correct?).size}
+    { :questions => @survey.sections_with_questions.map(&:questions).flatten.compact.size,
+      :responses => responses.compact.size,
+      :correct => responses.find_all(&:correct?).compact.size
+    }
+  end
+  def mandatory_questions_complete?
+    progress_hash[:triggered_mandatory] == progress_hash[:triggered_mandatory_completed]
   end
   def progress_hash
-    
+    qs = @survey.sections_with_questions.map(&:questions).flatten
+    ds = dependencies(qs.map(&:id))
+    triggered = qs - ds.select{|d| !d.is_met?(self)}.map(&:question)
+    { :questions => qs.compact.size,
+      :triggered => triggered.compact.size,
+      :triggered_mandatory => triggered.select{|q| q.mandatory?}.compact.size,
+      :triggered_mandatory_completed => triggered.select{|q| q.mandatory? and is_answered?(q)}.compact.size
+    }
   end
-  
-  def has_not_answered_question?(question)
-    self.responses.find_all_by_question_id(question.id).empty?
+  def is_answered?(question)
+    !is_unanswered?(question)
+  end
+  def is_unanswered?(question)
+    self.responses.detect{|r| r.question_id == question.id}.nil?
   end
     
   # Returns the number of response groups (count of group responses enterted) for this question group
@@ -110,7 +124,7 @@ class ResponseSet < ActiveRecord::Base
   end
   
   def unanswered_dependencies
-    dependencies.select{|d| d.is_met?(self) and self.has_not_answered_question?(d.question)}.map(&:question)
+    dependencies.select{|d| d.is_met?(self) and self.is_unanswered?(d.question)}.map(&:question)
   end
   
   def all_dependencies
@@ -120,11 +134,12 @@ class ResponseSet < ActiveRecord::Base
   
   protected
   
-  def dependencies
-    question_ids = Question.find_all_by_survey_section_id(current_section_id).map(&:id)
+  def dependencies(question_ids = nil)
+    question_ids ||= Question.find_all_by_survey_section_id(current_section_id).map(&:id)
     depdendecy_ids = DependencyCondition.all(:conditions => {:question_id => question_ids}).map(&:dependency_id)
     Dependency.find(depdendecy_ids, :include => :dependency_conditions)
   end
+  
 end
 
 # responses

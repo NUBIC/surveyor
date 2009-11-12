@@ -133,16 +133,79 @@ describe ResponseSet, "as a quiz" do
   it "should report correctness if it is a quiz" do
     generate_responses(3, "quiz", "correct")
     @response_set.correct?.should be_true
-    @response_set.correctness_hash.should == {:questions => 3, :correct => 3}
+    @response_set.correctness_hash.should == {:questions => 3, :responses => 3, :correct => 3}
   end
-  it "does something" do
+  it "should report incorrectness if it is a quiz" do
     generate_responses(3, "quiz", "incorrect")
     @response_set.correct?.should be_false
-    @response_set.correctness_hash.should == {:questions => 3, :correct => 0}
+    @response_set.correctness_hash.should == {:questions => 3, :responses => 3, :correct => 0}
   end
   it "should report correct if it isn't a quiz" do
     generate_responses(3, "non-quiz")
     @response_set.correct?.should be_true
-    @response_set.correctness_hash.should == {:questions => 3, :correct => 3}
+    @response_set.correctness_hash.should == {:questions => 3, :responses => 3, :correct => 3}
+  end
+end
+describe ResponseSet, "with mandatory questions" do
+  before(:each) do
+    @survey = Factory(:survey)
+    @section = Factory(:survey_section, :survey => @survey)
+    @response_set = Factory(:response_set, :survey => @survey)
+  end
+  def generate_responses(count, mandatory = nil, responded = nil)
+    count.times do |i|
+      q = Factory(:question, :survey_section => @section, :is_mandatory => (mandatory == "mandatory"))
+      a = Factory(:answer, :question => q, :response_class => "answer")
+      if responded == "responded"
+        @response_set.responses << Factory(:response, :question => q, :answer => a)
+      end
+    end
+  end
+  it "should report progress without mandatory questions" do
+    generate_responses(3)
+    @response_set.mandatory_questions_complete?.should be_true
+    @response_set.progress_hash.should == {:questions => 3, :triggered => 3, :triggered_mandatory => 0, :triggered_mandatory_completed => 0}
+  end
+  it "should report progress with mandatory questions" do
+    generate_responses(3, "mandatory", "responded")
+    @response_set.mandatory_questions_complete?.should be_true
+    @response_set.progress_hash.should == {:questions => 3, :triggered => 3, :triggered_mandatory => 3, :triggered_mandatory_completed => 3}
+  end
+  it "should report progress with mandatory questions" do
+    generate_responses(3, "mandatory", "not-responded")
+    @response_set.mandatory_questions_complete?.should be_false
+    @response_set.progress_hash.should == {:questions => 3, :triggered => 3, :triggered_mandatory => 3, :triggered_mandatory_completed => 0}
+  end
+end
+describe ResponseSet, "with mandatory, dependent questions" do
+  before(:each) do
+    @survey = Factory(:survey)
+    @section = Factory(:survey_section, :survey => @survey)
+    @response_set = Factory(:response_set, :survey => @survey)
+  end
+  def generate_responses(count, mandatory = nil, dependent = nil, triggered = nil)
+    dq = Factory(:question, :survey_section => @section, :is_mandatory => (mandatory == "mandatory"))
+    da = Factory(:answer, :question => dq, :response_class => "answer")
+    dx = Factory(:answer, :question => dq, :response_class => "answer")
+    count.times do |i|
+      q = Factory(:question, :survey_section => @section, :is_mandatory => (mandatory == "mandatory"))
+      a = Factory(:answer, :question => q, :response_class => "answer")
+      if dependent = "dependent"
+        d = Factory(:dependency, :question => q)
+        dc = Factory(:dependency_condition, :dependency => d, :question_id => dq.id, :answer_id => da.id)
+      end
+      @response_set.responses << Factory(:response, :question => dq, :answer => (triggered == "triggered" ? da : dx))
+      @response_set.responses << Factory(:response, :question => q, :answer => a)
+    end
+  end
+  it "should report progress without mandatory questions" do
+    generate_responses(3, "mandatory", "dependent")
+    @response_set.mandatory_questions_complete?.should be_true
+    @response_set.progress_hash.should == {:questions => 4, :triggered => 1, :triggered_mandatory => 1, :triggered_mandatory_completed => 1}
+  end
+  it "should report progress with mandatory questions" do
+    generate_responses(3, "mandatory", "dependent", "triggered")
+    @response_set.mandatory_questions_complete?.should be_true
+    @response_set.progress_hash.should == {:questions => 4, :triggered => 4, :triggered_mandatory => 4, :triggered_mandatory_completed => 4}
   end
 end
