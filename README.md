@@ -27,6 +27,10 @@ Try out the "kitchen sink" survey:
 
     rake surveyor FILE=surveys/kitchen_sink_survey.rb
 
+The rake surveyor task overwrites previous surveys by default, but can append instead:
+
+    rake surveyor FILE=surveys/kitchen_sink_survey.rb APPEND=true
+
 # Configuration
 
 The surveyor generator creates config/initializers/surveyor.rb. There, you can specify:

@@ -17,8 +17,8 @@ namespace :surveyor do
   desc "load survey fixtures"
   task :load_fixtures => :environment do
     require 'active_record/fixtures'
-    
-    ActiveRecord::Base.establish_connection(RAILS_ENV.to_sym)
+    require 'fixtures_extensions' unless ENV["APPEND"].blank?
+    ActiveRecord::Base.establish_connection(Rails.env)
 
     fixture_dir = File.join(RAILS_ROOT, "surveys", "fixtures")
     fixtures = Dir.glob("#{fixture_dir}/*.yml")

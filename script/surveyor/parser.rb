@@ -7,7 +7,7 @@ module SurveyParser
     (%w(base) + @@models).each{|m| require File.dirname(__FILE__) + "/#{m}"}
 
     # Attributes
-    attr_accessor :surveys, :grid_answers
+    attr_accessor :salt, :surveys, :grid_answers
     @@models.each{|m| attr_accessor "#{m.pluralize}_yml".to_sym } # for fixtures
     (@@models - %w(dependency_condition validation_condition)).each {|m| attr_accessor "current_#{m}".to_sym} # for current_model caches
   
@@ -32,12 +32,13 @@ module SurveyParser
   
     # Instance methods
     def initialize
+      self.salt = Time.now.strftime("%Y%m%d%H%M%S")
       self.surveys = []
       self.grid_answers = []
       initialize_counters(@@models)
       initialize_fixtures(@@models.map(&:pluralize), File.join(RAILS_ROOT, "surveys", "fixtures"))
     end
-  
+    
     # @last_survey_id, @last_survey_section_id, etc.
     def initialize_counters(names)
       names.each{|name| instance_variable_set("@last_#{name}_id", 0)}

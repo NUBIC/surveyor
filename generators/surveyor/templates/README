@@ -6,5 +6,5 @@ Surveyor installed. Next, run the migrations:
 Try out the "kitchen sink" survey:
 
     rake surveyor FILE=surveys/kitchen_sink_survey.rb
-    
+
 Or see README.md for configuration and customization details
