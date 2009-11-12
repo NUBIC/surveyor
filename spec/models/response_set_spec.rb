@@ -1,45 +1,23 @@
 require File.expand_path(File.dirname(__FILE__) + '/../spec_helper')
 
-describe ResponseSet, "class methods" do
-  before(:each) do
-    @response_set = Factory(:response_set, :access_code => "PDQ")
-  end
-  it "should find a response set by response_set.access_code or return false" do
-    ResponseSet.find_by_access_code("PDQ").should == @response_set
-    ResponseSet.find_by_access_code("Different").should be_nil
-  end
-end
-describe ResponseSet, "with responses" do
-  before(:each) do
-    @response_set = Factory(:response_set)
-  end
-
-  it "can tell you its responses" do
-    3.times{ |x| @response_set.responses.build }  
-    @response_set.responses.should have(3).items
-  end
-
-  it "is completable" do
-    @response_set.completed_at.should be_nil
-    @response_set.complete!
-    @response_set.completed_at.should_not be_nil
-    @response_set.completed_at.is_a?(Time).should be_true
-  end
-
-  it "does not allow completion through mass assignment" do
-    @response_set.completed_at.should be_nil
-    @response_set.update_attributes(:completed_at => Time.now)
-    @response_set.completed_at.should be_nil
-  end
-
-end
-describe ResponseSet, "Creating new set for user" do
+describe ResponseSet do
   before(:each) do
     @response_set = Factory(:response_set)
   end
   it "should have a unique code with length 10 that identifies the survey" do
     @response_set.access_code.should_not be_nil
     @response_set.access_code.length.should == 10
+  end
+  it "is completable" do
+    @response_set.completed_at.should be_nil
+    @response_set.complete!
+    @response_set.completed_at.should_not be_nil
+    @response_set.completed_at.is_a?(Time).should be_true
+  end
+  it "does not allow completion through mass assignment" do
+    @response_set.completed_at.should be_nil
+    @response_set.update_attributes(:completed_at => Time.now)
+    @response_set.completed_at.should be_nil
   end
 end
 describe ResponseSet, "Updating the response set" do
@@ -135,4 +113,36 @@ describe ResponseSet, "with dependencies" do
     @response_set.all_dependencies[:show].should == ["question_#{@what_flavor.id}", "question_#{@what_bakery.id}"]
   end
   
+end
+describe ResponseSet, "as a quiz" do
+  before(:each) do
+    @survey = Factory(:survey)
+    @section = Factory(:survey_section, :survey => @survey)
+    @response_set = Factory(:response_set, :survey => @survey)
+  end
+  def generate_responses(count, quiz = nil, correct = nil)
+    count.times do |i|
+      q = Factory(:question, :survey_section => @section)
+      a = Factory(:answer, :question => q, :response_class => "answer")
+      x = Factory(:answer, :question => q, :response_class => "answer")
+      q.correct_answer_id = (quiz == "quiz" ? a.id : nil)
+      @response_set.responses << Factory(:response, :question => q, :answer => (correct == "correct" ? a : x))
+    end
+  end
+  
+  it "should report correctness if it is a quiz" do
+    generate_responses(3, "quiz", "correct")
+    @response_set.correct?.should be_true
+    @response_set.correctness_hash.should == {:questions => 3, :correct => 3}
+  end
+  it "does something" do
+    generate_responses(3, "quiz", "incorrect")
+    @response_set.correct?.should be_false
+    @response_set.correctness_hash.should == {:questions => 3, :correct => 0}
+  end
+  it "should report correct if it isn't a quiz" do
+    generate_responses(3, "non-quiz")
+    @response_set.correct?.should be_true
+    @response_set.correctness_hash.should == {:questions => 3, :correct => 3}
+  end
 end

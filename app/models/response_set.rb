@@ -89,6 +89,17 @@ class ResponseSet < ActiveRecord::Base
     self.completed_at = Time.now
   end
   
+  def correct?
+    responses.all?(&:correct?)
+  end
+  def correctness_hash
+    { :questions => @survey.sections_with_questions.map(&:questions).flatten.size, 
+      :correct => responses.find_all(&:correct?).size}
+  end
+  def progress_hash
+    
+  end
+  
   def has_not_answered_question?(question)
     self.responses.find_all_by_question_id(question.id).empty?
   end
