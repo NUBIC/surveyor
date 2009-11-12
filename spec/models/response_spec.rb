@@ -2,7 +2,8 @@ require File.expand_path(File.dirname(__FILE__) + '/../spec_helper')
 
 describe Response, "when saving a response" do
   before(:each) do
-    @response = Response.new(:question_id => 314, :response_set_id => 159, :answer_id => 1)
+    # @response = Response.new(:question_id => 314, :response_set_id => 159, :answer_id => 1)
+    @response = Factory(:response, :question => Factory(:question), :answer => Factory(:answer))
   end
 
   it "should be valid" do
@@ -17,6 +18,22 @@ describe Response, "when saving a response" do
     @response.should have(1).error_on(:question_id)
   end
 
+  it "should be correct if the question has no correct_answer_id" do
+    @response.question.correct_answer_id.should be_nil
+    @response.correct?.should be_true
+  end
+  it "should be correct if the answer's response class != answer" do
+    @response.answer.response_class.should_not == "answer"
+    @response.correct?.should be_true
+  end  
+  it "should be (in)correct if answer_id is (not) equal to question's correct_answer_id" do
+    @answer = Factory(:answer, :response_class => "answer")
+    @question = Factory(:question, :correct_answer_id => @answer.id)
+    @response = Factory(:response, :question => @question, :answer => @answer)
+    @response.correct?.should be_true
+    @response.answer_id = 143
+    @response.correct?.should be_false
+  end
   describe "returns the response as the type requested" do
 
     it "returns 'string'" do

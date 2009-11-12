@@ -1,42 +1,43 @@
 # http://github.com/thoughtbot/factory_girl/tree/master
 
 Factory.define :survey do |s|
-  s.title	      	{"Simple survey"}
-  s.description		{"A simple survey for testing"}
-  s.access_code		{"simple_survey"}
-  s.active_at	  	{Time.now}
-  s.inactive_at		{}
-  s.css_url		    {}
+  s.title         {"Simple survey"}
+  s.description   {"A simple survey for testing"}
+  s.access_code   {"simple_survey"}
+  s.active_at     {Time.now}
+  s.inactive_at   {}
+  s.css_url       {}
 end
 
 Factory.sequence(:survey_section_display_order){|n| n }
 
 Factory.define :survey_section do |s|
   s.association               :survey # s.survey_id                 {}
-  s.title		                  {"Demographics"}
-  s.description	              {"Asking you about your personal data"}
-  s.display_order	            {Factory.next :survey_section_display_order}
-  s.reference_identifier		  {"demographics"}
-  s.data_export_identifier		{"demographics"}
+  s.title                     {"Demographics"}
+  s.description               {"Asking you about your personal data"}
+  s.display_order             {Factory.next :survey_section_display_order}
+  s.reference_identifier      {"demographics"}
+  s.data_export_identifier    {"demographics"}
 end
 
 Factory.sequence(:question_display_order){|n| n }
 
 Factory.define :question do |q|
   q.association             :survey_section  # s.survey_section_id       {}
-  q.question_group_id		    {}
-  q.text		                {"What is your favorite color?"}
-  q.short_text		          {"favorite_color"}
-  q.help_text	        	    {"just write it in the box"}
-  q.pick	            	    {:none}
+  q.question_group_id       {}
+  q.text                    {"What is your favorite color?"}
+  q.short_text              {"favorite_color"}
+  q.help_text               {"just write it in the box"}
+  q.pick                    {:none}
   q.reference_identifier    {|me| "q_#{me.object_id}"}
   q.data_export_identifier  {}
   q.common_namespace        {}
   q.common_identifier       {}
-  q.display_order	    	    {Factory.next :question_display_order}
-  q.display_type	    	    {} # nil is default
-  q.is_mandatory	    	    {false}
-  q.display_width       		{}
+  q.display_order           {Factory.next :question_display_order}
+  q.display_type            {} # nil is default
+  q.is_mandatory            {false}
+  q.display_width           {}
+  q.correct_answer_id       {nil}
 end
 
 Factory.define :question_group do |g|
@@ -55,19 +56,19 @@ Factory.sequence(:answer_display_order){|n| n }
 
 Factory.define :answer do |a|
   a.association               :question  # a.question_id               {}
-  a.text	                  	{"My favorite color is clear"}
-  a.short_text            		{"clear"}
-  a.help_text	              	{"Clear is the absense of color"}
-  a.weight		                {}
-  a.response_class        		{"String"}
-  a.reference_identifier		  {}
-  a.data_export_identifier		{}
+  a.text                      {"My favorite color is clear"}
+  a.short_text                {"clear"}
+  a.help_text                 {"Clear is the absense of color"}
+  a.weight                    {}
+  a.response_class            {"String"}
+  a.reference_identifier      {}
+  a.data_export_identifier    {}
   a.common_namespace          {}
-  a.common_identifier     		{}
-  a.display_order	        	  {Factory.next :answer_display_order}
-  a.is_exclusive	        	  {}
-  a.hide_label    		        {}
-  a.display_length		        {}
+  a.common_identifier         {}
+  a.display_order             {Factory.next :answer_display_order}
+  a.is_exclusive              {}
+  a.hide_label                {}
+  a.display_length            {}
   a.custom_class              {}
   a.custom_renderer           {}
 end
@@ -96,25 +97,25 @@ Factory.define :dependency_condition do |d|
 end
 
 Factory.define :response_set do |r|
-  r.user_id	        {}
+  r.user_id         {}
   r.association     :survey # r.survey_id       {}
-  r.access_code	    {Surveyor.make_tiny_code}
-  r.started_at	    {Time.now}
-  r.completed_at		{}
+  r.access_code     {Surveyor.make_tiny_code}
+  r.started_at      {Time.now}
+  r.completed_at    {}
 end
 
 Factory.define :response do |r|
   r.association       :response_set # r.response_set_id   {}
-  r.question_id	    	{}
-  r.answer_id	      	{}
-  r.datetime_value		{}
-  r.integer_value	  	{}
-  r.float_value	      {}
-  r.unit      	      {}
-  r.text_value	      {}
-  r.string_value	  	{}
-  r.response_other		{}
-  r.response_group		{}
+  r.question_id       {}
+  r.answer_id         {}
+  r.datetime_value    {}
+  r.integer_value     {}
+  r.float_value       {}
+  r.unit              {}
+  r.text_value        {}
+  r.string_value      {}
+  r.response_other    {}
+  r.response_group    {}
 end
 
 Factory.define :validation do |v|

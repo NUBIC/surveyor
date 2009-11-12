@@ -21,7 +21,11 @@ class Response < ActiveRecord::Base
     true
   end
   
-  def to_s
+  def correct?
+    question.correct_answer_id.nil? or self.answer.response_class != "answer" or (question.correct_answer_id.to_i == answer_id.to_i)
+  end
+  
+  def to_s # used in dependency_explanation_helper
     if self.answer.response_class == "answer" and self.answer_id
       return self.answer.text
     else
