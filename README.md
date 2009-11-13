@@ -7,12 +7,12 @@ Surveyor is a rails (gem) plugin, that brings surveys to your rails app. Before 
 As a plugin:
 
     sudo gem install haml
-    script/plugin install git://github.com/breakpointer/surveyor.git -r 'tag v0.9.0'
+    script/plugin install git://github.com/breakpointer/surveyor.git -r 'tag v0.9.8'
 
 Or as a gem plugin:
   
   # in environment.rb
-  config.gem "surveyor", :version => '>=0.9.0', :source => 'http://gemcutter.org'
+  config.gem "surveyor", :version => '>=0.9.8', :source => 'http://gemcutter.org'
   
     sudo gem install gemcutter
     gem tumble
@@ -108,6 +108,42 @@ The <code>surveyor\_includes</code> helper just calls <code>surveyor\_stylsheets
 Surveyor depends on Rails 2.3 and the SASS style sheet language, part of HAML (http://haml.hamptoncatlin.com/download)
 
 # Changes
+
+0.9.8
+
+* @current\_user.id if @current\_user isn't nil. Closes #37
+
+0.9.7
+
+* fixing typos
+* remove surveyor controller from load\_once\_paths. fixes issue with dependencies and unloading in development. closes #36
+
+0.9.6
+
+* response set reports progress and mandatory questions completeness. closes #33
+* adding correctness to response sets
+* adding correctness to responses
+
+0.9.5
+
+* allow append for survey parser. closes #32
+
+0.9.4
+
+* making tinycode compatible with ruby 1.8.6
+
+0.9.3
+
+* fix for survey parser require
+
+0.9.2
+
+* fixing specs for namespacing and move of tinycode
+* namespacing SurveyParser models to avoid conflict with model extensions
+
+0.9.1
+
+* fix for tinycode, more descriptive missing method
 
 0.9.0
 
