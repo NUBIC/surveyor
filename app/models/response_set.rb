@@ -93,7 +93,7 @@ class ResponseSet < ActiveRecord::Base
     responses.all?(&:correct?)
   end
   def correctness_hash
-    { :questions => @survey.sections_with_questions.map(&:questions).flatten.compact.size,
+    { :questions => survey.sections_with_questions.map(&:questions).flatten.compact.size,
       :responses => responses.compact.size,
       :correct => responses.find_all(&:correct?).compact.size
     }
@@ -102,7 +102,7 @@ class ResponseSet < ActiveRecord::Base
     progress_hash[:triggered_mandatory] == progress_hash[:triggered_mandatory_completed]
   end
   def progress_hash
-    qs = @survey.sections_with_questions.map(&:questions).flatten
+    qs = survey.sections_with_questions.map(&:questions).flatten
     ds = dependencies(qs.map(&:id))
     triggered = qs - ds.select{|d| !d.is_met?(self)}.map(&:question)
     { :questions => qs.compact.size,

@@ -1,9 +1,4 @@
-dir = File.dirname(__FILE__)
-$LOAD_PATH.unshift dir unless $LOAD_PATH.include?(dir)
-
-require 'surveyor/config'
-require 'surveyor/acts_as_response'
-
+require File.dirname(__FILE__) + '/surveyor/acts_as_response'
 module Surveyor
   RAND_CHARS = [('a'..'z'), ('A'..'Z'), (0..9)].map{|r| r.to_a}.flatten.to_s
 
@@ -25,4 +20,18 @@ module Surveyor
     cols = (col_text.split(' ') - words_to_omit)
     (cols.size > 5 ? cols[-5..-1] : cols).join("_")
   end
+end
+
+# From http://guides.rubyonrails.org/plugins.html#controllers
+# Fix for:
+# ArgumentError in SurveyorController#edit 
+# A copy of ApplicationController has been removed from the module tree but is still active!
+# Equivalent of using "unloadable" in SurveyorController (unloadable has been deprecated)
+
+%w{models controllers}.each do |dir|
+  path = File.expand_path(File.join(File.dirname(__FILE__), '../app', dir))
+  # $LOAD_PATH << path # already here
+  # ActiveSupport::Dependencies.load_paths << path # already here too
+  ActiveSupport::Dependencies.load_once_paths.delete(path)
+  # [$LOAD_PATH, ActiveSupport::Dependencies.load_paths, ActiveSupport::Dependencies.load_once_paths].each{|x| Rails.logger.info x}
 end

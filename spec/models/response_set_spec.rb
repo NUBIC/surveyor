@@ -190,7 +190,7 @@ describe ResponseSet, "with mandatory, dependent questions" do
     count.times do |i|
       q = Factory(:question, :survey_section => @section, :is_mandatory => (mandatory == "mandatory"))
       a = Factory(:answer, :question => q, :response_class => "answer")
-      if dependent = "dependent"
+      if dependent == "dependent"
         d = Factory(:dependency, :question => q)
         dc = Factory(:dependency_condition, :dependency => d, :question_id => dq.id, :answer_id => da.id)
       end
