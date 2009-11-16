@@ -112,7 +112,7 @@ class ResponseSet < ActiveRecord::Base
     }
   end
   def is_answered?(question)
-    !is_unanswered?(question)
+    %w(label image).include?(question.display_type) or !is_unanswered?(question)
   end
   def is_unanswered?(question)
     self.responses.detect{|r| r.question_id == question.id}.nil?

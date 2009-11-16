@@ -176,6 +176,13 @@ describe ResponseSet, "with mandatory questions" do
     @response_set.mandatory_questions_complete?.should be_false
     @response_set.progress_hash.should == {:questions => 3, :triggered => 3, :triggered_mandatory => 3, :triggered_mandatory_completed => 0}
   end
+  it "should ignore labels and images" do
+    generate_responses(3, "mandatory", "responded")
+    Factory(:question, :survey_section => @section, :display_type => "label", :is_mandatory => true)
+    Factory(:question, :survey_section => @section, :display_type => "image", :is_mandatory => true)
+    @response_set.mandatory_questions_complete?.should be_true
+    @response_set.progress_hash.should == {:questions => 5, :triggered => 5, :triggered_mandatory => 5, :triggered_mandatory_completed => 5}
+  end
 end
 describe ResponseSet, "with mandatory, dependent questions" do
   before(:each) do
