@@ -27,12 +27,14 @@ class ValidationCondition < ActiveRecord::Base
   
   def is_valid?(response)
     klass = response.answer.response_class
+    compare_to = Response.find_by_question_id_and_answer_id(self.question_id, self.answer_id) || self
     case self.operator
     when "==", "<", ">", "<=", ">="
-      response.as(klass).send(self.operator, self.as(klass))
+      response.as(klass).send(self.operator, compare_to.as(klass))
     when "!="
-      !(response.as(klass) == self.as(klass))
+      !(response.as(klass) == compare_to.as(klass))
     when "=~"
+      return false if compare_to != self
       !(response.as(klass).to_s =~ Regexp.new(self.regexp || "")).nil?
     else
       false

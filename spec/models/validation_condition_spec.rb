@@ -56,7 +56,7 @@ describe ValidationCondition, "validating responses" do
   def test_var(vhash, ahash, rhash)
     v = Factory(:validation_condition, vhash)
     a = Factory(:answer, ahash)
-    r = Factory(:response, rhash.merge(:answer => a, :question => a.question))
+    r = Factory(:response, {:answer => a, :question => a.question}.merge(rhash))
     return v.is_valid?(r)
   end
   
@@ -70,7 +70,7 @@ describe ValidationCondition, "validating responses" do
   end
   it "should validate a response by (in)equality" do
     test_var({:operator => "!=", :datetime_value => Date.today + 1}, {:response_class => "date"}, {:datetime_value => Date.today}).should be_true
-    test_var({:operator => "==", :answer_id => 2}, {:response_class => "answer"}, {:answer_id => 2}).should be_false
+    test_var({:operator => "==", :string_value => "foo"}, {:response_class => "string"}, {:string_value => "foo"}).should be_true
   end
   it "should represent itself as a hash" do
     @v = Factory(:validation_condition, :rule_key => "A")
@@ -78,5 +78,28 @@ describe ValidationCondition, "validating responses" do
     @v.to_hash("foo").should == {:A => true}
     @v.stub!(:is_valid?).and_return(false)
     @v.to_hash("foo").should == {:A => false}
+  end
+end
+
+describe ValidationCondition, "validating responses by other responses" do
+  def test_var(v_hash, a_hash, r_hash, ca_hash, cr_hash)
+    ca = Factory(:answer, ca_hash)
+    cr = Factory(:response, cr_hash.merge(:answer => ca, :question => ca.question))
+    v = Factory(:validation_condition, v_hash.merge({:question_id => ca.question.id, :answer_id => ca.id}))
+    a = Factory(:answer, a_hash)
+    r = Factory(:response, r_hash.merge(:answer => a, :question => a.question))
+    return v.is_valid?(r)
+  end
+  it "should validate a response by integer comparison" do
+    test_var({:operator => ">"}, {:response_class => "integer"}, {:integer_value => 4}, {:response_class => "integer"}, {:integer_value => 3}).should be_true
+    test_var({:operator => "<="}, {:response_class => "integer"}, {:integer_value => 512}, {:response_class => "integer"}, {:integer_value => 4}).should be_false
+  end
+  it "should validate a response by (in)equality" do
+    test_var({:operator => "!="}, {:response_class => "date"}, {:datetime_value => Date.today}, {:response_class => "date"}, {:datetime_value => Date.today + 1}).should be_true
+    test_var({:operator => "=="}, {:response_class => "string"}, {:string_value => "donuts"}, {:response_class => "string"}, {:string_value => "donuts"}).should be_true
+  end
+  it "should not validate a response by regexp" do
+    test_var({:operator => "=~"}, {:response_class => "date"}, {:datetime_value => Date.today}, {:response_class => "date"}, {:datetime_value => Date.today + 1}).should be_false
+    test_var({:operator => "=~"}, {:response_class => "string"}, {:string_value => "donuts"}, {:response_class => "string"}, {:string_value => "donuts"}).should be_false
   end
 end
