@@ -174,7 +174,7 @@ body {
     #surveyor .question_group .head {
       padding-bottom: 0.5em; }
       #surveyor .question_group .head .number {
-        padding: 0.2em 0.2em 4em 0.2em;
+        padding: 0.2em;
         font-weight: bold;
         font-size: 1.2em;
         letter-spacing: 0;
@@ -200,7 +200,10 @@ body {
     #surveyor .question_group ul.repeater {
       list-style-type: none; }
     #surveyor .question_group li.repeater {
-      display: block; }
+      display: block;
+      clear: both; }
+      #surveyor .question_group li.repeater .question {
+        float: left; }
       #surveyor .question_group li.repeater ol {
         margin: 0;
         padding: 0; }
@@ -220,7 +223,7 @@ body {
       font-style: italic;
       color: black; }
     #surveyor .group_questions .number {
-      padding: 0.2em 0 0.2em 0.2em;
+      padding: 0.2em;
       margin: 0 0 0.3em 0;
       font-weight: bold;
       font-size: 1em;
