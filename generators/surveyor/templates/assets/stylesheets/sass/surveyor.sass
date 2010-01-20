@@ -185,7 +185,7 @@ body
     .head
       :padding-bottom 0.5em
       .number
-        :padding 0.2em 0.2em 4em 0.2em
+        :padding 0.2em
         :font-weight bold
         :font-size 1.2em
         :letter-spacing 0       
@@ -212,6 +212,9 @@ body
       :list-style-type none
     li.repeater
       :display block
+      :clear left
+      .question
+        :float left
       ol
         :margin 0
         :padding 0
@@ -225,8 +228,7 @@ body
     :margin 0.5em 0.2em 0.5em 1em 
     .question
       :margin 0
-      :padding 0em 0.3em    
-  
+      :padding 0em 0.3em
     .text
       :font-size 0.9em
     .help
@@ -234,7 +236,7 @@ body
       :font-style italic
       :color= !page_text_color - !emphasis_shift
     .number
-      :padding 0.2em 0 0.2em 0.2em
+      :padding 0.2em
       :margin 0 0 0.3em 0
       :font-weight bold
       :font-size 1em

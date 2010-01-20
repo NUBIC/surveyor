@@ -19,13 +19,17 @@
   - when :one_answer, :one_string
     - fields_for_radio(response_obj) do |radio_form|
       = radio_form.radio_button(:answer_id, answer.id, :checked => response_obj.selected?, :title => answer.text)
-      = radio_form.label("answer_#{answer.id}", answer.text, :class => (hide_label ? "hidden" : ""))
+      = radio_form.label("answer_id_#{answer.id}", answer.text, :class => (hide_label ? "hidden" : ""))
     - if renderer == :one_string
       = response_form.text_field(:string_value, :size => 25, :maxlength => 250, :autocomplete => "off")
   - when :none_date
-    = response_form.text_field(:datetime_value, {:include_blank => true})
+    = response_form.label(:string_value, split_text(answer.text)[:prefix], :class => "#{(disabled)? 'disabled' : 'enabled'}") unless hide_label
+    = response_form.text_field(:datetime_value)
+    = response_form.label(:string_value, split_text(answer.text)[:postfix], :class => "#{(disabled)? 'disabled' : 'enabled'}") unless hide_label
   - when :none_datetime
+    = response_form.label(:string_value, split_text(answer.text)[:prefix], :class => "#{(disabled)? 'disabled' : 'enabled'}") unless hide_label
     = response_form.datetime_select(:datetime_value, {:include_blank => true})
+    = response_form.label(:string_value, split_text(answer.text)[:postfix], :class => "#{(disabled)? 'disabled' : 'enabled'}") unless hide_label
   - when :none_float
     = response_form.label(:float_value, split_text(answer.text)[:prefix]) unless hide_label
     = response_form.text_field(:float_value, :size => 5, :maxlength => 10, :autocomplete => "off")
@@ -43,7 +47,9 @@
     = response_form.text_area(:text_value, :cols => 80, :rows => 10)
     = response_form.label(:text_value, split_text(answer.text)[:postfix]) unless hide_label
   - when :none_time
+    = response_form.label(:string_value, split_text(answer.text)[:prefix], :class => "#{(disabled)? 'disabled' : 'enabled'}") unless hide_label
     = response_form.time_select(:datetime_value,{ :include_blank => true })
+    = response_form.label(:string_value, split_text(answer.text)[:postfix], :class => "#{(disabled)? 'disabled' : 'enabled'}") unless hide_label
   - else
     = answer.text
   
