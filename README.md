@@ -87,7 +87,7 @@ SurveyorController class_eval, class methods, instance methods, and actions can 
     <head>
       <meta http-equiv="content-type" content="text/html;charset=UTF-8" />
       <title>Survey: <%= controller.action_name %></title>
-      <%= surveyor_includes # calls surveyor_javascripts + surveyor_stylesheets %>
+      <%= surveyor_includes %>
     </head>
     <body>
       <div id="flash"><%= flash[:notice] %></div>
