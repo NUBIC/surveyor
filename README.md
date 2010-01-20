@@ -7,12 +7,12 @@ Surveyor is a rails (gem) plugin, that brings surveys to your rails app. Before 
 As a plugin:
 
     gem install haml
-    script/plugin install git://github.com/breakpointer/surveyor.git -r 'tag v0.9.9'
+    script/plugin install git://github.com/breakpointer/surveyor.git -r 'tag v0.9.10'
 
 Or as a gem plugin:
   
     # in environment.rb
-    config.gem "surveyor", :version => '>=0.9.9', :source => 'http://gemcutter.org'
+    config.gem "surveyor", :version => '>=0.9.10', :source => 'http://gemcutter.org'
   
     rake gems:install
 
@@ -106,6 +106,15 @@ The <code>surveyor\_includes</code> helper just calls <code>surveyor\_stylsheets
 Surveyor depends on Rails 2.3 and the SASS style sheet language, part of HAML (http://haml.hamptoncatlin.com/download)
 
 # Changes
+
+0.9.10
+
+* styles, adding labels for dates, correcting labels for radio buttons
+
+0.9.9
+
+* count label and image questions complete when mandatory. closes #38
+* validate by other responses. closes #35
 
 0.9.8
 
