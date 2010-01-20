@@ -29,6 +29,11 @@ The rake surveyor task overwrites previous surveys by default, but can append in
 
     rake surveyor FILE=surveys/kitchen_sink_survey.rb APPEND=true
 
+The rake tasks above generate surveys in our custom survey DSL (which is a great format for end users and stakeholders to use). 
+After you have run them start up your app and goto http://<my_app_root>/surveys (http://localhost:3000/surveys for example). 
+Try taking the survey and compare what is in there to the DSL in the file kitchen_sink_survey.rb to see how each type of
+DLS defined question maps to one that is in the actual survey web interface.
+
 # Configuration
 
 The surveyor generator creates config/initializers/surveyor.rb. There, you can specify:
