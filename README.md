@@ -12,7 +12,7 @@ As a plugin:
 Or as a gem plugin:
   
     # in environment.rb
-    config.gem "surveyor", :version => '>=0.9.9'
+    config.gem "surveyor", :version => '>=0.9.9', :source => 'http://gemcutter.org'
   
     rake gems:install
 
