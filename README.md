@@ -6,17 +6,15 @@ Surveyor is a rails (gem) plugin, that brings surveys to your rails app. Before 
 
 As a plugin:
 
-    sudo gem install haml
-    script/plugin install git://github.com/breakpointer/surveyor.git -r 'tag v0.9.8'
+    gem install haml
+    script/plugin install git://github.com/breakpointer/surveyor.git -r 'tag v0.9.9'
 
 Or as a gem plugin:
   
-  # in environment.rb
-  config.gem "surveyor", :version => '>=0.9.8', :source => 'http://gemcutter.org'
+    # in environment.rb
+    config.gem "surveyor", :version => '>=0.9.9'
   
-    sudo gem install gemcutter
-    gem tumble
-    sudo rake gems:install
+    rake gems:install
 
 Generate assets, run migrations:
     
