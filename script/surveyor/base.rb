@@ -48,18 +48,25 @@ module SurveyParser
     def yml_attrs
       instance_variables.sort - self.class.children.map{|model| "@#{model.to_s}"} - %w(@id @parser @dependency @validation @question_reference @answer_reference)
     end
+    
     def to_yml
       out = [ %(#{self.parser.salt}_#{self.class.name.demodulize.underscore}_#{@id}:) ]
       yml_attrs.each{|a| out << associate_and_format(a)}
       (out << nil ).join("\r\n")
     end
+    
     def associate_and_format(a)
       if a =~ /_id$/ # a foreign key, e.g. survey_id
-        "  #{a[1..-4]}: " + (instance_variable_get(a).nil? ? "" : "#{self.parser.salt}_#{a[1..-4]}_#{instance_variable_get(a)}")
+        "  #{property_name_map(a[1..-4])}: " + (instance_variable_get(a).nil? ? "" : "#{self.parser.salt}_#{a[1..-4]}_#{instance_variable_get(a)}")
       else # quote strings
-        "  #{a[1..-1]}: #{instance_variable_get(a).is_a?(String) ? "\"#{instance_variable_get(a)}\"" : instance_variable_get(a) }"
+        "  #{property_name_map(a[1..-1])}: #{instance_variable_get(a).is_a?(String) ? "\"#{instance_variable_get(a)}\"" : instance_variable_get(a) }"
       end
     end
+    
+    def property_name_map(property)
+      return property
+    end
+    
     def to_file
       File.open(self.parser.send("#{self.class.name.demodulize.underscore.pluralize}_yml"), File::CREAT|File::APPEND|File::WRONLY) {|f| f << to_yml}
       self.class.children.each{|model| self.send(model).compact.map(&:to_file)}

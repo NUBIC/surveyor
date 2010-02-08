@@ -92,6 +92,11 @@ module SurveyParser
           raise "Error: No current question" if self.current_question.nil?
           self.current_answer = Answer.new(self.current_question, args, opts.merge(:display_order => current_question.answers.size + 1))
         end
+        
+      when "correct"
+        drop_the &block
+        raise "Error: No current question" if self.current_question.nil?
+        self.current_correct_answer = self.current_question.find_current_answers(args)
     
       when "validation", "v"
         drop_the &block
@@ -135,31 +140,42 @@ module SurveyParser
       self.surveys << s
       @current_survey = s
     end
+    
     def current_survey_section=(s)
       clear_current "survey_section"
       self.current_survey.survey_sections << s
       @current_survey_section = s 
     end
+    
     def current_question_group=(g)
       clear_current "question_group"
       self.current_survey_section.question_groups << g
       @current_question_group = g
-    end  
+    end
+    
     def current_question=(q)
       clear_current "question"
       self.current_survey_section.questions << q
       @current_question = q
     end
+    
     def current_dependency=(d)
       raise "Error: No question or question group" unless (dependent = self.current_question_group || self.current_question)
       dependent.dependency = d
       @current_dependency = d
     end
+    
     def current_answer=(a)
       raise "Error: No current question" if self.current_question.nil?
       self.current_question.answers << a
       @current_answer = a
-    end  
+    end
+    
+    def current_correct_answer=(a)
+      raise "Error: No current question" if self.current_question.nil?
+      self.current_question.correct_answer = a
+    end
+    
     def current_validation=(v)
       clear_current "validation"
       self.current_answer.validation = v
