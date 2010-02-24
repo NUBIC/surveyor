@@ -25,6 +25,7 @@ class SurveyorController < ApplicationController
     @surveys = Survey.find(:all)
     redirect_to surveyor_default(:index) unless available_surveys_path == surveyor_default(:index)
   end
+
   def create
     if (@survey = Survey.find_by_access_code(params[:survey_code])) && (@response_set = ResponseSet.create(:survey => @survey, :user_id => (@current_user.nil? ? @current_user : @current_user.id)))
       flash[:notice] = "Survey was successfully started."
@@ -34,8 +35,10 @@ class SurveyorController < ApplicationController
       redirect_to(available_surveys_path)
     end
   end
+
   def show
   end
+  
   def edit
     if @response_set = ResponseSet.find_by_access_code(params[:response_set_code], :include => {:responses => [:question, :answer]})
       @survey = Survey.with_sections.find_by_id(@response_set.survey_id)
@@ -48,6 +51,7 @@ class SurveyorController < ApplicationController
       redirect_to(available_surveys_path)
     end
   end
+  
   def update
     if @response_set = ResponseSet.find_by_access_code(params[:response_set_code], :include => {:responses => :answer})
       @response_set.current_section_id = params[:current_section_id]
@@ -93,6 +97,7 @@ class SurveyorController < ApplicationController
   def section_id_from(p)
     p.respond_to?(:keys) ? p.keys.first : p
   end
+  
   def anchor_from(p)
     p.respond_to?(:keys) && p[p.keys.first].respond_to?(:keys) ? p[p.keys.first].keys.first : nil
   end
