@@ -60,23 +60,25 @@ class SurveyorController < ApplicationController
   end
 
   def update
-    if @response_set = ResponseSet.find_by_access_code(params[:response_set_code], :include => {:responses => :answer})
-      @response_set.current_section_id = params[:current_section_id]
-    else
-      flash[:notice] = "Unable to find your responses to the survey"
-      redirect_to(available_surveys_path) and return
-    end
+    saved = nil
+    ActiveRecord::Base.transation do 
+      if @response_set = ResponseSet.find_by_access_code(params[:response_set_code], :include => {:responses => :answer},:lock => true)
+        @response_set.current_section_id = params[:current_section_id]
+      else
+        flash[:notice] = "Unable to find your responses to the survey"
+        redirect_to(available_surveys_path) and return
+      end
 
-    if params[:responses] or params[:response_groups]
-      @response_set.clear_responses
-      saved = @response_set.update_attributes(:response_attributes => (params[:responses] || {}).dup ,
-                                              :response_group_attributes => (params[:response_groups] || {}).dup) #copy (dup) to preserve params because we manipulate params in the response_set methods
-      if (saved && params[:finish])
-        @response_set.complete!
-        saved = @response_set.save!
+      if params[:responses] or params[:response_groups]
+        @response_set.clear_responses
+        saved = @response_set.update_attributes(:response_attributes => (params[:responses] || {}).dup ,
+                                                :response_group_attributes => (params[:response_groups] || {}).dup) #copy (dup) to preserve params because we manipulate params in the response_set methods
+        if (saved && params[:finish])
+          @response_set.complete!
+          saved = @response_set.save!
+        end
       end
     end
-
     respond_to do |format|
       format.html do
         if saved && params[:finish]
