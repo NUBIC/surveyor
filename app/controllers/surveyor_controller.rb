@@ -61,7 +61,7 @@ class SurveyorController < ApplicationController
 
   def update
     saved = nil
-    ActiveRecord::Base.transation do 
+    ActiveRecord::Base.transaction do 
       if @response_set = ResponseSet.find_by_access_code(params[:response_set_code], :include => {:responses => :answer},:lock => true)
         @response_set.current_section_id = params[:current_section_id]
       else
