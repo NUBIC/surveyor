@@ -4,6 +4,7 @@ module SurveyExtensions
     base.send(:include, InstanceMethods)
     base.class_eval do
       # Same as typing in the class
+      
     end
   end
   
@@ -11,8 +12,13 @@ module SurveyExtensions
   end
   
   module InstanceMethods
+    # def title
+    #   foo
+    # end
+    # def foo
+    #   "bar"
+    # end
   end
 end
 
-# Add module to Survey
-Survey.send(:include, SurveyExtensions)
+# Add "survey" to config['extend'] array in config/initializers/surveyor.rb to activate these extensions

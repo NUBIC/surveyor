@@ -7,7 +7,7 @@ class SurveyorController < ApplicationController
   layout Surveyor::Config['default.layout'] || 'surveyor_default'
 
   # Extending surveyor
-  include SurveyorControllerExtensions if Surveyor::Config['extend_controller']
+  include SurveyorControllerExtensions if Surveyor::Config['extend'].include?("surveyor_controller")
   before_filter :extend_actions
 
   # RESTful authentication
@@ -129,7 +129,7 @@ class SurveyorController < ApplicationController
 
   def extend_actions
     # http://blog.mattwynne.net/2009/07/11/rails-tip-use-polymorphism-to-extend-your-controllers-at-runtime/
-    self.extend SurveyorControllerExtensions::Actions if Surveyor::Config['extend_controller'] && defined? SurveyorControllerExtensions::Actions
+    self.extend SurveyorControllerExtensions::Actions if Surveyor::Config['extend'].include?("surveyor_controller") && defined? SurveyorControllerExtensions::Actions
   end
 
 end

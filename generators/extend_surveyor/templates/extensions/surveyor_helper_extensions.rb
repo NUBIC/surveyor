@@ -14,5 +14,4 @@ module SurveyorHelperExtensions
   end
 end
 
-# Add module to SurveyorHelper
-SurveyorHelper.send(:include, SurveyorHelperExtensions)
+# Add "surveyor_helper" to config['extend'] array in config/initializers/surveyor.rb to activate these extensions

@@ -1,5 +1,8 @@
 class ResponseSet < ActiveRecord::Base
 
+  # Extending surveyor
+  include "#{self.name}Extensions".constantize if Surveyor::Config['extend'].include?(self.name.underscore)
+  
   # Associations
   belongs_to :survey
   belongs_to :user

@@ -25,4 +25,4 @@ module SurveyorControllerExtensions
   end
 end
 
-# Set config['extend_controller'] = true in config/initializers/surveyor.rb to activate these extensions
+# Add "surveyor_controller" to config['extend'] array in config/initializers/surveyor.rb to activate these extensions
