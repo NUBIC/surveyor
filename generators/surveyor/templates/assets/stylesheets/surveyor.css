@@ -201,7 +201,7 @@ body {
       list-style-type: none; }
     #surveyor .question_group li.repeater {
       display: block;
-      clear: both; }
+      clear: left; }
       #surveyor .question_group li.repeater .question {
         float: left; }
       #surveyor .question_group li.repeater ol {
