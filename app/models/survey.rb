@@ -13,6 +13,7 @@ class Survey < ActiveRecord::Base
   
   # Validations
   validates_presence_of :title
+  validates_uniqueness_of :access_code
   
   # Class methods
   def self.to_normalized_string(value)
