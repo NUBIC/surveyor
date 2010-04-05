@@ -185,6 +185,17 @@ To work on the plugin code (for enhancements, and bug fixes, etc...) fork this g
 
 # Changes
 
+0.9.11
+
+* adding rails init.rb to make gem loading work. thanks mike gurley. closes #52.
+* Repeater changed to only have +1, not +3 as previous
+* added locking and transaction to surveyor update action. Prevents bug that caused duplicated answers
+* some light re-factoring and code readability changes
+* some code formatting changes
+* added require statement to specs so the factory_girl test dependency was more clear
+* spiced up the readme... may have some typos
+* readme update
+
 0.9.10
 
 * styles, adding labels for dates, correcting labels for radio buttons
