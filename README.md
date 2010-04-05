@@ -2,6 +2,67 @@
 
 Surveyor is a rails (gem) plugin, that brings surveys to your rails app. Before Rails 2.3, it was implemented as a Rails Engine. Surveys are written in a DSL (Domain Specific Language), with examples available in the "kitchen sink" survey.
 
+## Why you might want to use Surveyor
+
+If you have to have a part of your Rails app that asks users questions as part of a survey, quiz, or questionnare then you should consider using Surveyor.
+This plugin was designed out of the need to deliver clinical research surveys to large populations of people but it can be used for any type of survey. It has an easy to use DSL to define the questions, 
+response dependenies (if user answers 'A' to question 1 then show question 1a, etc...), and structure (different sections of longer questionnares).
+
+To build your questionnare you define it using a custom DSL. Having a DSL instead of a GUI makes it signifigantly easier to import long surveys 
+(no more endless clicking and typing into tiny text boxes). It also means that you can let your customer write out the survey, edit, re-edit, 
+tweak, throwout and start over, any number of surveys without having to change a single line of code in your app. 
+
+## DSL example
+
+Our DSL supports a wide range of question types (too many to list here) and varrying dependency logic. Here are the first few questions of the 
+"kitchen_sink" survey which should give you and idea of how the DSL works. The full example with all the types of questions is in the plugin and available if you run the installation instructions below.
+
+    survey "&#8220;Kitchen Sink&#8221; survey" do
+    
+      section "Basic questions" do
+        # A label is a question that accepts no answers
+        label "These questions are examples of the basic supported input types"
+    
+        # A basic question with radio buttons
+        question_1 "What is your favorite color?", :pick => :one
+        answer "red"
+        answer "blue"
+        answer "green"
+        answer "yellow"
+        answer :other
+    
+        # A basic question with checkboxes
+        # "question" and "answer" may be abbreviated as "q" and "a"
+        q_2 "Choose the colors you don't like", :pick => :any
+        a_1 "red"
+        a_2 "blue"
+        a_3 "green"
+        a_4 "yellow"
+        a :omit
+    
+        # A dependent question, with conditions and rule to logically join them  
+        # the question's reference identifier is "2a", and the answer's reference_identifier is "1"
+        # question reference identifiers used in conditions need to be unique on a survey for the lookups to work
+        q_2a "Please explain why you don't like this color?"
+        a_1 "explanation", :text
+        dependency :rule => "A or B or C or D"
+        condition_A :q_2, "==", :a_1
+        condition_B :q_2, "==", :a_2
+        condition_C :q_2, "==", :a_3
+        condition_D :q_2, "==", :a_4
+    
+        <... other question, sections and such. See kitchen_sink_survey.rb for more... >
+     end 
+    
+    end
+   
+The survey above shows a couple simple question types. The first one is a "pick one" type with the "other" custom entry. The second question
+is a "pick any" type with the option to "omit". It also has a dependency where you can ask a follow up question based on how the user 
+answered the previous question. Notice the way the dependency is defined as a string. This implementation supports any number of complex
+dependency rules so not just "A or B or C or D" but "A and (B or C) and D" or "!A or ((B and !C) or D)". The conditions are the letters used
+they are evaluated separately using the operators defined for "==","<>", ">=","<", (the usual stuff) the plugged in to the dependency rule and
+evaluated. See the example survey for more details.
+
 # Installation
 
 As a plugin:
@@ -28,6 +89,18 @@ Try out the "kitchen sink" survey:
 The rake surveyor task overwrites previous surveys by default, but can append instead:
 
     rake surveyor FILE=surveys/kitchen_sink_survey.rb APPEND=true
+
+The rake tasks above generate surveys in our custom survey DSL (which is a great format for end users and stakeholders to use). 
+After you have run them start up your app:
+    
+    script/server
+
+(or however you normally start your app) and goto:
+
+    http://localhost:3000/surveys
+
+Try taking the survey and compare it to the contents of the DSL file kitchen_sink_survey.rb. See how each type of
+DSL question maps to the resulting rendered view of the question.
 
 # Configuration
 
@@ -103,7 +176,12 @@ The <code>surveyor\_includes</code> helper just calls <code>surveyor\_stylsheets
     
 # Dependencices
 
-Surveyor depends on Rails 2.3 and the SASS style sheet language, part of HAML (http://haml.hamptoncatlin.com/download)
+Surveyor depends on Rails 2.3 and the SASS style sheet language, part of HAML (http://haml.hamptoncatlin.com/download). For running the test suite you will need rspec and have the rspec plugin installed in your application.
+
+# Test Suite and Development
+
+To work on the plugin code (for enhancements, and bug fixes, etc...) fork this github project. Then clone the project under the vendor/plugins directory in a Rails app used only for development:
+
 
 # Changes
 

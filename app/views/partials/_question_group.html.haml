@@ -25,7 +25,7 @@
               %th{:class => "#{cycle("column_highlight", "", :name => "column_highlight")}"}= answer.text
   - when :repeater
     %ul.repeater
-      - (response_set.count_group_responses(group_questions) + 3).times do |group_number|
+      - (response_set.count_group_responses(group_questions) + 1).times do |group_number|
         %li.repeater
           - group_questions.each do |question|
             = render(:partial => question.custom_renderer || "/partials/question", :locals => locals.merge({:question => question, :response_group => group_number, :disabled => false}))
