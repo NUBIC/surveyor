@@ -11,6 +11,7 @@ class ResponseSet < ActiveRecord::Base
   # Validations
   validates_presence_of :survey_id
   validates_associated :responses
+  validates_uniqueness_of :access_code
   
   # Attributes
   attr_protected :completed_at
@@ -28,6 +29,13 @@ class ResponseSet < ActiveRecord::Base
   def default_args
     self.started_at ||= Time.now
     self.access_code = Surveyor.make_tiny_code
+  end
+  
+  def access_code=(val)
+    while ResponseSet.find_by_access_code(val)
+      val = Surveyor.make_tiny_code
+    end
+    super
   end
   
   def response_for(question_id, answer_id, group = nil)
