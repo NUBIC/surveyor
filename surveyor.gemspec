@@ -5,11 +5,11 @@
 
 Gem::Specification.new do |s|
   s.name = %q{surveyor}
-  s.version = "0.9.10"
+  s.version = "0.9.11"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Brian Chamberlain", "Mark Yoon"]
-  s.date = %q{2010-03-04}
+  s.date = %q{2010-04-05}
   s.email = %q{yoon@northwestern.edu}
   s.extra_rdoc_files = [
     "README.md"
@@ -135,6 +135,7 @@ Gem::Specification.new do |s|
      "lib/surveyor/config.rb",
      "lib/tasks/surveyor_tasks.rake",
      "lib/xml_formatter.rb",
+     "rails/init.rb",
      "script/surveyor/answer.rb",
      "script/surveyor/base.rb",
      "script/surveyor/dependency.rb",
@@ -176,7 +177,7 @@ Gem::Specification.new do |s|
   s.homepage = %q{http://github.com/breakpointer/surveyor}
   s.rdoc_options = ["--charset=UTF-8"]
   s.require_paths = ["lib"]
-  s.rubygems_version = %q{1.3.5}
+  s.rubygems_version = %q{1.3.6}
   s.summary = %q{A rails (gem) plugin to enable surveys in your application}
   s.test_files = [
     "spec/controllers/surveyor_controller_spec.rb",
