@@ -19,9 +19,7 @@ end
 
 describe SurveySection, "with questions" do
   before(:each) do
-    @survey = mock_model(Survey)
-    @valid_attributes={:title => "Rhymes", :survey => @survey, :display_order => 4}
-    @survey_section = SurveySection.create(@valid_attributes)
+    @survey_section = Factory(:survey_section, :title => "Rhymes", :display_order => 4)
     @q1 = @survey_section.questions.create(:text => "Peep", :display_order => 3)
     @q2 = @survey_section.questions.create(:text => "Little", :display_order => 1)
     @q3 = @survey_section.questions.create(:text => "Bo", :display_order => 2)
