@@ -8,7 +8,6 @@
         - @surveys.each do |survey|
           %li
             - form_tag(take_survey_path(:survey_code => survey.access_code)) do 
-              = hidden_field_tag("current_user_id", @current_user.nil? ? nil : @current_user.id)
               = survey.title
               &nbsp;
               = submit_tag("Take it" )
