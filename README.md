@@ -58,12 +58,12 @@ The survey above shows a couple simple question types. The first one is a "pick 
 As a plugin:
 
     gem install haml
-    script/plugin install git://github.com/breakpointer/surveyor.git -r 'tag v0.9.10'
+    script/plugin install git://github.com/breakpointer/surveyor.git -r 'tag v0.10.0'
 
 Or as a gem plugin:
   
     # in environment.rb
-    config.gem "surveyor", :version => '>=0.9.10', :source => 'http://gemcutter.org'
+    config.gem "surveyor", :version => '~> 0.10.0', :source => 'http://gemcutter.org'
   
     rake gems:install
 
