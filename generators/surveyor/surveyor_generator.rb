@@ -30,7 +30,7 @@ class SurveyorGenerator < Rails::Generator::Base
         "create_dependencies", "create_dependency_conditions", 
         "create_validations", "create_validation_conditions", 
         "add_display_order_to_surveys", "add_correct_answer_id_to_questions",
-        "add_index_to_response_sets", "add_index_to_surveys"].each_with_index do |model, i|
+        "add_index_to_response_sets", "add_index_to_surveys", "add_unique_indicies"].each_with_index do |model, i|
         unless (prev_migrations = Dir.glob("db/migrate/[0-9]*_*.rb").grep(/[0-9]+_#{model}.rb$/)).empty?
           prev_migration_timestamp = prev_migrations[0].match(/([0-9]+)_#{model}.rb$/)[1]
         end
