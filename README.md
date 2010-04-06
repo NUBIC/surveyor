@@ -106,15 +106,16 @@ The surveyor generator creates config/initializers/surveyor.rb. There, you can s
 The initializer runs once, when the app starts. The block style is used to keep multiple options DRY (defaults below):
 
     Surveyor::Config.run do |config|
-      config['default.relative_url_root'] = "surveys/" # should end with '/'
-      config['default.title'] = "You can take these surveys:"
-      config['default.layout'] = "surveyor_default"
-      config['default.finish'] =  "/surveys"
-      config['use_restful_authentication'] = false
-      config['extend_controller'] = false
+      config['default.relative_url_root'] = nil # "surveys"
+      config['default.title'] = nil # "You can take these surveys:"
+      config['default.layout'] = nil # "surveyor_default"
+      config['default.index'] =  nil # "/surveys" # or :index_path_method
+      config['default.finish'] =  nil # "/surveys" # or :finish_path_method
+      config['use_restful_authentication'] = false # set to true to use restful authentication
+      config['extend'] = %w() # %w(survey surveyor_helper surveyor_controller)
     end
-    
-You can update surveyor's at any time. Use the block style (above), or the individual style:
+
+You can update surveyor's configuration at any time. Use the block style (above), or the individual style:
 
     Surveyor::Config['default.title'] = "Cheese is great!"
 
@@ -152,9 +153,7 @@ SurveyorController class_eval, class methods, instance methods, and actions can 
     </head>
     <body>
       <div id="flash"><%= flash[:notice] %></div>
-      <div id="survey_with_menu">
-        <%= yield %>
-      </div>
+      <%= yield %>
     </body>
     </html>
   
@@ -174,6 +173,26 @@ To work on the plugin code (for enhancements, and bug fixes, etc...) fork this g
 
 
 # Changes
+
+0.11.0
+
+* basic csv export. closes #21
+* add unique indicies. closes #45
+* add one_integer renderer. closes #51
+* constrain surveys to have unique access_codes. closes #45. closes #42
+* covering the extremely unlikely case that response_sets may have a non-unique access_code. closes #46. thanks jakewendt.
+* current user id not needed in the view, set in SurveyorController. closes #48. thanks jakewendt
+
+0.10.0
+
+* surveyor config['extend'] is now an array. custom modules (e.g. SurveyExtensions are now included from within surveyor models, allowing 
+the customizations to work on every request in development. closes #39. thanks to mgurley and jakewendt for the suggestions.
+* remove comment from surveyor_includes
+* css tweak
+* automatically add backslashes and eliminate multiple backslashes in relative root for routes
+* readme spelling and line breaks
+* fixing a failing spec with factory instead of mock parent model
+* upgrading cucumber to 0.6
 
 0.9.11
 
