@@ -216,3 +216,30 @@ describe ResponseSet, "with mandatory, dependent questions" do
     @response_set.progress_hash.should == {:questions => 4, :triggered => 4, :triggered_mandatory => 4, :triggered_mandatory_completed => 4}
   end
 end
+describe ResponseSet, "exporting csv" do
+  before(:each) do
+    @section = Factory(:survey_section)
+    # Questions
+    @do_you_like_pie = Factory(:question, :text => "Do you like pie?", :survey_section => @section)
+    @what_flavor = Factory(:question, :text => "What flavor?", :survey_section => @section)
+    @what_bakery = Factory(:question, :text => "What bakery?", :survey_section => @section)
+    # Answers
+    @do_you_like_pie.answers << Factory(:answer, :text => "yes", :question_id => @do_you_like_pie.id)
+    @do_you_like_pie.answers << Factory(:answer, :text => "no", :question_id => @do_you_like_pie.id)
+    @what_flavor.answers << Factory(:answer, :response_class => :string, :question_id => @what_flavor.id)
+    @what_bakery.answers << Factory(:answer, :response_class => :string, :question_id => @what_bakery.id)
+    # Responses
+    @response_set = Factory(:response_set)
+    @response_set.current_section_id = @section.id
+    @response_set.responses << Factory(:response, :question_id => @do_you_like_pie.id, :answer_id => @do_you_like_pie.answers.first.id, :response_set_id => @response_set.id)
+    @response_set.responses << Factory(:response, :string_value => "pecan pie", :question_id => @what_flavor.id, :answer_id => @what_flavor.answers.first.id, :response_set_id => @response_set.id)
+  end
+  it "should export a string with responses" do
+    @response_set.responses.size.should == 2
+    csv = @response_set.to_csv
+    csv.is_a?(String).should be_true
+    csv.should match "question.short_text"
+    csv.should match "What flavor?"
+    csv.should match /pecan pie/    
+  end
+end

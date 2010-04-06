@@ -39,6 +39,13 @@ class SurveyorController < ApplicationController
   end
 
   def show
+    @response_set = ResponseSet.find_by_access_code(params[:response_set_code], :include => {:responses => [:question, :answer]})
+    respond_to do |format|
+      format.html #{render :action => :show}
+      format.csv {
+        send_data(@response_set.to_csv, :type => 'text/csv; charset=utf-8; header=present',:filename => "#{@response_set.updated_at.strftime('%Y-%m-%d')}_#{@response_set.access_code}.csv")
+      }
+    end
   end
 
   def edit

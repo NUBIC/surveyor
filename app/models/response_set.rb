@@ -38,6 +38,20 @@ class ResponseSet < ActiveRecord::Base
     super
   end
   
+  def to_csv
+    qcols = Question.content_columns.map(&:name) - %w(created_at updated_at)
+    acols = Answer.content_columns.map(&:name) - %w(created_at updated_at)
+    rcols = Response.content_columns.map(&:name)
+    require 'fastercsv'
+    FCSV(result = "") do |csv|
+      csv << qcols.map{|qcol| "question.#{qcol}"} + acols.map{|acol| "answer.#{acol}"} + rcols.map{|rcol| "response.#{rcol}"}
+      responses.each do |response|
+        csv << qcols.map{|qcol| response.question.send(qcol)} + acols.map{|acol| response.answer.send(acol)} + rcols.map{|rcol| response.send(rcol)}
+      end
+    end
+    result
+  end
+  
   def response_for(question_id, answer_id, group = nil)
     found = responses.detect{|r| r.question_id == question_id && r.answer_id == answer_id && r.response_group.to_s == group.to_s}
     found.blank? ? responses.new(:question_id => question_id, :answer_id => answer_id, :response_group => group) : found
