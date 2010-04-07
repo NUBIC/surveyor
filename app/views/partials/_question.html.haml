@@ -2,6 +2,8 @@
 - case renderer
 - when :label
   - div_for question, :class => "label #{question.css_class(response_set)}" do
+    - if question.survey_section.survey.manual_numbering
+      .number= question.number||'&nbsp;'
     %span.text= question.text
     %span.help= question.help_text
 - when :image
