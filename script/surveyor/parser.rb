@@ -102,6 +102,25 @@ module SurveyParser
         drop_the &block
         self.current_validation = Validation.new(self.current_answer, args, opts)
 
+
+      # explicitly define a dependency condition
+      # (not really necessary as is default)
+      when "dependencycondition", "dcondition", "dc"
+        drop_the &block
+        raise "Error: No current dependency for this condition" if self.current_dependency.nil?
+        self.current_dependency.dependency_conditions << DependencyCondition.new(self.current_dependency, args, opts)
+
+      # explicitly define a validation condition
+      # (is necessary if want dependency AND validation on
+      #  same question as dependency existance would try to
+      #  make the condition a dependency condition.)
+      when "validationcondition", "vcondition", "vc"
+        drop_the &block
+        raise "Error: No current validation for this condition" if self.current_validation.nil?
+        self.current_validation.validation_conditions << ValidationCondition.new(self.current_validation, args, opts)
+      
+
+
       else
         raise "  ERROR: '#{missing_method}' not valid method"
     
