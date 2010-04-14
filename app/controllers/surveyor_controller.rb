@@ -11,9 +11,8 @@ class SurveyorController < ApplicationController
   before_filter :extend_actions
 
   # RESTful authentication
-  if Surveyor::Config['use_restful_authentication']
-    include AuthenticatedSystem
-    before_filter :login_required
+  if Surveyor::Config['authentication_method']
+    before_filter Surveyor::Config['authentication_method']
   end
 
   # Get the response set or current_user
