@@ -39,11 +39,16 @@ class SurveyorController < ApplicationController
 
   def show
     @response_set = ResponseSet.find_by_access_code(params[:response_set_code], :include => {:responses => [:question, :answer]})
-    respond_to do |format|
-      format.html #{render :action => :show}
-      format.csv {
-        send_data(@response_set.to_csv, :type => 'text/csv; charset=utf-8; header=present',:filename => "#{@response_set.updated_at.strftime('%Y-%m-%d')}_#{@response_set.access_code}.csv")
-      }
+    if @response_set
+      respond_to do |format|
+        format.html #{render :action => :show}
+        format.csv {
+          send_data(@response_set.to_csv, :type => 'text/csv; charset=utf-8; header=present',:filename => "#{@response_set.updated_at.strftime('%Y-%m-%d')}_#{@response_set.access_code}.csv")
+        }
+      end
+    else
+      flash[:notice] = "Unable to find your responses to the survey"
+      redirect_to(available_surveys_path)
     end
   end
 
