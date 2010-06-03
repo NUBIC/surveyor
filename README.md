@@ -1,4 +1,4 @@
-# Survey On Rails
+# Surveys On Rails
 
 Surveyor is a rails (gem) plugin, that brings surveys to your rails app. Before Rails 2.3, it was implemented as a Rails Engine. Surveys are written in a DSL (Domain Specific Language), with examples available in the "kitchen sink" survey.
 
