@@ -36,7 +36,13 @@ class Question < ActiveRecord::Base
     self.dependency != nil
   end
   def triggered?(response_set)
-    dependent? ? self.dependency.is_met?(response_set) : true
+    #dependent? ? self.dependency.is_met?(response_set) : true
+    return true if !dependent? and (question_group.nil? or !question_group.dependent?)
+    if dependent?
+      return dependency.is_met?(response_set)
+    elsif question_group.dependent?
+      return question_group.dependency.is_met?(response_set)
+    end
   end
   def css_class(response_set)
     [(dependent? ? "dependent" : nil), (triggered?(response_set) ? nil : "hidden"), custom_class].compact.join(" ")

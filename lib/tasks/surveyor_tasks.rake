@@ -18,9 +18,10 @@ namespace :surveyor do
   task :load_fixtures => :environment do
     require 'active_record/fixtures'
     require 'fixtures_extensions' unless ENV["APPEND"].blank?
+    raise "USAGE: fixtures directory required e.g. 'FIXTURES=surveys/fixtures'" if ENV["FIXTURES"].blank?
     ActiveRecord::Base.establish_connection(Rails.env)
 
-    fixture_dir = File.join(RAILS_ROOT, "surveys", "fixtures")
+    fixture_dir = File.join(RAILS_ROOT, ENV["FIXTURES"])
     fixtures = Dir.glob("#{fixture_dir}/*.yml")
     raise "No fixtures found." if fixtures.empty?
     

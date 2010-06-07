@@ -1,14 +1,21 @@
+%script{:type => 'text/javascript'}
+  $(document).ready(function(){
+  $(".date.answer input").datepicker({changeMonth: true, changeYear: true,showOn: 'button', buttonImage: " #{root_url}/images/icons/calendar.gif", buttonImageOnly: true});
+  $(".answer.timepicker input").datetime({userLang:'en',americanMode: true});
+  });
 #surveyor
   - form_tag(update_my_survey_path, :method => :put, :id => "survey_form", :class => @survey.custom_class) do
     = hidden_field_tag :current_section_id, @section.id
-    - unless @sections.size < 3
+    - unless @sections.size < 2
       #menu
         Sections:
         %ul
           - @sections.each do |s|
-            %li{:class => ("active" if s == @section)}= menu_button_for(s)
-    #header
-      .title= @survey.title
+            %li{:class => ("active" if s == @section)}
+              = image_submit_tag("icons/completed.gif",:name => "section[#{s.id}]") if @response_set.section_status(s) == "FINISHED"
+              = image_submit_tag("icons/attempted.gif",:name => "section[#{s.id}]") if @response_set.section_status(s) == "STARTED"
+              = image_submit_tag("icons/not_attempted.gif",:name => "section[#{s.id}]") if @response_set.section_status(s) == "NOT STARTED"
+              = menu_button_for(s)
     .previous_section= previous_section
     - unless @dependents.empty?
       #dependents
@@ -29,5 +36,7 @@
               - # this is the last question of the section, or the group
               = render(:partial => question.question_group.custom_renderer || "/partials/question_group", :locals => {:question_group => question.question_group, :response_set => @response_set, :group_questions => group_questions})
               - group_questions = []
-    .next_section= next_section
+    .next_section
+      =link_to("Save & Exit",dashboard_path)
+      =next_section
       

@@ -9,6 +9,7 @@ Factory.define :survey do |s|
   s.description   {"A simple survey for testing"}
   s.access_code   {Factory.next :unique_survey_access_code}
   s.active_at     {Time.now}
+  s.portal {1} 
   s.inactive_at   {}
   s.css_url       {}
 end

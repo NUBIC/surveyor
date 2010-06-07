@@ -31,7 +31,8 @@
     = response_form.label(:datetime_value, split_text(answer.text)[:postfix], :class => "#{(disabled)? 'disabled' : 'enabled'}") unless hide_label
   - when :none_datetime
     = response_form.label(:datetime_value, split_text(answer.text)[:prefix], :class => "#{(disabled)? 'disabled' : 'enabled'}") unless hide_label
-    = response_form.datetime_select(:datetime_value, {:include_blank => true})
+    = response_form.text_field(:datetime_value)
+    //= response_form.datetime_select(:datetime_value, {:include_blank => true})
     = response_form.label(:datetime_value, split_text(answer.text)[:postfix], :class => "#{(disabled)? 'disabled' : 'enabled'}") unless hide_label
   - when :none_float
     = response_form.label(:float_value, split_text(answer.text)[:prefix]) unless hide_label
