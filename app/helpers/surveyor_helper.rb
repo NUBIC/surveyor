@@ -16,7 +16,7 @@ module SurveyorHelper
     stylesheet_link_tag 'surveyor/reset', 'surveyor/surveyor', 'surveyor/ui.theme.css','surveyor/jquery-ui-slider-additions'
   end
   def surveyor_javascripts
-    javascript_include_tag 'surveyor/accessibleUISlider.jQuery.js','surveyor/jquery.form.js', 'surveyor/surveyor.js'
+    javascript_include_tag 'surveyor/accessibleUISlider.jQuery.js','surveyor/jquery.form.js', 'surveyor/selectToUISlider.jQuery'
   end
   
   # Section: dependencies, menu, previous and next

@@ -8,7 +8,7 @@
   .image= image_tag(question.text)
 - when :dropdown, :slider
   - if renderer == :slider
-    %script{:type => "text/javascript"}= "$(function(){$('#slider_#{question.id}').accessibleUISlider({width: 400, labels:#{question.answers.size} }).hide();});"
+    %script{:type => "text/javascript"}= "$(function(){$('#slider_#{question.id}').selectToUISlider({labels: #{question.answers.size},labelSrc:'text' }).hide();});"
   - div_for question, :class => question.css_class(response_set) do
     .number= next_number unless question.dependent?
     %fieldset
