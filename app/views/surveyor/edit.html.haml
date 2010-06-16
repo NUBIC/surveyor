@@ -1,3 +1,6 @@
+-content_for :head do
+  =stylesheet_link_tag(@survey.css_url) unless @survey.css_url.blank?
+
 %script{:type => 'text/javascript'}
   $(document).ready(function(){
   $(".date.answer input").datepicker({changeMonth: true, changeYear: true,showOn: 'button', buttonImage: " #{root_url}/images/icons/calendar.gif", buttonImageOnly: true});
