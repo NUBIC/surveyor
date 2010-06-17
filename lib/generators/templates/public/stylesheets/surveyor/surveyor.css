@@ -77,7 +77,7 @@ body {
     margin: 0.5em;
     margin: 0.55em; }
   #surveyor input[type="submit"] {
-    font-size: 1.0em;
+    font-size: 1em;
     border: 0px;
     padding: 0.2em;
     margin: 0.2em;
@@ -85,7 +85,7 @@ body {
     background-color: #dcdcdc;
     color: #464646; }
   #surveyor input[type="text"], #surveyor textarea {
-    border: 2px inset #333;
+    border: 2px inset #333333;
     border-color: #bcbcbc;
     background-color: #fafafa;
     padding: 0.1em;
@@ -100,7 +100,7 @@ body {
     margin: 0em;
     margin-left: -1em;
     font-size: 0.7em;
-    border: 1px solid #333;
+    border: 1px solid #333333;
     border-color: #bcbcbc; }
   #surveyor .questions {
     margin: 0;
@@ -162,7 +162,7 @@ body {
       padding: 0.2em 0.5em;
       text-align: center; }
     #surveyor table.grid td {
-      border-bottom: 2px dotted #999;
+      border-bottom: 2px dotted #999999;
       border-color: #bfbfb4; }
     #surveyor table.grid th.question_prefix, #surveyor table.grid th.question_postfix {
       padding: 0.2em 0.5em;
