@@ -165,12 +165,11 @@ The <code>surveyor\_includes</code> helper just calls <code>surveyor\_stylsheets
     
 # Dependencices
 
-Surveyor depends on Rails 2.3 and the SASS style sheet language, part of HAML (http://haml.hamptoncatlin.com/download). For running the test suite you will need rspec and have the rspec plugin installed in your application.
+Surveyor depends on Rails 3 and HAML (http://haml.hamptoncatlin.com/download).
 
-# Test Suite and Development
+# Test and Development
 
-To work on the plugin code (for enhancements, and bug fixes, etc...) fork this github project. Then clone the project under the vendor/plugins directory in a Rails app used only for development:
-
+To work on the plugin code clone git://github.com/yoon/base\_app\_for\_surveyor.git and follow the instructions in README.
 
 # Changes
 
