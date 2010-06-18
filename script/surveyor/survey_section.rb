@@ -9,7 +9,7 @@ module SurveyParser
 
     def parse_args(args)
       title = args[0]
-      {:title => title, :data_export_identifier => Surveyor.to_normalized_string(title)}.merge(args[1] || {})
+      {:title => title, :data_export_identifier => Surveyor::Common.to_normalized_string(title)}.merge(args[1] || {})
     end
 
     # Used to find questions for dependency linking

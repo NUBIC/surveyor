@@ -25,12 +25,12 @@ class ResponseSet < ActiveRecord::Base
   
   def default_args
     self.started_at ||= Time.now
-    self.access_code = Surveyor.make_tiny_code
+    self.access_code = Surveyor::Common.make_tiny_code
   end
   
   def access_code=(val)
     while ResponseSet.find_by_access_code(val)
-      val = Surveyor.make_tiny_code
+      val = Surveyor::Common.make_tiny_code
     end
     super
   end
