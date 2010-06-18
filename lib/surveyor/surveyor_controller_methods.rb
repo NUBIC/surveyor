@@ -2,27 +2,14 @@ module Surveyor
   module SurveyorControllerMethods
     def self.included(base)
       base.send :before_filter, :get_current_user, :only => [:new, :create]
+      base.send :layout, 'surveyor_default'
     end
-  
-    # # Layout
-    # layout Surveyor::Config['default.layout'] || 'surveyor_default'
-    # 
-    # # Extending surveyor
-    # include SurveyorControllerExtensions if Surveyor::Config['extend'].include?("surveyor_controller")
-    # before_filter :extend_actions
-    # 
-    # # RESTful authentication
-    # if Surveyor::Config['authentication_method']
-    #   before_filter Surveyor::Config['authentication_method']
-    # end
-
-    # Get the response set or current_user
-    # before_filter :get_response_set, :except => [:new, :create]
-
+    
     # Actions
     def new
       @surveys = Survey.find(:all)
-      redirect_to surveyor_default(:index) unless available_surveys_path == surveyor_default(:index)
+      @title = "You can take these surveys"
+      redirect_to surveyor_index unless surveyor_index == available_surveys_path
     end
 
     def create
@@ -33,7 +20,7 @@ module Surveyor
         redirect_to(edit_my_survey_path(:survey_code => @survey.access_code, :response_set_code  => @response_set.access_code))
       else
         flash[:notice] = "Unable to find that survey"
-        redirect_to(available_surveys_path)
+        redirect_to surveyor_index
       end
     end
 
@@ -48,7 +35,7 @@ module Surveyor
         end
       else
         flash[:notice] = "Unable to find your responses to the survey"
-        redirect_to(available_surveys_path)
+        redirect_to surveyor_index
       end
     end
 
@@ -66,7 +53,7 @@ module Surveyor
         @dependents = (@response_set.unanswered_dependencies - @section.questions) || []
       else
         flash[:notice] = "Unable to find your responses to the survey"
-        redirect_to(available_surveys_path)
+        redirect_to surveyor_index
       end
     end
 
@@ -94,7 +81,7 @@ module Surveyor
         format.html do
           if saved && params[:finish]
             flash[:notice] = "Completed survey"
-            redirect_to surveyor_default(:finish)
+            redirect_to surveyor_finish
           else
             flash[:notice] = "Unable to update survey" if !saved #and !saved.nil? # saved.nil? is true if there are no questions on the page (i.e. if it only contains a label)
             redirect_to :action => "edit", :anchor => anchor_from(params[:section]), :params => {:section => section_id_from(params[:section])}
@@ -124,26 +111,11 @@ module Surveyor
       p.respond_to?(:keys) && p[p.keys.first].respond_to?(:keys) ? p[p.keys.first].keys.first : nil
     end
 
-    def surveyor_default(a)
+    def surveyor_index
       available_surveys_path
     end
-    # Extending surveyor
-    # def surveyor_default(type = :finish)
-    #   # http://www.postal-code.com/mrhappy/blog/2007/02/01/ruby-comparing-an-objects-class-in-a-case-statement/
-    #   # http://www.skorks.com/2009/08/how-a-ruby-case-statement-works-and-what-you-can-do-with-it/
-    #   case arg = Surveyor::Config["default.#{type.to_s}"]
-    #   when String
-    #     return arg
-    #   when Symbol
-    #     return self.send(arg)
-    #   else
-    #     return available_surveys_path
-    #   end
-    # end
-
-    # def extend_actions
-    #   # http://blog.mattwynne.net/2009/07/11/rails-tip-use-polymorphism-to-extend-your-controllers-at-runtime/
-    #   self.extend SurveyorControllerExtensions::Actions if Surveyor::Config['extend'].include?("surveyor_controller") && defined? SurveyorControllerExtensions::Actions
-    # end
+    def surveyor_finish
+      available_surveys_path
+    end
   end
 end
