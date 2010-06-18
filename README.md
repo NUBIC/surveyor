@@ -1,10 +1,10 @@
 # Survey On Rails
 
-Surveyor is a rails (gem) plugin, that brings surveys to your rails app. Before Rails 2.3, it was implemented as a Rails Engine. Surveys are written in a DSL (Domain Specific Language), with examples available in the "kitchen sink" survey.
+Surveyor is a rails gem that brings surveys to your rails app. It is implemented as a Rails 3 Engine. Surveys are written in a DSL (Domain Specific Language), with examples available in the "kitchen sink" survey.
 
 ## Why you might want to use Surveyor
 
-If you have to have a part of your Rails app that asks users questions as part of a survey, quiz, or questionnaire then you should consider using Surveyor. This plugin was designed out of the need to deliver clinical research surveys to large populations of people but it can be used for any type of survey. It has an easy to use DSL to define the questions, response dependencies (if user answers 'A' to question 1 then show question 1a, etc...), and structure (different sections of longer questionnaires).
+If you want to ask your users questions as part of a survey, quiz, or questionnaire, then you should consider using Surveyor. This plugin was designed out of the need to deliver clinical research surveys to large populations but may be used for any type of survey. It has an easy to use DSL to define the questions, response dependencies (if user answers 'A' to question 1 then show question 1a, etc...), and structure (different sections of longer questionnaires).
 
 To build your questionnaire you define it using a custom DSL. Having a DSL instead of a GUI makes it significantly easier to import long surveys (no more endless clicking and typing into tiny text boxes). It also means that you can let your customer write out the survey, edit, re-edit, tweak, throw out and start over, any number of surveys without having to change a single line of code in your app. 
 
@@ -58,7 +58,7 @@ The survey above shows a couple simple question types. The first one is a "pick 
 As a plugin:
 
     gem install haml
-    script/plugin install git://github.com/breakpointer/surveyor.git -r 'tag v0.10.0'
+    script/rails plugin install git://github.com/breakpointer/surveyor.git -r 'tag v0.10.0'
 
 Or as a gem plugin:
   
@@ -69,7 +69,7 @@ Or as a gem plugin:
 
 Generate assets, run migrations:
     
-    script/generate surveyor
+    script/rails generate surveyor:install
     rake db:migrate
 
 Try out the "kitchen sink" survey:
@@ -83,7 +83,7 @@ The rake surveyor task overwrites previous surveys by default, but can append in
 The rake tasks above generate surveys in our custom survey DSL (which is a great format for end users and stakeholders to use). 
 After you have run them start up your app:
     
-    script/server
+    script/rails server
 
 (or however you normally start your app) and goto:
 
@@ -94,41 +94,16 @@ DSL question maps to the resulting rendered view of the question.
 
 # Configuration
 
-The surveyor generator creates config/initializers/surveyor.rb. There, you can specify:
 
 - your own relative root for surveys ('/' is not recommended as any path will be interpreted as a survey name)
-- your own custom title (string) for the survey list page
-- your own custom layout file name, in your app/views/layouts folder
-- your own custom finish url for all surveys. you can give a string (a path), a symbol (the name of a method in ApplicationController)
-- if you would like surveys to require authorization via the restful_authentication plugin
-
-The initializer runs once, when the app starts. The block style is used to keep multiple options DRY (defaults below):
-
-    Surveyor::Config.run do |config|
-      config['default.relative_url_root'] = nil # "surveys"
-      config['default.title'] = nil # "You can take these surveys:"
-      config['default.layout'] = nil # "surveyor_default"
-      config['default.index'] =  nil # "/surveys" # or :index_path_method
-      config['default.finish'] =  nil # "/surveys" # or :finish_path_method
-      #config['authentication_method'] = :login_required # set to true to use restful authentication
-      config['extend'] = %w() # %w(survey surveyor_helper surveyor_controller)
-    end
-
-You can update surveyor's configuration at any time. Use the block style (above), or the individual style:
-
-    Surveyor::Config['default.title'] = "Cheese is great!"
-
-To look at the current surveyor configuration:
-    
-    Surveyor::Config.to_hash.inspect
 
 # Customizing surveyor
 
-Surveyor's models, helper, and controller can be customized via classes in your app/models, app/helpers and app/controllers directories. To generate the sample files and sample layout, run:
+Surveyor's controller, models, and views may be customized via classes in your app/models, app/helpers and app/controllers directories. To generate a sample custom controller and layout, run:
 
     script/rails generate surveyor:custom
 
-and open surveys/README\_FOR\_CUSTOM\_SURVEYOR.md
+and check out surveys/README\_FOR\_CUSTOM\_SURVEYOR.md
 
 # Dependencices
 
@@ -138,7 +113,16 @@ Surveyor depends on Rails 3 and HAML (http://haml.hamptoncatlin.com/download).
 
 To work on the plugin code clone git://github.com/yoon/base\_app\_for\_surveyor.git and follow the instructions in README.
 
+
 # Changes
+
+0.12.0
+
+* http://www.themodestrubyist.com/2010/03/01/rails-3-plugins---part-1---the-big-picture/
+* http://www.themodestrubyist.com/2010/03/05/rails-3-plugins---part-2---writing-an-engine/
+* http://www.themodestrubyist.com/2010/03/16/rails-3-plugins---part-3---rake-tasks-generators-initializers-oh-my/
+* http://www.themodestrubyist.com/2010/03/22/rails-3-plugins---part-4---more-on-generators/
+* http://rdoc.info/rdoc/wycats/thor/blob/f939a3e8a854616784cac1dcff04ef4f3ee5f7ff/Thor/Actions.html
 
 0.11.0
 
