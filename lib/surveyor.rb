@@ -1,7 +1,9 @@
 require 'generators/install_generator.rb'
+require 'surveyor/acts_as_response'
 
-require File.dirname(__FILE__) + '/surveyor/acts_as_response'
 module Surveyor
+  require 'surveyor/engine' if defined?(Rails) && Rails::VERSION::MAJOR == 3
+  
   RAND_CHARS = [('a'..'z'), ('A'..'Z'), (0..9)].map{|r| r.to_a}.flatten.to_s
 
   def self.make_tiny_code(len = 10)
