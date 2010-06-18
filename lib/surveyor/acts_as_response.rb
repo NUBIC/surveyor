@@ -1,15 +1,10 @@
 require 'active_record'
 
+# Cleaned up per http://yehudakatz.com/2009/11/12/better-ruby-idioms
 module Surveyor
   module Response
-    def self.included(base)
-      base.extend(ClassMethods)
-    end
-
-    module ClassMethods
-      def acts_as_response
-        include Surveyor::Response::InstanceMethods
-      end    
+    def acts_as_response
+      include InstanceMethods
     end
     
     module InstanceMethods
@@ -30,4 +25,4 @@ module Surveyor
   end
 end
 
-ActiveRecord::Base.send(:include, Surveyor::Response)
+ActiveRecord::Base.extend Surveyor::Response
