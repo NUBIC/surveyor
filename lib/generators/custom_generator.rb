@@ -9,7 +9,7 @@ module Surveyor
     end
     
     def readme
-      copy_file "README_FOR_CUSTOM_SURVEYOR", "surveys/README_FOR_CUSTOM_SURVEYOR"
+      copy_file "surveys/README_FOR_CUSTOM_SURVEYOR"
     end
   end
 end
