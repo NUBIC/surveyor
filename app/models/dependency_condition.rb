@@ -1,8 +1,5 @@
 class DependencyCondition < ActiveRecord::Base
 
-  # Extending surveyor
-  include "#{self.name}Extensions".constantize if Surveyor::Config['extend'].include?(self.name.underscore)
-
   # Constants
   OPERATORS = %w(== != < > <= >=) # CONSTANT or @@class_variable when validations listed before class method
 
