@@ -1,4 +1,4 @@
-require 'activesupport' # for pluralize, humanize in ActiveSupport::CoreExtensions::String::Inflections
+require 'active_support/core_ext/string/inflections' # for pluralize, humanize in ActiveSupport::CoreExtensions::String::Inflections
 module SurveyParser
   class Parser
     @@models = %w(survey survey_section question_group question answer dependency dependency_condition validation validation_condition)
