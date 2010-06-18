@@ -1,4 +1,5 @@
 require 'generators/install_generator.rb'
+require 'generators/custom_generator.rb'
 require 'surveyor/acts_as_response'
 
 module Surveyor
