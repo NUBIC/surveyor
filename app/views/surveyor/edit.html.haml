@@ -3,7 +3,7 @@
 
 %script{:type => 'text/javascript'}
   $(document).ready(function(){
-  $(".date.answer input").datepicker({changeMonth: true, changeYear: true,showOn: 'button', buttonImage: " #{root_url}/images/icons/calendar.gif", buttonImageOnly: true});
+  $(".date.answer input").datepicker({changeMonth: true, changeYear: true,showOn: 'button', buttonImage: "/images/icons/calendar.gif", buttonImageOnly: true});
   $(".answer.timepicker input").datetime({userLang:'en',americanMode: true});
   });
 #surveyor
@@ -37,6 +37,5 @@
               = render(:partial => question.question_group.custom_renderer || "/partials/question_group", :locals => {:question_group => question.question_group, :response_set => @response_set, :group_questions => group_questions})
               - group_questions = []
     .next_section
-      =link_to("Save & Exit",dashboard_path)
       =next_section
       
