@@ -15,9 +15,6 @@
         %ul
           - @sections.each do |s|
             %li{:class => ("active" if s == @section)}
-              = image_submit_tag("icons/completed.gif",:name => "section[#{s.id}]") if @response_set.section_status(s) == "FINISHED"
-              = image_submit_tag("icons/attempted.gif",:name => "section[#{s.id}]") if @response_set.section_status(s) == "STARTED"
-              = image_submit_tag("icons/not_attempted.gif",:name => "section[#{s.id}]") if @response_set.section_status(s) == "NOT STARTED"
               = menu_button_for(s)
     .previous_section= previous_section
     - unless @dependents.empty?
