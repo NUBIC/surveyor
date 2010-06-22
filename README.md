@@ -58,12 +58,12 @@ The survey above shows a couple simple question types. The first one is a "pick 
 As a plugin:
 
     gem install haml
-    script/plugin install git://github.com/breakpointer/surveyor.git -r 'tag v0.10.0'
+    script/plugin install git://github.com/breakpointer/surveyor.git -r 'tag v0.11.0'
 
 Or as a gem plugin:
   
     # in environment.rb
-    config.gem "surveyor", :version => '~> 0.10.0', :source => 'http://gemcutter.org'
+    config.gem "surveyor", :version => '~> 0.11.0', :source => 'http://gemcutter.org'
   
     rake gems:install
 
@@ -74,11 +74,11 @@ Generate assets, run migrations:
 
 Try out the "kitchen sink" survey:
 
-    rake surveyor FILE=surveys/kitchen_sink_survey.rb
+    rake surveyor FILE=surveys/kitchen_sink_survey.rb FIXTURES=surveys/fixtures
 
 The rake surveyor task overwrites previous surveys by default, but can append instead:
 
-    rake surveyor FILE=surveys/kitchen_sink_survey.rb APPEND=true
+    rake surveyor FILE=surveys/kitchen_sink_survey.rb FIXTURES=surveys/fixtures APPEND=true
 
 The rake tasks above generate surveys in our custom survey DSL (which is a great format for end users and stakeholders to use). 
 After you have run them start up your app:
