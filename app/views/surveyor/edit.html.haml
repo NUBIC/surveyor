@@ -1,11 +1,6 @@
 -content_for :head do
   =stylesheet_link_tag(@survey.css_url) unless @survey.css_url.blank?
 
-%script{:type => 'text/javascript'}
-  $(document).ready(function(){
-  $(".date.answer input").datepicker({changeMonth: true, changeYear: true,showOn: 'button', buttonImage: "/images/icons/calendar.gif", buttonImageOnly: true});
-  $(".answer.timepicker input").datetime({userLang:'en',americanMode: true});
-  });
 #surveyor
   - form_tag(update_my_survey_path, :method => :put, :id => "survey_form", :class => @survey.custom_class) do
     = hidden_field_tag :current_section_id, @section.id
