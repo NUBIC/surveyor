@@ -58,14 +58,22 @@ The survey above shows a couple simple question types. The first one is a "pick 
 As a plugin:
 
     gem install haml
+    gem install fastercsv
     script/plugin install git://github.com/breakpointer/surveyor.git -r 'tag v0.11.0'
 
-Or as a gem plugin:
+Or as a gem:
   
     # in environment.rb
     config.gem "surveyor", :version => '~> 0.11.0', :source => 'http://gemcutter.org'
   
     rake gems:install
+
+Or as a gem (with bundler):
+
+    # in environment.rb
+    gem "surveyor", '~> 0.11.0'
+
+    bundle install
 
 Generate assets, run migrations:
     
@@ -165,7 +173,7 @@ The <code>surveyor\_includes</code> helper just calls <code>surveyor\_stylsheets
     
 # Dependencices
 
-Surveyor depends on Rails 2.3 and the SASS style sheet language, part of HAML (http://haml.hamptoncatlin.com/download). For running the test suite you will need rspec and have the rspec plugin installed in your application.
+Surveyor depends on Rails 2.3 and the SASS style sheet language, part of HAML (http://haml.hamptoncatlin.com/download). It also depends on fastercsv for csv exports. For running the test suite you will need rspec and have the rspec plugin installed in your application.
 
 # Test Suite and Development
 
