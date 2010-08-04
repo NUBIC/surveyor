@@ -128,9 +128,8 @@ class ResponseSet < ActiveRecord::Base
   end
   def progress_hash
     qs = survey.sections_with_questions.map(&:questions).flatten
-    #ds = dependencies(qs.map(&:id))
-    #triggered = qs - ds.select{|d| !d.is_met?(self)}.map(&:question)
-    triggered = qs.select{|q| q.triggered?(self)}
+    ds = dependencies(qs.map(&:id))
+    triggered = qs - ds.select{|d| !d.is_met?(self)}.map(&:question)
     { :questions => qs.compact.size,
       :triggered => triggered.compact.size,
       :triggered_mandatory => triggered.select{|q| q.mandatory?}.compact.size,

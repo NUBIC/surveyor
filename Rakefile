@@ -10,7 +10,6 @@ begin
     gem.homepage = "http://github.com/breakpointer/surveyor"
     gem.authors = ["Brian Chamberlain", "Mark Yoon"]
     gem.add_dependency 'haml'
-    gem.add_dependency 'fastercsv'
     # gem is a Gem::Specification... see http://www.rubygems.org/read/chapter/20 for additional settings
   end
   Jeweler::GemcutterTasks.new

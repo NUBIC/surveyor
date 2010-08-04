@@ -16,7 +16,7 @@ module SurveyorHelper
     stylesheet_link_tag 'surveyor/reset', 'surveyor/surveyor', 'surveyor/ui.theme.css','surveyor/jquery-ui-slider-additions'
   end
   def surveyor_javascripts
-    javascript_include_tag 'surveyor/accessibleUISlider.jQuery.js','surveyor/jquery.form.js', 'surveyor/selectToUISlider.jQuery'
+    javascript_include_tag 'surveyor/jquery-1.2.6.js', 'surveyor/jquery-ui-personalized-1.5.3.js', 'surveyor/accessibleUISlider.jQuery.js','surveyor/jquery.form.js', 'surveyor/surveyor.js'
   end
   
   # Section: dependencies, menu, previous and next
@@ -40,7 +40,7 @@ module SurveyorHelper
   def next_section
     # @section.next.nil? ? submit_tag("Click here to finish", :name => "finish") : submit_tag("Next section &raquo;", :name => "section[#{@section.next.id}]")
     # refactored to use copy in memory instead of making extra db calls
-    @sections.last == @section ? submit_tag("Submit", :name => "finish") : submit_tag("Continue", :name => "section[#{@sections[@sections.index(@section)+1].id}]")
+    @sections.last == @section ? submit_tag("Click here to finish", :name => "finish") : submit_tag("Next section &raquo;", :name => "section[#{@sections[@sections.index(@section)+1].id}]")
   end
   
   # Questions
