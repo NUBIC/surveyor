@@ -5,11 +5,11 @@
 
 Gem::Specification.new do |s|
   s.name = %q{surveyor}
-  s.version = "0.11.0"
+  s.version = "0.12.0"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Brian Chamberlain", "Mark Yoon"]
-  s.date = %q{2010-04-06}
+  s.date = %q{2010-08-19}
   s.email = %q{yoon@northwestern.edu}
   s.extra_rdoc_files = [
     "README.md"
@@ -180,7 +180,7 @@ Gem::Specification.new do |s|
   s.homepage = %q{http://github.com/breakpointer/surveyor}
   s.rdoc_options = ["--charset=UTF-8"]
   s.require_paths = ["lib"]
-  s.rubygems_version = %q{1.3.6}
+  s.rubygems_version = %q{1.3.7}
   s.summary = %q{A rails (gem) plugin to enable surveys in your application}
   s.test_files = [
     "spec/controllers/surveyor_controller_spec.rb",
@@ -204,13 +204,16 @@ Gem::Specification.new do |s|
     current_version = Gem::Specification::CURRENT_SPECIFICATION_VERSION
     s.specification_version = 3
 
-    if Gem::Version.new(Gem::RubyGemsVersion) >= Gem::Version.new('1.2.0') then
+    if Gem::Version.new(Gem::VERSION) >= Gem::Version.new('1.2.0') then
       s.add_runtime_dependency(%q<haml>, [">= 0"])
+      s.add_runtime_dependency(%q<fastercsv>, [">= 0"])
     else
       s.add_dependency(%q<haml>, [">= 0"])
+      s.add_dependency(%q<fastercsv>, [">= 0"])
     end
   else
     s.add_dependency(%q<haml>, [">= 0"])
+    s.add_dependency(%q<fastercsv>, [">= 0"])
   end
 end
 
