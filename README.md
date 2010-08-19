@@ -59,19 +59,19 @@ As a plugin:
 
     gem install haml
     gem install fastercsv
-    script/plugin install git://github.com/breakpointer/surveyor.git -r 'tag v0.11.0'
+    script/plugin install git://github.com/breakpointer/surveyor.git -r 'tag v0.12.0'
 
 Or as a gem:
   
     # in environment.rb
-    config.gem "surveyor", :version => '~> 0.11.0', :source => 'http://gemcutter.org'
+    config.gem "surveyor", :version => '~> 0.12.0', :source => 'http://gemcutter.org'
   
     rake gems:install
 
 Or as a gem (with bundler):
 
     # in environment.rb
-    gem "surveyor", '~> 0.11.0'
+    gem "surveyor", '~> 0.12.0'
 
     bundle install
 
@@ -173,7 +173,7 @@ The <code>surveyor\_includes</code> helper just calls <code>surveyor\_stylsheets
     
 # Dependencices
 
-Surveyor depends on Rails 2.3 and the SASS style sheet language, part of HAML (http://haml.hamptoncatlin.com/download). It also depends on fastercsv for csv exports. For running the test suite you will need rspec and have the rspec plugin installed in your application.
+Surveyor depends on Ruby (1.8.7 - 1.9.1), Rails 2.3 and the SASS style sheet language, part of HAML (http://haml.hamptoncatlin.com/download). It also depends on fastercsv for csv exports. For running the test suite you will need rspec and have the rspec plugin installed in your application.
 
 # Test Suite and Development
 
@@ -181,6 +181,16 @@ To work on the plugin code (for enhancements, and bug fixes, etc...) fork this g
 
 
 # Changes
+
+0.12.0
+
+* fix parser error in ruby 1.9, where instance_variables are symbols. closes #61
+* added fastercsv as dependency. closes #59
+* typo fix and test
+* fixed broken spec for survey urls, made pending surveyor_controller specs pass
+* Added explicit dependencycondition and validationcondition to DSL
+* have authentication work with authlogic
+* added "correct_answer" to parser, so you can specify one correct answer per question
 
 0.11.0
 
