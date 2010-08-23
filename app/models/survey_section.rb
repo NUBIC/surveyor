@@ -1,8 +1,5 @@
 class SurveySection < ActiveRecord::Base
-  
-  # Extending surveyor
-  include "#{self.name}Extensions".constantize if Surveyor::Config['extend'].include?(self.name.underscore)
-    
+
   # Associations
   has_many :questions, :order => "display_order ASC"
   belongs_to :survey

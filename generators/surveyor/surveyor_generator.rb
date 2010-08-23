@@ -16,10 +16,6 @@ class SurveyorGenerator < Rails::Generator::Base
         # http://ggr.com/how-to-include-a-gems-rake-tasks-in-your-rails-app.html
         logger.appended 'Rakefile'
       end
-                  
-      # HAML
-      m.file "initializers/surveyor.rb", "config/initializers/surveyor.rb"
-      m.file "initializers/haml.rb", "config/initializers/haml.rb"
       
       # Migrate 
       # not using m.migration_template because all migration timestamps end up the same, causing a collision when running rake db:migrate
@@ -38,10 +34,6 @@ class SurveyorGenerator < Rails::Generator::Base
         m.template("migrate/#{model}.rb", "db/migrate/#{(prev_migration_timestamp || Time.now.utc.strftime("%Y%m%d%H%M%S").to_i + i).to_s}_#{model}.rb")
       end
       
-      # Generate CSS
-      css_root = File.join(File.dirname(__FILE__), "templates", "assets", "stylesheets")
-      `sass #{css_root}/sass/surveyor.sass #{css_root}/surveyor.css`
-
       # Assets
       ["images", "javascripts", "stylesheets"].each do |asset_type|
         m.directory "public/#{asset_type}/surveyor"
@@ -49,6 +41,8 @@ class SurveyorGenerator < Rails::Generator::Base
           m.file "assets/#{asset_type}/#{filename}", "public/#{asset_type}/surveyor/#{filename}"
         end
       end
+      m.directory "public/stylesheets/sass"
+      m.file "assets/stylesheets/sass/surveyor.sass", "public/stylesheets/sass/surveyor.sass"
       
       # Surveys
       m.directory "surveys/fixtures"

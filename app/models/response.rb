@@ -1,8 +1,5 @@
 class Response < ActiveRecord::Base
 
-  # Extending surveyor
-  include "#{self.name}Extensions".constantize if Surveyor::Config['extend'].include?(self.name.underscore)
-  
   include ActionView::Helpers::SanitizeHelper
          
   # Associations
