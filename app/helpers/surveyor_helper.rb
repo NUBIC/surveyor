@@ -5,7 +5,7 @@ module SurveyorHelper
     surveyor_stylsheets + surveyor_javascripts    
   end
   def surveyor_stylsheets
-    stylesheet_link_tag 'surveyor/reset', 'surveyor/surveyor', 'surveyor/ui.theme.css','surveyor/jquery-ui-slider-additions'
+    stylesheet_link_tag 'surveyor/reset', 'surveyor', 'surveyor/ui.theme.css','surveyor/jquery-ui-slider-additions'
   end
   def surveyor_javascripts
     javascript_include_tag 'surveyor/jquery-1.2.6.js', 'surveyor/jquery-ui-personalized-1.5.3.js', 'surveyor/accessibleUISlider.jQuery.js','surveyor/jquery.form.js', 'surveyor/surveyor.js'

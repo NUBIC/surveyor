@@ -20,10 +20,6 @@ module Surveyor
         end
       end
     end
-    def sass_to_css
-      css_root = File.join(File.dirname(__FILE__), "templates", "public", "stylesheets", "surveyor")
-      `sass #{css_root}/sass/surveyor.sass #{css_root}/surveyor.css`
-    end
     def assets
       directory "public"
     end
