@@ -58,18 +58,26 @@ The survey above shows a couple simple question types. The first one is a "pick 
 As a plugin:
 
     gem install haml
-    script/rails plugin install git://github.com/breakpointer/surveyor.git -r 'tag v0.10.0'
+    gem install fastercsv
+    script/plugin install git://github.com/breakpointer/surveyor.git -r 'tag v0.13.0'
 
-Or as a gem plugin:
+Or as a gem:
   
     # in environment.rb
-    config.gem "surveyor", :version => '~> 0.10.0', :source => 'http://gemcutter.org'
+    config.gem "surveyor", :version => '~> 0.13.0', :source => 'http://gemcutter.org'
   
     rake gems:install
 
+Or as a gem (with bundler):
+
+    # in environment.rb
+    gem "surveyor", '~> 0.13.0'
+
+    bundle install
+
 Generate assets, run migrations:
     
-    script/rails generate surveyor:install
+    script/generate surveyor
     rake db:migrate
 
 Try out the "kitchen sink" survey:
@@ -81,21 +89,12 @@ The rake surveyor task overwrites previous surveys by default, but can append in
     rake surveyor FILE=surveys/kitchen_sink_survey.rb APPEND=true
 
 The rake tasks above generate surveys in our custom survey DSL (which is a great format for end users and stakeholders to use). 
-After you have run them start up your app:
-    
-    script/rails server
-
-(or however you normally start your app) and goto:
+After you have run them start up your app and go to:
 
     http://localhost:3000/surveys
 
 Try taking the survey and compare it to the contents of the DSL file kitchen\_sink\_survey.rb. See how each type of
 DSL question maps to the resulting rendered view of the question.
-
-# Configuration
-
-
-- your own relative root for surveys ('/' is not recommended as any path will be interpreted as a survey name)
 
 # Customizing surveyor
 
