@@ -5,11 +5,11 @@
 
 Gem::Specification.new do |s|
   s.name = %q{surveyor}
-  s.version = "0.12.1"
+  s.version = "0.13.0"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Brian Chamberlain", "Mark Yoon"]
-  s.date = %q{2010-08-19}
+  s.date = %q{2010-08-23}
   s.email = %q{yoon@northwestern.edu}
   s.extra_rdoc_files = [
     "README.md"
@@ -49,10 +49,8 @@ Gem::Specification.new do |s|
      "features/surveyor.feature",
      "generators/extend_surveyor/extend_surveyor_generator.rb",
      "generators/extend_surveyor/templates/EXTENDING_SURVEYOR",
-     "generators/extend_surveyor/templates/extensions/survey_extensions.rb",
-     "generators/extend_surveyor/templates/extensions/surveyor_controller_extensions.rb",
+     "generators/extend_surveyor/templates/extensions/surveyor_controller.rb",
      "generators/extend_surveyor/templates/extensions/surveyor_custom.html.erb",
-     "generators/extend_surveyor/templates/extensions/surveyor_helper_extensions.rb",
      "generators/surveyor/surveyor_generator.rb",
      "generators/surveyor/templates/README",
      "generators/surveyor/templates/assets/images/222222_11x11_icon_arrows_leftright.gif",
@@ -105,10 +103,7 @@ Gem::Specification.new do |s|
      "generators/surveyor/templates/assets/stylesheets/jquery-ui-slider-additions.css",
      "generators/surveyor/templates/assets/stylesheets/reset.css",
      "generators/surveyor/templates/assets/stylesheets/sass/surveyor.sass",
-     "generators/surveyor/templates/assets/stylesheets/surveyor.css",
      "generators/surveyor/templates/assets/stylesheets/ui.theme.css",
-     "generators/surveyor/templates/initializers/haml.rb",
-     "generators/surveyor/templates/initializers/surveyor.rb",
      "generators/surveyor/templates/migrate/add_correct_answer_id_to_questions.rb",
      "generators/surveyor/templates/migrate/add_display_order_to_surveys.rb",
      "generators/surveyor/templates/migrate/add_index_to_response_sets.rb",
@@ -135,7 +130,9 @@ Gem::Specification.new do |s|
      "lib/fixtures_extensions.rb",
      "lib/surveyor.rb",
      "lib/surveyor/acts_as_response.rb",
+     "lib/surveyor/common.rb",
      "lib/surveyor/config.rb",
+     "lib/surveyor/surveyor_controller_methods.rb",
      "lib/tasks/surveyor_tasks.rake",
      "lib/xml_formatter.rb",
      "rails/init.rb",
