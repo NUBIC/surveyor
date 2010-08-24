@@ -5,7 +5,7 @@
 
 Gem::Specification.new do |s|
   s.name = %q{surveyor}
-  s.version = "0.14.1"
+  s.version = "0.14.2"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Brian Chamberlain", "Mark Yoon"]
@@ -20,11 +20,11 @@ Gem::Specification.new do |s|
      "README.md",
      "Rakefile",
      "VERSION",
-     "app/controllers/surveyor_controller.rb",
      "app/controllers/results_controller.rb",
+     "app/controllers/surveyor_controller.rb",
+     "app/helpers/results_helper.rb",
      "app/helpers/survey_form_builder.rb",
      "app/helpers/surveyor_helper.rb",
-     "app/helpers/results_helper.rb",
      "app/models/answer.rb",
      "app/models/dependency.rb",
      "app/models/dependency_condition.rb",
@@ -37,16 +37,17 @@ Gem::Specification.new do |s|
      "app/models/survey_section_sweeper.rb",
      "app/models/validation.rb",
      "app/models/validation_condition.rb",
+     "app/views/layouts/results.html.erb",
      "app/views/layouts/surveyor_default.html.erb",
      "app/views/partials/_answer.html.haml",
      "app/views/partials/_question.html.haml",
      "app/views/partials/_question_group.html.haml",
      "app/views/partials/_section.html.haml",
+     "app/views/results/index.html.erb",
+     "app/views/results/show.html.erb",
      "app/views/surveyor/edit.html.haml",
      "app/views/surveyor/new.html.haml",
      "app/views/surveyor/show.html.haml",
-     "app/views/results/index.html.erb",
-     "app/views/results/show.html.erb",
      "config/routes.rb",
      "features/step_definitions/surveyor_steps.rb",
      "features/step_definitions/web_steps.rb",
@@ -111,6 +112,7 @@ Gem::Specification.new do |s|
      "generators/surveyor/templates/assets/javascripts/surveyor.js",
      "generators/surveyor/templates/assets/stylesheets/jquery-ui-slider-additions.css",
      "generators/surveyor/templates/assets/stylesheets/reset.css",
+     "generators/surveyor/templates/assets/stylesheets/results.css",
      "generators/surveyor/templates/assets/stylesheets/sass/surveyor.sass",
      "generators/surveyor/templates/assets/stylesheets/ui.theme.css",
      "generators/surveyor/templates/locales/surveyor_en.yml",
