@@ -2,18 +2,16 @@ require 'activesupport' # for pluralize, humanize in ActiveSupport::CoreExtensio
 module SurveyParser
   class Parser
     @@models = %w(survey survey_section question_group question answer dependency dependency_condition validation validation_condition)
-  
     # Require base and all models
     (%w(base) + @@models).each{|m| require File.dirname(__FILE__) + "/#{m}"}
 
     # Attributes
-    attr_accessor :salt, :surveys, :grid_answers
+    attr_accessor :salt, :surveys, :grid_answers, :counters
     @@models.each{|m| attr_accessor "#{m.pluralize}_yml".to_sym } # for fixtures
     (@@models - %w(dependency_condition validation_condition)).each {|m| attr_accessor "current_#{m}".to_sym} # for current_model caches
   
     # Class methods
     def self.parse(file_name)
-      self.define_counter_methods(@@models)
       puts "\n--- Parsing '#{file_name}' ---"
       parser = SurveyParser::Parser.new
       parser.instance_eval(File.read(file_name))
@@ -21,27 +19,18 @@ module SurveyParser
       puts "--- End of parsing ---\n\n"
     end
 
-    # new_survey_id, new_survey_section_id, etc.
-    def self.define_counter_methods(names)
-      names.each do |name|
-        define_method("new_#{name}_id") do
-          instance_variable_set("@last_#{name}_id", instance_variable_get("@last_#{name}_id") + 1)
-        end
-      end
+    def next_id(sym)
+      counters[sym] ||= 0
+      counters[sym] += 1
     end
-  
+    
     # Instance methods
     def initialize
       self.salt = Time.now.strftime("%Y%m%d%H%M%S")
       self.surveys = []
       self.grid_answers = []
-      initialize_counters(@@models)
       initialize_fixtures(@@models.map(&:pluralize), File.join(RAILS_ROOT, "surveys", "fixtures"))
-    end
-    
-    # @last_survey_id, @last_survey_section_id, etc.
-    def initialize_counters(names)
-      names.each{|name| instance_variable_set("@last_#{name}_id", 0)}
+      self.counters = {}
     end
 
     # @surveys_yml, @survey_sections_yml, etc.
@@ -208,7 +197,7 @@ module SurveyParser
     def add_grid_answers
       self.grid_answers.each do |grid_answer|
         my_answer = grid_answer.dup
-        my_answer.id = new_answer_id
+        my_answer.id = next_id(:answer)
         my_answer.question_id = self.current_question.id
         my_answer.parser = self
         self.current_answer = my_answer

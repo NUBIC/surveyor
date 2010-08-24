@@ -24,7 +24,7 @@ module SurveyParser
       # inherit the parser from parent (obj)
       self.parser = (obj.nil? ? nil : obj.class == SurveyParser::Parser ? obj : obj.parser)
       # get a new id from the parser
-      self.id = parser.nil? ? nil : parser.send("new_#{self.class.name.demodulize.underscore}_id")
+      self.id = parser.nil? ? nil : parser.send(:next_id, self.class.name.demodulize.underscore)
       # set [parent]_id to obj.id, if we have that attribute
       self.send("#{obj.class.name.demodulize.underscore}_id=", obj.nil? ? nil : obj.id) if self.respond_to?("#{obj.class.name.demodulize.underscore}_id=") 
       # initialize descendant models
