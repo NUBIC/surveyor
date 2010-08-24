@@ -1,0 +1,13 @@
+- div_for @section, :class => @section.custom_class do
+  %span.title= @section.title
+  .questions
+    - group_questions ||= []
+    - @questions.each_with_index do |question, index|
+      - unless question.part_of_group?
+        = render(:partial => question.custom_renderer || "/partials/question", :locals => {:question => question, :response_set => @response_set})
+      - else # gather up the group questions
+        - group_questions << question
+        - if (index + 1 >= @questions.size) or (question.question_group_id != @questions[index + 1].question_group_id)
+          - # this is the last question of the section, or the group
+          = render(:partial => question.question_group.custom_renderer || "/partials/question_group", :locals => {:question_group => question.question_group, :response_set => @response_set, :group_questions => group_questions})
+          - group_questions = []

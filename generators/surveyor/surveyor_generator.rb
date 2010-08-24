@@ -16,10 +16,6 @@ class SurveyorGenerator < Rails::Generator::Base
         # http://ggr.com/how-to-include-a-gems-rake-tasks-in-your-rails-app.html
         logger.appended 'Rakefile'
       end
-                  
-      # HAML
-      m.file "initializers/surveyor.rb", "config/initializers/surveyor.rb"
-      m.file "initializers/haml.rb", "config/initializers/haml.rb"
       
       # Migrate 
       # not using m.migration_template because all migration timestamps end up the same, causing a collision when running rake db:migrate
@@ -30,7 +26,8 @@ class SurveyorGenerator < Rails::Generator::Base
         "create_dependencies", "create_dependency_conditions", 
         "create_validations", "create_validation_conditions", 
         "add_display_order_to_surveys", "add_correct_answer_id_to_questions",
-        "add_index_to_response_sets", "add_index_to_surveys", "add_unique_indicies"].each_with_index do |model, i|
+        "add_index_to_response_sets", "add_index_to_surveys", 
+        "add_unique_indicies", "add_section_id_to_responses"].each_with_index do |model, i|
         unless (prev_migrations = Dir.glob("db/migrate/[0-9]*_*.rb").grep(/[0-9]+_#{model}.rb$/)).empty?
           prev_migration_timestamp = prev_migrations[0].match(/([0-9]+)_#{model}.rb$/)[1]
         end
@@ -38,16 +35,21 @@ class SurveyorGenerator < Rails::Generator::Base
         m.template("migrate/#{model}.rb", "db/migrate/#{(prev_migration_timestamp || Time.now.utc.strftime("%Y%m%d%H%M%S").to_i + i).to_s}_#{model}.rb")
       end
       
-      # Generate CSS
-      css_root = File.join(File.dirname(__FILE__), "templates", "assets", "stylesheets")
-      `sass #{css_root}/sass/surveyor.sass #{css_root}/surveyor.css`
-
       # Assets
       ["images", "javascripts", "stylesheets"].each do |asset_type|
         m.directory "public/#{asset_type}/surveyor"
         Dir.glob(File.join(File.dirname(__FILE__), "templates", "assets", asset_type, "*.*")).map{|path| File.basename(path)}.each do |filename|
           m.file "assets/#{asset_type}/#{filename}", "public/#{asset_type}/surveyor/#{filename}"
         end
+      end
+      m.directory "public/stylesheets/sass"
+      m.file "assets/stylesheets/sass/surveyor.sass", "public/stylesheets/sass/surveyor.sass"
+      
+
+      # Locales
+      m.directory "config/locales"
+      Dir.glob(File.join(File.dirname(__FILE__), "templates", "locales", "*.yml")).map{|path| File.basename(path)}.each do |filename|
+        m.file "locales/#{filename}", "config/locales/#{filename}"
       end
       
       # Surveys

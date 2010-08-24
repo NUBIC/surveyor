@@ -1,8 +1,5 @@
 class QuestionGroup < ActiveRecord::Base
 
-  # Extending surveyor
-  include "#{self.name}Extensions".constantize if Surveyor::Config['extend'].include?(self.name.underscore)
-    
   has_many :questions
   has_one :dependency
   

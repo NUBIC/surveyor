@@ -3,10 +3,13 @@
     - div_for section do
       .title= section.title
       .questions
-        - @section.questions.each_with_index do |question, index|
+        - group_questions ||= []
+        - section.questions.each_with_index do |question, index|
           - if question.part_of_group?
-            - if (index + 1 >= @section.questions.size) or (question.question_group_id != @section.questions[index + 1].question_group_id)
+            - group_questions << question
+            - if (index + 1 >= section.questions.size) or (question.question_group_id != section.questions[index + 1].question_group_id)
               - # skip to the last question of the section, or the last question of the group
-              = render(:partial => "/partials/question_group", :locals => {:question_group => question.question_group, :response_set => @response_set})
+              = render(:partial => "/partials/question_group", :locals => {:question_group => question.question_group, :response_set => @response_set, :group_questions => group_questions})
+              - group_questions = []
           - else
             = render(:partial => "/partials/question", :locals => {:question => question, :response_set => @response_set})

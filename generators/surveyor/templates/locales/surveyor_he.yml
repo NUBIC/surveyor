@@ -1,0 +1,16 @@
+# Localization file for Hebrew. Add more files in this directory for other locales.
+# See http://github.com/svenfuchs/rails-i18n/tree/master/rails%2Flocale for starting points.
+
+he:
+  surveyor:
+    take_these_surveys: "תוכלו לבצע סקרים אלו"
+    take_it: "בצע"
+    Completed_survey: "סיום הסקר"
+    Unable_to_find_your_responses: "לא נמצאו תשובותיך לסקר"
+    Unable to_find_that_survey: "לא ניתן לאתר את הסקר המבוקש"
+    survey_started_success: "הסקר הוחל בהצלחה"
+    click_here_to_finish: "לסיום"
+    previous_section: "חזרה &raquo;"
+    next_section: "&laquo; המשך"
+    Select_one: "בחר/י"
+  

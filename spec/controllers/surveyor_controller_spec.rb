@@ -26,31 +26,33 @@ describe SurveyorController do
       response.should be_success
       response.should render_template('new')
     end
+
     it "should find all surveys" do
       Survey.should_receive(:find).with(:all).and_return([@survey])
       do_get
     end
+    
     it "should assign the found surveys for the view" do
       do_get
       assigns[:surveys].should == [@survey]
     end
   end
 
-  describe "take survey: POST /surveys/XYZ" do
+  describe "take survey: POST /surveys/xyz" do
 
     before(:each) do
-      @survey = Factory(:survey, :title => "XYZ", :access_code => "XYZ")
-      @response_set = Factory(:response_set, :access_code => "PDQ")
+      @survey = Factory(:survey, :title => "xyz", :access_code => "xyz")
+      @response_set = Factory(:response_set, :access_code => "pdq")
       ResponseSet.stub!(:create).and_return(@response_set)
       Survey.stub!(:find_by_access_code).and_return(@survey)
     end
     
     describe "with success" do
       def do_post
-        post :create, :survey_code => "XYZ"
+        post :create, :survey_code => "xyz"
       end
       it "should look for the survey" do
-        Survey.should_receive(:find_by_access_code).with("XYZ").and_return(@survey)
+        Survey.should_receive(:find_by_access_code).with("xyz").and_return(@survey)
         do_post
       end
       it "should create a new response_set" do
@@ -59,7 +61,7 @@ describe SurveyorController do
       end
       it "should redirect to the new response_set" do
         do_post
-        response.should redirect_to(edit_my_survey_url(:survey_code => "XYZ", :response_set_code  => "PDQ"))
+        response.should redirect_to(edit_my_survey_url(:survey_code => "xyz", :response_set_code  => "pdq"))
       end
     end
     
@@ -77,47 +79,37 @@ describe SurveyorController do
     end
   end
 
-  describe "view my survey: GET /surveys/XYZ/PDQ" do
-
+  describe "view my survey: GET /surveys/xyz/pdq" do
+   #integrate_views
     before(:each) do
-      @survey = Factory(:survey, :title => "XYZ", :access_code => "XYZ", :sections => [Factory(:survey_section)])  
-      @response_set = Factory(:response_set, :access_code => "PDQ", :survey => @survey)
+      @survey = Factory(:survey, :title => "xyz", :access_code => "xyz", :sections => [Factory(:survey_section)])  
+      @response_set = Factory(:response_set, :access_code => "pdq", :survey => @survey)
     end
   
     def do_get
-      get :show, :survey_code => "XYZ", :response_set_code => "PDQ"
+      get :show, :survey_code => "xyz", :response_set_code => "pdq"
     end
 
     it "should be successful" do
       do_get
       response.should be_success
     end
+    
     it "should render show template" do
       do_get
       response.should render_template('show')
     end
+   
     it "should find the response_set requested" do
-      pending
-      ResponseSet.should_receive(:find_by_access_code).with("PDQ").and_return(@response_set)
+      ResponseSet.should_receive(:find_by_access_code).with("pdq",{:include=>{:responses=>[:question, :answer]}}).and_return(@response_set)
       do_get
     end
-    it "should assign the found response_set and survey for the view" do
-      pending
-      do_get
-      assigns[:response_set].should equal(@response_set)
-      assigns[:survey].should equal(@survey)
-    end
+
     it "should redirect if :response_code not found" do
-      pending
-      get :show, :survey_code => "XYZ", :response_set_code => "DIFFERENT"
+      get :show, :survey_code => "xyz", :response_set_code => "DIFFERENT"
       response.should redirect_to(available_surveys_url)      
     end
-    # I'm not sure this is enterly neccessary since we look up the survey from the response_code in the url -BC
-    it "should redirect if :survey_code in url doesn't match response_set.survey.access_code" do
-      pending
-      get :show, :survey_code => "DIFFERENT", :response_set_code => "PDQ"
-      response.should redirect_to(available_surveys_url)
-    end
+
   end
 
   describe "edit my survey: GET /surveys/XYZ/PDQ/take" do

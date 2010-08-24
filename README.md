@@ -1,4 +1,4 @@
-# Survey On Rails
+# Surveys On Rails
 
 Surveyor is a rails (gem) plugin, that brings surveys to your rails app. Before Rails 2.3, it was implemented as a Rails Engine. Surveys are written in a DSL (Domain Specific Language), with examples available in the "kitchen sink" survey.
 
@@ -58,14 +58,22 @@ The survey above shows a couple simple question types. The first one is a "pick 
 As a plugin:
 
     gem install haml
-    script/plugin install git://github.com/breakpointer/surveyor.git -r 'tag v0.10.0'
+    gem install fastercsv
+    script/plugin install git://github.com/breakpointer/surveyor.git
 
-Or as a gem plugin:
+Or as a gem:
   
     # in environment.rb
-    config.gem "surveyor", :version => '~> 0.10.0', :source => 'http://gemcutter.org'
+    config.gem "surveyor", :source => 'http://gemcutter.org'
   
     rake gems:install
+
+Or as a gem (with bundler):
+
+    # in environment.rb
+    gem "surveyor"
+
+    bundle install
 
 Generate assets, run migrations:
     
@@ -81,98 +89,54 @@ The rake surveyor task overwrites previous surveys by default, but can append in
     rake surveyor FILE=surveys/kitchen_sink_survey.rb APPEND=true
 
 The rake tasks above generate surveys in our custom survey DSL (which is a great format for end users and stakeholders to use). 
-After you have run them start up your app:
-    
-    script/server
-
-(or however you normally start your app) and goto:
+After you have run them start up your app and go to:
 
     http://localhost:3000/surveys
 
 Try taking the survey and compare it to the contents of the DSL file kitchen\_sink\_survey.rb. See how each type of
 DSL question maps to the resulting rendered view of the question.
 
-# Configuration
+# Customizing surveyor
 
-The surveyor generator creates config/initializers/surveyor.rb. There, you can specify:
+Surveyor's controller, models, and views may be customized via classes in your app/models, app/helpers and app/controllers directories. To generate a sample custom controller and layout, run:
 
-- your own relative root for surveys ('/' is not recommended as any path will be interpreted as a survey name)
-- your own custom title (string) for the survey list page
-- your own custom layout file name, in your app/views/layouts folder
-- your own custom finish url for all surveys. you can give a string (a path), a symbol (the name of a method in ApplicationController)
-- if you would like surveys to require authorization via the restful_authentication plugin
-- if you would like to extend the surveyor_controller (see Extending Surveyor below)
+    script/rails generate surveyor:custom
 
-The initializer runs once, when the app starts. The block style is used to keep multiple options DRY (defaults below):
+and check out surveys/README\_FOR\_CUSTOM\_SURVEYOR.md
 
-    Surveyor::Config.run do |config|
-      config['default.relative_url_root'] = nil # "surveys"
-      config['default.title'] = nil # "You can take these surveys:"
-      config['default.layout'] = nil # "surveyor_default"
-      config['default.index'] =  nil # "/surveys" # or :index_path_method
-      config['default.finish'] =  nil # "/surveys" # or :finish_path_method
-      #config['authentication_method'] = :login_required # set to true to use restful authentication
-      config['extend'] = %w() # %w(survey surveyor_helper surveyor_controller)
-    end
-
-You can update surveyor's configuration at any time. Use the block style (above), or the individual style:
-
-    Surveyor::Config['default.title'] = "Cheese is great!"
-
-To look at the current surveyor configuration:
-    
-    Surveyor::Config.to_hash.inspect
-
-# Extending surveyor
-
-Surveyor's models, helper, and controller can be extended from custom modules your app/models, app/helpers and app/controllers directories. To generate the sample files and sample layout, run:
-
-    script/generate extend_surveyor
-
-Any of surveyor's models class_eval, class methods, and instance methods can be modified. Include the following in config/initializers/surveyor.rb:
-
-    require 'models/survey_extensions' # Extended the survey model
-
-SurveyorHelper class_eval and instance methods can be modified. Include the following in config/initializers/surveyor.rb:
-
-    require 'helpers/surveyor_helper_extensions' # Extend the surveyor helper
-
-SurveyorController class_eval, class methods, instance methods, and actions can be modified. Action methods should be specified separately in the Actions submodule. Set the following option in config/initializers/surveyor.rb Surveyor::Config block:
-
-    config['extend_controller'] = true
-
-# Sample layout
-
-    <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-      "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-    <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
-    <head>
-      <meta http-equiv="content-type" content="text/html;charset=UTF-8" />
-      <title>Survey: <%= controller.action_name %></title>
-      <%= surveyor_includes %>
-    </head>
-    <body>
-      <div id="flash"><%= flash[:notice] %></div>
-      <%= yield %>
-    </body>
-    </html>
-  
-The <code>surveyor\_includes</code> helper just calls <code>surveyor\_stylsheets + surveyor\_javascripts</code> which in turn call:
-
-    stylesheet_link_tag 'surveyor/reset', 'surveyor/surveyor', 'surveyor/ui.theme.css','surveyor/jquery-ui-slider-additions'
-
-    javascript_include_tag 'surveyor/jquery-1.2.6.js', 'surveyor/jquery-ui-personalized-1.5.3.js', 'surveyor/accessibleUISlider.jQuery.js','surveyor/jquery.form.js', 'surveyor/surveyor.js'
-    
 # Dependencices
 
-Surveyor depends on Rails 2.3 and the SASS style sheet language, part of HAML (http://haml.hamptoncatlin.com/download). For running the test suite you will need rspec and have the rspec plugin installed in your application.
+Surveyor depends on Ruby (1.8.7 - 1.9.1), Rails 2.3 and the SASS style sheet language, part of HAML (http://haml.hamptoncatlin.com/download). It also depends on fastercsv for csv exports. For running the test suite you will need rspec and have the rspec plugin installed in your application.
 
 # Test Suite and Development
 
 To work on the plugin code (for enhancements, and bug fixes, etc...) fork this github project. Then clone the project under the vendor/plugins directory in a Rails app used only for development:
 
-
 # Changes
+
+0.14.1
+
+* typo in repeaters - use survey\_section\_id instead of section\_id
+
+0.14.0
+
+* view my survey specs fixed, fragment caching for surveyor#edit, localization. thanks bnadav
+
+0.13.0
+
+* simpler customization of surveyor.
+* spec plugins task
+* Feature instead of Story for cucumber. http://wiki.github.com/aslakhellesoy/cucumber/upgrading
+
+0.12.0
+
+* fix parser error in ruby 1.9, where instance_variables are symbols. closes #61
+* added fastercsv as dependency. closes #59
+* typo fix and test
+* fixed broken spec for survey urls, made pending surveyor_controller specs pass
+* Added explicit dependencycondition and validationcondition to DSL
+* have authentication work with authlogic
+* added "correct_answer" to parser, so you can specify one correct answer per question
 
 0.11.0
 
