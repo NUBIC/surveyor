@@ -35,7 +35,7 @@ module Surveyor
           }
         end
       else
-        flash[:notice] = t('surveyor.Unable_to_find_your_responses')
+        flash[:notice] = t('surveyor.unable_to_find_your_responses')
         redirect_to surveyor_index
       end
     end
@@ -53,7 +53,7 @@ module Surveyor
         @questions = @section.questions
         @dependents = (@response_set.unanswered_dependencies - @section.questions) || []
       else
-        flash[:notice] = t('surveyor.Unable_to_find_your_responses')
+        flash[:notice] = t('surveyor.unable_to_find_your_responses')
         redirect_to surveyor_index
       end
     end
@@ -64,7 +64,7 @@ module Surveyor
         if @response_set = ResponseSet.find_by_access_code(params[:response_set_code], :include => {:responses => :answer},:lock => true)
           @response_set.current_section_id = params[:current_section_id]
         else
-          flash[:notice] = t('surveyor.Unable_to_find_your_responses')
+          flash[:notice] = t('surveyor.unable_to_find_your_responses')
           redirect_to(available_surveys_path) and return
         end
 
@@ -81,10 +81,10 @@ module Surveyor
       respond_to do |format|
         format.html do
           if saved && params[:finish]
-            flash[:notice] = t('surveyor.Completed_survey')
+            flash[:notice] = t('surveyor.completed_survey')
             redirect_to surveyor_finish
           else
-            flash[:notice] = t('surveyor.Unable_to_update_survey') if !saved #and !saved.nil? # saved.nil? is true if there are no questions on the page (i.e. if it only contains a label)
+            flash[:notice] = t('surveyor.unable_to_update_survey') if !saved #and !saved.nil? # saved.nil? is true if there are no questions on the page (i.e. if it only contains a label)
             redirect_to :action => "edit", :anchor => anchor_from(params[:section]), :params => {:section => section_id_from(params[:section])}
           end
         end
