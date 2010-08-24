@@ -59,19 +59,19 @@ As a plugin:
 
     gem install haml
     gem install fastercsv
-    script/plugin install git://github.com/breakpointer/surveyor.git -r 'tag v0.14.0'
+    script/plugin install git://github.com/breakpointer/surveyor.git
 
 Or as a gem:
   
     # in environment.rb
-    config.gem "surveyor", :version => '~> 0.14.0', :source => 'http://gemcutter.org'
+    config.gem "surveyor", :source => 'http://gemcutter.org'
   
     rake gems:install
 
 Or as a gem (with bundler):
 
     # in environment.rb
-    gem "surveyor", '~> 0.14.0'
+    gem "surveyor"
 
     bundle install
 
@@ -113,6 +113,10 @@ Surveyor depends on Ruby (1.8.7 - 1.9.1), Rails 2.3 and the SASS style sheet lan
 To work on the plugin code (for enhancements, and bug fixes, etc...) fork this github project. Then clone the project under the vendor/plugins directory in a Rails app used only for development:
 
 # Changes
+
+0.14.1
+
+* typo in repeaters - use survey\_section\_id instead of section\_id
 
 0.14.0
 
