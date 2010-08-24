@@ -5,11 +5,11 @@
 
 Gem::Specification.new do |s|
   s.name = %q{surveyor}
-  s.version = "0.13.0"
+  s.version = "0.14.0"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Brian Chamberlain", "Mark Yoon"]
-  s.date = %q{2010-08-23}
+  s.date = %q{2010-08-24}
   s.email = %q{yoon@northwestern.edu}
   s.extra_rdoc_files = [
     "README.md"
@@ -32,12 +32,14 @@ Gem::Specification.new do |s|
      "app/models/response_set.rb",
      "app/models/survey.rb",
      "app/models/survey_section.rb",
+     "app/models/survey_section_sweeper.rb",
      "app/models/validation.rb",
      "app/models/validation_condition.rb",
      "app/views/layouts/surveyor_default.html.erb",
      "app/views/partials/_answer.html.haml",
      "app/views/partials/_question.html.haml",
      "app/views/partials/_question_group.html.haml",
+     "app/views/partials/_section.html.haml",
      "app/views/surveyor/edit.html.haml",
      "app/views/surveyor/new.html.haml",
      "app/views/surveyor/show.html.haml",
@@ -49,8 +51,11 @@ Gem::Specification.new do |s|
      "features/surveyor.feature",
      "generators/extend_surveyor/extend_surveyor_generator.rb",
      "generators/extend_surveyor/templates/EXTENDING_SURVEYOR",
+     "generators/extend_surveyor/templates/extensions/survey_extensions.rb",
      "generators/extend_surveyor/templates/extensions/surveyor_controller.rb",
+     "generators/extend_surveyor/templates/extensions/surveyor_controller_extensions.rb",
      "generators/extend_surveyor/templates/extensions/surveyor_custom.html.erb",
+     "generators/extend_surveyor/templates/extensions/surveyor_helper_extensions.rb",
      "generators/surveyor/surveyor_generator.rb",
      "generators/surveyor/templates/README",
      "generators/surveyor/templates/assets/images/222222_11x11_icon_arrows_leftright.gif",
@@ -104,10 +109,13 @@ Gem::Specification.new do |s|
      "generators/surveyor/templates/assets/stylesheets/reset.css",
      "generators/surveyor/templates/assets/stylesheets/sass/surveyor.sass",
      "generators/surveyor/templates/assets/stylesheets/ui.theme.css",
+     "generators/surveyor/templates/locales/surveyor_en.yml",
+     "generators/surveyor/templates/locales/surveyor_he.yml",
      "generators/surveyor/templates/migrate/add_correct_answer_id_to_questions.rb",
      "generators/surveyor/templates/migrate/add_display_order_to_surveys.rb",
      "generators/surveyor/templates/migrate/add_index_to_response_sets.rb",
      "generators/surveyor/templates/migrate/add_index_to_surveys.rb",
+     "generators/surveyor/templates/migrate/add_section_id_to_responses.rb",
      "generators/surveyor/templates/migrate/add_unique_indicies.rb",
      "generators/surveyor/templates/migrate/create_answers.rb",
      "generators/surveyor/templates/migrate/create_dependencies.rb",
@@ -171,6 +179,7 @@ Gem::Specification.new do |s|
      "spec/rcov.opts",
      "spec/spec.opts",
      "spec/spec_helper.rb",
+     "spec/views/surveyor/show.html.haml_spec.rb",
      "surveyor.gemspec",
      "uninstall.rb"
   ]
@@ -194,7 +203,8 @@ Gem::Specification.new do |s|
      "spec/models/survey_spec.rb",
      "spec/models/validation_condition_spec.rb",
      "spec/models/validation_spec.rb",
-     "spec/spec_helper.rb"
+     "spec/spec_helper.rb",
+     "spec/views/surveyor/show.html.haml_spec.rb"
   ]
 
   if s.respond_to? :specification_version then
