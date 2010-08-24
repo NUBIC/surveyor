@@ -114,6 +114,10 @@ To work on the plugin code (for enhancements, and bug fixes, etc...) fork this g
 
 # Changes
 
+0.14.3
+
+* remove manual numbering until it works. refactoring to use common methods.
+
 0.14.2
 
 * lowercase localization. feature instead of story in cucumber feature
