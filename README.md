@@ -114,6 +114,13 @@ To work on the plugin code (for enhancements, and bug fixes, etc...) fork this g
 
 # Changes
 
+0.14.2
+
+* lowercase localization. feature instead of story in cucumber feature
+* add results section
+* add simple admin section for displaying survey result set
+* Added manual numbering to labels as well
+
 0.14.1
 
 * typo in repeaters - use survey\_section\_id instead of section\_id
