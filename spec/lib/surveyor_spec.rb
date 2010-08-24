@@ -38,7 +38,7 @@ describe Surveyor do
               "you_would_say_your_health" ]
     
     strings.each_with_index do |s, i|
-      Surveyor.to_normalized_string(s).should == codes[i]
+      Surveyor::Common.to_normalized_string(s).should == codes[i]
     end
   end
 end

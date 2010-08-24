@@ -10,7 +10,7 @@ module SurveyParser
   
     def parse_args(args)
       title = args[0]
-      {:title => title, :access_code => Surveyor.to_normalized_string(title)}.merge(args[1] || {})
+      {:title => title, :access_code => Surveyor::Common.to_normalized_string(title)}.merge(args[1] || {})
     end
 
     def find_question_by_reference(ref_id)

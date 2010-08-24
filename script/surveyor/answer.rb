@@ -28,7 +28,7 @@ module SurveyParser
     end
   
     def text_args(text = "Answer")
-      {:text => text.to_s, :short_text => text, :data_export_identifier => Surveyor.to_normalized_string(text)}
+      {:text => text.to_s, :short_text => text, :data_export_identifier => Surveyor::Common.to_normalized_string(text)}
     end
     def hash_from(arg)
       arg.is_a?(Symbol) ? {:response_class => arg.to_s} : arg.is_a?(Hash) ? arg : {}

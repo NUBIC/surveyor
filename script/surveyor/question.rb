@@ -24,7 +24,7 @@ module SurveyParser
     
     def parse_args(args)
       text = args[0] || "Question"
-      {:text => text, :short_text => text, :data_export_identifier => Surveyor.to_normalized_string(text)}.merge(args[1] || {})
+      {:text => text, :short_text => text, :data_export_identifier => Surveyor::Common.to_normalized_string(text)}.merge(args[1] || {})
     end
     
     def correct_answer=(a)
