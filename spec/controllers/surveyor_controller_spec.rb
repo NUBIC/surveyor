@@ -80,7 +80,7 @@ describe SurveyorController do
   end
 
   describe "view my survey: GET /surveys/xyz/pdq" do
-
+   #integrate_views
     before(:each) do
       @survey = Factory(:survey, :title => "xyz", :access_code => "xyz", :sections => [Factory(:survey_section)])  
       @response_set = Factory(:response_set, :access_code => "pdq", :survey => @survey)
@@ -103,11 +103,6 @@ describe SurveyorController do
     it "should find the response_set requested" do
       ResponseSet.should_receive(:find_by_access_code).with("pdq",{:include=>{:responses=>[:question, :answer]}}).and_return(@response_set)
       do_get
-    end
-
-    it "should assign the found response_set and survey for the view" do
-      do_get
-      assigns[:response_set].should == @response_set
     end
 
     it "should redirect if :response_code not found" do

@@ -66,14 +66,14 @@ class ResponseSet < ActiveRecord::Base
       if (answer_id = responses_hash[:answer_id]) 
         if (!responses_hash[:answer_id].empty?) # Dropdowns return answer id but have an empty value if they are not set... ignoring those.
           #radio or dropdown - only one response
-          responses.build({:question_id => question_id, :answer_id => answer_id}.merge(responses_hash[answer_id] || {}))
+          responses.build({:question_id => question_id, :answer_id => answer_id, :survey_section_id => current_section_id}.merge(responses_hash[answer_id] || {}))
         end
       else
         #possibly multiples responses - unresponded radios end up here too
         # we use the variable question_id, not the "question_id" in the response_hash
         responses_hash.delete_if{|k,v| k == "question_id"}.each do |answer_id, response_hash|
           unless response_hash.delete_if{|k,v| v.blank?}.empty?
-            responses.build({:question_id => question_id, :answer_id => answer_id}.merge(response_hash))
+            responses.build({:question_id => question_id, :answer_id => answer_id, :survey_section_id => current_section_id}.merge(response_hash))
           end
         end
       end
@@ -87,14 +87,14 @@ class ResponseSet < ActiveRecord::Base
         if (answer_id = group_hash[:answer_id]) # if group_hash has an answer_id key we treat it differently 
           if (!group_hash[:answer_id].empty?) # dropdowns return empty values in answer_ids if they are not selected
             #radio or dropdown - only one response
-            responses.build({:question_id => question_id, :answer_id => answer_id, :response_group => response_group_number}.merge(group_hash[answer_id] || {}))
+            responses.build({:question_id => question_id, :answer_id => answer_id, :response_group => response_group_number, :section_id => current_section_id}.merge(group_hash[answer_id] || {}))
           end
         else
           #possibly multiples responses - unresponded radios end up here too
           # we use the variable question_id in the key, not the "question_id" in the response_hash... same with response_group key
           group_hash.delete_if{|k,v| (k == "question_id") or (k == "response_group")}.each do |answer_id, inner_hash|
             unless inner_hash.delete_if{|k,v| v.blank?}.empty?
-              responses.build({:question_id => question_id, :answer_id => answer_id, :response_group => response_group_number}.merge(inner_hash))
+              responses.build({:question_id => question_id, :answer_id => answer_id, :response_group => response_group_number, :section_id => current_section_id}.merge(inner_hash))
             end
           end
         end
@@ -153,7 +153,12 @@ class ResponseSet < ActiveRecord::Base
     arr = dependencies.partition{|d| d.is_met?(self) }
     {:show => arr[0].map{|d| d.question_group_id.nil? ? "question_#{d.question_id}" : "question_group_#{d.question_group_id}"}, :hide => arr[1].map{|d| d.question_group_id.nil? ? "question_#{d.question_id}" : "question_group_#{d.question_group_id}"}}
   end
-  
+
+  # Check existence of responses to questions from a given survey_section
+  def no_responses_for_section?(section)
+    self.responses.count(:conditions => {:survey_section_id => section.id}) == 0
+  end
+
   protected
   
   def dependencies(question_ids = nil)

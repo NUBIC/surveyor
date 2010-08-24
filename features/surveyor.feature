@@ -1,4 +1,4 @@
-Feature: Logging in
+Story: Logging in
   As an anonymous user with an account
   I want to log in to my account
   So that I can be myself

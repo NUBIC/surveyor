@@ -26,7 +26,8 @@ class SurveyorGenerator < Rails::Generator::Base
         "create_dependencies", "create_dependency_conditions", 
         "create_validations", "create_validation_conditions", 
         "add_display_order_to_surveys", "add_correct_answer_id_to_questions",
-        "add_index_to_response_sets", "add_index_to_surveys", "add_unique_indicies"].each_with_index do |model, i|
+        "add_index_to_response_sets", "add_index_to_surveys", 
+        "add_unique_indicies", "add_section_id_to_responses"].each_with_index do |model, i|
         unless (prev_migrations = Dir.glob("db/migrate/[0-9]*_*.rb").grep(/[0-9]+_#{model}.rb$/)).empty?
           prev_migration_timestamp = prev_migrations[0].match(/([0-9]+)_#{model}.rb$/)[1]
         end
@@ -43,6 +44,13 @@ class SurveyorGenerator < Rails::Generator::Base
       end
       m.directory "public/stylesheets/sass"
       m.file "assets/stylesheets/sass/surveyor.sass", "public/stylesheets/sass/surveyor.sass"
+      
+
+      # Locales
+      m.directory "config/locales"
+      Dir.glob(File.join(File.dirname(__FILE__), "templates", "locales", "*.yml")).map{|path| File.basename(path)}.each do |filename|
+        m.file "locales/#{filename}", "config/locales/#{filename}"
+      end
       
       # Surveys
       m.directory "surveys/fixtures"

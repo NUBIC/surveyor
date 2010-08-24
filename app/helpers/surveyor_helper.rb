@@ -1,5 +1,5 @@
 module SurveyorHelper
-  
+
   # Layout: stylsheets and javascripts
   def surveyor_includes
     surveyor_stylsheets + surveyor_javascripts    
@@ -25,14 +25,14 @@ module SurveyorHelper
     submit_tag(section.title, :name => "section[#{section.id}]")
   end
   def previous_section
-    # submit_tag("&laquo; Previous section", :name => "section[#{@section.previous.id}]") unless @section.previous.nil?
+    # submit_tag("#{t ('surveyor.previous_section')} &raquo;", :name => "section[#{@section.previous.id}]") unless @section.previous.nil?
     # refactored to use copy in memory instead of making extra db calls
-    submit_tag("&laquo; Previous section", :name => "section[#{@sections[@sections.index(@section)-1].id}]") unless @sections.first == @section
+    submit_tag(t('surveyor.previous_section'), :name => "section[#{@sections[@sections.index(@section)-1].id}]") unless @sections.first == @section
   end
   def next_section
-    # @section.next.nil? ? submit_tag("Click here to finish", :name => "finish") : submit_tag("Next section &raquo;", :name => "section[#{@section.next.id}]")
+    # @section.next.nil? ? submit_tag(t ('surveyor.click_here_to_finish'), :name => "finish") : submit_tag("Next section &laquo;", :name => "section[#{@section.next.id}]")
     # refactored to use copy in memory instead of making extra db calls
-    @sections.last == @section ? submit_tag("Click here to finish", :name => "finish") : submit_tag("Next section &raquo;", :name => "section[#{@sections[@sections.index(@section)+1].id}]")
+    @sections.last == @section ? submit_tag(t('surveyor.click_here_to_finish'), :name => "finish") : submit_tag(t('surveyor.next_section'), :name => "section[#{@sections[@sections.index(@section)+1].id}]")
   end
   
   # Questions

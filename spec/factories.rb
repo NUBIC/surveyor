@@ -110,6 +110,7 @@ end
 
 Factory.define :response do |r|
   r.association       :response_set # r.response_set_id   {}
+  r.survey_section_id {}
   r.question_id       {}
   r.answer_id         {}
   r.datetime_value    {}

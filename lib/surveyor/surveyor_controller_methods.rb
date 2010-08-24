@@ -4,7 +4,7 @@ module Surveyor
       base.send :before_filter, :get_current_user, :only => [:new, :create]
       base.send :layout, 'surveyor_default'
     end
-    
+
     # Actions
     def new
       @surveys = Survey.find(:all)
@@ -16,10 +16,10 @@ module Surveyor
       @survey = Survey.find_by_access_code(params[:survey_code])
       @response_set = ResponseSet.create(:survey => @survey, :user_id => (@current_user.nil? ? @current_user : @current_user.id))
       if (@survey && @response_set)
-        flash[:notice] = "Survey was successfully started."
+        flash[:notice] = t('surveyor.survey_started_success')
         redirect_to(edit_my_survey_path(:survey_code => @survey.access_code, :response_set_code  => @response_set.access_code))
       else
-        flash[:notice] = "Unable to find that survey"
+        flash[:notice] = t('surveyor.Unable_to_find_that_survey')
         redirect_to surveyor_index
       end
     end
@@ -27,6 +27,7 @@ module Surveyor
     def show
       @response_set = ResponseSet.find_by_access_code(params[:response_set_code], :include => {:responses => [:question, :answer]})
       if @response_set
+        @survey = @response_set.survey
         respond_to do |format|
           format.html #{render :action => :show}
           format.csv {
@@ -34,7 +35,7 @@ module Surveyor
           }
         end
       else
-        flash[:notice] = "Unable to find your responses to the survey"
+        flash[:notice] = t('surveyor.Unable_to_find_your_responses')
         redirect_to surveyor_index
       end
     end
@@ -52,7 +53,7 @@ module Surveyor
         @questions = @section.questions
         @dependents = (@response_set.unanswered_dependencies - @section.questions) || []
       else
-        flash[:notice] = "Unable to find your responses to the survey"
+        flash[:notice] = t('surveyor.Unable_to_find_your_responses')
         redirect_to surveyor_index
       end
     end
@@ -63,7 +64,7 @@ module Surveyor
         if @response_set = ResponseSet.find_by_access_code(params[:response_set_code], :include => {:responses => :answer},:lock => true)
           @response_set.current_section_id = params[:current_section_id]
         else
-          flash[:notice] = "Unable to find your responses to the survey"
+          flash[:notice] = t('surveyor.Unable_to_find_your_responses')
           redirect_to(available_surveys_path) and return
         end
 
@@ -80,10 +81,10 @@ module Surveyor
       respond_to do |format|
         format.html do
           if saved && params[:finish]
-            flash[:notice] = "Completed survey"
+            flash[:notice] = t('surveyor.Completed_survey')
             redirect_to surveyor_finish
           else
-            flash[:notice] = "Unable to update survey" if !saved #and !saved.nil? # saved.nil? is true if there are no questions on the page (i.e. if it only contains a label)
+            flash[:notice] = t('surveyor.Unable_to_update_survey') if !saved #and !saved.nil? # saved.nil? is true if there are no questions on the page (i.e. if it only contains a label)
             redirect_to :action => "edit", :anchor => anchor_from(params[:section]), :params => {:section => section_id_from(params[:section])}
           end
         end

@@ -19,7 +19,7 @@
       %ol.answers
         %li.answer
           - options = question.answers.collect{|a| "<option #{ (response_set.response_for(question.id, a.id).selected?)? "selected='selected'" : nil } value ='#{a.id}'>#{a.text}</option>" }
-          = renderer == :slider ? select_tag("responses[#{question.id}][answer_id]", options, {:id => "slider_#{question.id}"}) : select_tag("responses[#{question.id}][answer_id]", ["<option value=''>Select one...</option>"].concat(options))
+          = renderer == :slider ? select_tag("responses[#{question.id}][answer_id]", options, {:id => "slider_#{question.id}"}) : select_tag("responses[#{question.id}][answer_id]", ["<option value=''>#{t('surveyor.Select_one')}</option>"].concat(options))
 - when :grid_default
   - reset_cycle("col")
   - content_tag_for :tr, question, :class => question.css_class(response_set) do
