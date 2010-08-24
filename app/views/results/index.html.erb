@@ -1,0 +1,17 @@
+<h1>Listing Surveys</h1>
+
+<table class="list_table">
+  <tr>
+    <th>ID</th>
+    <th>Name</th>
+    <th>Operation</th>
+  </tr>
+
+<% @surveys.each do |survey| -%>
+  <tr>
+    <td><%=h survey.id %></td>
+    <td><%=h survey.title %></td>
+    <td><%= link_to "show results list(#{survey.response_sets.count})", show_one_survey_results_path(survey) %></td>
+  </tr>
+<% end %>
+</table>
