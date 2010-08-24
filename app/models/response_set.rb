@@ -87,14 +87,14 @@ class ResponseSet < ActiveRecord::Base
         if (answer_id = group_hash[:answer_id]) # if group_hash has an answer_id key we treat it differently 
           if (!group_hash[:answer_id].empty?) # dropdowns return empty values in answer_ids if they are not selected
             #radio or dropdown - only one response
-            responses.build({:question_id => question_id, :answer_id => answer_id, :response_group => response_group_number, :section_id => current_section_id}.merge(group_hash[answer_id] || {}))
+            responses.build({:question_id => question_id, :answer_id => answer_id, :response_group => response_group_number, :survey_section_id => current_section_id}.merge(group_hash[answer_id] || {}))
           end
         else
           #possibly multiples responses - unresponded radios end up here too
           # we use the variable question_id in the key, not the "question_id" in the response_hash... same with response_group key
           group_hash.delete_if{|k,v| (k == "question_id") or (k == "response_group")}.each do |answer_id, inner_hash|
             unless inner_hash.delete_if{|k,v| v.blank?}.empty?
-              responses.build({:question_id => question_id, :answer_id => answer_id, :response_group => response_group_number, :section_id => current_section_id}.merge(inner_hash))
+              responses.build({:question_id => question_id, :answer_id => answer_id, :response_group => response_group_number, :survey_section_id => current_section_id}.merge(inner_hash))
             end
           end
         end
