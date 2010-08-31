@@ -114,6 +114,12 @@ To work on the plugin code (for enhancements, and bug fixes, etc...) fork this g
 
 # Changes
 
+0.14.4
+
+* explicity require surveyor models and helper. update sweeper syntax. closes #77
+* cleanup and requires
+* fixing instructions for extending surveyor. closes #76
+
 0.14.3
 
 * remove manual numbering until it works. refactoring to use common methods.
