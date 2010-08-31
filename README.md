@@ -100,7 +100,7 @@ DSL question maps to the resulting rendered view of the question.
 
 Surveyor's controller, models, and views may be customized via classes in your app/models, app/helpers and app/controllers directories. To generate a sample custom controller and layout, run:
 
-    script/rails generate surveyor:custom
+    script/generate extend_surveyor
 
 and check out surveys/README\_FOR\_CUSTOM\_SURVEYOR.md
 
