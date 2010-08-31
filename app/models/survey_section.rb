@@ -1,7 +1,7 @@
 class SurveySection < ActiveRecord::Base
 
   # Associations
-  has_many :questions, :order => "display_order ASC"
+  has_many :questions, :order => "display_order ASC", :dependent => :destroy
   belongs_to :survey
   
   # Scopes

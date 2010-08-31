@@ -2,7 +2,7 @@ class Validation < ActiveRecord::Base
 
   # Associations
   belongs_to :answer
-  has_many :validation_conditions
+  has_many :validation_conditions, :dependent => :destroy
   
   # Scopes
   

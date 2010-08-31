@@ -3,6 +3,7 @@ class Answer < ActiveRecord::Base
   # Associations
   belongs_to :question
   has_many :responses
+  has_many :validations, :dependent => :destroy
 
   # Scopes
   default_scope :order => "display_order ASC"

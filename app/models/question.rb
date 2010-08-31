@@ -2,9 +2,9 @@ class Question < ActiveRecord::Base
 
   # Associations
   belongs_to :survey_section
-  belongs_to :question_group
-  has_many :answers, :order => "display_order ASC" # it might not always have answers
-  has_one :dependency
+  belongs_to :question_group, :dependent => :destroy
+  has_many :answers, :order => "display_order ASC", :dependent => :destroy # it might not always have answers
+  has_one :dependency, :dependent => :destroy
 
   # Scopes
   default_scope :order => "display_order ASC"

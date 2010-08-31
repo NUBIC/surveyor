@@ -3,7 +3,7 @@ class Dependency < ActiveRecord::Base
   # Associations
   belongs_to :question
   belongs_to :question_group
-  has_many :dependency_conditions
+  has_many :dependency_conditions, :dependent => :destroy
   
   # Validations
   validates_presence_of :rule
