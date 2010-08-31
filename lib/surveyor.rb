@@ -1,3 +1,5 @@
-require File.dirname(__FILE__) + '/surveyor/acts_as_response'
-module Surveyor
-end
+require 'surveyor/common'
+require 'surveyor/acts_as_response'
+
+Dir.glob('app/models/*.rb').each{|f| require f}
+Dir.glob('app/helpers/*.rb').each{|f| require f}
