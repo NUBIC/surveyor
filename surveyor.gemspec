@@ -5,11 +5,11 @@
 
 Gem::Specification.new do |s|
   s.name = %q{surveyor}
-  s.version = "0.14.3"
+  s.version = "0.14.4"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Brian Chamberlain", "Mark Yoon"]
-  s.date = %q{2010-08-24}
+  s.date = %q{2010-08-31}
   s.email = %q{yoon@northwestern.edu}
   s.extra_rdoc_files = [
     "README.md"
@@ -147,7 +147,6 @@ Gem::Specification.new do |s|
      "lib/surveyor/common.rb",
      "lib/surveyor/surveyor_controller_methods.rb",
      "lib/tasks/surveyor_tasks.rake",
-     "lib/xml_formatter.rb",
      "rails/init.rb",
      "script/surveyor/answer.rb",
      "script/surveyor/base.rb",
