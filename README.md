@@ -102,7 +102,7 @@ Surveyor's controller, models, and views may be customized via classes in your a
 
     script/generate extend_surveyor
 
-and check out surveys/README\_FOR\_CUSTOM\_SURVEYOR.md
+and check out surveys/EXTENDING\_SURVEYOR
 
 # Dependencices
 
@@ -114,9 +114,14 @@ To work on the plugin code (for enhancements, and bug fixes, etc...) fork this g
 
 # Changes
 
+0.14.5
+
+* use modules to include model methods. re-closes #77
+* rails init. destroy dependent models
+
 0.14.4
 
-* explicity require surveyor models and helper. update sweeper syntax. closes #77
+* explicitly require surveyor models and helper. update sweeper syntax. closes #77
 * cleanup and requires
 * fixing instructions for extending surveyor. closes #76
 

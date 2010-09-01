@@ -21,6 +21,7 @@ Surveyor's models can all be customized:
 For example, create app/models/survey.rb with the following contents:
 
     class Survey < ActiveRecord::Base
+      include Surveyor::Models::SurveyMethods
       def title
         "Custom #{super}"
       end
