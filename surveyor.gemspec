@@ -5,11 +5,11 @@
 
 Gem::Specification.new do |s|
   s.name = %q{surveyor}
-  s.version = "0.14.4"
+  s.version = "0.14.5"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Brian Chamberlain", "Mark Yoon"]
-  s.date = %q{2010-08-31}
+  s.date = %q{2010-09-01}
   s.email = %q{yoon@northwestern.edu}
   s.extra_rdoc_files = [
     "README.md"
@@ -56,11 +56,8 @@ Gem::Specification.new do |s|
      "features/surveyor.feature",
      "generators/extend_surveyor/extend_surveyor_generator.rb",
      "generators/extend_surveyor/templates/EXTENDING_SURVEYOR",
-     "generators/extend_surveyor/templates/extensions/survey_extensions.rb",
      "generators/extend_surveyor/templates/extensions/surveyor_controller.rb",
-     "generators/extend_surveyor/templates/extensions/surveyor_controller_extensions.rb",
      "generators/extend_surveyor/templates/extensions/surveyor_custom.html.erb",
-     "generators/extend_surveyor/templates/extensions/surveyor_helper_extensions.rb",
      "generators/surveyor/surveyor_generator.rb",
      "generators/surveyor/templates/README",
      "generators/surveyor/templates/assets/images/222222_11x11_icon_arrows_leftright.gif",
@@ -145,6 +142,17 @@ Gem::Specification.new do |s|
      "lib/surveyor.rb",
      "lib/surveyor/acts_as_response.rb",
      "lib/surveyor/common.rb",
+     "lib/surveyor/models/answer_methods.rb",
+     "lib/surveyor/models/dependency_condition_methods.rb",
+     "lib/surveyor/models/dependency_methods.rb",
+     "lib/surveyor/models/question_group_methods.rb",
+     "lib/surveyor/models/question_methods.rb",
+     "lib/surveyor/models/response_methods.rb",
+     "lib/surveyor/models/response_set_methods.rb",
+     "lib/surveyor/models/survey_methods.rb",
+     "lib/surveyor/models/survey_section_methods.rb",
+     "lib/surveyor/models/validation_condition_methods.rb",
+     "lib/surveyor/models/validation_methods.rb",
      "lib/surveyor/surveyor_controller_methods.rb",
      "lib/tasks/surveyor_tasks.rake",
      "rails/init.rb",
