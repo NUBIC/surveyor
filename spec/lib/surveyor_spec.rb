@@ -1,4 +1,4 @@
-require File.expand_path(File.dirname(__FILE__) + '/../../lib/surveyor')
+require File.expand_path(File.dirname(__FILE__) + '/../spec_helper')
 
 describe Surveyor do
   it "should create a normalized code from the answer text" do

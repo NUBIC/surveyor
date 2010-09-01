@@ -13,7 +13,7 @@ module Surveyor
         base.send :validates_inclusion_of, :operator, :in => Surveyor::Common::OPERATORS
         base.send :validates_uniqueness_of, :rule_key, :scope => :validation_id
 
-        base.send :acts_as_response # includes "as" instance method
+        base.send :include, Surveyor::ActsAsResponse # includes "as" instance method
 
         # Class methods
         base.instance_eval do

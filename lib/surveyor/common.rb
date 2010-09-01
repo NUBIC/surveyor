@@ -1,7 +1,7 @@
 module Surveyor
   class Common
     RAND_CHARS = [('a'..'z'), ('A'..'Z'), (0..9)].map{|r| r.to_a}.flatten.to_s
-    OPERATORS = %w(== != < > <= >=)
+    OPERATORS = %w(== != < > <= >= =~)
     
     class << self
       def make_tiny_code(len = 10)
@@ -14,7 +14,7 @@ module Surveyor
 
       def to_normalized_string(text)
         words_to_omit = %w(a be but has have in is it of on or the to when)
-        col_text = text.gsub(/(<[^>]*>)|\n|\t/s, ' ') # Remove html tags
+        col_text = text.to_s.gsub(/(<[^>]*>)|\n|\t/s, ' ') # Remove html tags
         col_text.downcase!                            # Remove capitalization
         col_text.gsub!(/\"|\'/, '')                   # Remove potential problem characters
         col_text.gsub!(/\(.*?\)/,'')                  # Remove text inside parens

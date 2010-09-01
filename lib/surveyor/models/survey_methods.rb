@@ -34,7 +34,7 @@ module Surveyor
       end
 
       def title=(value)
-        self.access_code = Surveyor::Common.to_normalized_string(value)
+        self.access_code = Survey.to_normalized_string(value)
         super
       end
 

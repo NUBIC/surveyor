@@ -10,7 +10,8 @@ module Surveyor
         # Validations
         base.send :validates_presence_of, :response_set_id, :question_id, :answer_id
 
-        base.send :acts_as_response # includes "as" instance method
+        base.send :include, Surveyor::ActsAsResponse # includes "as" instance method
+
       end
 
       # Instance Methods
