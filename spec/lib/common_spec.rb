@@ -1,4 +1,4 @@
-require File.expand_path(File.dirname(__FILE__) + '/../../spec_helper')
+require File.expand_path(File.dirname(__FILE__) + '/../spec_helper')
 
 describe Surveyor::Common, "" do
   it "should create a normalized code from the answer text" do
@@ -22,6 +22,6 @@ describe Surveyor::Common, "" do
     strings.each do |k, v|
       Surveyor::Common.to_normalized_string(k).should == v
     end
-  
+  end
   
 end

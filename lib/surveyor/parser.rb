@@ -49,7 +49,7 @@ module Surveyor
       when /^q|label|image$/; "question"
       when /^a$/; "answer"
       when /^d$/; "dependency"
-      when /^c|condition$/; context["validation"] ? "validation_condition" : "dependency_condition"
+      when /^c(ondition)?$/; context["validation"] ? "validation_condition" : "dependency_condition"
       when /^v$/; "validation"
       when /^dc(ondition)?$/; "dependency_condition"
       when /^vc(ondition)?$/; "validation_condition"

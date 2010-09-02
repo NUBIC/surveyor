@@ -1,4 +1,4 @@
-require File.expand_path(File.dirname(__FILE__) + '/../../spec_helper')
+require File.expand_path(File.dirname(__FILE__) + '/../spec_helper')
 
 describe Surveyor::Parser, "" do
   before(:each) do
@@ -14,14 +14,14 @@ describe Surveyor::Parser, "" do
     @parser.send(:full, "vcondition").should == "validation_condition"
   end
   it "should translate 'condition' based on context" do
-    @parser.send(:full, "condition").should == "validation_condition"
-    @parser.send(:full, "c").should == "validation_condition"
-    @parser.context["dependency"] = Dependency.new
     @parser.send(:full, "condition").should == "dependency_condition"
     @parser.send(:full, "c").should == "dependency_condition"
-    @parser.context["dependency"] = nil
+    @parser.context["validation"] = Validation.new
     @parser.send(:full, "condition").should == "validation_condition"
     @parser.send(:full, "c").should == "validation_condition"
+    @parser.context["validation"] = nil
+    @parser.send(:full, "condition").should == "dependency_condition"
+    @parser.send(:full, "c").should == "dependency_condition"
   end
   it "should identify models that take blocks" do
     @parser.send(:block_models).should == %w(survey survey_section question_group)
