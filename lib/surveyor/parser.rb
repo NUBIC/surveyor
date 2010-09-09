@@ -19,7 +19,7 @@ module Surveyor
       method_name, reference_identifier = missing_method.to_s.split("_", 2)
       type = full(method_name)
       
-      print "#{type} "
+      print "#{type}"
       
       # check for blocks
       raise "Error: A #{type.humanize} cannot be empty" if block_models.include?(type) && !block_given?
@@ -28,13 +28,16 @@ module Surveyor
       # parse and build
       type.classify.constantize.parse_and_build(context, args, method_name, reference_identifier)
       
+      # save
+      print context[type.to_sym].save ? ". " : " not saved! #{context[type.to_sym].errors.each_full.join(", ")} "
+
       # evaluate and clear context for block models
       if block_models.include?(type)
         self.instance_eval(&block) 
-        if type == 'survey'
-          puts
-          puts context[type.to_sym].save ? "saved" : "not saved!"
-        end
+        # if type == 'survey'
+        #   puts
+        #   puts context[type.to_sym].save ? "saved" : "not saved!"
+        # end
         context[type.to_sym].clear(context)
       end
     end
@@ -65,6 +68,8 @@ end
 # Surveyor models with extra parsing methods
 class Survey < ActiveRecord::Base
   # block
+  include Surveyor::Models::SurveyMethods
+  
   def self.parse_and_build(context, args, original_method, reference_identifier)
     # clear context
     context.delete_if{|k,v| true}
@@ -81,6 +86,8 @@ class Survey < ActiveRecord::Base
 end
 class SurveySection < ActiveRecord::Base
   # block
+  include Surveyor::Models::SurveySectionMethods
+  
   def self.parse_and_build(context, args, original_method, reference_identifier)
     # clear context
     context.delete_if{|k,v| k != :survey}
@@ -97,6 +104,8 @@ class SurveySection < ActiveRecord::Base
 end
 class QuestionGroup < ActiveRecord::Base
   # block
+  include Surveyor::Models::QuestionGroupMethods
+  
   def self.parse_and_build(context, args, original_method, reference_identifier)
     # clear context
     context.delete_if{|k,v| k != :survey && k != :survey_section}
@@ -112,6 +121,8 @@ class QuestionGroup < ActiveRecord::Base
 end
 class Question < ActiveRecord::Base
   # nonblock
+  include Surveyor::Models::QuestionMethods
+  
   def self.parse_and_build(context, args, original_method, reference_identifier)
     # clear context
     context.delete_if{|k,v| %w(question dependency dependency_condition answer validation validation_condition).map(&:to_sym).include? k}
@@ -120,10 +131,8 @@ class Question < ActiveRecord::Base
     text = args[0] || "Question"
     context[:question] = new({  :survey_section => context[:survey_section],
                                 :question_group => context[:question_group],
-                                :text => text, 
-                                :pick => :none,
-                                :is_mandatory => true,
-                                :display_order => context[:survey_section].questions.count,
+                                :reference_identifier => reference_identifier,
+                                :text => text,
                                 :short_text => text, 
                                 :display_type => (original_method =~ /label|image/ ? original_method : "default"),
                                 :data_export_identifier => Surveyor::Common.normalize(text)}.merge(args[1] || {}))
@@ -134,6 +143,8 @@ class Question < ActiveRecord::Base
 end
 class Dependency < ActiveRecord::Base
   # nonblock
+  include Surveyor::Models::DependencyMethods
+  
   def self.parse_and_build(context, args, original_method, reference_identifier)
     # clear context
     context.delete_if{|k,v| %w(dependency dependency_condition).map(&:to_sym).include? k}
@@ -145,6 +156,8 @@ class Dependency < ActiveRecord::Base
 end
 class DependencyCondition < ActiveRecord::Base
   # nonblock
+  include Surveyor::Models::DependencyConditionMethods
+  
   def self.parse_and_build(context, args, original_method, reference_identifier)
     # clear context
     context.delete_if{|k,v| k == :dependency_condition}
@@ -159,6 +172,8 @@ class DependencyCondition < ActiveRecord::Base
 end
 class Answer < ActiveRecord::Base
   # nonblock
+  include Surveyor::Models::AnswerMethods
+  
   def self.parse_and_build(context, args, original_method, reference_identifier)
     # clear context
     context.delete_if{|k,v| %w(answer validation validation_condition).map(&:to_sym).include? k}
@@ -209,6 +224,8 @@ class Answer < ActiveRecord::Base
 end
 class Validation < ActiveRecord::Base
   # nonblock
+  include Surveyor::Models::ValidationMethods
+  
   def self.parse_and_build(context, args, original_method, reference_identifier)
     # clear context
     context.delete_if{|k,v| %w(validation validation_condition).map(&:to_sym).include? k}
@@ -220,6 +237,8 @@ class Validation < ActiveRecord::Base
 end
 class ValidationCondition < ActiveRecord::Base
   # nonblock
+  include Surveyor::Models::ValidationConditionMethods
+  
   def self.parse_and_build(context, args, original_method, reference_identifier)
     # clear context
     context.delete_if{|k,v| k == :validation_condition}

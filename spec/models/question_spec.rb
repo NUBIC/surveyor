@@ -6,10 +6,6 @@ describe Question, "when creating a new question" do
     @question = Question.new(:text => "What is your favorite color?", :survey_section => @ss, :is_mandatory => true, :display_order => 1)
   end
 
-  it "should be valid" do
-    @question.should be_valid
-  end
-
   it "should be invalid without text" do
     @question.text = nil
     @question.should have(1).error_on(:text)
@@ -24,6 +20,13 @@ describe Question, "when creating a new question" do
     @question.mandatory?.should be_true
   end
   
+  it "should convert pick attribute to string" do
+    @question.pick.should == "none"
+    @question.pick = :one
+    @question.pick.should == "one"
+    @question.pick = nil
+    @question.pick.should == nil
+  end
 end
 
 describe Question, "that has answers" do
@@ -47,8 +50,7 @@ end
 describe Question, "when interacting with an instance" do
   
   before(:each) do
-    @ss = mock_model(SurveySection)
-    @question = Question.new(:text => "What is your favorite color?", :survey_section => @ss)
+    @question = Factory(:question)
   end
 
   it "should return 'default' for nil display type" do
@@ -60,9 +62,8 @@ end
 
 describe Question, "with dependencies" do
   before(:each) do
-    @ss = mock_model(SurveySection)
     @rs = mock_model(ResponseSet)
-    @question = Question.new(:text => "Which island?", :survey_section => @ss)
+    @question = Factory(:question)
   end
 
   it "should check its dependency" do

@@ -26,8 +26,12 @@ module Surveyor
         self.is_mandatory ||= true
         self.display_type ||= "default"
         self.pick ||= "none"
+        self.display_order ||= self.survey_section ? self.survey_section.questions.count : 0
       end
-
+      
+      def pick=(val)
+        write_attribute(:pick, val.nil? ? nil : val.to_s)
+      end
       def mandatory?
         self.is_mandatory == true
       end

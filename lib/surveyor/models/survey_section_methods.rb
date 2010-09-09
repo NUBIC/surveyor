@@ -15,6 +15,14 @@ module Surveyor
       end
 
       # Instance Methods
+      def initialize(*args)
+        super(*args)
+        default_args
+      end
+
+      def default_args
+        self.display_order ||= self.survey ? self.survey.sections.count : 0
+      end
 
     end
   end

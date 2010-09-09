@@ -1,10 +1,9 @@
 require File.expand_path(File.dirname(__FILE__) + '/../spec_helper')
 
-describe Surveyor::Parser, "" do
+describe Surveyor::Parser do
   before(:each) do
     @parser = Surveyor::Parser.new
   end
-  
   it "should translate shortcuts into full model names" do
     @parser.send(:full, "section").should == "survey_section"
     @parser.send(:full, "g").should == "question_group"

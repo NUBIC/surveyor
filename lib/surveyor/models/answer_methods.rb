@@ -16,6 +16,15 @@ module Surveyor
       end
 
       # Instance Methods
+      def initialize(*args)
+        super(*args)
+        default_args
+      end
+
+      def default_args
+        self.display_order ||= self.question ? self.question.answers.count : 0
+      end
+      
       def renderer(q = question)  
         r = [q.pick.to_s, self.response_class].compact.map(&:downcase).join("_")
         r.blank? ? :default : r.to_sym
