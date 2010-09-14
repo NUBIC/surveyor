@@ -84,10 +84,6 @@ Try out the "kitchen sink" survey:
 
     rake surveyor FILE=surveys/kitchen_sink_survey.rb
 
-The rake surveyor task overwrites previous surveys by default, but can append instead:
-
-    rake surveyor FILE=surveys/kitchen_sink_survey.rb APPEND=true
-
 The rake tasks above generate surveys in our custom survey DSL (which is a great format for end users and stakeholders to use). 
 After you have run them start up your app and go to:
 
@@ -113,6 +109,18 @@ Surveyor depends on Ruby (1.8.7 - 1.9.1), Rails 2.3 and the SASS style sheet lan
 To work on the plugin code (for enhancements, and bug fixes, etc...) fork this github project. Then clone the project under the vendor/plugins directory in a Rails app used only for development:
 
 # Changes
+
+0.15.0
+
+* prevent duplicate survey titles by appending incrementing numbers
+* rake task to remove a survey. closes #64
+* cleanup of old parsing strategy
+* features and specs and new parser. closes #62
+* first test driven work on parser
+* moving parser and common specs so they run automatically. fixing some spec errors
+* first shot a surveyor parser. some parts untested, but coded to determine style. references #62
+* refactoring counters
+* fixing failing specs. fixes acts\_as\_response issues
 
 0.14.5
 
