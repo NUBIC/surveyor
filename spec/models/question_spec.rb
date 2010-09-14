@@ -59,6 +59,14 @@ describe Question, "when interacting with an instance" do
     @question.renderer.should == :default
   end
   
+  it "should let you know if it is part of a group" do
+    @question.question_group = Factory(:question_group)
+    @question.solo?.should be_false
+    @question.part_of_group?.should be_true
+    @question.question_group = nil
+    @question.solo?.should be_true
+    @question.part_of_group?.should be_false
+  end
 end
 
 describe Question, "with dependencies" do

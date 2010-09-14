@@ -55,6 +55,9 @@ module Surveyor
       def part_of_group?
         !self.question_group.nil?
       end
+      def solo?
+        self.question_group.nil?
+      end
 
       def renderer(g = question_group)
         r = [g ? g.renderer.to_s : nil, display_type].compact.join("_")
