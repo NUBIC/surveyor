@@ -77,7 +77,6 @@ class Survey < ActiveRecord::Base
     # build and set context
     title = args[0]
     context[:survey] = new({  :title => title, 
-                              :access_code => Surveyor::Common.normalize(title),
                               :reference_identifier => reference_identifier}.merge(args[1] || {}))
   end
   def clear(context)

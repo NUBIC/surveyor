@@ -10,6 +10,17 @@ describe Survey, "when saving a new one" do
     @survey.title = nil
     @survey.should have(1).error_on(:title)
   end
+  
+  it "should adjust the title to save unique titles" do
+    original = Survey.new(:title => "Foo")
+    original.save.should be_true
+    imposter = Survey.new(:title => "Foo")
+    imposter.save.should be_true
+    imposter.title.should == "Foo 1"
+    bandwagoneer = Survey.new(:title => "Foo")
+    bandwagoneer.save.should be_true
+    bandwagoneer.title.should == "Foo 2"
+  end
 end
 
 # Associations

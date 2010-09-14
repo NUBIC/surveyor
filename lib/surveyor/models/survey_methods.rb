@@ -34,8 +34,16 @@ module Surveyor
       end
 
       def title=(value)
-        self.access_code = Survey.to_normalized_string(value)
-        super
+        adjusted_value = value
+        while Survey.find_by_access_code(Survey.to_normalized_string(adjusted_value))
+          i ||= 0
+          i += 1
+          adjusted_value = "#{value} #{i.to_s}"
+        end
+        self.access_code = Survey.to_normalized_string(adjusted_value)
+        super(adjusted_value)        
+        # self.access_code = Survey.to_normalized_string(value)
+        # super
       end
 
       def active?
