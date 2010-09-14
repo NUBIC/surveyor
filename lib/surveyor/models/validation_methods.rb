@@ -11,8 +11,8 @@ module Surveyor
         # Validations
         base.send :validates_presence_of, :rule
         base.send :validates_format_of, :rule, :with => /^(?:and|or|\)|\(|[A-Z]|\s)+$/
-        base.send :validates_numericality_of, :answer_id
-
+        # this causes issues with building and saving
+        # base.send :validates_numericality_of, :answer_id
       end
 
       # Instance Methods

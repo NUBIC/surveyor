@@ -15,10 +15,10 @@ describe Surveyor::Parser do
   it "should translate 'condition' based on context" do
     @parser.send(:full, "condition").should == "dependency_condition"
     @parser.send(:full, "c").should == "dependency_condition"
-    @parser.context["validation"] = Validation.new
+    @parser.context[:validation] = Validation.new
     @parser.send(:full, "condition").should == "validation_condition"
     @parser.send(:full, "c").should == "validation_condition"
-    @parser.context["validation"] = nil
+    @parser.context[:validation] = nil
     @parser.send(:full, "condition").should == "dependency_condition"
     @parser.send(:full, "c").should == "dependency_condition"
   end

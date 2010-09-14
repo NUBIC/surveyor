@@ -11,7 +11,9 @@ module Surveyor
         base.send :named_scope, :with_includes, { :include => {:questions => [:answers, :question_group, {:dependency => :dependency_conditions}]}}
 
         # Validations
-        base.send :validates_presence_of, :title, :survey, :display_order
+        base.send :validates_presence_of, :title, :display_order
+        # this causes issues with building and saving
+        #, :survey
       end
 
       # Instance Methods

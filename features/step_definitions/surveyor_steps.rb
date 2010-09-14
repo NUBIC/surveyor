@@ -9,9 +9,18 @@ Then /^there should be (\d+) survey(?:s?) with:$/ do |x, table|
   end
 end
 
+Then /^there should be (\d+) question groups with:$/ do |x, table|
+  QuestionGroup.count.should == x.to_i
+  table.hashes.each do |hash|
+    QuestionGroup.find(:first, :conditions => hash).should_not be_nil
+  end
+end
+
 Then /^there should be (\d+) question(?:s?) with:$/ do |x, table|
   Question.count.should == x.to_i
   table.hashes.each do |hash|
+    hash["reference_identifier"] = nil if hash["reference_identifier"] == "nil"
+    hash["custom_class"] = nil if hash["custom_class"] == "nil"
     Question.find(:first, :conditions => hash).should_not be_nil
   end
 end
@@ -19,6 +28,40 @@ end
 Then /^there should be (\d+) answer(?:s?) with:$/ do |x, table|
   Answer.count.should == x.to_i
   table.hashes.each do |hash|
+    hash["reference_identifier"] = nil if hash["reference_identifier"] == "nil"
     Answer.find(:first, :conditions => hash).should_not be_nil
+  end
+end
+
+Then /^there should be (\d+) dependency with:$/ do |x, table|
+  Dependency.count.should == x.to_i
+  table.hashes.each do |hash|
+    Dependency.find(:first, :conditions => hash).should_not be_nil
+  end
+end
+
+Then /^there should be (\d+) resolved dependency_condition(?:s?) with:$/ do |x, table|
+  DependencyCondition.count.should == x.to_i
+  table.hashes.each do |hash|
+    d = DependencyCondition.find(:first, :conditions => hash)
+    d.should_not be_nil
+    d.question.should_not be_nil
+    d.answer.should_not be_nil
+  end
+end
+
+
+Then /^there should be (\d+) validation(?:s?) with:$/ do |x, table|
+  Validation.count.should == x.to_i
+  table.hashes.each do |hash|
+    Validation.find(:first, :conditions => hash).should_not be_nil
+  end
+end
+
+Then /^there should be (\d+) validation_condition(?:s?) with:$/ do |x, table|
+  ValidationCondition.count.should == x.to_i
+  table.hashes.each do |hash|
+    hash["integer_value"] = nil if hash["integer_value"] == "nil"
+    ValidationCondition.find(:first, :conditions => hash).should_not be_nil
   end
 end

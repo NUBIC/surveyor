@@ -12,7 +12,8 @@ module Surveyor
 
         # Validations
         base.send :validates_presence_of, :text
-        base.send :validates_numericality_of, :question_id, :allow_nil => false, :only_integer => true
+        # this causes issues with building and saving
+        # base.send :validates_numericality_of, :question_id, :allow_nil => false, :only_integer => true
       end
 
       # Instance Methods
@@ -23,6 +24,9 @@ module Surveyor
 
       def default_args
         self.display_order ||= self.question ? self.question.answers.count : 0
+        # self.is_exclusive ||= false
+        # self.hide_label ||= false
+        # self.response_class ||= "answer"
       end
       
       def renderer(q = question)  

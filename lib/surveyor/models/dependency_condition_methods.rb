@@ -9,10 +9,11 @@ module Surveyor
         base.send :belongs_to, :question
 
         # Validations
-        base.send :validates_numericality_of, :dependency_id, :question_id, :answer_id
         base.send :validates_presence_of, :operator, :rule_key
         base.send :validates_inclusion_of, :operator, :in => Surveyor::Common::OPERATORS
         base.send :validates_uniqueness_of, :rule_key, :scope => :dependency_id
+        # this causes issues with building and saving
+        # base.send :validates_numericality_of, :question_id, :answer_id, :dependency_id
         
         base.send :include, Surveyor::ActsAsResponse # includes "as" instance method
 

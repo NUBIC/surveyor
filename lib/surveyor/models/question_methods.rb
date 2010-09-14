@@ -12,7 +12,9 @@ module Surveyor
         base.send :default_scope, :order => "display_order ASC"
 
         # Validations
-        base.send :validates_presence_of, :text, :survey_section_id, :display_order
+        base.send :validates_presence_of, :text, :display_order
+        # this causes issues with building and saving
+        #, :survey_section_id
         base.send :validates_inclusion_of, :is_mandatory, :in => [true, false]
       end
 
@@ -32,6 +34,10 @@ module Surveyor
       def pick=(val)
         write_attribute(:pick, val.nil? ? nil : val.to_s)
       end
+      def display_type=(val)
+        write_attribute(:display_type, val.nil? ? nil : val.to_s)
+      end
+
       def mandatory?
         self.is_mandatory == true
       end

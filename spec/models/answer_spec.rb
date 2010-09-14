@@ -8,11 +8,12 @@ describe Answer, "when creating a new answer" do
   it "should be valid" do
     @answer.should be_valid
   end
-
-  it "should be invalid without a question_id" do
-    @answer.question_id = nil
-    @answer.should_not be_valid
-  end
+  
+  # this causes issues with building and saving answers to questions within a grid.
+  # it "should be invalid without a question_id" do
+  #   @answer.question_id = nil
+  #   @answer.should_not be_valid
+  # end
   
   it "should have 'default' renderer with nil question.pick and response_class" do      
     @answer.question = Factory(:question, :pick => nil)
