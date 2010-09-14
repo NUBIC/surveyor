@@ -12,7 +12,7 @@ describe Surveyor::Unparser do
     a12 = q1.answers.build(:text => "green", :response_class => "answer", :reference_identifier => 2, :question => q1)
     a13 = q1.answers.build(:text => "blue", :response_class => "answer", :reference_identifier => 3, :question => q1)
     a14 = q1.answers.build(:text => "Other", :response_class => "string", :reference_identifier => 4, :question => q1)
-    a15 = q1.answers.build(:text => "Omit", :reference_identifier => 5, :question => q1)
+    a15 = q1.answers.build(:text => "Omit", :reference_identifier => 5, :question => q1, :is_exclusive => true)
     q2 = @section.questions.build(:text => "What is your name?", :reference_identifier => 2, :pick => :none)
     a21 = q2.answers.build(:response_class => "string", :reference_identifier => 1, :question => q2)
     Surveyor::Unparser.unparse(@survey).should ==

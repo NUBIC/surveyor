@@ -21,6 +21,10 @@ module Surveyor
         display_type.blank? ? :default : display_type.to_sym
       end
 
+      def display_type=(val)
+        write_attribute(:display_type, val.nil? ? nil : val.to_s)
+      end
+
       def dependent?
         self.dependency != nil
       end

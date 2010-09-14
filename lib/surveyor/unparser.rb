@@ -47,7 +47,7 @@ class QuestionGroup < ActiveRecord::Base
   # block
   include Surveyor::Models::QuestionGroupMethods
   def unparse(dsl)
-    attrs = (self.attributes.diff QuestionGroup.new(:text => text).attributes).delete_if{|k,v| %w(created_at updated_at).include?(k) or (k == "display_type" && %w(grid repeater default).include?(v))}.symbolize_keys!
+    attrs = (self.attributes.diff QuestionGroup.new(:text => text).attributes).delete_if{|k,v| %w(created_at updated_at id).include?(k) or (k == "display_type" && %w(grid repeater default).include?(v))}.symbolize_keys!
     method = (%w(grid repeater).include?(display_type) ? display_type : "group")
     dsl << "\n"
     dsl << "    #{method} \"#{text}\""
@@ -61,7 +61,7 @@ class Question < ActiveRecord::Base
   # nonblock
   include Surveyor::Models::QuestionMethods
   def unparse(dsl)
-    attrs = (self.attributes.diff Question.new(:text => text).attributes).delete_if{|k,v| %w(created_at updated_at reference_identifier id survey_section_id question_group_id).include?(k) or (k == "display_type" and v == "label")}.symbolize_keys!
+    attrs = (self.attributes.diff Question.new(:text => text).attributes).delete_if{|k,v| %w(created_at updated_at reference_identifier id survey_section_id question_group_id).include?(k) or (k == "display_type" && v == "label")}.symbolize_keys!
     dsl << (solo? ? "\n" : "  ")
     if display_type == "label"
       dsl << "    label"

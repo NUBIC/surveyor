@@ -73,7 +73,7 @@ survey "&#8220;Kitchen Sink&#8221; survey" do
     a :text, :custom_class => 'mapper'
     # validations can use regexp values
     validation :rule => "A"
-    condition_A "=~", :regexp => /[0-9a-zA-z\. #]/
+    condition_A "=~", :regexp => "[0-9a-zA-z\. #]"
     
     # Questions, groups, and answers take a custom renderer (a partial in the application's views dir)
     # defaults are "/partials/question_group", "/partials/question", "/partials/answer", so the custom renderers should have a different name
@@ -82,13 +82,7 @@ survey "&#8220;Kitchen Sink&#8221; survey" do
     
     q_time_lunch "What time do you usually take a lunch break?"
     a_1 :time
-    
-    # # validation conditions can look up the response to another question/answer pair
-    # q_time_dinner "What time do you usually take a dinner break?"
-    # a :time
-    # validation :rule => "A"
-    # condition_A ">=", :question_reference => "time_lunch", :answer_reference => "1"
-        
+            
     q "When would you like to meet for dinner?"
     a :date
     
