@@ -59,17 +59,16 @@ dsl
 <<-dsl
 survey "Simple survey", :description=>"very simple" do
   section "Simple section" do
+
     grid "How are you feeling?" do
       a "Yes"
       a "Maybe"
       a "No"
-
       q "Happy?"
-
       q "Energized?"
     end
-    repeater "Tell us about the cars you own" do
 
+    repeater "Tell us about the cars you own" do
       q "Model"
       a :string
     end

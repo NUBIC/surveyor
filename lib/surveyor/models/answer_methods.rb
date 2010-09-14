@@ -24,9 +24,11 @@ module Surveyor
 
       def default_args
         self.display_order ||= self.question ? self.question.answers.count : 0
-        # self.is_exclusive ||= false
-        # self.hide_label ||= false
-        # self.response_class ||= "answer"
+        self.is_exclusive ||= false
+        self.hide_label ||= false
+        self.response_class ||= "answer"
+        self.short_text ||= text
+        self.data_export_identifier ||= Surveyor::Common.normalize(text)
       end
       
       def renderer(q = question)  

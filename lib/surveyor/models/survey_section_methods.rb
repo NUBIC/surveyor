@@ -23,7 +23,8 @@ module Surveyor
       end
 
       def default_args
-        self.display_order ||= self.survey ? self.survey.sections.count : 0
+        self.display_order ||= survey ? survey.sections.count : 0
+        self.data_export_identifier ||= Surveyor::Common.normalize(title)
       end
 
     end

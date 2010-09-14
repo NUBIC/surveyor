@@ -95,8 +95,7 @@ class SurveySection < ActiveRecord::Base
     
     # build and set context
     title = args[0]
-    context[:survey_section] = context[:survey].sections.build({ :title => title, 
-                                                                :data_export_identifier => Surveyor::Common.normalize(title)}.merge(args[1] || {}))
+    context[:survey_section] = context[:survey].sections.build({ :title => title }.merge(args[1] || {}))
   end
   def clear(context)
     context.delete_if{|k,v| k != :survey && k != :question_references && k != :answer_references}
@@ -133,9 +132,7 @@ class Question < ActiveRecord::Base
       :question_group => context[:question_group],
       :reference_identifier => reference_identifier,
       :text => text,
-      :short_text => text, 
-      :display_type => (original_method =~ /label|image/ ? original_method : "default"),
-      :data_export_identifier => Surveyor::Common.normalize(text)}.merge(args[1] || {}))
+      :display_type => (original_method =~ /label|image/ ? original_method : "default")}.merge(args[1] || {}))
     
     # keep reference for dependencies
     context[:question_references][reference_identifier] = context[:question] unless reference_identifier.blank?
@@ -196,12 +193,9 @@ class Answer < ActiveRecord::Base
   
   def self.parse_and_build(context, args, original_method, reference_identifier)
     # clear context
-    context.delete_if{|k,v| %w(answer validation validation_condition).map(&:to_sym).include? k}
+    context.delete_if{|k,v| %w(answer validation validation_condition reference_identifier).map(&:to_sym).include? k}
 
-    attrs = { :reference_identifier => reference_identifier,
-              :is_exclusive => false,
-              :hide_label => false,
-              :response_class => "answer"}.merge(self.parse_args(args))
+    attrs = { :reference_identifier => reference_identifier}.merge(self.parse_args(args))
                               
     # add answers to grid
     if context[:question_group] && context[:question_group].display_type == "grid"
@@ -227,7 +221,7 @@ class Answer < ActiveRecord::Base
     end
   end
   def self.text_args(text = "Answer")
-    {:text => text.to_s, :short_text => text, :data_export_identifier => Surveyor::Common.normalize(text)}
+    {:text => text.to_s}
   end
   def self.hash_from(arg)
     arg.is_a?(Symbol) ? {:response_class => arg.to_s} : arg.is_a?(Hash) ? arg : {}

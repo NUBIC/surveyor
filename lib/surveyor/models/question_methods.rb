@@ -29,6 +29,8 @@ module Surveyor
         self.display_type ||= "default"
         self.pick ||= "none"
         self.display_order ||= self.survey_section ? self.survey_section.questions.count : 0
+        self.data_export_identifier ||= Surveyor::Common.normalize(text)
+        self.short_text ||= text
       end
       
       def pick=(val)
