@@ -5,7 +5,7 @@
 
 Gem::Specification.new do |s|
   s.name = %q{surveyor}
-  s.version = "0.15.0"
+  s.version = "0.16.0"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Brian Chamberlain", "Mark Yoon"]
@@ -154,12 +154,14 @@ Gem::Specification.new do |s|
      "lib/surveyor/models/validation_methods.rb",
      "lib/surveyor/parser.rb",
      "lib/surveyor/surveyor_controller_methods.rb",
+     "lib/surveyor/unparser.rb",
      "lib/tasks/surveyor_tasks.rake",
      "rails/init.rb",
      "spec/controllers/surveyor_controller_spec.rb",
      "spec/factories.rb",
      "spec/lib/common_spec.rb",
      "spec/lib/parser_spec.rb",
+     "spec/lib/unparser_spec.rb",
      "spec/models/answer_spec.rb",
      "spec/models/dependency_condition_spec.rb",
      "spec/models/dependency_spec.rb",
@@ -188,6 +190,7 @@ Gem::Specification.new do |s|
      "spec/factories.rb",
      "spec/lib/common_spec.rb",
      "spec/lib/parser_spec.rb",
+     "spec/lib/unparser_spec.rb",
      "spec/models/answer_spec.rb",
      "spec/models/dependency_condition_spec.rb",
      "spec/models/dependency_spec.rb",
