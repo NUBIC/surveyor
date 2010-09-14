@@ -89,8 +89,12 @@ After you have run them start up your app and go to:
 
     http://localhost:3000/surveys
 
-Try taking the survey and compare it to the contents of the DSL file kitchen\_sink\_survey.rb. See how each type of
-DSL question maps to the resulting rendered view of the question.
+Try taking the survey and compare it to the contents of the DSL file kitchen\_sink\_survey.rb. See how each type of DSL question maps to the resulting rendered view of the question.
+
+There are two other useful rake tasks for removing (only surveys without responses) and un-parsing (from db to DSL file) surveys:
+
+    rake surveyor:remove
+    rake surveyor:unparse
 
 # Customizing surveyor
 
@@ -109,6 +113,13 @@ Surveyor depends on Ruby (1.8.7 - 1.9.1), Rails 2.3 and the SASS style sheet lan
 To work on the plugin code (for enhancements, and bug fixes, etc...) fork this github project. Then clone the project under the vendor/plugins directory in a Rails app used only for development:
 
 # Changes
+
+0.16.0
+
+* minor fixes to unparsing
+* refining unparser. added rake task to unparse survey. closes #79
+* unparsing for groups, dependencies, validations
+* starting work on unparser for basic survey, section and question.
 
 0.15.0
 
