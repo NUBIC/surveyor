@@ -10,7 +10,26 @@ namespace :surveyor do
     Surveyor::Parser.parse File.read(file)
     puts "--- Done #{file} ---"
   end
-
+  desc "remove surveys (that don't have response sets)"
+  task :remove => :environment do
+    surveys = Survey.all.delete_if{|s| !s.response_sets.blank?}
+    if surveys
+      puts "The following surveys do not have any response sets"
+      surveys.each do |survey|
+        puts "#{survey.id} #{survey.title}"
+      end
+      puts "Which survey would you like to remove?"
+      id = $stdin.gets.to_i
+      if survey_to_delete = surveys.detect{|s| s.id == id}
+        puts "removing #{survey_to_delete.title}"
+        survey_to_delete.destroy
+      else
+        put "not found"
+      end
+    else
+      puts "There are no surveys surveys without response sets"      
+    end
+  end
 end
 
 namespace :spec do
