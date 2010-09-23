@@ -8,7 +8,7 @@ ActionController::Routing::Routes.draw do |map|
   end
   
   map.with_options :controller => 'results' do |r|
-    r.show_surveys_result_lists "surveys/results", :conditions => {:method => :get}, :action => "index"
-    r.show_one_survey_results "surveys/:id/result", :conditions => {:method => :get}, :action => "show"
+    r.results "results", :conditions => {:method => :get}, :action => "index"
+    r.result "results/:survey_code", :conditions => {:method => :get}, :action => "show"
   end   
 end
