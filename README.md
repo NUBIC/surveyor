@@ -59,7 +59,7 @@ As a plugin:
 
     gem install haml
     gem install fastercsv
-    script/plugin install git://github.com/breakpointer/surveyor.git
+    script/rails plugin install git://github.com/breakpointer/surveyor.git
 
 Or as a gem:
   
@@ -77,7 +77,7 @@ Or as a gem (with bundler):
 
 Generate assets, run migrations:
     
-    script/generate surveyor
+    script/rails generate surveyor:install
     rake db:migrate
 
 Try out the "kitchen sink" survey:
@@ -85,7 +85,11 @@ Try out the "kitchen sink" survey:
     rake surveyor FILE=surveys/kitchen_sink_survey.rb
 
 The rake tasks above generate surveys in our custom survey DSL (which is a great format for end users and stakeholders to use). 
-After you have run them start up your app and go to:
+After you have run them start up your app:
+    
+    script/rails server
+
+(or however you normally start your app) and goto:
 
     http://localhost:3000/surveys
 
@@ -100,7 +104,7 @@ There are two other useful rake tasks for removing (only surveys without respons
 
 Surveyor's controller, models, and views may be customized via classes in your app/models, app/helpers and app/controllers directories. To generate a sample custom controller and layout, run:
 
-    script/generate extend_surveyor
+    script/generate surveyor:custom
 
 and check out surveys/EXTENDING\_SURVEYOR
 
