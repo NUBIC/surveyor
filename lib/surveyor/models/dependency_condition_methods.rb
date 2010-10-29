@@ -27,14 +27,16 @@ module Surveyor
 
       # Instance methods
       def to_hash(response_set)
+        # all responses to associated question
         responses = response_set.responses.select do |r| 
           question && question.answers.include?(r.answer)
         end
         {rule_key.to_sym => (!responses.empty? and self.is_met?(responses))}
       end
 
-      # Checks to see if the responses passed in meets the dependency condition
+      # Checks to see if the responses passed in meet the dependency condition
       def is_met?(responses)
+        # response to associated answer if available, or first response
         response = if self.answer_id
                      responses.detect do |r| 
                        r.answer_id.to_i == self.answer_id.to_i
