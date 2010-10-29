@@ -27,12 +27,19 @@ module Surveyor
 
       # Instance methods
       def to_hash(response_set)
-        response = response_set.responses.detect{|r| r.answer_id.to_i == self.answer_id.to_i} || false # eval("nil and false") => nil so return false if no response is found
-        {rule_key.to_sym => (response and self.is_met?(response))}
+        responses = response_set.responses.select do |r| 
+          question && question.answers.include?(r.answer)
+        end
+        {rule_key.to_sym => (!responses.empty? and self.is_met?(responses))}
       end
 
-      # Checks to see if the response passed in meets the dependency condition
-      def is_met?(response)
+      # Checks to see if the responses passed in meets the dependency condition
+      def is_met?(responses)
+        response = if self.answer_id
+                     responses.detect do |r| 
+                       r.answer_id.to_i == self.answer_id.to_i
+                     end 
+                   end || responses.first
         klass = response.answer.response_class
         return case self.operator
         when "==", "<", ">", "<=", ">="

@@ -59,12 +59,12 @@ describe DependencyCondition, "instance" do
   it "should evaluate within the context of a response set object" do
     @response = Response.new(:question_id => 45, :response_set_id => 40, :answer_id => 23)
     @response.answer = Answer.new(:question_id => 45, :response_class => "answer")
-    @dependency_condition.is_met?(@response).should be_true
+    @dependency_condition.is_met?([@response]).should be_true
     # inversion
     @alt_response = Response.new(:question_id => 45, :response_set_id => 40, :answer_id => 55)
     @alt_response.answer = Answer.new(:question_id => 45, :response_class => "answer")
 
-    @dependency_condition.is_met?(@alt_response).should be_false
+    @dependency_condition.is_met?([@alt_response]).should be_false
   end
   
   it "converts to a hash for evaluation by the depedency object" do
@@ -90,45 +90,45 @@ describe DependencyCondition, "evaluting the resonse_set state" do
     end
 
     it "knows checkbox/radio type response" do
-      @dep_c.is_met?(@response).should be_true
+      @dep_c.is_met?([@response]).should be_true
       @dep_c.answer_id = 12
-      @dep_c.is_met?(@response).should be_false
+      @dep_c.is_met?([@response]).should be_false
     end
 
     it "knows string value response" do
       @select_answer.response_class = "string"
       @response.string_value = "hello123"
       @dep_c.string_value = "hello123"
-      @dep_c.is_met?(@response).should be_true
+      @dep_c.is_met?([@response]).should be_true
       @response.string_value = "foo_abc"
-      @dep_c.is_met?(@response).should be_false
+      @dep_c.is_met?([@response]).should be_false
     end
 
     it "knows a text value response" do
       @select_answer.response_class = "text"
       @response.text_value = "hello this is some text for comparison"
       @dep_c.text_value = "hello this is some text for comparison"
-      @dep_c.is_met?(@response).should be_true
+      @dep_c.is_met?([@response]).should be_true
       @response.text_value = "Not the same text"
-      @dep_c.is_met?(@response).should be_false 
+      @dep_c.is_met?([@response]).should be_false 
     end
 
     it "knows an integer value response" do
       @select_answer.response_class = "integer"
       @response.integer_value = 10045
       @dep_c.integer_value = 10045
-      @dep_c.is_met?(@response).should be_true
+      @dep_c.is_met?([@response]).should be_true
       @response.integer_value = 421
-      @dep_c.is_met?(@response).should be_false
+      @dep_c.is_met?([@response]).should be_false
     end
 
     it "knows a float value response" do
       @select_answer.response_class = "float"
       @response.float_value = 121.1
       @dep_c.float_value = 121.1
-      @dep_c.is_met?(@response).should be_true
+      @dep_c.is_met?([@response]).should be_true
       @response.float_value = 130.123
-      @dep_c.is_met?(@response).should be_false
+      @dep_c.is_met?([@response]).should be_false
     end
 
   end
@@ -146,45 +146,45 @@ describe DependencyCondition, "evaluting the resonse_set state" do
     end
 
     it "knows checkbox/radio type response" do
-      @dep_c.is_met?(@response).should be_false
+      @dep_c.is_met?([@response]).should be_false
       @dep_c.answer_id = 12
-      @dep_c.is_met?(@response).should be_true
+      @dep_c.is_met?([@response]).should be_true
     end
 
     it "knows string value response" do
       @select_answer.response_class = "string"
       @response.string_value = "hello123"
       @dep_c.string_value = "hello123"
-      @dep_c.is_met?(@response).should be_false
+      @dep_c.is_met?([@response]).should be_false
       @response.string_value = "foo_abc"
-      @dep_c.is_met?(@response).should be_true
+      @dep_c.is_met?([@response]).should be_true
     end
 
     it "knows a text value response" do
       @select_answer.response_class = "text"
       @response.text_value = "hello this is some text for comparison"
       @dep_c.text_value = "hello this is some text for comparison"
-      @dep_c.is_met?(@response).should be_false
+      @dep_c.is_met?([@response]).should be_false
       @response.text_value = "Not the same text"
-      @dep_c.is_met?(@response).should be_true 
+      @dep_c.is_met?([@response]).should be_true 
     end
 
     it "knows an integer value response" do
       @select_answer.response_class = "integer"
       @response.integer_value = 10045
       @dep_c.integer_value = 10045
-      @dep_c.is_met?(@response).should be_false
+      @dep_c.is_met?([@response]).should be_false
       @response.integer_value = 421
-      @dep_c.is_met?(@response).should be_true
+      @dep_c.is_met?([@response]).should be_true
     end
 
     it "knows a float value response" do
       @select_answer.response_class = "float"
       @response.float_value = 121.1
       @dep_c.float_value = 121.1
-      @dep_c.is_met?(@response).should be_false
+      @dep_c.is_met?([@response]).should be_false
       @response.float_value = 130.123
-      @dep_c.is_met?(@response).should be_true
+      @dep_c.is_met?([@response]).should be_true
     end
 
   end
@@ -203,18 +203,18 @@ describe DependencyCondition, "evaluting the resonse_set state" do
       @select_answer.response_class = "integer"
       @response.integer_value = 50
       @dep_c.integer_value = 100
-      @dep_c.is_met?(@response).should be_true
+      @dep_c.is_met?([@response]).should be_true
       @response.integer_value = 421
-      @dep_c.is_met?(@response).should be_false
+      @dep_c.is_met?([@response]).should be_false
     end
 
     it "knows operator on float value response" do
       @select_answer.response_class = "float"
       @response.float_value = 5.1
       @dep_c.float_value = 121.1
-      @dep_c.is_met?(@response).should be_true
+      @dep_c.is_met?([@response]).should be_true
       @response.float_value = 130.123
-      @dep_c.is_met?(@response).should be_false
+      @dep_c.is_met?([@response]).should be_false
     end
 
   end
@@ -233,22 +233,22 @@ describe DependencyCondition, "evaluting the resonse_set state" do
       @select_answer.response_class = "integer"
       @response.integer_value = 50
       @dep_c.integer_value = 100
-      @dep_c.is_met?(@response).should be_true
+      @dep_c.is_met?([@response]).should be_true
       @response.integer_value = 100
-      @dep_c.is_met?(@response).should be_true
+      @dep_c.is_met?([@response]).should be_true
       @response.integer_value = 421
-      @dep_c.is_met?(@response).should be_false
+      @dep_c.is_met?([@response]).should be_false
     end
 
     it "knows operator on float value response" do
       @select_answer.response_class = "float"
       @response.float_value = 5.1
       @dep_c.float_value = 121.1
-      @dep_c.is_met?(@response).should be_true
+      @dep_c.is_met?([@response]).should be_true
       @response.float_value = 121.1
-      @dep_c.is_met?(@response).should be_true
+      @dep_c.is_met?([@response]).should be_true
       @response.float_value = 130.123
-      @dep_c.is_met?(@response).should be_false
+      @dep_c.is_met?([@response]).should be_false
     end
 
   end
@@ -267,18 +267,18 @@ describe DependencyCondition, "evaluting the resonse_set state" do
       @select_answer.response_class = "integer"
       @response.integer_value = 50
       @dep_c.integer_value = 100
-      @dep_c.is_met?(@response).should be_false
+      @dep_c.is_met?([@response]).should be_false
       @response.integer_value = 421
-      @dep_c.is_met?(@response).should be_true
+      @dep_c.is_met?([@response]).should be_true
     end
 
     it "knows operator on float value response" do
       @select_answer.response_class = "float"
       @response.float_value = 5.1
       @dep_c.float_value = 121.1
-      @dep_c.is_met?(@response).should be_false
+      @dep_c.is_met?([@response]).should be_false
       @response.float_value = 130.123
-      @dep_c.is_met?(@response).should be_true
+      @dep_c.is_met?([@response]).should be_true
     end
 
   end
@@ -297,22 +297,22 @@ describe DependencyCondition, "evaluting the resonse_set state" do
       @select_answer.response_class = "integer"
       @response.integer_value = 50
       @dep_c.integer_value = 100
-      @dep_c.is_met?(@response).should be_false
+      @dep_c.is_met?([@response]).should be_false
       @response.integer_value = 100
-      @dep_c.is_met?(@response).should be_true
+      @dep_c.is_met?([@response]).should be_true
       @response.integer_value = 421
-      @dep_c.is_met?(@response).should be_true
+      @dep_c.is_met?([@response]).should be_true
     end
 
     it "knows operator on float value response" do
       @select_answer.response_class = "float"
       @response.float_value = 5.1
       @dep_c.float_value = 121.1
-      @dep_c.is_met?(@response).should be_false
+      @dep_c.is_met?([@response]).should be_false
       @response.float_value = 121.1
-      @dep_c.is_met?(@response).should be_true
+      @dep_c.is_met?([@response]).should be_true
       @response.float_value = 130.123
-      @dep_c.is_met?(@response).should be_true
+      @dep_c.is_met?([@response]).should be_true
     end
   end
   
