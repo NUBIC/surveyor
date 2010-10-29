@@ -316,7 +316,29 @@ describe DependencyCondition, "evaluating the response_set state" do
     end
   end
   
-  
+  describe "when given responses whether the dependency is satisfied using 'count>'" do
+    before(:each) do
+      @dep_c = DependencyCondition.new(:answer_id => nil, 
+                                       :operator => "count>2")
+      @question = Question.new
+      @select_answers = []
+      3.times do 
+        @select_answers << Answer.new(:question => @question, 
+                                      :response_class => "answer")
+      end
+      @responses = []
+      @select_answers.slice(0,2).each do |a|
+        @responses << Response.new(:question => @question, :answer => a, 
+                                   :response_set_id => 159)
+      end
+     end
 
+    it "knows operator" do
+      @dep_c.is_met?(@responses).should be_false
+      @responses << Response.new(:question => @question, 
+                                 :answer => @select_answers.last, 
+                                 :response_set_id => 159)
+      @dep_c.is_met?(@responses).should be_true
+    end
+  end
 end
-
