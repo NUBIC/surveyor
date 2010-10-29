@@ -67,7 +67,7 @@ describe DependencyCondition, "instance" do
     @dependency_condition.is_met?([@alt_response]).should be_false
   end
   
-  it "converts to a hash for evaluation by the depedency object" do
+  it "converts to a hash for evaluation by the dependency object" do
     @response = Response.new(:question_id => 45, :response_set_id => 40, :answer_id => 23)
     @rs = mock(ResponseSet, :responses => [@response])
     @dependency_condition.stub!(:is_met?).and_return(true)
@@ -75,7 +75,7 @@ describe DependencyCondition, "instance" do
   end
 end
 
-describe DependencyCondition, "evaluting the resonse_set state" do
+describe DependencyCondition, "evaluating the response_set state" do
 
   describe "when if given a response object whether the dependency is satisfied using '=='" do
     before(:each) do
