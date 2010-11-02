@@ -3,7 +3,7 @@ require File.expand_path(File.dirname(__FILE__) + '/../spec_helper')
 
 describe DependencyCondition, "Class methods" do
   it "should have a list of operators" do
-    %w(== != < > <= >= count>).each do |operator|
+    %w(== != < > <= >=).each do |operator|
       DependencyCondition.operators.include?(operator).should be_true
     end
   end

@@ -39,7 +39,7 @@ module Surveyor
         # response to associated answer if available, or first response
         response = if self.answer_id
                      responses.detect do |r| 
-                       r.answer_id.to_i == self.answer_id.to_i
+                       r.answer == self.answer
                      end 
                    end || responses.first
         klass = response.answer.response_class
