@@ -6,8 +6,8 @@ class ResultsController < ApplicationController
   end
 
   def show
-    @survey = Survey.find(params[:id])
+    @survey = Survey.find_by_access_code(params[:survey_code])
     @response_sets = @survey.response_sets
-    @questions = SurveySection.find_by_survey_id(params[:id]).questions
+    @questions = @survey.sections_with_questions.map(&:questions).flatten
   end
 end
