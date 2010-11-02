@@ -10,7 +10,7 @@ module Surveyor
 
         # Validations
         base.send :validates_presence_of, :operator, :rule_key
-        base.send :validates_inclusion_of, :operator, :in => Surveyor::Common::OPERATORS
+        base.send :validate, :validates_operator
         base.send :validates_uniqueness_of, :rule_key, :scope => :dependency_id
         # this causes issues with building and saving
         # base.send :validates_numericality_of, :question_id, :dependency_id
@@ -53,6 +53,14 @@ module Surveyor
         else
           false
         end
+      end
+
+    protected
+
+      def validates_operator
+        errors.add(:operator, "Invalid operator") unless
+          Surveyor::Common::OPERATORS.include?(self.operator) ||
+            self.operator && self.operator.match(/^count(<|>|==|>=|<=|!=)(\d+)/)
       end
     end
   end
