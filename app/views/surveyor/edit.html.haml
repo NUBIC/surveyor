@@ -3,7 +3,7 @@
     = hidden_field_tag :current_section_id, @section.id
     - unless @sections.size < 3
       #menu
-        Sections:
+        = t('surveyor.sections')
         %ul
           - @sections.each do |s|
             %li{:class => ("active" if s == @section)}= menu_button_for(s)

@@ -5,11 +5,11 @@
 
 Gem::Specification.new do |s|
   s.name = %q{surveyor}
-  s.version = "0.16.0"
+  s.version = "0.16.1"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Brian Chamberlain", "Mark Yoon"]
-  s.date = %q{2010-09-14}
+  s.date = %q{2010-11-02}
   s.email = %q{yoon@northwestern.edu}
   s.extra_rdoc_files = [
     "README.md"
@@ -113,6 +113,7 @@ Gem::Specification.new do |s|
      "generators/surveyor/templates/assets/stylesheets/sass/surveyor.sass",
      "generators/surveyor/templates/assets/stylesheets/ui.theme.css",
      "generators/surveyor/templates/locales/surveyor_en.yml",
+     "generators/surveyor/templates/locales/surveyor_es.yml",
      "generators/surveyor/templates/locales/surveyor_he.yml",
      "generators/surveyor/templates/migrate/add_correct_answer_id_to_questions.rb",
      "generators/surveyor/templates/migrate/add_display_order_to_surveys.rb",
