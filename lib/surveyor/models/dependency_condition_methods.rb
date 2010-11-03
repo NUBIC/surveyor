@@ -48,8 +48,11 @@ module Surveyor
           response.as(klass).send(self.operator, self.as(klass))
         when "!="
           !(response.as(klass) == self.as(klass))
-        when /count\>\d+/
-          responses.count > self.operator.scan(/\d+/).first.to_i
+        when /^count[<>=]{1,2}\d+$/
+          op, i = self.operator.scan(/^count([<>!=]{1,2})(\d+)$/).flatten
+          responses.count.send(op, i.to_i)
+        when /^count!=\d+$/
+          !(responses.count == self.operator.scan(/\d+/).first.to_i)
         else
           false
         end

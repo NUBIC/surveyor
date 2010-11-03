@@ -316,7 +316,7 @@ describe DependencyCondition, "evaluating the response_set state" do
     end
   end
   
-  describe "when given responses whether the dependency is satisfied using 'count>'" do
+  describe "when given responses whether the dependency is satisfied using 'count'" do
     before(:each) do
       @dep_c = DependencyCondition.new(:answer_id => nil, 
                                        :operator => "count>2")
@@ -333,11 +333,45 @@ describe DependencyCondition, "evaluating the response_set state" do
       end
      end
 
-    it "knows operator" do
+    it "knows operator with >" do
       @dep_c.is_met?(@responses).should be_false
       @responses << Response.new(:question => @question, 
                                  :answer => @select_answers.last, 
                                  :response_set_id => 159)
+      @dep_c.is_met?(@responses).should be_true
+    end
+
+    it "knows operator with <" do
+      @dep_c.operator = "count<2"
+      @dep_c.is_met?(@responses).should be_false
+      @dep_c.operator = "count<3"
+      @dep_c.is_met?(@responses).should be_true
+    end
+
+    it "knows operator with <=" do
+      @dep_c.operator = "count<=1"
+      @dep_c.is_met?(@responses).should be_false
+      @dep_c.operator = "count<=2"
+      @dep_c.is_met?(@responses).should be_true
+      @dep_c.operator = "count<=3"
+      @dep_c.is_met?(@responses).should be_true
+    end
+
+    it "knows operator with >=" do
+      @dep_c.operator = "count>=1"
+      @dep_c.is_met?(@responses).should be_true
+      @dep_c.operator = "count>=2"
+      @dep_c.is_met?(@responses).should be_true
+      @dep_c.operator = "count>=3"
+      @dep_c.is_met?(@responses).should be_false
+    end
+
+    it "knows operator with !=" do
+      @dep_c.operator = "count!=1"
+      @dep_c.is_met?(@responses).should be_true
+      @dep_c.operator = "count!=2"
+      @dep_c.is_met?(@responses).should be_false
+      @dep_c.operator = "count!=3"
       @dep_c.is_met?(@responses).should be_true
     end
   end
