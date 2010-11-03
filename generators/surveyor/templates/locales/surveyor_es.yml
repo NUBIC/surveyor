@@ -1,0 +1,17 @@
+# Sample localization file for Spanish. Add more files in this directory for other locales.
+# See http://github.com/svenfuchs/rails-i18n/tree/master/rails%2Flocale for starting points.
+
+es:
+  surveyor:
+    take_these_surveys: "Bienvenido, usted puede tomar estas encuestas"
+    take_it: "Tomar"
+    completed_survey: "Encuesta completada"
+    unable_to_find_your_responses: "No se puede encontrar sus respuestas a la encuesta"
+    unable_to_update_survey: "No se puede actualizar la encuesta"
+    unable_to_find_that_survey: "No se puede encontrar la encuesta"
+    survey_started_success: "Encuesta iniciada correctamente"
+    click_here_to_finish: "Haga clic aquí para terminar"
+    previous_section: "&laquo; Sección anterior"
+    next_section: "Sección siguiente &raquo;"
+    select_one: "Seleccione una ..."
+    sections: "Secciones"

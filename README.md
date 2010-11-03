@@ -114,6 +114,16 @@ To work on the plugin code (for enhancements, and bug fixes, etc...) fork this g
 
 # Changes
 
+0.16.1
+
+* fixed surveyor.sections translation line
+* changed map resources order to access results survey success
+* add translations for Sections title
+* Add I18n to Sections title
+* updated date on license
+* updating results views and controller for new paths
+* new results routes
+
 0.16.0
 
 * minor fixes to unparsing
