@@ -119,22 +119,35 @@ Feature: Survey creation
           a :text, :custom_class => 'mapper'
           validation :rule => "AC"
           vcondition_AC "=~", :regexp => /[0-9a-zA-z\. #]/
+
+          q_2 "Which colors do you loathe?", :pick => :any
+          a_1 "red"
+          a_2 "blue"
+          a_3 "green"
+          a_4 "yellow"
+
+          q_2a "Please explain why you hate so many colors?"
+          a_1 "explanation", :text
+          dependency :rule => "Z"
+          condition_Z :q_2, "count>2"
         end
       end
     """
     Then there should be 1 survey with:
       | title                            |
       | Dependency and validation survey |
-    And there should be 4 questions with:
+    And there should be 6 questions with:
       | text                                                             | pick | display_type | custom_class |
       | What... is your name? (e.g. It is 'Arthur', King of the Britons) | none | default      | nil          |
       | What is your address?                                            | none | default      | address      |
-    And there should be 1 dependency with:
+    And there should be 2 dependency with:
       | rule |
       | A    |
-    And there should be 1 resolved dependency_condition with:
+      | Z    |
+    And there should be 2 resolved dependency_condition with:
       | rule_key |
       | A        |
+      | Z        |
     And there should be 2 validations with:
       | rule |
       | A    |

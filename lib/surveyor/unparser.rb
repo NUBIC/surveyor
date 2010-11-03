@@ -97,7 +97,7 @@ class DependencyCondition < ActiveRecord::Base
     dsl << "    condition"
     dsl << "_#{rule_key}" unless rule_key.blank?
     dsl << " :q_#{question.reference_identifier}, \"#{operator}\""
-    dsl << (attrs.blank? ? ", {:answer_reference=>\"#{answer.reference_identifier}\"}\n" : ", {#{attrs.inspect.gsub(/\{|\}/, "")}, :answer_reference=>\"#{answer.reference_identifier}\"}\n")
+    dsl << (attrs.blank? ? ", {:answer_reference=>\"#{answer && answer.reference_identifier}\"}\n" : ", {#{attrs.inspect.gsub(/\{|\}/, "")}, :answer_reference=>\"#{answer && answer.reference_identifier}\"}\n")
   end  
 end
 class Answer < ActiveRecord::Base

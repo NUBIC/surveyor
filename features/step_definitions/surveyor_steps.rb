@@ -46,7 +46,7 @@ Then /^there should be (\d+) resolved dependency_condition(?:s?) with:$/ do |x, 
     d = DependencyCondition.find(:first, :conditions => hash)
     d.should_not be_nil
     d.question.should_not be_nil
-    d.answer.should_not be_nil
+    d.answer.should_not be_nil unless d.operator.match(/^count[<>=!]{1,2}\d+/) 
   end
 end
 

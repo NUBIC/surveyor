@@ -1,7 +1,7 @@
 module Surveyor
   class Common
     RAND_CHARS = [('a'..'z'), ('A'..'Z'), (0..9)].map{|r| r.to_a}.flatten.to_s
-    OPERATORS = %w(== != < > <= >= =~ count>)
+    OPERATORS = %w(== != < > <= >= =~)
     
     class << self
       def make_tiny_code(len = 10)
