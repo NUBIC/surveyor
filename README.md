@@ -70,7 +70,7 @@ Or as a gem:
 
 Or as a gem (with bundler):
 
-    # in environment.rb
+    # in Gemfile
     gem "surveyor"
 
     bundle install
