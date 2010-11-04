@@ -1,12 +1,17 @@
-ENV["RAILS_ENV"] = "test"
-require File.expand_path(File.dirname(__FILE__) + "/../../../../config/environment")
-require 'spec/autorun'
-require 'spec/rails'
 
+require 'rubygems'
+require 'bundler'
+Bundler.setup
+
+require "spec"
+
+$LOAD_PATH.unshift File.expand_path("../../lib", __FILE__)
+
+require File.join(File.dirname(__FILE__), 'test_app/spec/spec_helper')
 require File.dirname(__FILE__) + "/factories"
 
-$LOAD_PATH.unshift(File.dirname(__FILE__))
-$LOAD_PATH.unshift(File.join(File.dirname(__FILE__), '..', 'lib'))
+require 'surveyor'
+require 'surveyor/parser'
 
 Spec::Runner.configure do |config|
 end

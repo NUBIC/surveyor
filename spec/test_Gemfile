@@ -1,0 +1,5 @@
+
+plugin_root = File.expand_path("../../..", __FILE__)
+self.instance_eval File.read("#{plugin_root}/Gemfile")
+
+gem 'surveyor', :path => plugin_root
