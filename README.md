@@ -55,13 +55,7 @@ The survey above shows a couple simple question types. The first one is a "pick 
 
 # Installation
 
-As a plugin:
-
-    gem install haml
-    gem install fastercsv
-    script/plugin install git://github.com/breakpointer/surveyor.git
-
-Or as a gem:
+As a gem:
   
     # in environment.rb
     config.gem "surveyor", :source => 'http://gemcutter.org'
