@@ -41,7 +41,8 @@ namespace "testbed" do
     chdir("spec/#{RAPPNAME}") do
       sh "cp ../test_Gemfile Gemfile"
       sh "cp ../test_preinitializer.rb config/preinitializer.rb"
-      puts "NOTE: Don't forget to modify the config/boot.rb file as described here: http://gembundler.com/rails23.html"
+      sh "cp ../test_boot.rb config/boot.rb"
+      puts "NOTE: These files were created/modified as described here: http://gembundler.com/rails23.html"
     end
   end
 
