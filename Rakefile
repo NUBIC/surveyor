@@ -55,7 +55,8 @@ namespace "testbed" do
       sh "rake db:migrate"
       sh "rake db:test:prepare"
     end
-    puts "NOTE: Run `gem uninstall surveyor` to remove the gem version of surveyor leaving the dev version" # Getting around a bug/problem in bundler. see: http://bit.ly/9NZOEz
+    # I don't think this is needed anymore
+    #puts "NOTE: Run `gem uninstall surveyor` to remove the gem version of surveyor leaving the dev version" # Getting around a bug/problem in bundler. see: http://bit.ly/9NZOEz
   end
 
   desc "Remove rails base app in spec dir"
