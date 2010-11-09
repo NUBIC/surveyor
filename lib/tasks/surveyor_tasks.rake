@@ -15,7 +15,7 @@ namespace :surveyor do
     file = File.join(RAILS_ROOT, ENV["FILE"])
     raise "File does not exist: #{file}" unless FileTest.exists?(file)
     puts "--- Parsing #{file} ---"
-    Surveyor::RedcapParser.parse File.read(file, File.basename(file, ".csv"))
+    Surveyor::RedcapParser.parse File.read(file), File.basename(file, ".csv")
     puts "--- Done #{file} ---"
   end
   desc "generate a surveyor DSL file from a survey"
