@@ -19,6 +19,18 @@ rescue LoadError
   puts "Jeweler (or a dependency) not available. Install it with: sudo gem install jeweler"
 end
 
+begin
+  require 'cucumber/rake/task'
+  Cucumber::Rake::Task.new(:features)
+
+  task :features => :check_dependencies
+rescue LoadError
+  task :features do
+    abort "Cucumber is not available. In order to run features, you must: sudo gem install cucumber"
+  end
+end
+
+
 namespace "testbed" do
 
   RAPPNAME = "test_app" #This is also hardcoded in the spec/spec_helper.rb and gitignore file. Change it there too...
@@ -31,7 +43,9 @@ namespace "testbed" do
       puts "Put a test_app in the spec folder"
       chdir("#{RAPPNAME}") do
         sh "ruby script/generate rspec"
-        puts "Ran plugin installer for rspec in #{RAPPNAME}"
+        puts "Ran installer for rspec in #{RAPPNAME}"
+        sh "ruby script/generate cucumber --webrat"
+        puts "Ran installer for cucumber in #{RAPPNAME}"
       end
     end
   end
