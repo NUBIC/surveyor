@@ -28,7 +28,7 @@ module Surveyor
             SurveySection.build_or_set(context, r)
             Question.build_and_set(context, r)
             Answer.build_and_set(context, r)
-            # Validation.build_and_set(context, r)
+            Validation.build_and_set(context, r)
             # Dependency.build_and_set(context, r)
           end
         end
@@ -103,10 +103,7 @@ class Answer < ActiveRecord::Base
   def self.build_and_set(context, r)
     r[:choices_or_calculations].to_s.split("|").each do |pair|
       aref, atext = pair.strip.split(", ")
-      context[:answer] = context[:question].answers.build({
-        :reference_identifier => aref,
-        :text => atext
-      })
+      context[:answer] = context[:question].answers.build({:reference_identifier => aref, :text => atext})
       print "answer_#{context[:answer].reference_identifier} "
     end
   end
@@ -114,6 +111,44 @@ end
 class Validation < ActiveRecord::Base
   include Surveyor::Models::ValidationMethods
   def self.build_and_set(context, r)
+    # text_validation_type text_validation_min text_validation_max
+    min = r[:text_validation_min].to_s.blank? ? nil : r[:text_validation_min].to_s
+    max = r[:text_validation_max].to_s.blank? ? nil : r[:text_validation_max].to_s
+    type = r[:text_validation_type].to_s.blank? ? nil : r[:text_validation_type].to_s
+    if min or max
+      context[:question].answers.each do |a|
+        context[:validation] = a.validations.build{:rule => min ? max ? "A and B" : "A" : "B" : nil}
+        context[:validation].validation_conditions.build{:rule_key => "A", :operator => ">=", :integer_value => min} if min
+        context[:validation].validation_conditions.build{:rule_key => "B", :operator => "<=", :integer_value => max} if max
+      end
+    elsif type
+      # date email integer number phone
+      case r[:text_validation_type]
+      when "date"
+        context[:question].display_type = :date if context[:question].display_type == :string
+      when "email"
+        context[:question].answers.each do |a|
+          context[:validation] = a.validations.build{:rule => "A"}
+          context[:validation].validation_conditions.build{:rule_key => "A", :operator => "=~", :regexp_value => "/^[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+(?:[A-Z]{2}|com|org|net|edu|gov|mil|biz|info|mobi|name|aero|asia|jobs|museum)$/"}
+        end        
+      when "integer"
+        context[:question].display_type = :integer if context[:question].display_type == :string
+        context[:question].answers.each do |a|
+          context[:validation] = a.validations.build{:rule => "A"}
+          context[:validation].validation_conditions.build{:rule_key => "A", :operator => "=~", :regexp_value => "/\d+/"}
+        end
+      when "number"
+        context[:question].display_type = :float if context[:question].display_type == :string
+        context[:question].answers.each do |a|
+          context[:validation] = a.validations.build{:rule => "A"}
+          context[:validation].validation_conditions.build{:rule_key => "A", :operator => "=~", :regexp_value => "/^\d*(,\d{3})*(\.\d*)?$/"}
+        end
+      when "phone"
+        context[:question].answers.each do |a|
+          context[:validation] = a.validations.build{:rule => "A"}
+          context[:validation].validation_conditions.build{:rule_key => "A", :operator => "=~", :regexp_value => "/\d{3}.*\d{4}/"}
+        end
+    end
   end
   
 end
