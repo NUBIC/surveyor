@@ -10,6 +10,7 @@ namespace :surveyor do
     Surveyor::Parser.parse File.read(file)
     puts "--- Done #{file} ---"
   end
+  desc "generate and load survey from REDCap Data Dictionary (specify FILE=surveys/redcap.csv)"
   task :redcap => :environment do
     raise "USAGE: file name required e.g. 'FILE=surveys/redcap_demo_survey.csv'" if ENV["FILE"].blank?
     file = File.join(RAILS_ROOT, ENV["FILE"])

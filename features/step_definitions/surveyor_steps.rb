@@ -2,6 +2,10 @@ Given /^I parse$/ do |string|
   Surveyor::Parser.parse(string)
 end
 
+Given /^I parse redcap file "([^"]*)"$/ do |name|
+  Surveyor::RedcapParser.parse File.read(File.join(RAILS_ROOT, '..', '..', 'features', 'support', name)), name
+end
+
 Then /^there should be (\d+) survey(?:s?) with:$/ do |x, table|
   Survey.count.should == x.to_i
   table.hashes.each do |hash|
