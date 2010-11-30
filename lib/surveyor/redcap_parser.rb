@@ -95,47 +95,34 @@ end
 class Dependency < ActiveRecord::Base
   include Surveyor::Models::DependencyMethods
   def self.decompose_rule(str)
+    # see spec/lib/redcap_parser_spec.rb for examples
     letters = ('A'..'Z').to_a
     rule = str
     components = str.split(/\band\b|\bor\b|\((?!\d)|\)(?!\(|\])/).reject(&:blank?).map(&:strip)
-    components.each{|part| rule = rule.gsub(part){letters.shift} }
-    {:rule => rule, :components => components}
+    components.each_with_index do |part, i|
+      # internal commas on the right side of the operator e.g. '[initial_189] = "1, 2, 3"'
+      if match = part.match(/^(\[[^\]]+\][^\"]+)"([0-9 ]+,[0-9 ,]+)"$/)
+        nums = match[2].split(",").map(&:strip)
+        components[i] = nums.map{|x| "#{match[1]}\"#{x}\""}
+        # sub in rule key
+        rule = rule.gsub(part, "(#{nums.map{letters.shift}.join(' and ')})")
+      # multiple internal parenthesis on the left  e.g. '[initial_119(1)(2)(3)(4)(6)] = "1"'
+      elsif match = part.match(/^\[(\w+)(\(\d+\)\([\d\(\)]+)\]([^\"]+"\d+")$/)
+        nums = match[2].split(/\(|\)/).reject(&:blank?).map(&:strip)
+        components[i] = nums.map{|x| "[#{match[1]}(#{x})]#{match[3]}"}
+        # sub in rule key
+        rule = rule.gsub(part, "(#{nums.map{letters.shift}.join(' and ')})")
+      else
+        # 'or' on the right of the operator        
+        components[i] = components[i-1].gsub(/"(\d+)"/, part) if part.match(/^"(\d+)"$/) && i != 0
+        # sub in rule key
+        rule = rule.gsub(part){letters.shift}
+      end
+    end
+    {:rule => rule, :components => components.flatten}
   end
   # def self.build_and_set(context, r)
   #   unless (bl = r[:branching_logic]).blank?
-  #     rule = bl
-  #     @letters = ('A'..'Z').to_a
-  #     condition_clauses = bl.split(/ and | or |\(|\)/).reject{|x| x.empty?}
-  #     condition_clauses.each{|part| rule = rule.gsub(part){@letters.shift} }
-  #     context[:dependency] = context[:question].build_dependency(:rule => rule)
-  # 
-  #     condition_clauses.each_with_index do |clause, i|
-  #       if match = clause.match /\[([^\]]+)\] ?([^\ \"]+) ?"?([^"]+)"?/
-  #         # e.g. [f1_q28] ="1"
-  #         
-  #         if match[0].match /(\w+)\(\d+\)/ 
-  #         
-  #         elsif match[0].match /(\w+)(\(\d+?\)+)/
-  #         # [f1_q7(11)] = "1" or [initial_119(1)(2)(3)(4)(6)] = "1"
-  #         
-  #         
-  #         # [initial_119(1)(2)(3)(4)(6)] = "1"
-  #         
-  #         
-  #         
-  #         context[:dependency_condition] = context[:dependency].dependency_conditions.build(:question_reference = match[1], :operator => match[2], :answer_reference => match[3], :lookup_reference => context[:lookup])
-  #       elsif match = clause.match /"(\d+)"/
-  #         # e.g. "2" from [initial_52] = "1" or "2" or "3"
-  #         if context[:dependency_condition].nil? or i == 0
-  #           # uh oh, we're first!
-  #           puts "\n!!! skipping dependency condition #{clause}"
-  #         else
-  #           # borrow from our previous sibling
-  #           context[:dependency_condition] = context[:dependency].dependency_conditions.build(:question_reference = context[:dependency_condition].question_reference, :operator => operator = context[:dependency_condition].operator, :answer_reference => answer_reference = match[1], :lookup_reference => context[:lookup])
-  #         end
-  #       end
-  #       context[:dependency].dependency_conditions.build
-  #     end
   #   end
   # end
 end
