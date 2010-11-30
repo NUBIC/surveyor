@@ -3,4 +3,6 @@
 coverage
 rdoc
 pkg
+spec/test_app/**
+.bundle
 surveys/fixtures/*.yml

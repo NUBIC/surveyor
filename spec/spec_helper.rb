@@ -1,12 +1,20 @@
-ENV["RAILS_ENV"] = "test"
-require File.expand_path(File.dirname(__FILE__) + "/../../../../config/environment")
-require 'spec/autorun'
-require 'spec/rails'
 
-require File.dirname(__FILE__) + "/factories"
+require 'rubygems'
+require 'bundler'
+Bundler.setup
 
-$LOAD_PATH.unshift(File.dirname(__FILE__))
-$LOAD_PATH.unshift(File.join(File.dirname(__FILE__), '..', 'lib'))
+require "spec"
+
+$LOAD_PATH.unshift File.expand_path("../../lib", __FILE__)
+
+
+this_dir = File.dirname(__FILE__)
+raise "Alert! Run the rake task to install the test Rails app. It seems to be missing." unless File.directory?(File.join(this_dir,'test_app/spec'))
+require File.join(this_dir, 'test_app/spec/spec_helper')
+require File.join(this_dir, '/factories')
+
+require 'surveyor'
+require 'surveyor/parser'
 
 Spec::Runner.configure do |config|
 end
