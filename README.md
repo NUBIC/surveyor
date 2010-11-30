@@ -108,6 +108,25 @@ To work on the plugin code (for enhancements, and bug fixes, etc...) fork this g
 
 # Changes
 
+0.17.0
+
+* cucumber tests now work
+* correction to post install notes in rakefile
+* fix to rakefile instructions
+* un-dryed the gemfile to try to fix a gem location problem
+* added test boot file for test app usage, modified the rake task to copy in this file as well
+* removed unparser from specs, it was breakin a bunch of them. deferred investigation
+* got specs running and passing by adding internal rails app
+* added rvmrc to create default gemset and added bundler
+* Plugin installation is no longer supported
+* wrong information in readme
+* Merge branch 'master' into issue87
+* Add count operator example to kitchen sink survey
+* Generalize count operator to handle < <= >= !=
+* Parse/unparse surveys w/ count> DC operator
+* Add custom validation to handle count operator
+* Remove count> "operator."
+
 0.16.1
 
 * fixed surveyor.sections translation line
