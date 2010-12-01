@@ -5,11 +5,11 @@
 
 Gem::Specification.new do |s|
   s.name = %q{surveyor}
-  s.version = "0.17.0"
+  s.version = "0.18.0"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Brian Chamberlain", "Mark Yoon"]
-  s.date = %q{2010-11-30}
+  s.date = %q{2010-12-01}
   s.email = %q{yoon@northwestern.edu}
   s.extra_rdoc_files = [
     "README.md"
@@ -17,6 +17,7 @@ Gem::Specification.new do |s|
   s.files = [
     ".gitignore",
      ".rvmrc",
+     "CHANGELOG",
      "Gemfile",
      "Gemfile.lock",
      "MIT-LICENSE",
@@ -52,8 +53,10 @@ Gem::Specification.new do |s|
      "app/views/surveyor/new.html.haml",
      "app/views/surveyor/show.html.haml",
      "config/routes.rb",
+     "features/redcap.feature",
      "features/step_definitions/surveyor_steps.rb",
      "features/step_definitions/web_steps.rb",
+     "features/support/REDCapDemoDatabase_DataDictionary.csv",
      "features/support/env.rb",
      "features/support/paths.rb",
      "features/surveyor.feature",
@@ -137,9 +140,6 @@ Gem::Specification.new do |s|
      "generators/surveyor/templates/migrate/create_validations.rb",
      "generators/surveyor/templates/surveys/kitchen_sink_survey.rb",
      "generators/surveyor/templates/tasks/surveyor.rb",
-     "generators/test_surveyor/templates/TESTING_SURVEYOR",
-     "generators/test_surveyor/templates/environments/cucumber.rb",
-     "generators/test_surveyor/test_surveyor_generator.rb",
      "init.rb",
      "install.rb",
      "lib/surveyor.rb",
@@ -157,6 +157,7 @@ Gem::Specification.new do |s|
      "lib/surveyor/models/validation_condition_methods.rb",
      "lib/surveyor/models/validation_methods.rb",
      "lib/surveyor/parser.rb",
+     "lib/surveyor/redcap_parser.rb",
      "lib/surveyor/surveyor_controller_methods.rb",
      "lib/surveyor/unparser.rb",
      "lib/tasks/surveyor_tasks.rake",
@@ -165,6 +166,7 @@ Gem::Specification.new do |s|
      "spec/factories.rb",
      "spec/lib/common_spec.rb",
      "spec/lib/parser_spec.rb",
+     "spec/lib/redcap_parser_spec.rb",
      "spec/lib/unparser_spec.rb",
      "spec/models/answer_spec.rb",
      "spec/models/dependency_condition_spec.rb",
@@ -197,6 +199,7 @@ Gem::Specification.new do |s|
      "spec/factories.rb",
      "spec/lib/common_spec.rb",
      "spec/lib/parser_spec.rb",
+     "spec/lib/redcap_parser_spec.rb",
      "spec/lib/unparser_spec.rb",
      "spec/models/answer_spec.rb",
      "spec/models/dependency_condition_spec.rb",
