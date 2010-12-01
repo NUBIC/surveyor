@@ -40,4 +40,9 @@ describe Surveyor::RedcapParser do
     # multiple internal parenthesis on the left
     Dependency.decompose_rule('[initial_119(1)(2)(3)(4)(5)] = "1"').should == {:rule => "(A and B and C and D and E)", :components => ['[initial_119(1)] = "1"', '[initial_119(2)] = "1"', '[initial_119(3)] = "1"', '[initial_119(4)] = "1"', '[initial_119(5)] = "1"']}
   end
+  it "should decompose components" do
+    Dependency.decompose_component('[initial_52] = "1"').should == {:question_reference => 'initial_52', :operator => '==', :answer_reference => '1'}
+    Dependency.decompose_component('[initial_119(2)] = "1"').should == {:question_reference => 'initial_119', :operator => '==', :answer_reference => '2'}
+    Dependency.decompose_component('[f1_q15] >= 21').should == {:question_reference => 'f1_q15', :operator => '>=', :integer_value => '21'}
+  end
 end

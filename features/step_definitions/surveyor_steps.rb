@@ -37,7 +37,7 @@ Then /^there should be (\d+) answer(?:s?) with:$/ do |x, table|
   end
 end
 
-Then /^there should be (\d+) dependency with:$/ do |x, table|
+Then /^there should be (\d+) dependenc(?:y|ies) with:$/ do |x, table|
   Dependency.count.should == x.to_i
   table.hashes.each do |hash|
     Dependency.find(:first, :conditions => hash).should_not be_nil

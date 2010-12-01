@@ -29,7 +29,7 @@ module Surveyor
             Question.build_and_set(context, r)
             Answer.build_and_set(context, r)
             Validation.build_and_set(context, r)
-            # Dependency.build_and_set(context, r)
+            Dependency.build_and_set(context, r)
           end
         end
         print context[:survey].save ? "saved. " : " not saved! #{context[:survey].errors.each_full{|x| x }.join(", ")} "
@@ -94,6 +94,33 @@ class Question < ActiveRecord::Base
 end
 class Dependency < ActiveRecord::Base
   include Surveyor::Models::DependencyMethods
+  def self.build_and_set(context, r)
+    unless (bl = r[:branching_logic_show_field_only_if]).blank?
+      # TODO: forgot to tie rule key to component, counting on the sequence of components
+      letters = ('A'..'Z').to_a
+      hash = decompose_rule(bl)
+      context[:dependency] = context[:question].build_dependency(:rule => hash[:rule])
+      hash[:components].each do |component|
+        context[:dependency].dependency_conditions.build(decompose_component(component).merge(:lookup_reference => context[:lookup], :rule_key => letters.shift))
+      end
+      print "dependency(#{hash[:rule]}) "
+    end
+  end
+  def self.decompose_component(str)
+     # [initial_52] = "1"
+    if match = str.match(/^\[(\w+)\] ?([!=><]+) ?"(\w+)"$/)
+      {:question_reference => match[1], :operator => match[2].gsub(/^=$/, "=="), :answer_reference => match[3]}
+    # [initial_119(2)] = "1"
+    elsif match = str.match(/^\[(\w+)\((\w+)\)\] ?([!=><]+) ?"1"$/)
+      {:question_reference => match[1], :operator => match[3].gsub(/^=$/, "=="), :answer_reference => match[2]}
+    # [f1_q15] >= 21
+    elsif match = str.match(/^\[(\w+)\] ?([!=><]+) ?(\d+)$/)
+      {:question_reference => match[1], :operator => match[2].gsub(/^=$/, "=="), :integer_value => match[3]}
+    # uhoh
+    else
+      puts "\n!!! skipping dependency_condition #{str}"
+    end
+  end
   def self.decompose_rule(str)
     # see spec/lib/redcap_parser_spec.rb for examples
     letters = ('A'..'Z').to_a
@@ -121,17 +148,20 @@ class Dependency < ActiveRecord::Base
     end
     {:rule => rule, :components => components.flatten}
   end
-  # def self.build_and_set(context, r)
-  #   unless (bl = r[:branching_logic]).blank?
-  #   end
-  # end
 end
 class DependencyCondition < ActiveRecord::Base
   include Surveyor::Models::DependencyConditionMethods
   attr_accessor :question_reference, :answer_reference, :lookup_reference
   before_save :resolve_references
   def resolve_references
-    
+    print "resolve(#{question_reference},#{answer_reference})"
+    if row = lookup_reference.find{|r| r[0] == question_reference and r[1] == answer_reference}
+      print "...found "
+      self.answer = row[2]
+      self.question = self.answer.question
+    else
+      puts "\n!!! failed lookup for dependency_condition q: #{question_reference} a: #{question_reference}"
+    end
   end
 end
 class Answer < ActiveRecord::Base
@@ -143,7 +173,8 @@ class Answer < ActiveRecord::Base
         puts "\n!!! skipping answer #{pair}"
       else
         context[:answer] = context[:question].answers.build(:reference_identifier => aref, :text => atext)
-        unless context[:question].reference_identifier.blank or aref.blank or !context[:answer].valid?
+        unless context[:question].reference_identifier.blank? or aref.blank? or !context[:answer].valid?
+          context[:lookup] ||= []
           context[:lookup] << [context[:question].reference_identifier, aref, context[:answer]]
         end
         puts "#{context[:answer].errors.full_messages}, #{context[:answer].inspect}" unless context[:answer].valid?

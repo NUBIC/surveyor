@@ -11,16 +11,9 @@ Feature: Survey creation
       ||
     And there should be 161 answers with:
       ||
-    # And there should be 1 dependency with:
-    #   | rule |
-    #   | A    |
-    # And there should be 1 resolved dependency_condition with:
-    #   | rule_key |
-    #   | A        |
-    # And there should be 2 validations with:
-    #   | rule |
-    #   | A    |
-    #   | AC   |
-    # And there should be 2 validation_conditions with:
-    #   | rule_key | integer_value |
-    #   | A        | 0             |
+    And there should be 3 resolved dependency_conditions with:
+      ||
+    And there should be 2 dependencies with:
+      | rule    |
+      | A       |
+      | A and B |
