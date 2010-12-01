@@ -30,12 +30,13 @@ rescue LoadError
   end
 end
 
+desc "Set up a rails app for testing in the spec dir"
+task :testbed => [:"testbed:build_app", :"testbed:copy_files", :"testbed:install_surveyor"]
 
 namespace "testbed" do
-
   RAPPNAME = "test_app" #This is also hardcoded in the spec/spec_helper.rb and gitignore file. Change it there too...
-
-  desc "Install rails base app in spec dir"
+  
+  "Generate rails app in spec dir"
   task :build_app do
     directory "spec"
     chdir("spec") do
@@ -60,7 +61,7 @@ namespace "testbed" do
     end
   end
 
-  desc "Install surveyor in rails base app, runs migrations, preps for testing"
+  desc "Install surveyor in test app, run migrations, prep test db"
   task :install_surveyor do
     sh "gem install surveyor"
     chdir("spec/#{RAPPNAME}") do
@@ -73,17 +74,11 @@ namespace "testbed" do
     puts "NOTE: We installed the surveyor gem using 'gem install surveyor' to fix a problem where RVM (or bundler or both) don't let Rails see generators in a gem. ('script/generate surveyor' for example). To remove the gem run `gem uninstall surveyor` to remove the gem version of surveyor leaving the dev version" # Getting around a bug/problem in bundler. see: http://bit.ly/9NZOEz
   end
 
-  desc "Remove rails base app in spec dir"
-  task :remove_app do
+  desc "Remove rails test app from spec dir"
+  task :remove do
     puts "Removing the test_app in the spec folder"
     sh "rm -rf spec/#{RAPPNAME}"
   end
-
-  desc "Setup for the test app (create)"
-  task :setup => [:build_app, :copy_files, :install_surveyor]
-  desc "Teardown for the test app (remove)"
-  task :teardown => [:remove_app]
-
 end # namespace
 
 require 'spec/rake/spectask'

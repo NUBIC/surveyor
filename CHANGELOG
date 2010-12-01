@@ -1,0 +1,210 @@
+0.18.0
+
+* finalizing redcap feature. parse dependencies. closes #93
+* finished decomposing redcap branching logic rules
+* working on redcap parser spec, question/answer reference lookup table
+* skipping calcuated answers for now
+* validations
+* more progress on redcap parser
+* working on redcap parser
+
+0.17.0
+
+* cucumber tests now work
+* correction to post install notes in rakefile
+* fix to rakefile instructions
+* un-dryed the gemfile to try to fix a gem location problem
+* added test boot file for test app usage, modified the rake task to copy in this file as well
+* removed unparser from specs, it was breakin a bunch of them. deferred investigation
+* got specs running and passing by adding internal rails app
+* added rvmrc to create default gemset and added bundler
+* Plugin installation is no longer supported
+* wrong information in readme
+* Merge branch 'master' into issue87
+* Add count operator example to kitchen sink survey
+* Generalize count operator to handle < <= >= !=
+* Parse/unparse surveys w/ count> DC operator
+* Add custom validation to handle count operator
+* Remove count> "operator."
+
+0.16.1
+
+* fixed surveyor.sections translation line
+* changed map resources order to access results survey success
+* add translations for Sections title
+* Add I18n to Sections title
+* updated date on license
+* updating results views and controller for new paths
+* new results routes
+
+0.16.0
+
+* minor fixes to unparsing
+* refining unparser. added rake task to unparse survey. closes #79
+* unparsing for groups, dependencies, validations
+* starting work on unparser for basic survey, section and question.
+
+0.15.0
+
+* prevent duplicate survey titles by appending incrementing numbers
+* rake task to remove a survey. closes #64
+* cleanup of old parsing strategy
+* features and specs and new parser. closes #62
+* first test driven work on parser
+* moving parser and common specs so they run automatically. fixing some spec errors
+* first shot a surveyor parser. some parts untested, but coded to determine style. references #62
+* refactoring counters
+* fixing failing specs. fixes acts\_as\_response issues
+
+0.14.5
+
+* use modules to include model methods. re-closes #77
+* rails init. destroy dependent models
+
+0.14.4
+
+* explicitly require surveyor models and helper. update sweeper syntax. closes #77
+* cleanup and requires
+* fixing instructions for extending surveyor. closes #76
+
+0.14.3
+
+* remove manual numbering until it works. refactoring to use common methods.
+
+0.14.2
+
+* lowercase localization. feature instead of story in cucumber feature
+* add results section
+* add simple admin section for displaying survey result set
+* Added manual numbering to labels as well
+
+0.14.1
+
+* typo in repeaters - use survey\_section\_id instead of section\_id
+
+0.14.0
+
+* view my survey specs fixed, fragment caching for surveyor#edit, localization. thanks bnadav
+
+0.13.0
+
+* simpler customization of surveyor.
+* spec plugins task
+* Feature instead of Story for cucumber. http://wiki.github.com/aslakhellesoy/cucumber/upgrading
+
+0.12.0
+
+* fix parser error in ruby 1.9, where instance_variables are symbols. closes #61
+* added fastercsv as dependency. closes #59
+* typo fix and test
+* fixed broken spec for survey urls, made pending surveyor_controller specs pass
+* Added explicit dependencycondition and validationcondition to DSL
+* have authentication work with authlogic
+* added "correct_answer" to parser, so you can specify one correct answer per question
+
+0.11.0
+
+* basic csv export. closes #21
+* add unique indicies. closes #45
+* add one_integer renderer. closes #51
+* constrain surveys to have unique access_codes. closes #45. closes #42
+* covering the extremely unlikely case that response_sets may have a non-unique access_code. closes #46. thanks jakewendt.
+* current user id not needed in the view, set in SurveyorController. closes #48. thanks jakewendt
+
+0.10.0
+
+* surveyor config['extend'] is now an array. custom modules (e.g. SurveyExtensions are now included from within surveyor models, allowing 
+the customizations to work on every request in development. closes #39. thanks to mgurley and jakewendt for the suggestions.
+* remove comment from surveyor_includes
+* css tweak
+* automatically add backslashes and eliminate multiple backslashes in relative root for routes
+* readme spelling and line breaks
+* fixing a failing spec with factory instead of mock parent model
+* upgrading cucumber to 0.6
+
+0.9.11
+
+* adding rails init.rb to make gem loading work. thanks mike gurley. closes #52.
+* Repeater changed to only have +1, not +3 as previous
+* added locking and transaction to surveyor update action. Prevents bug that caused duplicated answers
+* some light re-factoring and code readability changes
+* some code formatting changes
+* added require statement to specs so the factory_girl test dependency was more clear
+* spiced up the readme... may have some typos
+* readme update
+
+0.9.10
+
+* styles, adding labels for dates, correcting labels for radio buttons
+
+0.9.9
+
+* count label and image questions complete when mandatory. closes #38
+* validate by other responses. closes #35
+
+0.9.8
+
+* @current\_user.id if @current\_user isn't nil. Closes #37
+
+0.9.7
+
+* fixing typos
+* remove surveyor controller from load\_once\_paths. fixes issue with dependencies and unloading in development. closes #36
+
+0.9.6
+
+* response set reports progress and mandatory questions completeness. closes #33
+* adding correctness to response sets
+* adding correctness to responses
+
+0.9.5
+
+* allow append for survey parser. closes #32
+
+0.9.4
+
+* making tinycode compatible with ruby 1.8.6
+
+0.9.3
+
+* fix for survey parser require
+
+0.9.2
+
+* fixing specs for namespacing and move of tinycode
+* namespacing SurveyParser models to avoid conflict with model extensions
+
+0.9.1
+
+* fix for tinycode, more descriptive missing method
+
+0.9.0
+
+* validations in dsl and surveyor models
+* preserve underscores in reference identifiers
+* dsl specs, refactoring into base class
+* adding display order to surveys
+* moving columnizer and tiny column functionality to surveyor module
+* columnizer (and tiny code) refactoring, columnizer spec extracted from answer spec
+* cleanup of scopes with joins
+* refactoring dependency
+
+0.8.0
+
+* question group dependencies
+* expanded examples in kitchen sink survey
+* specs
+
+0.7.1
+
+* custom index page
+* custom classes and renderers
+* fixing typo in kitchen sink survey
+
+0.7.0
+
+* new kitchen sink survey with better documentation of DSL
+* migration misspelling
+* fixing ordering, dependency conditions evaluation, and changing named scopes for now
+* DRYing up surveyor DSL models
+* working on adding dependencies for question groups

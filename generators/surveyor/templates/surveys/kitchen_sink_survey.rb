@@ -1,4 +1,4 @@
-survey "&#8220;Kitchen Sink&#8221; survey" do
+survey "Kitchen Sink survey" do
 
   section "Basic questions" do
     # A label is a question that accepts no answers
