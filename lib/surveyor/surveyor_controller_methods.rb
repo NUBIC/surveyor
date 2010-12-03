@@ -50,7 +50,6 @@ module Surveyor
         else
           @section = @sections.with_includes.first
         end
-        @questions = @section.questions
         @dependents = (@response_set.unanswered_dependencies - @section.questions) || []
       else
         flash[:notice] = t('surveyor.unable_to_find_your_responses')

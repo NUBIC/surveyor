@@ -16,7 +16,7 @@ module Surveyor
         end
         
         base.send :include, Surveyor::ActsAsResponse # includes "as" instance method
-
+        
       end
 
       # Instance Methods

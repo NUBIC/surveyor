@@ -1,5 +1,4 @@
 module SurveyorHelper
-
   # Layout: stylsheets and javascripts
   def surveyor_includes
     surveyor_stylsheets + surveyor_javascripts    
@@ -34,7 +33,28 @@ module SurveyorHelper
     # refactored to use copy in memory instead of making extra db calls
     @sections.last == @section ? submit_tag(t('surveyor.click_here_to_finish'), :name => "finish") : submit_tag(t('surveyor.next_section'), :name => "section[#{@sections[@sections.index(@section)+1].id}]")
   end
-  
+
+  # new methods
+  def q_text(obj)
+    @n ||= 0
+    return image_tag(obj.text) if obj.is_a?(Question) and obj.display_type == "image"
+    return obj.text if obj.is_a?(Question) and (obj.dependent? or obj.display_type == "label" or obj.part_of_group?)
+    "#{@n += 1}) #{obj.text}"
+  end
+  def response_for(response_set, question, answer = nil)
+    return nil unless response_set && question && question.id
+    if answer.nil?
+      result = response_set.responses.detect{|r| r.question_id == question.id}
+      result.blank? ? response_set.responses.build(:question => question) : result
+    elsif
+      result = response_set.responses.detect{|r| r.question_id == question.id && r.answer_id == answer.id}
+      result.blank? ? response_set.responses.build(:question => question, :answer => answer) : result
+    end
+  end
+  def response_idx(increment = true)
+    @rc ||= 0
+    (increment ? @rc += 1 : @rc).to_s
+  end
   # Questions
   def next_number
     @n ||= 0

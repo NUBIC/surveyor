@@ -6,6 +6,7 @@ module Surveyor
         base.send :belongs_to, :survey
         base.send :belongs_to, :user
         base.send :has_many, :responses, :dependent => :destroy
+        base.send :accepts_nested_attributes_for, :responses
         
         @@validations_already_included ||= nil
         unless @@validations_already_included
@@ -16,7 +17,7 @@ module Surveyor
           
           @@validations_already_included = true
         end
-        
+
         # Attributes
         base.send :attr_protected, :completed_at
         base.send :attr_accessor, :current_section_id
