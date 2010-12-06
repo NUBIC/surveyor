@@ -1,3 +1,4 @@
+%w(survey survey_section question_group question dependency dependency_condition answer validation validation_condition).each {|model| require model }
 require 'fastercsv'
 require 'active_support' # for humanize
 module Surveyor
@@ -50,10 +51,8 @@ end
 
 # Surveyor models with extra parsing methods
 class Survey < ActiveRecord::Base
-  include Surveyor::Models::SurveyMethods
 end
 class SurveySection < ActiveRecord::Base
-  include Surveyor::Models::SurveySectionMethods
   def self.build_or_set(context, r)
     unless context[:survey_section] && context[:survey_section].reference_identifier == r[:form_name]
       if match = context[:survey].sections.detect{|ss| ss.reference_identifier == r[:form_name]}
@@ -66,10 +65,8 @@ class SurveySection < ActiveRecord::Base
   end
 end
 class QuestionGroup < ActiveRecord::Base
-  include Surveyor::Models::QuestionGroupMethods
 end
 class Question < ActiveRecord::Base
-  include Surveyor::Models::QuestionMethods
   def self.build_and_set(context, r)
     if !r[:section_header].blank?
       context[:survey_section].questions.build({:display_type => "label", :text => r[:section_header]})
@@ -93,7 +90,6 @@ class Question < ActiveRecord::Base
   end
 end
 class Dependency < ActiveRecord::Base
-  include Surveyor::Models::DependencyMethods
   def self.build_and_set(context, r)
     unless (bl = r[:branching_logic_show_field_only_if]).blank?
       # TODO: forgot to tie rule key to component, counting on the sequence of components
@@ -150,7 +146,6 @@ class Dependency < ActiveRecord::Base
   end
 end
 class DependencyCondition < ActiveRecord::Base
-  include Surveyor::Models::DependencyConditionMethods
   attr_accessor :question_reference, :answer_reference, :lookup_reference
   before_save :resolve_references
   def resolve_references
@@ -165,7 +160,6 @@ class DependencyCondition < ActiveRecord::Base
   end
 end
 class Answer < ActiveRecord::Base
-  include Surveyor::Models::AnswerMethods
   def self.build_and_set(context, r)
     r[:choices_or_calculations].to_s.split("|").each do |pair|
       aref, atext = pair.strip.split(", ")
@@ -184,7 +178,6 @@ class Answer < ActiveRecord::Base
   end
 end
 class Validation < ActiveRecord::Base
-  include Surveyor::Models::ValidationMethods
   def self.build_and_set(context, r)
     # text_validation_type text_validation_min text_validation_max
     min = r[:text_validation_min].to_s.blank? ? nil : r[:text_validation_min].to_s
@@ -229,5 +222,4 @@ class Validation < ActiveRecord::Base
   
 end
 class ValidationCondition < ActiveRecord::Base
-  include Surveyor::Models::ValidationConditionMethods
 end
