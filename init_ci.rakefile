@@ -1,0 +1,21 @@
+BUNDLER_VERSION="1.0.7"
+
+namespace :bundle do
+  task :ensure_bundler_available do
+    `gem list -i bundler -v '=#{BUNDLER_VERSION}'`
+    unless $? == 0
+      puts bordered_message("Installing bundler #{BUNDLER_VERSION}")
+      system("gem install bundler -v '=#{BUNDLER_VERSION}' --no-ri --no-rdoc")
+      unless $? == 0
+        fail bordered_message("Install failed.\nPlease fix the problem and try again or manually install bundler #{BUNDLER_VERSION}.")
+      end
+    end
+  end
+
+  def bordered_message(msg)
+    len = msg.split("\n").collect { |l| l.size }.max
+    ['=' * len, msg, '=' * len].join("\n")
+  end
+end
+
+task :default => :'bundle:ensure_bundler_available'
