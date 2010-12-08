@@ -97,9 +97,8 @@ Surveyor depends on Ruby (1.8.7 - 1.9.1), Rails 2.3 and HAML/SASS http://haml.ha
 
 To work on the code fork this github project. Run:
 
-`bundler install`
-`rake testbed`
+`rake -f init_testbed.rakefile`
 
-and start writing tests!
+which will generate a test app in testbed. Run rake spec and rake cucumber there, and start writing tests!
 
 Copyright (c) 2008-2010 Brian Chamberlain and Mark Yoon, released under the MIT license

@@ -5,7 +5,7 @@ class SurveyorGenerator < Rails::Generator::Base
       m.directory "surveys"
       
       # Copy README to your app
-      m.file "../../../README.md", "surveys/README.md"
+      # m.file "../../../README.md", "surveys/README.md"
           
       # Gem plugin rake tasks
       m.file "tasks/surveyor.rb", "lib/tasks/surveyor.rb"
