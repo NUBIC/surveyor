@@ -3,7 +3,7 @@ Given /^I parse$/ do |string|
 end
 
 Given /^I parse redcap file "([^"]*)"$/ do |name|
-  Surveyor::RedcapParser.parse File.read(File.join(RAILS_ROOT, '..', '..', 'features', 'support', name)), name
+  Surveyor::RedcapParser.parse File.read(File.join(RAILS_ROOT, '..', 'features', 'support', name)), name
 end
 
 Then /^there should be (\d+) survey(?:s?) with:$/ do |x, table|
