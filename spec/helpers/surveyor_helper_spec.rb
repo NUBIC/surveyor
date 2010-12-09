@@ -22,19 +22,29 @@ describe SurveyorHelper do
   end
   it "should find or create responses, with index" do
     q1 = Factory(:question, :answers => [a = Factory(:answer, :text => "different")])
-    q2 = Factory(:question, :text => "Foo", :answers => [Factory(:answer)])
+    q2 = Factory(:question, :answers => [b = Factory(:answer)], :text => "strokes")
     rs = Factory(:response_set, :responses => [r = Factory(:response, :question => q1, :answer => a)])
-    
+
     helper.response_for(rs, nil).should == nil
     helper.response_for(nil, q1).should == nil
     helper.response_for(rs, q1).should == r
     helper.response_for(rs, q1, a).should == r
     helper.response_for(rs, q2).attributes.should == Response.new(:question => q2, :response_set => rs).attributes
+    helper.response_for(rs, q2, b).attributes.should == Response.new(:question => q2, :response_set => rs).attributes
   end
   it "should keep an index of responses" do
     helper.response_idx.should == "1"
     helper.response_idx.should == "2"
     helper.response_idx(false).should == "2"
     helper.response_idx.should == "3"
+  end
+  it "should translate response class into attribute" do
+    helper.rc_to_attr(:string).should == :string_value
+    helper.rc_to_attr(:text).should == :text_value
+    helper.rc_to_attr(:integer).should == :integer_value
+    helper.rc_to_attr(:float).should == :float_value
+    helper.rc_to_attr(:datetime).should == :datetime_value
+    helper.rc_to_attr(:date).should == :datetime_value
+    helper.rc_to_attr(:time).should == :datetime_value
   end
 end

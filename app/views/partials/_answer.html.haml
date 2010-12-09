@@ -3,6 +3,7 @@
 - i = response_idx(q.pick != "one") # argument will be false (don't increment i) if we're on radio buttons
 - f.semantic_fields_for i, r do |g|
   = g.input :question_id, :as => :hidden unless q.pick == "one" # don't repeat question_id if we're on radio buttons
+  = g.input :id, :as => :hidden unless q.pick == "one" or r.new_record?
   - case q.pick
   - when "one"
     = g.input :answer_id, :as => :radio, :collection => [[a.text, a.id]], :label => false
@@ -13,7 +14,8 @@
     = g.input :other_value, :label => false if a.response_class == "other_and_string"
     = g.input :string_value, :label => false if %w(string other_and_string).include? a.response_class
   - when "none"
-    - if %w(date datetime time float integer string text time).include? a.response_class
-      = g.input a.response_class.to_sym, :label => a.text
+    - if %w(date datetime time float integer string text).include? a.response_class
+      = g.input :answer_id, :as => :hidden, :value => a.id
+      = g.input rc_to_attr(a.response_class), :label => a.text
     - else
       = a.text

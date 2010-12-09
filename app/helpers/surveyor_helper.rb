@@ -45,16 +45,24 @@ module SurveyorHelper
     return nil unless response_set && question && question.id
     if answer.nil?
       result = response_set.responses.detect{|r| r.question_id == question.id}
-      result.blank? ? response_set.responses.build(:question => question) : result
-    elsif
+      result.blank? ? response_set.responses.build(:question_id => question.id) : result
+    else
       result = response_set.responses.detect{|r| r.question_id == question.id && r.answer_id == answer.id}
-      result.blank? ? response_set.responses.build(:question => question, :answer => answer) : result
+      result.blank? ? response_set.responses.build(:question_id => question.id) : result
     end
   end
   def response_idx(increment = true)
     @rc ||= 0
     (increment ? @rc += 1 : @rc).to_s
   end
+  def rc_to_attr(type_sym)
+    case type_sym.to_s
+    when /^date|time$/ then :datetime_value
+    when /(string|text|integer|float|datetime)/ then "#{type_sym.to_s}_value".to_sym
+    else :answer_id
+    end
+  end
+  
   # Questions
   def next_number
     @n ||= 0
