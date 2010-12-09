@@ -1,5 +1,5 @@
 desc "Set up a rails app for testing in the spec dir"
-task :default => [:"testbed:generate"] #, :"testbed:setup", :"testbed:migrate"]
+task :default => [:"testbed:generate", :"testbed:setup", :"testbed:migrate"]
 
 namespace "testbed" do
   # "testbed" is also hardcoded in the spec/spec_helper.rb features/support/env.rb and gitignore file. Change it there too...
