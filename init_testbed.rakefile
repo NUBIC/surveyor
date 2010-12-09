@@ -1,0 +1,55 @@
+desc "Set up a rails app for testing in the spec dir"
+task :default => [:"testbed:generate", :"testbed:setup", :"testbed:migrate"]
+
+namespace "testbed" do
+  # "testbed" is also hardcoded in the spec/spec_helper.rb features/support/env.rb and gitignore file. Change it there too...
+  
+  "Generate rails, rspec, cucumber"
+  task :generate do
+    chdir("testbed") do
+      sh "bundle install"
+      sh "bundle exec rails ."
+      sh "bundle exec script/generate rspec"
+      sh "bundle exec script/generate cucumber --webrat"
+      sh "rm -rf spec features"
+    end
+  end
+ 
+  desc "Setup bundler, rspec, cucumber"
+  task :setup do
+    chdir("testbed") do
+      # Bundler
+      preinitializer_rb = "begin\n  require \"rubygems\"\n  require \"bundler\"\nrescue LoadError\n  raise \"Could not load the bundler gem. Install it with `gem install bundler`.\"\nend\n\nif Gem::Version.new(Bundler::VERSION) <= Gem::Version.new(\"0.9.24\")\n  raise RuntimeError, \"Your bundler version is too old for Rails 2.3.\" +\n   \"Run `gem install bundler` to upgrade.\"\nend\n\nbegin\n  # Set up load paths for all bundled gems\n  ENV[\"BUNDLE_GEMFILE\"] = File.expand_path(\"../../Gemfile\", __FILE__)\n  Bundler.setup\nrescue Bundler::GemNotFound\n  raise RuntimeError, \"Bundler couldn't find some gems.\" +\n    \"Did you run `bundle install`?\"\nend\n"
+      File.open('config/preinitializer.rb', 'w'){|f| f.write preinitializer_rb}
+      
+      boot_rb = File.read('config/boot.rb').sub("# All that for this:", "class Rails::Boot\n  def run\n    load_initializer\n\n    Rails::Initializer.class_eval do\n      def load_gems\n        @bundler_loaded ||= Bundler.require :default, Rails.env\n      end\n    end\n\n    Rails::Initializer.run(:set_load_path)\n  end\nend\n\n# All that for this:")
+      File.open('config/boot.rb', 'w'){|f| f.write boot_rb}
+      puts "NOTE: These files were created/modified as described here: http://gembundler.com/rails23.html"
+      
+      # Rspec
+      rspec_rake = File.read('lib/tasks/rspec.rake').gsub('#{RAILS_ROOT}/spec/', '#{RAILS_ROOT}/../spec/').gsub("FileList['spec/", "FileList['../spec/").gsub("File.exist?('spec/","File.exist?('../spec/")
+      File.open('lib/tasks/rspec.rake', 'w'){|f| f.write rspec_rake}
+
+      # Cucumber
+      cucumber_rake = File.read('lib/tasks/cucumber.rake').sub("begin", "ENV['FEATURE'] ||= '../features'\n\nbegin")
+      File.open('lib/tasks/cucumber.rake', 'w'){|f| f.write cucumber_rake}
+    end
+  end
+
+  desc "Generate, migrate testbed"
+  task :migrate do
+    sh "cp -R generators testbed/lib"
+    chdir("testbed") do
+      sh "bundle exec script/generate surveyor"
+      sh "bundle exec rake db:migrate db:test:prepare"
+    end
+  end
+
+  desc "Remove testbed app"
+  task :remove do
+    puts "Removing the test_app in the spec folder"
+    chdir("testbed") do
+      sh 'rm -rf Gemfile.lock README Rakefile app config db doc features lib log public script spec surveys test tmp vendor'
+    end
+  end
+end
