@@ -33,6 +33,14 @@ namespace "testbed" do
       # Cucumber
       cucumber_rake = File.read('lib/tasks/cucumber.rake').sub("begin", "ENV['FEATURE'] ||= '../features'\n\nbegin")
       File.open('lib/tasks/cucumber.rake', 'w'){|f| f.write cucumber_rake}
+      
+      # Hudson
+      database_yml = File.read('config/database.yml') + "\n\nhudson:\n  <<: *test"
+      File.open('config/database.yml', 'w'){|f| f.write database_yml}
+      
+      hudson_rb = File.read('config/environments/cucumber.rb')
+      File.new('config/environments/hudson.rb', 'w')
+      File.open('config/environments/hudson.rb', 'w'){|f| f.write hudson_rb}
     end
   end
 
