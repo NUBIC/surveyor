@@ -149,6 +149,7 @@ class DependencyCondition < ActiveRecord::Base
   attr_accessor :question_reference, :answer_reference, :lookup_reference
   before_save :resolve_references
   def resolve_references
+    return unless lookup_reference
     print "resolve(#{question_reference},#{answer_reference})"
     if row = lookup_reference.find{|r| r[0] == question_reference and r[1] == answer_reference}
       print "...found "
