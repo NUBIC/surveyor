@@ -9,11 +9,15 @@ module Surveyor
         
         # Scopes
         base.send :default_scope, :order => "display_order ASC"
-
-        # Validations
-        base.send :validates_presence_of, :text
-        # this causes issues with building and saving
-        # base.send :validates_numericality_of, :question_id, :allow_nil => false, :only_integer => true
+        
+        @@validations_already_included ||= nil
+        unless @@validations_already_included
+          # Validations
+          base.send :validates_presence_of, :text
+          # this causes issues with building and saving
+          # base.send :validates_numericality_of, :question_id, :allow_nil => false, :only_integer => true
+          @@validations_already_included = true
+        end
       end
 
       # Instance Methods

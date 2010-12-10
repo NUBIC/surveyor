@@ -10,12 +10,17 @@ module Surveyor
 
         # Scopes
         base.send :default_scope, :order => "display_order ASC"
-
-        # Validations
-        base.send :validates_presence_of, :text, :display_order
-        # this causes issues with building and saving
-        #, :survey_section_id
-        base.send :validates_inclusion_of, :is_mandatory, :in => [true, false]
+        
+        @@validations_already_included ||= nil
+        unless @@validations_already_included
+          # Validations
+          base.send :validates_presence_of, :text, :display_order
+          # this causes issues with building and saving
+          #, :survey_section_id
+          base.send :validates_inclusion_of, :is_mandatory, :in => [true, false]
+          
+          @@validations_already_included = true
+        end
       end
 
       # Instance Methods

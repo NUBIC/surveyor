@@ -9,11 +9,16 @@ module Surveyor
         # Scopes
         base.send :default_scope, :order => "display_order ASC"
         base.send :named_scope, :with_includes, { :include => {:questions => [:answers, :question_group, {:dependency => :dependency_conditions}]}}
-
-        # Validations
-        base.send :validates_presence_of, :title, :display_order
-        # this causes issues with building and saving
-        #, :survey
+        
+        @@validations_already_included ||= nil
+        unless @@validations_already_included
+          # Validations
+          base.send :validates_presence_of, :title, :display_order
+          # this causes issues with building and saving
+          #, :survey
+          
+          @@validations_already_included = true
+        end
       end
 
       # Instance Methods

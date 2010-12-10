@@ -7,14 +7,19 @@ module Surveyor
         base.send :belongs_to, :dependency
         base.send :belongs_to, :dependent_question, :foreign_key => :question_id, :class_name => :question
         base.send :belongs_to, :question
-
-        # Validations
-        base.send :validates_presence_of, :operator, :rule_key
-        base.send :validate, :validates_operator
-        base.send :validates_uniqueness_of, :rule_key, :scope => :dependency_id
-        # this causes issues with building and saving
-        # base.send :validates_numericality_of, :question_id, :dependency_id
         
+        @@validations_already_included ||= nil
+        unless @@validations_already_included
+          # Validations
+          base.send :validates_presence_of, :operator, :rule_key
+          base.send :validate, :validates_operator
+          base.send :validates_uniqueness_of, :rule_key, :scope => :dependency_id
+          # this causes issues with building and saving
+          # base.send :validates_numericality_of, :question_id, :dependency_id
+          
+          @@validations_already_included = true
+        end
+                
         base.send :include, Surveyor::ActsAsResponse # includes "as" instance method
 
         # Class methods

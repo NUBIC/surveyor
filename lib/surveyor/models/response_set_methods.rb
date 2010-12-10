@@ -6,12 +6,17 @@ module Surveyor
         base.send :belongs_to, :survey
         base.send :belongs_to, :user
         base.send :has_many, :responses, :dependent => :destroy
-
-        # Validations
-        base.send :validates_presence_of, :survey_id
-        base.send :validates_associated, :responses
-        base.send :validates_uniqueness_of, :access_code
-
+        
+        @@validations_already_included ||= nil
+        unless @@validations_already_included
+          # Validations
+          base.send :validates_presence_of, :survey_id
+          base.send :validates_associated, :responses
+          base.send :validates_uniqueness_of, :access_code
+          
+          @@validations_already_included = true
+        end
+        
         # Attributes
         base.send :attr_protected, :completed_at
         base.send :attr_accessor, :current_section_id

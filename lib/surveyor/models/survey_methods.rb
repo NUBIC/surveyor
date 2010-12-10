@@ -9,10 +9,15 @@ module Surveyor
 
         # Scopes
         base.send :named_scope, :with_sections, {:include => :sections}
-
-        # Validations
-        base.send :validates_presence_of, :title
-        base.send :validates_uniqueness_of, :access_code
+        
+        @@validations_already_included ||= nil
+        unless @@validations_already_included
+          # Validations
+          base.send :validates_presence_of, :title
+          base.send :validates_uniqueness_of, :access_code
+          
+          @@validations_already_included = true
+        end        
 
         # Class methods
         base.instance_eval do
