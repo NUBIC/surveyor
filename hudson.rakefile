@@ -1,4 +1,5 @@
 BUNDLER_VERSION="1.0.7"
+import 'init_testbed.rakefile'
 
 namespace :bundle do
   task :ensure_bundler_available do
@@ -17,5 +18,16 @@ namespace :bundle do
     ['=' * len, msg, '=' * len].join("\n")
   end
 end
+namespace :ci do
+  task :generate_testbed_for_hudson => [:'testbed:remove', :'testbed:generate'] do
+    # Hudson
+    chdir("testbed") do
+      database_yml = File.read('config/database.yml') + "\n\nhudson:\n  <<: *test\n"
+      File.open('config/database.yml', 'w'){|f| f.write database_yml}
+      sh "cp config/environments/cucumber.rb config/environments/hudson.rb"
+    end
+  end
+  task :setup_testbed_for_hudson => [:'testbed:setup', :'testbed:migrate']
+end
 
-task :default => :'bundle:ensure_bundler_available'
+task :default => [:'bundle:ensure_bundler_available', :'ci:generate_testbed_for_hudson', :'ci:setup_testbed_for_hudson']

@@ -9,12 +9,6 @@ namespace "testbed" do
     chdir("testbed") do
       sh "bundle install"
       sh "bundle exec rails ."
-      
-      # Hudson
-      database_yml = File.read('config/database.yml') + "\nhudson:\n  adapter: sqlite3\n  database: db/hudson.sqlite3\n  pool: 5\n  timeout: 5000"
-      File.open('config/database.yml', 'w'){|f| f.write database_yml}
-      sh "cp config/environments/test.rb config/environments/hudson.rb"
-
       sh "bundle exec script/generate rspec"
       sh "bundle exec script/generate cucumber --webrat"
       sh "rm -rf spec features"

@@ -14,47 +14,16 @@
 # Hudson Build Execute Shell Commands:
 #
 # source ci-env.sh
-# export RAILS_ENV="hudson"
-# rake -f init_ci.rakefile --trace
-# rake -f init_testbed.rakefile
+# rake -f hudson.rakefile --trace
 # cd testbed
+# export RAILS_ENV="hudson"
 # bundle exec rake spec cucumber
 
-set +x
-echo "Loading RVM"
-source ~/.rvm/scripts/rvm
-set -x
+export rvm_gemset_create_on_use_flag=1
+export rvm_project_rvmrc=0
 
-RVM_RUBY=ree
-GEMSET=surveyor-dev
-
-if [ -z "$RVM_RUBY" ]; then
-    echo "Could not map env (RVM_RUBY=\"${RVM_RUBY}\") to an RVM version.";
-    shopt -q login_shell
-    if [ $? -eq 0 ]; then
-        echo "This means you are still using the previously selected RVM ruby."
-        echo "Probably not what you want -- aborting."
-        # don't exit an interactive shell
-        return;
-    else
-        exit 1;
-    fi
-fi
-
-echo "Switching to ${RVM_RUBY}@${GEMSET}"
 set +xe
-rvm use "${RVM_RUBY}@${GEMSET}"
-if [ $? -ne 0 ]; then
-    echo "Switch failed"
-    exit 2;
-fi
+echo "Loading RVM ree@surveyor-dev"
+source ~/.rvm/scripts/rvm
+rvm use ree@surveyor-dev
 set -xe
-ruby -v
-
-set +e
-gem list -i rake
-if [ $? -ne 0 ]; then
-    echo "Installing rake since it is not available"
-    gem install rake
-fi
-set -e
