@@ -24,23 +24,38 @@ module SurveyorHelper
     submit_tag(section.title, :name => "section[#{section.id}]")
   end
   def previous_section
-    # submit_tag("#{t ('surveyor.previous_section')} &raquo;", :name => "section[#{@section.previous.id}]") unless @section.previous.nil?
-    # refactored to use copy in memory instead of making extra db calls
+    # use copy in memory instead of making extra db calls
     submit_tag(t('surveyor.previous_section'), :name => "section[#{@sections[@sections.index(@section)-1].id}]") unless @sections.first == @section
   end
   def next_section
-    # @section.next.nil? ? submit_tag(t ('surveyor.click_here_to_finish'), :name => "finish") : submit_tag("Next section &laquo;", :name => "section[#{@section.next.id}]")
-    # refactored to use copy in memory instead of making extra db calls
+    # use copy in memory instead of making extra db calls
     @sections.last == @section ? submit_tag(t('surveyor.click_here_to_finish'), :name => "finish") : submit_tag(t('surveyor.next_section'), :name => "section[#{@sections[@sections.index(@section)+1].id}]")
   end
-
-  # new methods
+  
+  # Questions
   def q_text(obj)
     @n ||= 0
     return image_tag(obj.text) if obj.is_a?(Question) and obj.display_type == "image"
     return obj.text if obj.is_a?(Question) and (obj.dependent? or obj.display_type == "label" or obj.part_of_group?)
     "#{@n += 1}) #{obj.text}"
   end
+  # def split_text(text = "") # Split text into with "|" delimiter - parts to go before/after input element
+  #   {:prefix => text.split("|")[0].blank? ? "&nbsp;" : text.split("|")[0], :postfix => text.split("|")[1] || "&nbsp;"}
+  # end
+  # def question_help_helper(question)
+  #   question.help_text.blank? ? "" : %Q(<span class="question-help">#{question.help_text}</span>)
+  # end
+  
+  # Answers
+  def rc_to_attr(type_sym)
+    case type_sym.to_s
+    when /^date|time$/ then :datetime_value
+    when /(string|text|integer|float|datetime)/ then "#{type_sym.to_s}_value".to_sym
+    else :answer_id
+    end
+  end
+  
+  # Responses
   def response_for(response_set, question, answer = nil)
     return nil unless response_set && question && question.id
     if answer.nil?
@@ -54,34 +69,5 @@ module SurveyorHelper
   def response_idx(increment = true)
     @rc ||= 0
     (increment ? @rc += 1 : @rc).to_s
-  end
-  def rc_to_attr(type_sym)
-    case type_sym.to_s
-    when /^date|time$/ then :datetime_value
-    when /(string|text|integer|float|datetime)/ then "#{type_sym.to_s}_value".to_sym
-    else :answer_id
-    end
-  end
-  
-  # Questions
-  def next_number
-    @n ||= 0
-    "#{@n += 1}<span style='padding-left:0.1em;'>)</span>"
-  end
-  def split_text(text = "") # Split text into with "|" delimiter - parts to go before/after input element
-    {:prefix => text.split("|")[0].blank? ? "&nbsp;" : text.split("|")[0], :postfix => text.split("|")[1] || "&nbsp;"}
-  end
-  def question_help_helper(question)
-    question.help_text.blank? ? "" : %Q(<span class="question-help">#{question.help_text}</span>)
-  end
-
-  # Answers
-  def fields_for_response(response, response_group = nil, &block)
-    name = response_group.nil? ? "responses[#{response.question_id}][#{response.answer_id}]" : "response_groups[#{response.question_id}][#{response_group}][#{response.answer_id}]"
-    fields_for(name, response, :builder => SurveyFormBuilder, &block)
-  end
-  def fields_for_radio(response, &block)
-    fields_for("responses[#{response.question_id}]", response, :builder => SurveyFormBuilder, &block)
-  end
-  
+  end  
 end

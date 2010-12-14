@@ -15,16 +15,11 @@ describe Answer, "when creating a new answer" do
   #   @answer.should_not be_valid
   # end
   
-  it "should have 'default' renderer with nil question.pick and response_class" do      
-    @answer.question = Factory(:question, :pick => nil)
-    @answer.response_class = nil
-    @answer.renderer.should == :default
-  end
-  
-  it "should have a_b renderer for a question.pick and B response_class" do
-    @answer.question = Factory(:question, :pick => "a")
-    @answer.response_class = "B"
-    @answer.renderer.should == :a_b
+  it "should tell me its css class" do
+    @answer.custom_class = "foo bar"
+    @answer.css_class.should == "foo bar"
+    @answer.is_exclusive = true
+    @answer.css_class.should == "exclusive foo bar"
   end
     
 end

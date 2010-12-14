@@ -69,15 +69,15 @@ describe ResponseSet, "Updating the response set" do
       @section = Factory(:survey_section) 
       @response_set.current_section_id = @section.id
     end
-    it "should detect existence of responses to questions that belong to a given survey_section" do
-      @response_set.update_attributes(:responses_attributes => @radio_response_attributes))
-      @response_set.no_responses_for_section?(@section).should be_false
-    end
-    it "should detect absence of responses to questions that belong to a given survey_section" do
-      @response_set.update_attributes(:responses_attributes => @radio_response_attributes) #responses are associated with @section
-      @another_section = Factory(:survey_section) 
-      @response_set.no_responses_for_section?(@another_section).should be_true
-    end
+    # it "should detect existence of responses to questions that belong to a given survey_section" do
+    #   @response_set.update_attributes(:responses_attributes => ResponseSet.reject_or_delete_blanks(@radio_response_attributes))
+    #   @response_set.no_responses_for_section?(@section).should be_false
+    # end
+    # it "should detect absence of responses to questions that belong to a given survey_section" do
+    #   @response_set.update_attributes(:responses_attributes => ResponseSet.reject_or_delete_blanks(@radio_response_attributes)) #responses are associated with @section
+    #   @another_section = Factory(:survey_section) 
+    #   @response_set.no_responses_for_section?(@another_section).should be_true
+    # end
   end
   it "should clean up responses_attributes before passing to nested_attributes" do
     hash_of_hashes = {

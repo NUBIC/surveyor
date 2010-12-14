@@ -6,16 +6,16 @@
   = g.input :id, :as => :hidden unless q.pick == "one" or r.new_record?
   - case q.pick
   - when "one"
-    = g.input :answer_id, :as => :radio, :collection => [[a.text, a.id]], :label => false
+    = g.input :answer_id, :as => :radio, :collection => [[a.text, a.id]], :label => false, :input_html => {:class => a.css_class}
     = g.input :string if a.response_class == 'string'
     = g.input :integer if a.response_class == 'integer'
   - when "any"
-    = g.input :answer_id, :as => :check_boxes, :collection => [[a.text, a.id]], :label => false
+    = g.input :answer_id, :as => :check_boxes, :collection => [[a.text, a.id]], :label => false, :input_html => {:class => a.css_class}
     = g.input :other_value, :label => false if a.response_class == "other_and_string"
     = g.input :string_value, :label => false if %w(string other_and_string).include? a.response_class
   - when "none"
     - if %w(date datetime time float integer string text).include? a.response_class
-      = g.input :answer_id, :as => :hidden, :value => a.id
+      = g.input :answer_id, :as => :hidden, :value => a.id, :input_html => {:class => a.css_class}
       = g.input rc_to_attr(a.response_class), :label => a.text
     - else
       = a.text
