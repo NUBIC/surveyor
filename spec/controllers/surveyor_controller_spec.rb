@@ -151,15 +151,15 @@ describe SurveyorController do
     end
     def do_put_with_finish
       responses = {
-         "6"=>{"question_id"=>"6", "20"=>{"string_value"=>"saf"}}, #string
-         "7"=>{"question_id"=>"7", "21"=>{"text_value"=>""}}, #text
-         "1"=>{"question_id"=>"1", "answer_id"=>"1", "4"=>{"string_value"=>""}}, #radio+txt
-         "2"=>{"answer_id"=>"6"}, #radio
-         "3"=>{"answer_id"=>"10"}, #radio
+         "6"=>{"question_id"=>"6", "answer_id" => "6", "string_value"=>"saf"}, #string
+         "7"=>{"question_id"=>"7", "answer_id" => "11", "text_value"=>"foo"}, #text
+         "1"=>{"question_id"=>"1", "answer_id"=>"1", "string_value"=>"bar"}, #radio+txt
+         "2"=>{"question_id"=>"2", "answer_id"=>"6"}, #radio
+         "3"=>{"question_id"=>"3", "answer_id"=>"10"}, #radio
          "4"=>{"question_id"=>"4", "answer_id"=>"15"}, #check
-         "5"=>{"question_id"=>"5", "16"=>{"selected"=>"1"}, "19"=>{"string_value"=>""}} #check+txt
+         "5"=>{"question_id"=>"5", "answer_id"=>"16", "string_value"=>""} #check+txt
       }
-      put :update, :survey_code => "XYZ", :response_set_code => "PDQ", :finish => "finish", :responses => responses
+      put :update, :survey_code => "XYZ", :response_set_code => "PDQ", :finish => "finish", :r => responses
     end
     
     it "should find the response set requested" do

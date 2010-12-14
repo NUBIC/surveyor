@@ -23,78 +23,95 @@ end
 describe ResponseSet, "Updating the response set" do
   before(:each) do
     @response_set = Factory(:response_set)
-    # {"responses"=>{
-    #   "6"=>{"question_id"=>"6", "20"=>{"string_value"=>""}}, 
-    #   "7"=>{"question_id"=>"7", "21"=>{"text_value"=>"Brian is tired"}}, 
-    #   "1"=>{"question_id"=>"1", "answer_id"=>"1", "4"=>{"string_value"=>"XXL"}}, 
-    #   "2"=>{"question_id"=>"2", "answer_id"=>"6"}, 
-    #   "3"=>{"question_id"=>"3"}, 
-    #   "4"=>{"question_id"=>"4"}, 
-    #   "5"=>{"question_id"=>"5", "19"=>{"string_value"=>""}}}, 
-    # "survey_code"=>"test_survey", 
-    # "commit"=>"Next Section (Utensiles and you!) >>", 
-    # "authenticity_token"=>"d03bc1b52fa9669e1ed87c313b939836e7b93e34", 
-    # "_method"=>"put", 
-    # "action"=>"update", 
-    # "controller"=>"app", 
-    # "response_set_code"=>"cIFn0DnxlU", 
-    # "section"=>"2"}
-      
-    #TODO test views to produce these params. e.g., blank responses should still have a hash with question_id
+    # {"finish"=>"Click here to finish", 
+    #   "_method"=>"put", 
+    #   "action"=>"update", 
+    #   "current_section_id"=>"1", 
+    #   "r"=>{"1"=>{"question_id"=>"2", "answer_id"=>"2"}, 
+    #         "2"=>{"question_id"=>"", "answer_id"=>["", "5"]}, 
+    #         "3"=>{"question_id"=>"", "answer_id"=>[""]}, 
+    #         "4"=>{"question_id"=>"", "answer_id"=>["", "7"]}, 
+    #         "5"=>{"question_id"=>"", "answer_id"=>[""]}}, 
+    #   "controller"=>"surveyor", 
+    #   "survey_code"=>"favorites", 
+    #   "response_set_code"=>"k6bJebfP2v"}
     @radio_response_attributes = HashWithIndifferentAccess.new({
-      "1"=>{"question_id"=>"1", "answer_id"=>"1", "4"=>{"string_value"=>"XXL"}}, 
+      "1"=>{"question_id"=>"1", "answer_id"=>"1", "string_value"=>"XXL"}, 
       "2"=>{"question_id"=>"2", "answer_id"=>"6"}, 
-      "3"=>{"question_id"=>"3"}
+      "3"=>{"question_id"=>"3", "answer_id"=>""}
     })
     @other_response_attributes = HashWithIndifferentAccess.new({
-      "6"=>{"question_id"=>"6", "20"=>{"string_value"=>""}}, 
-      "7"=>{"question_id"=>"7", "21"=>{"text_value"=>"Brian is tired"}}, 
-      "5"=>{"question_id"=>"5", "19"=>{"string_value"=>""}}   
+      "6"=>{"question_id"=>"6", "answer_id" => "3", "string_value"=>""}, 
+      "7"=>{"question_id"=>"7", "answer_id" => "4", "text_value"=>"Brian is tired"}, 
+      "5"=>{"question_id"=>"5", "answer_id" => "5", "string_value"=>""}   
     })
   end
-
   it "should save new responses from radio buttons, ignoring blanks" do
-    @response_set.update_attributes(:response_attributes => @radio_response_attributes)
+    @response_set.update_attributes(:responses_attributes => ResponseSet.reject_or_delete_blanks(@radio_response_attributes))
     @response_set.responses.should have(2).items
     @response_set.responses.detect{|r| r.question_id == 2}.answer_id.should == 6
   end
   it "should save new responses from other types, ignoring blanks" do
-    @response_set.update_attributes(:response_attributes => @other_response_attributes)
+    @response_set.update_attributes(:responses_attributes => ResponseSet.reject_or_delete_blanks(@other_response_attributes))
     @response_set.responses.should have(1).items
     @response_set.responses.detect{|r| r.question_id == 7}.text_value.should == "Brian is tired"
   end
   it "should ignore data if corresponding radio button is not selected" do
-    @response_set.update_attributes(:response_attributes => @radio_response_attributes)
+    @response_set.update_attributes(:responses_attributes => ResponseSet.reject_or_delete_blanks(@radio_response_attributes))
     @response_set.responses.select{|r| r.question_id == 2}.should have(1).item
     @response_set.responses.detect{|r| r.question_id == 2}.string_value.should == nil
   end
   it "should preserve data in checkboxes regardless of selection" do
     pending
   end
-
-  it "should give convenient access to responses through response_for" do
-    @response_set.save #need to save for the associated models to build/save
-    @response_set.attributes = {:response_attributes => @radio_response_attributes}
-    @response_set.save.should be_true
-    @response_set.responses.should have(2).items
-    
-    pending
-  end
-  describe "assoication of responses to a survey_section" do
+  describe "association of responses to a survey_section" do
     before(:each) do
       @section = Factory(:survey_section) 
       @response_set.current_section_id = @section.id
     end
     it "should detect existence of responses to questions that belong to a given survey_section" do
-      @response_set.update_attributes(:response_attributes => @radio_response_attributes)
+      @response_set.update_attributes(:responses_attributes => @radio_response_attributes))
       @response_set.no_responses_for_section?(@section).should be_false
     end
     it "should detect absence of responses to questions that belong to a given survey_section" do
-      @response_set.update_attributes(:response_attributes => @radio_response_attributes) #responses are associated with @section
+      @response_set.update_attributes(:responses_attributes => @radio_response_attributes) #responses are associated with @section
       @another_section = Factory(:survey_section) 
       @response_set.no_responses_for_section?(@another_section).should be_true
     end
   end
+  it "should clean up responses_attributes before passing to nested_attributes" do
+    hash_of_hashes = {
+      "11" => {"question_id" => "1", "answer_id" => [""]}, # new checkbox, blank
+      "12" => {"question_id" => "2", "answer_id" => ["", "124"]}, # new checkbox, checked
+      "13" => {"id" => "101", "question_id" => "3", "answer_id" => [""]}, # existing checkbox, unchecked
+      "14" => {"id" => "102", "question_id" => "4", "answer_id" => ["", "147"]}, # existing checkbox, left alone
+      "15" => {"question_id" => "5", "answer_id" => ""}, # new radio, blank
+      "16" => {"question_id" => "6", "answer_id" => "161"}, # new radio, selected
+      "17" => {"id" => "103", "question_id" => "7", "answer_id" => "171"}, # existing radio, changed
+      "18" => {"id" => "104", "question_id" => "8", "answer_id" => "181"}, # existing radio, unchanged
+      "19" => {"question_id" => "9", "answer_id" => "191", "string_value" => ""}, # new string, blank
+      "20" => {"question_id" => "10", "answer_id" => "201", "string_value" => "hi"}, # new string, filled
+      "21" => {"id" => "105", "question_id" => "11", "answer_id" => "211", "string_value" => ""}, # existing string, cleared
+      "22" => {"id" => "106", "question_id" => "12", "answer_id" => "221", "string_value" => "ho"}, # existing string, changed
+      "23" => {"id" => "107", "question_id" => "13", "answer_id" => "231", "string_value" => "hi"} # existing string, unchanged
+    }
+    ResponseSet.reject_or_delete_blanks(hash_of_hashes).should == {
+      # "11" => {"question_id" => "1", "answer_id" => [""]}, # new checkbox, blank
+      "12" => {"question_id" => "2", "answer_id" => ["", "124"]}, # new checkbox, checked
+      "13" => {"id" => "101", "question_id" => "3", "answer_id" => [""], "_delete" => "true"}, # existing checkbox, unchecked
+      "14" => {"id" => "102", "question_id" => "4", "answer_id" => ["", "147"]}, # existing checkbox, left alone
+      # "15" => {"question_id" => "5", "answer_id" => ""}, # new radio, blank
+      "16" => {"question_id" => "6", "answer_id" => "161"}, # new radio, selected
+      "17" => {"id" => "103", "question_id" => "7", "answer_id" => "171"}, # existing radio, changed
+      "18" => {"id" => "104", "question_id" => "8", "answer_id" => "181"}, # existing radio, unchanged
+      # "19" => {"question_id" => "9", "answer_id" => "191", "string_value" => ""}, # new string, blank
+      "20" => {"question_id" => "10", "answer_id" => "201", "string_value" => "hi"}, # new string, filled
+      "21" => {"id" => "105", "question_id" => "11", "answer_id" => "211", "string_value" => "", "_delete" => "true"}, # existing string, cleared
+      "22" => {"id" => "106", "question_id" => "12", "answer_id" => "221", "string_value" => "ho"}, # existing string, changed
+      "23" => {"id" => "107", "question_id" => "13", "answer_id" => "231", "string_value" => "hi"} # existing string, unchanged
+    }
+  end
+
 end
 
 describe ResponseSet, "with dependencies" do

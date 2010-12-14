@@ -6,7 +6,7 @@ module Surveyor
         base.send :belongs_to, :survey
         base.send :belongs_to, :user
         base.send :has_many, :responses, :dependent => :destroy
-        base.send :accepts_nested_attributes_for, :responses
+        base.send :accepts_nested_attributes_for, :responses, :allow_destroy => true
         
         @@validations_already_included ||= nil
         unless @@validations_already_included
@@ -21,9 +21,24 @@ module Surveyor
         # Attributes
         base.send :attr_protected, :completed_at
         base.send :attr_accessor, :current_section_id
-
-        # Callbacks
-        base.send :after_update, :save_responses
+        
+        # Class methods
+        base.instance_eval do
+          def reject_or_delete_blanks(hash_of_hashes)
+            result = {}
+            hash_of_hashes.each_pair do |k, hash|
+              if has_blank_value?(hash)
+                result.merge!({k => hash.merge("_delete" => "true")}) if hash.has_key?("id")
+              else
+                result.merge!({k => hash})
+              end
+            end
+            result
+          end
+          def has_blank_value?(hash)
+            hash.any?{|k,v| v.is_a?(Array) ? v.all?{|x| x.to_s.blank?} : v.to_s.blank?}
+          end
+        end
       end
 
       # Instance methods
@@ -58,63 +73,28 @@ module Surveyor
         result
       end
 
-      def response_for(question_id, answer_id, group = nil)
-        found = responses.detect{|r| r.question_id == question_id && r.answer_id == answer_id && r.response_group.to_s == group.to_s}
-        found.blank? ? responses.new(:question_id => question_id, :answer_id => answer_id, :response_group => group) : found
-      end
-
-      def clear_responses
-        question_ids = Question.find_all_by_survey_section_id(current_section_id).map(&:id)
-        responses.select{|r| question_ids.include? r.question_id}.map(&:destroy)
-        responses.reload
-      end
-
-      def response_attributes=(response_attributes)
-        response_attributes.each do |question_id, responses_hash|
-          # Response.delete_all(["response_set_id =? AND question_id =?", self.id, question_id])
-          if (answer_id = responses_hash[:answer_id]) 
-            if (!responses_hash[:answer_id].empty?) # Dropdowns return answer id but have an empty value if they are not set... ignoring those.
-              #radio or dropdown - only one response
-              responses.build({:question_id => question_id, :answer_id => answer_id, :survey_section_id => current_section_id}.merge(responses_hash[answer_id] || {}))
-            end
-          else
-            #possibly multiples responses - unresponded radios end up here too
-            # we use the variable question_id, not the "question_id" in the response_hash
-            responses_hash.delete_if{|k,v| k == "question_id"}.each do |answer_id, response_hash|
-              unless response_hash.delete_if{|k,v| v.blank?}.empty?
-                responses.build({:question_id => question_id, :answer_id => answer_id, :survey_section_id => current_section_id}.merge(response_hash))
-              end
-            end
-          end
-        end
-      end
-
-      def response_group_attributes=(response_attributes)
-        response_attributes.each do |question_id, responses_group_hash|
-          # Response.delete_all(["response_set_id =? AND question_id =?", self.id, question_id])
-          responses_group_hash.each do |response_group_number, group_hash|
-            if (answer_id = group_hash[:answer_id]) # if group_hash has an answer_id key we treat it differently 
-              if (!group_hash[:answer_id].empty?) # dropdowns return empty values in answer_ids if they are not selected
-                #radio or dropdown - only one response
-                responses.build({:question_id => question_id, :answer_id => answer_id, :response_group => response_group_number, :survey_section_id => current_section_id}.merge(group_hash[answer_id] || {}))
-              end
-            else
-              #possibly multiples responses - unresponded radios end up here too
-              # we use the variable question_id in the key, not the "question_id" in the response_hash... same with response_group key
-              group_hash.delete_if{|k,v| (k == "question_id") or (k == "response_group")}.each do |answer_id, inner_hash|
-                unless inner_hash.delete_if{|k,v| v.blank?}.empty?
-                  responses.build({:question_id => question_id, :answer_id => answer_id, :response_group => response_group_number, :survey_section_id => current_section_id}.merge(inner_hash))
-                end
-              end
-            end
-
-          end
-        end
-      end
-
-      def save_responses
-        responses.each{|response| response.save(false)}
-      end
+      # def response_group_attributes=(response_attributes)
+      #   response_attributes.each do |question_id, responses_group_hash|
+      #     # Response.delete_all(["response_set_id =? AND question_id =?", self.id, question_id])
+      #     responses_group_hash.each do |response_group_number, group_hash|
+      #       if (answer_id = group_hash[:answer_id]) # if group_hash has an answer_id key we treat it differently 
+      #         if (!group_hash[:answer_id].empty?) # dropdowns return empty values in answer_ids if they are not selected
+      #           #radio or dropdown - only one response
+      #           responses.build({:question_id => question_id, :answer_id => answer_id, :response_group => response_group_number, :survey_section_id => current_section_id}.merge(group_hash[answer_id] || {}))
+      #         end
+      #       else
+      #         #possibly multiples responses - unresponded radios end up here too
+      #         # we use the variable question_id in the key, not the "question_id" in the response_hash... same with response_group key
+      #         group_hash.delete_if{|k,v| (k == "question_id") or (k == "response_group")}.each do |answer_id, inner_hash|
+      #           unless inner_hash.delete_if{|k,v| v.blank?}.empty?
+      #             responses.build({:question_id => question_id, :answer_id => answer_id, :response_group => response_group_number, :survey_section_id => current_section_id}.merge(inner_hash))
+      #           end
+      #         end
+      #       end
+      # 
+      #     end
+      #   end
+      # end
 
       def complete!
         self.completed_at = Time.now

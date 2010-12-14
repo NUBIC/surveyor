@@ -66,12 +66,10 @@ module Surveyor
           flash[:notice] = t('surveyor.unable_to_find_your_responses')
           redirect_to(available_surveys_path) and return
         end
-
-        if params[:responses] or params[:response_groups]
-          @response_set.clear_responses
-          saved = @response_set.update_attributes(:response_attributes => (params[:responses] || {}).dup ,
-                                                  :response_group_attributes => (params[:response_groups] || {}).dup) #copy (dup) to preserve params because we manipulate params in the response_set methods
-          if (saved && params[:finish])
+        if params[:r] # or params[:response_groups]
+          @response_set.responses_attributes = ResponseSet.reject_or_delete_blanks(params[:r]) || {}
+          saved = @response_set.save
+          if saved && params[:finish]
             @response_set.complete!
             saved = @response_set.save!
           end
@@ -84,6 +82,7 @@ module Surveyor
             redirect_to surveyor_finish
           else
             flash[:notice] = t('surveyor.unable_to_update_survey') if !saved #and !saved.nil? # saved.nil? is true if there are no questions on the page (i.e. if it only contains a label)
+            # logger.warn("\n\nErrors: #{@response_set.errors.full_messages}\n\n")
             redirect_to :action => "edit", :anchor => anchor_from(params[:section]), :params => {:section => section_id_from(params[:section])}
           end
         end
