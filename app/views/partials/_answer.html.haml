@@ -15,7 +15,7 @@
     = g.input :string_value, :label => false if %w(string other_and_string).include? a.response_class
   - when "none"
     - if %w(date datetime time float integer string text).include? a.response_class
-      = g.input :answer_id, :as => :hidden, :value => a.id, :input_html => {:class => a.css_class}
+      = g.input :answer_id, :as => :hidden, :input_html => {:class => a.css_class, :value => a.id}
       = g.input rc_to_attr(a.response_class), :label => a.text
     - else
       = a.text
