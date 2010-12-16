@@ -99,6 +99,14 @@ describe ResponseSet do
       "23" => {"id" => "107", "question_id" => "13", "answer_id" => "231", "string_value" => "hi"} # existing string, unchanged
     }
   end
+  it "should remove responses" do
+    r = @response_set.responses.create(:question_id => 1, :answer_id => 2)
+    r.id.should_not be nil
+    @response_set.should have(1).responses
+    ResponseSet.reject_or_destroy_blanks({"2"=>{"question_id"=>"1", "id"=> r.id, "answer_id"=>[""]}}).should == {"2"=>{"question_id"=>"1", "id"=> r.id, "_destroy"=> "true", "answer_id"=>[""]}}
+    @response_set.update_attributes(:responses_attributes => {"2"=>{"question_id"=>"1", "id"=> r.id, "_destroy"=> "true", "answer_id"=>[""]}}).should be_true
+    @response_set.reload.should have(1).responses
+  end
 end
 
 describe ResponseSet, "with dependencies" do
