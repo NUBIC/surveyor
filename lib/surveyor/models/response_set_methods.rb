@@ -113,8 +113,8 @@ module Surveyor
         dependencies.select{|d| d.is_met?(self) and self.is_unanswered?(d.question)}.map(&:question)
       end
 
-      def all_dependencies
-        arr = dependencies.partition{|d| d.is_met?(self) }
+      def all_dependencies(question_ids = nil)
+        arr = dependencies(question_ids).partition{|d| d.is_met?(self) }
         {:show => arr[0].map{|d| d.question_group_id.nil? ? "q_#{d.question_id}" : "qg_#{d.question_group_id}"}, :hide => arr[1].map{|d| d.question_group_id.nil? ? "q_#{d.question_id}" : "qg_#{d.question_group_id}"}}
       end
 
@@ -126,7 +126,7 @@ module Surveyor
       protected
 
       def dependencies(question_ids = nil)
-        Dependency.all(:include => :dependency_conditions, :conditions => {:dependency_conditions => {:question_id => responses.map(&:question_id)}})
+        Dependency.all(:include => :dependency_conditions, :conditions => {:dependency_conditions => {:question_id => question_ids || responses.map(&:question_id)}})
       end
     end
   end

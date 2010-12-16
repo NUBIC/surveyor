@@ -73,12 +73,13 @@ module Surveyor
           redirect_to :action => "edit", :anchor => anchor_from(params[:section]), :params => {:section => section_id_from(params[:section])}
         end
         format.js do
-          ids, remove = {}, {}
+          ids, remove, question_ids = {}, {}, []
           ResponseSet.reject_or_destroy_blanks(params[:r]).each do |k,v|
             ids[k] = @response_set.responses.find(:first, :conditions => v).id if !v.has_key?("id")
             remove[k] = v["id"] if v.has_key?("id") && v.has_key?("_destroy")
+            question_ids << v["question_id"]
           end
-          render :json => {"ids" => ids, "remove" => remove}.merge(@response_set.all_dependencies)
+          render :json => {"ids" => ids, "remove" => remove}.merge(@response_set.all_dependencies(question_ids))
         end
       end
     end
