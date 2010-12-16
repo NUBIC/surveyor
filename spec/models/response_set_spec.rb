@@ -3,81 +3,69 @@ require File.expand_path(File.dirname(__FILE__) + '/../spec_helper')
 describe ResponseSet do
   before(:each) do
     @response_set = Factory(:response_set)
+    @radio_response_attributes = HashWithIndifferentAccess.new({"1"=>{"question_id"=>"1", "answer_id"=>"1", "string_value"=>"XXL"}, "2"=>{"question_id"=>"2", "answer_id"=>"6"}, "3"=>{"question_id"=>"3", "answer_id"=>""}})
+    @checkbox_response_attributes = HashWithIndifferentAccess.new({"1"=>{"question_id"=>"9", "answer_id"=>"11"}, "2"=>{"question_id"=>"9", "answer_id"=>"12"}})
+    @other_response_attributes = HashWithIndifferentAccess.new({"6"=>{"question_id"=>"6", "answer_id" => "3", "string_value"=>""}, "7"=>{"question_id"=>"7", "answer_id" => "4", "text_value"=>"Brian is tired"}, "5"=>{"question_id"=>"5", "answer_id" => "5", "string_value"=>""}})
   end
+
   it "should have a unique code with length 10 that identifies the survey" do
     @response_set.access_code.should_not be_nil
     @response_set.access_code.length.should == 10
   end
+
   it "is completable" do
     @response_set.completed_at.should be_nil
     @response_set.complete!
     @response_set.completed_at.should_not be_nil
     @response_set.completed_at.is_a?(Time).should be_true
   end
+
   it "does not allow completion through mass assignment" do
     @response_set.completed_at.should be_nil
     @response_set.update_attributes(:completed_at => Time.now)
     @response_set.completed_at.should be_nil
   end
-end
-describe ResponseSet, "Updating the response set" do
-  before(:each) do
-    @response_set = Factory(:response_set)
-    # {"finish"=>"Click here to finish", 
-    #   "_method"=>"put", 
-    #   "action"=>"update", 
-    #   "current_section_id"=>"1", 
-    #   "r"=>{"1"=>{"question_id"=>"2", "answer_id"=>"2"}, 
-    #         "2"=>{"question_id"=>"", "answer_id"=>["", "5"]}, 
-    #         "3"=>{"question_id"=>"", "answer_id"=>[""]}, 
-    #         "4"=>{"question_id"=>"", "answer_id"=>["", "7"]}, 
-    #         "5"=>{"question_id"=>"", "answer_id"=>[""]}}, 
-    #   "controller"=>"surveyor", 
-    #   "survey_code"=>"favorites", 
-    #   "response_set_code"=>"k6bJebfP2v"}
-    @radio_response_attributes = HashWithIndifferentAccess.new({
-      "1"=>{"question_id"=>"1", "answer_id"=>"1", "string_value"=>"XXL"}, 
-      "2"=>{"question_id"=>"2", "answer_id"=>"6"}, 
-      "3"=>{"question_id"=>"3", "answer_id"=>""}
-    })
-    @other_response_attributes = HashWithIndifferentAccess.new({
-      "6"=>{"question_id"=>"6", "answer_id" => "3", "string_value"=>""}, 
-      "7"=>{"question_id"=>"7", "answer_id" => "4", "text_value"=>"Brian is tired"}, 
-      "5"=>{"question_id"=>"5", "answer_id" => "5", "string_value"=>""}   
-    })
-  end
+
   it "should save new responses from radio buttons, ignoring blanks" do
-    @response_set.update_attributes(:responses_attributes => ResponseSet.reject_or_delete_blanks(@radio_response_attributes))
+    @response_set.update_attributes(:responses_attributes => ResponseSet.reject_or_destroy_blanks(@radio_response_attributes))
     @response_set.responses.should have(2).items
     @response_set.responses.detect{|r| r.question_id == 2}.answer_id.should == 6
   end
+
   it "should save new responses from other types, ignoring blanks" do
-    @response_set.update_attributes(:responses_attributes => ResponseSet.reject_or_delete_blanks(@other_response_attributes))
+    @response_set.update_attributes(:responses_attributes => ResponseSet.reject_or_destroy_blanks(@other_response_attributes))
     @response_set.responses.should have(1).items
     @response_set.responses.detect{|r| r.question_id == 7}.text_value.should == "Brian is tired"
   end
+
   it "should ignore data if corresponding radio button is not selected" do
-    @response_set.update_attributes(:responses_attributes => ResponseSet.reject_or_delete_blanks(@radio_response_attributes))
+    @response_set.update_attributes(:responses_attributes => ResponseSet.reject_or_destroy_blanks(@radio_response_attributes))
     @response_set.responses.select{|r| r.question_id == 2}.should have(1).item
     @response_set.responses.detect{|r| r.question_id == 2}.string_value.should == nil
   end
-  it "should preserve data in checkboxes regardless of selection" do
-    pending
+
+  it "should preserve response ids in checkboxes when adding another checkbox" do
+    @response_set.update_attributes(:responses_attributes => ResponseSet.reject_or_destroy_blanks(@checkbox_response_attributes))
+    @response_set.responses.should have(2).items
+    initial_response_ids = @response_set.responses.map(&:id)
+    # adding a checkbox
+    @response_set.update_attributes(:responses_attributes => ResponseSet.reject_or_destroy_blanks({"1"=>{"question_id"=>"9", "answer_id"=>"13"}}))
+    @response_set.responses.should have(3).items
+    (@response_set.responses.map(&:id) - initial_response_ids).size.should == 1
   end
-  describe "association of responses to a survey_section" do
-    before(:each) do
-      @section = Factory(:survey_section) 
-      @response_set.current_section_id = @section.id
-    end
-    # it "should detect existence of responses to questions that belong to a given survey_section" do
-    #   @response_set.update_attributes(:responses_attributes => ResponseSet.reject_or_delete_blanks(@radio_response_attributes))
-    #   @response_set.no_responses_for_section?(@section).should be_false
-    # end
-    # it "should detect absence of responses to questions that belong to a given survey_section" do
-    #   @response_set.update_attributes(:responses_attributes => ResponseSet.reject_or_delete_blanks(@radio_response_attributes)) #responses are associated with @section
-    #   @another_section = Factory(:survey_section) 
-    #   @response_set.no_responses_for_section?(@another_section).should be_true
-    # end
+  
+  it "should preserve response ids in checkboxes when removing another checkbox" do
+    @response_set.update_attributes(:responses_attributes => ResponseSet.reject_or_destroy_blanks(@checkbox_response_attributes))
+    @response_set.responses.should have(2).items
+    initial_response_ids = @response_set.responses.map(&:id)
+    # removing a checkbox, reload the response set
+    @response_set.update_attributes(:responses_attributes => ResponseSet.reject_or_destroy_blanks({"1"=>{"question_id"=>"9", "answer_id"=>"", "id" => initial_response_ids.first}}))
+    @response_set.reload.responses.should have(1).items
+    (initial_response_ids - @response_set.responses.map(&:id)).size.should == 1
+  end
+  it "should clean up a blank or empty hash" do
+    ResponseSet.reject_or_destroy_blanks(nil).should == {}
+    ResponseSet.reject_or_destroy_blanks({}).should == {}
   end
   it "should clean up responses_attributes before passing to nested_attributes" do
     hash_of_hashes = {
@@ -95,10 +83,10 @@ describe ResponseSet, "Updating the response set" do
       "22" => {"id" => "106", "question_id" => "12", "answer_id" => "221", "string_value" => "ho"}, # existing string, changed
       "23" => {"id" => "107", "question_id" => "13", "answer_id" => "231", "string_value" => "hi"} # existing string, unchanged
     }
-    ResponseSet.reject_or_delete_blanks(hash_of_hashes).should == {
+    ResponseSet.reject_or_destroy_blanks(hash_of_hashes).should == {
       # "11" => {"question_id" => "1", "answer_id" => [""]}, # new checkbox, blank
       "12" => {"question_id" => "2", "answer_id" => ["", "124"]}, # new checkbox, checked
-      "13" => {"id" => "101", "question_id" => "3", "answer_id" => [""], "_delete" => "true"}, # existing checkbox, unchecked
+      "13" => {"id" => "101", "question_id" => "3", "answer_id" => [""], "_destroy" => "true"}, # existing checkbox, unchecked
       "14" => {"id" => "102", "question_id" => "4", "answer_id" => ["", "147"]}, # existing checkbox, left alone
       # "15" => {"question_id" => "5", "answer_id" => ""}, # new radio, blank
       "16" => {"question_id" => "6", "answer_id" => "161"}, # new radio, selected
@@ -106,12 +94,11 @@ describe ResponseSet, "Updating the response set" do
       "18" => {"id" => "104", "question_id" => "8", "answer_id" => "181"}, # existing radio, unchanged
       # "19" => {"question_id" => "9", "answer_id" => "191", "string_value" => ""}, # new string, blank
       "20" => {"question_id" => "10", "answer_id" => "201", "string_value" => "hi"}, # new string, filled
-      "21" => {"id" => "105", "question_id" => "11", "answer_id" => "211", "string_value" => "", "_delete" => "true"}, # existing string, cleared
+      "21" => {"id" => "105", "question_id" => "11", "answer_id" => "211", "string_value" => "", "_destroy" => "true"}, # existing string, cleared
       "22" => {"id" => "106", "question_id" => "12", "answer_id" => "221", "string_value" => "ho"}, # existing string, changed
       "23" => {"id" => "107", "question_id" => "13", "answer_id" => "231", "string_value" => "hi"} # existing string, unchanged
     }
   end
-
 end
 
 describe ResponseSet, "with dependencies" do
@@ -133,7 +120,6 @@ describe ResponseSet, "with dependencies" do
     Factory(:dependency_condition, :rule_key => "B", :question_id => @do_you_like_pie.id, :operator => "==", :answer_id => @do_you_like_pie.answers.first.id, :dependency_id => @what_bakery_dep.id)
     # Responses
     @response_set = Factory(:response_set)
-    @response_set.current_section_id = @section.id
     @response_set.responses << Factory(:response, :question_id => @do_you_like_pie.id, :answer_id => @do_you_like_pie.answers.first.id, :response_set_id => @response_set.id)
     @response_set.responses << Factory(:response, :string_value => "pecan pie", :question_id => @what_flavor.id, :answer_id => @what_flavor.answers.first.id, :response_set_id => @response_set.id)
   end
@@ -142,7 +128,7 @@ describe ResponseSet, "with dependencies" do
     @response_set.unanswered_dependencies.should == [@what_bakery]
   end
   it "should list answered and unanswered dependencies to show inline (javascript turned on)" do
-    @response_set.all_dependencies[:show].should == ["question_#{@what_flavor.id}", "question_#{@what_bakery.id}"]
+    @response_set.all_dependencies[:show].should == ["q_#{@what_flavor.id}", "q_#{@what_bakery.id}"]
   end
   
 end
@@ -262,7 +248,6 @@ describe ResponseSet, "exporting csv" do
     @what_bakery.answers << Factory(:answer, :response_class => :string, :question_id => @what_bakery.id)
     # Responses
     @response_set = Factory(:response_set)
-    @response_set.current_section_id = @section.id
     @response_set.responses << Factory(:response, :question_id => @do_you_like_pie.id, :answer_id => @do_you_like_pie.answers.first.id, :response_set_id => @response_set.id)
     @response_set.responses << Factory(:response, :string_value => "pecan pie", :question_id => @what_flavor.id, :answer_id => @what_flavor.answers.first.id, :response_set_id => @response_set.id)
   end

@@ -58,37 +58,27 @@ module Surveyor
     end
 
     def update
-      saved = nil
-      ActiveRecord::Base.transaction do 
-        if @response_set = ResponseSet.find_by_access_code(params[:response_set_code], :include => {:responses => :answer},:lock => true)
-          @response_set.current_section_id = params[:current_section_id]
-        else
-          flash[:notice] = t('surveyor.unable_to_find_your_responses')
-          redirect_to(available_surveys_path) and return
-        end
-        if params[:r] # or params[:response_groups]
-          @response_set.responses_attributes = ResponseSet.reject_or_delete_blanks(params[:r]) || {}
-          saved = @response_set.save
-          if saved && params[:finish]
-            @response_set.complete!
-            saved = @response_set.save!
-          end
-        end
+      @response_set = ResponseSet.find_by_access_code(params[:response_set_code], :include => {:responses => :answer}, :lock => true)
+      return redirect_with_message(available_surveys_path, :notice, t('surveyor.unable_to_find_your_responses')) if @response_set.blank?
+      saved = false
+      ActiveRecord::Base.transaction do
+        saved = @response_set.update_attributes(:responses_attributes => ResponseSet.reject_or_destroy_blanks(params[:r]))
+        saved = @response_set.complete! if saved && params[:finish]
       end
+      return redirect_with_message(surveyor_finish, :notice, t('surveyor.completed_survey')) if saved && params[:finish]
+
       respond_to do |format|
         format.html do
-          if saved && params[:finish]
-            flash[:notice] = t('surveyor.completed_survey')
-            redirect_to surveyor_finish
-          else
-            flash[:notice] = t('surveyor.unable_to_update_survey') if !saved #and !saved.nil? # saved.nil? is true if there are no questions on the page (i.e. if it only contains a label)
-            # logger.warn("\n\nErrors: #{@response_set.errors.full_messages}\n\n")
-            redirect_to :action => "edit", :anchor => anchor_from(params[:section]), :params => {:section => section_id_from(params[:section])}
-          end
+          flash[:notice] = t('surveyor.unable_to_update_survey') unless saved
+          redirect_to :action => "edit", :anchor => anchor_from(params[:section]), :params => {:section => section_id_from(params[:section])}
         end
-        # No redirect needed if we're talking to the page via json
         format.js do
-          render :json => @response_set.all_dependencies.to_json
+          ids, remove = {}, {}
+          ResponseSet.reject_or_destroy_blanks(params[:r]).each do |k,v|
+            ids[k] = @response_set.responses.find(:first, :conditions => v).id if !v.has_key?("id")
+            remove[k] = v["id"] if v.has_key?("id") && v.has_key?("_destroy")
+          end
+          render :json => {"ids" => ids, "remove" => remove}.merge(@response_set.all_dependencies)
         end
       end
     end
@@ -115,6 +105,18 @@ module Surveyor
     end
     def surveyor_finish
       available_surveys_path
+    end
+    
+    def redirect_with_message(path, message_type, message)
+      respond_to do |format|
+        format.html do
+          flash[message_type] = message if !message.blank? and !message_type.blank?
+          redirect_to path
+        end
+        format.js do
+          render :text => message, :status => 403
+        end
+      end
     end
   end
 end

@@ -20,15 +20,14 @@ module Surveyor
 
         # Attributes
         base.send :attr_protected, :completed_at
-        base.send :attr_accessor, :current_section_id
         
         # Class methods
         base.instance_eval do
-          def reject_or_delete_blanks(hash_of_hashes)
+          def reject_or_destroy_blanks(hash_of_hashes)
             result = {}
-            hash_of_hashes.each_pair do |k, hash|
+            (hash_of_hashes || {}).each_pair do |k, hash|
               if has_blank_value?(hash)
-                result.merge!({k => hash.merge("_delete" => "true")}) if hash.has_key?("id")
+                result.merge!({k => hash.merge("_destroy" => "true")}) if hash.has_key?("id")
               else
                 result.merge!({k => hash})
               end
@@ -72,30 +71,6 @@ module Surveyor
         end
         result
       end
-
-      # def response_group_attributes=(response_attributes)
-      #   response_attributes.each do |question_id, responses_group_hash|
-      #     # Response.delete_all(["response_set_id =? AND question_id =?", self.id, question_id])
-      #     responses_group_hash.each do |response_group_number, group_hash|
-      #       if (answer_id = group_hash[:answer_id]) # if group_hash has an answer_id key we treat it differently 
-      #         if (!group_hash[:answer_id].empty?) # dropdowns return empty values in answer_ids if they are not selected
-      #           #radio or dropdown - only one response
-      #           responses.build({:question_id => question_id, :answer_id => answer_id, :response_group => response_group_number, :survey_section_id => current_section_id}.merge(group_hash[answer_id] || {}))
-      #         end
-      #       else
-      #         #possibly multiples responses - unresponded radios end up here too
-      #         # we use the variable question_id in the key, not the "question_id" in the response_hash... same with response_group key
-      #         group_hash.delete_if{|k,v| (k == "question_id") or (k == "response_group")}.each do |answer_id, inner_hash|
-      #           unless inner_hash.delete_if{|k,v| v.blank?}.empty?
-      #             responses.build({:question_id => question_id, :answer_id => answer_id, :response_group => response_group_number, :survey_section_id => current_section_id}.merge(inner_hash))
-      #           end
-      #         end
-      #       end
-      # 
-      #     end
-      #   end
-      # end
-
       def complete!
         self.completed_at = Time.now
       end
@@ -140,20 +115,18 @@ module Surveyor
 
       def all_dependencies
         arr = dependencies.partition{|d| d.is_met?(self) }
-        {:show => arr[0].map{|d| d.question_group_id.nil? ? "question_#{d.question_id}" : "question_group_#{d.question_group_id}"}, :hide => arr[1].map{|d| d.question_group_id.nil? ? "question_#{d.question_id}" : "question_group_#{d.question_group_id}"}}
+        {:show => arr[0].map{|d| d.question_group_id.nil? ? "q_#{d.question_id}" : "qg_#{d.question_group_id}"}, :hide => arr[1].map{|d| d.question_group_id.nil? ? "q_#{d.question_id}" : "qg_#{d.question_group_id}"}}
       end
 
       # Check existence of responses to questions from a given survey_section
       def no_responses_for_section?(section)
-        self.responses.count(:conditions => {:survey_section_id => section.id}) == 0
+        !responses.any?{|r| r.survey_section_id == section.id}
       end
 
       protected
 
       def dependencies(question_ids = nil)
-        question_ids ||= Question.find_all_by_survey_section_id(current_section_id).map(&:id)
-        depdendecy_ids = DependencyCondition.all(:conditions => {:question_id => question_ids}).map(&:dependency_id)
-        Dependency.find(depdendecy_ids, :include => :dependency_conditions)
+        Dependency.all(:include => :dependency_conditions, :conditions => {:dependency_conditions => {:question_id => responses.map(&:question_id)}})
       end
     end
   end
