@@ -28,6 +28,16 @@ describe Question, "when creating a new question" do
     @question.pick = nil
     @question.pick.should == nil
   end
+  
+  it "should split the text" do
+    @question.split_text.should == "What is your favorite color?"
+    @question.split_text(:pre).should == "What is your favorite color?"
+    @question.split_text(:post).should == ""
+    @question.text = "before|after|extra"
+    @question.split_text.should == "before|after|extra"
+    @question.split_text(:pre).should == "before"
+    @question.split_text(:post).should == "after|extra"
+  end
 end
 
 describe Question, "that has answers" do

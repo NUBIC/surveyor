@@ -21,5 +21,15 @@ describe Answer, "when creating a new answer" do
     @answer.is_exclusive = true
     @answer.css_class.should == "exclusive foo bar"
   end
-    
+  
+  it "should hide the label when hide_label is set" do
+    @answer.split_or_hidden_text.should == "Red"
+    @answer.hide_label = true
+    @answer.split_or_hidden_text.should == ""
+  end
+  it "should split up pre/post labels" do
+    @answer.text = "before|after|extra"
+    @answer.split_or_hidden_text(:pre).should == "before"
+    @answer.split_or_hidden_text(:post).should == "after|extra"
+  end
 end

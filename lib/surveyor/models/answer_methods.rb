@@ -39,6 +39,11 @@ module Surveyor
         [(is_exclusive ? "exclusive" : nil), custom_class].compact.join(" ")
       end
       
+      def split_or_hidden_text(part = nil)
+        return "" if hide_label.to_s == "true"
+        part == :pre ? text.split("|",2)[0] : (part == :post ? text.split("|",2)[1] : text)
+      end
+      
     end
   end
 end

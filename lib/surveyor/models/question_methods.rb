@@ -65,7 +65,11 @@ module Surveyor
       def solo?
         self.question_group.nil?
       end
-
+      
+      def split_text(part = nil)
+        (part == :pre ? text.split("|",2)[0] : (part == :post ? text.split("|",2)[1] : text)).to_s
+      end
+      
       def renderer(g = question_group)
         r = [g ? g.renderer.to_s : nil, display_type].compact.join("_")
         r.blank? ? :default : r.to_sym
