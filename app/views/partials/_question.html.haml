@@ -1,6 +1,7 @@
--# TODO: js for slider pre/post text for question in a grid
+-# TODO: js for slider
+- rg ||= nil
 - renderer = q.renderer(g ||= nil)
-- f.inputs q_text(q), :id => "q_#{q.id}", :class => "q_#{renderer} #{q.css_class(@response_set)}" do
+- f.inputs q_text(q), :id => rg ? "q_#{q.id}_#{rg.id}" : "q_#{q.id}", :class => "q_#{renderer} #{q.css_class(@response_set)}" do
   %span.help= q.help_text
   - case renderer
   - when :image, :label
@@ -9,7 +10,7 @@
     - i = response_idx
     - f.semantic_fields_for i, r do |g|
       = g.input :question_id, :as => :hidden
-      = g.input :answer_id, :collection => q.answers.map{|a| [a.text, a.id]}, :label => false
+      = g.input :answer_id, :as => :select, :collection => q.answers.map{|a| [a.text, a.id]}, :label => false
   - else # :default, :inline, :inline_default
     - if q.pick == "one"
       - r = response_for(@response_set, q)

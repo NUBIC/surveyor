@@ -1,4 +1,4 @@
--# TODO: disabled, hide_label, prefix/post labels
+-# TODO: disabled
 - r = response_for(@response_set, q, a)
 - i = response_idx(q.pick != "one") # argument will be false (don't increment i) if we're on radio buttons
 - f.semantic_fields_for i, r do |g|
@@ -16,6 +16,7 @@
   - when "none"
     - if %w(date datetime time float integer string text).include? a.response_class
       = g.input :answer_id, :as => :hidden, :input_html => {:class => a.css_class, :value => a.id}
-      = g.input rc_to_attr(a.response_class), :label => a.text
+      = g.input rc_to_attr(a.response_class), :label => a.split_or_hidden_text(:pre)
+      %label{:for => "r_#{i}_#{rc_to_attr(a.response_class)}"}= a.split_or_hidden_text(:post)
     - else
       = a.text
