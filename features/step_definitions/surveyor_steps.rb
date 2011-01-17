@@ -44,6 +44,16 @@ Then /^there should be (\d+) dependenc(?:y|ies) with:$/ do |x, table|
   end
 end
 
+Then /^there should be (\d+) group dependenc(?:y|ies) with:$/ do |x, table|
+  Dependency.count(:conditions => ["question_group_id NOT NULL"]).should == x.to_i
+  table.hashes.each do |hash|
+    (d = Dependency.find(:first, :conditions => hash)).should_not be_nil
+    d.question_group_id.should_not be_nil
+    d.question_id.should be_nil
+  end
+end
+
+
 Then /^there should be (\d+) resolved dependency_condition(?:s?) with:$/ do |x, table|
   DependencyCondition.count.should == x.to_i
   table.hashes.each do |hash|

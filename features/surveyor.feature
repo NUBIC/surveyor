@@ -155,3 +155,37 @@ Feature: Survey creation
     And there should be 2 validation_conditions with:
       | rule_key | integer_value |
       | A        | 0             |
+  Scenario: Group dependencies
+    Given I parse
+    """
+      survey "Group dependencies" do
+        section "Meds" do
+          repeater "Medication regimen (PPI)" do
+            dependency :rule => "A"
+            condition_A :q_dayone_1, "==", :a_2
+              q_dayone_2 "Medication", :pick=> :one, :display_type => :dropdown
+                a_0 "None"
+                a_1 "Dexlansoprazole (Kapidex)"
+                a_2 "Esomeprazole (Nexium)"
+                a_3 "Lansoprazole (Prevacid)"
+                a_4 "Omeprazole (Prilosec)"
+                a_5 "Omeprazole, Sodium Bicarbonate (Zegerid)"
+                a_6 "Pantoprazole (Protonix)"
+                a_7 "Rabeprazole (Aciphex)"
+                a_8 "Other", :string
+
+              q_dayone_3 "Dose (mg)"
+                a :string
+              q_dayone_4 "Frequency", :pick => :one, :display_type => :dropdown
+                a_1 "Daily (AM)"
+                a_2  "Daily (PM)"
+                a_3 "Twice daily"
+          end
+        end
+      end
+    """
+    And there should be 1 group dependency with:
+      | rule |
+      | A    |
+      
+    

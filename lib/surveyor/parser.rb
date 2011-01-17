@@ -152,7 +152,11 @@ class Dependency < ActiveRecord::Base
     context.delete_if{|k,v| %w(dependency dependency_condition).map(&:to_sym).include? k}
     
     # build and set context
-    context[:dependency] = context[:question].build_dependency({ :question_group => context[:question_group]}.merge(args[0] || {}))
+    if context[:question]
+      context[:dependency] = context[:question].build_dependency({:question_group => context[:question_group]}.merge(args[0] || {}))
+    elsif context[:question_group]
+      context[:dependency] = context[:question_group].build_dependency(args[0] || {})
+    end
   end
 end
 class DependencyCondition < ActiveRecord::Base
