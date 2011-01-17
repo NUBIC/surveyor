@@ -5,11 +5,11 @@
 
 Gem::Specification.new do |s|
   s.name = %q{surveyor}
-  s.version = "0.18.0"
+  s.version = "0.18.1"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Brian Chamberlain", "Mark Yoon"]
-  s.date = %q{2010-12-01}
+  s.date = %q{2011-01-17}
   s.email = %q{yoon@northwestern.edu}
   s.extra_rdoc_files = [
     "README.md"
@@ -18,8 +18,6 @@ Gem::Specification.new do |s|
     ".gitignore",
      ".rvmrc",
      "CHANGELOG",
-     "Gemfile",
-     "Gemfile.lock",
      "MIT-LICENSE",
      "README.md",
      "Rakefile",
@@ -52,6 +50,7 @@ Gem::Specification.new do |s|
      "app/views/surveyor/edit.html.haml",
      "app/views/surveyor/new.html.haml",
      "app/views/surveyor/show.html.haml",
+     "ci-env.sh",
      "config/routes.rb",
      "features/redcap.feature",
      "features/step_definitions/surveyor_steps.rb",
@@ -140,8 +139,8 @@ Gem::Specification.new do |s|
      "generators/surveyor/templates/migrate/create_validations.rb",
      "generators/surveyor/templates/surveys/kitchen_sink_survey.rb",
      "generators/surveyor/templates/tasks/surveyor.rb",
-     "init.rb",
-     "install.rb",
+     "hudson.rakefile",
+     "init_testbed.rakefile",
      "lib/surveyor.rb",
      "lib/surveyor/acts_as_response.rb",
      "lib/surveyor/common.rb",
@@ -182,11 +181,9 @@ Gem::Specification.new do |s|
      "spec/rcov.opts",
      "spec/spec.opts",
      "spec/spec_helper.rb",
-     "spec/test_Gemfile",
-     "spec/test_boot.rb",
-     "spec/test_preinitializer.rb",
      "spec/views/surveyor/show.html.haml_spec.rb",
      "surveyor.gemspec",
+     "testbed/Gemfile",
      "uninstall.rb"
   ]
   s.homepage = %q{http://github.com/breakpointer/surveyor}
@@ -213,51 +210,6 @@ Gem::Specification.new do |s|
      "spec/models/validation_condition_spec.rb",
      "spec/models/validation_spec.rb",
      "spec/spec_helper.rb",
-     "spec/test_app/app/controllers/application_controller.rb",
-     "spec/test_app/app/helpers/application_helper.rb",
-     "spec/test_app/config/boot.rb",
-     "spec/test_app/config/environment.rb",
-     "spec/test_app/config/environments/cucumber.rb",
-     "spec/test_app/config/environments/development.rb",
-     "spec/test_app/config/environments/production.rb",
-     "spec/test_app/config/environments/test.rb",
-     "spec/test_app/config/initializers/backtrace_silencers.rb",
-     "spec/test_app/config/initializers/cookie_verification_secret.rb",
-     "spec/test_app/config/initializers/inflections.rb",
-     "spec/test_app/config/initializers/mime_types.rb",
-     "spec/test_app/config/initializers/new_rails_defaults.rb",
-     "spec/test_app/config/initializers/session_store.rb",
-     "spec/test_app/config/preinitializer.rb",
-     "spec/test_app/config/routes.rb",
-     "spec/test_app/db/migrate/20101119172426_create_surveys.rb",
-     "spec/test_app/db/migrate/20101119172427_create_survey_sections.rb",
-     "spec/test_app/db/migrate/20101119172428_create_questions.rb",
-     "spec/test_app/db/migrate/20101119172429_create_question_groups.rb",
-     "spec/test_app/db/migrate/20101119172430_create_answers.rb",
-     "spec/test_app/db/migrate/20101119172431_create_response_sets.rb",
-     "spec/test_app/db/migrate/20101119172432_create_responses.rb",
-     "spec/test_app/db/migrate/20101119172433_create_dependencies.rb",
-     "spec/test_app/db/migrate/20101119172434_create_dependency_conditions.rb",
-     "spec/test_app/db/migrate/20101119172435_create_validations.rb",
-     "spec/test_app/db/migrate/20101119172436_create_validation_conditions.rb",
-     "spec/test_app/db/migrate/20101119172437_add_display_order_to_surveys.rb",
-     "spec/test_app/db/migrate/20101119172438_add_correct_answer_id_to_questions.rb",
-     "spec/test_app/db/migrate/20101119172439_add_index_to_response_sets.rb",
-     "spec/test_app/db/migrate/20101119172440_add_index_to_surveys.rb",
-     "spec/test_app/db/migrate/20101119172441_add_unique_indicies.rb",
-     "spec/test_app/db/migrate/20101119172442_add_section_id_to_responses.rb",
-     "spec/test_app/db/schema.rb",
-     "spec/test_app/db/seeds.rb",
-     "spec/test_app/features/step_definitions/web_steps.rb",
-     "spec/test_app/features/support/env.rb",
-     "spec/test_app/features/support/paths.rb",
-     "spec/test_app/lib/tasks/surveyor.rb",
-     "spec/test_app/spec/spec_helper.rb",
-     "spec/test_app/surveys/kitchen_sink_survey.rb",
-     "spec/test_app/test/performance/browsing_test.rb",
-     "spec/test_app/test/test_helper.rb",
-     "spec/test_boot.rb",
-     "spec/test_preinitializer.rb",
      "spec/views/surveyor/show.html.haml_spec.rb"
   ]
 
@@ -268,13 +220,16 @@ Gem::Specification.new do |s|
     if Gem::Version.new(Gem::VERSION) >= Gem::Version.new('1.2.0') then
       s.add_runtime_dependency(%q<haml>, [">= 0"])
       s.add_runtime_dependency(%q<fastercsv>, [">= 0"])
+      s.add_development_dependency(%q<yard>, [">= 0"])
     else
       s.add_dependency(%q<haml>, [">= 0"])
       s.add_dependency(%q<fastercsv>, [">= 0"])
+      s.add_dependency(%q<yard>, [">= 0"])
     end
   else
     s.add_dependency(%q<haml>, [">= 0"])
     s.add_dependency(%q<fastercsv>, [">= 0"])
+    s.add_dependency(%q<yard>, [">= 0"])
   end
 end
 
