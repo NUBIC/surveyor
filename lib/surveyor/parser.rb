@@ -138,6 +138,7 @@ class Question < ActiveRecord::Base
     if context[:question_group] && context[:question_group].display_type == "grid"
       (context[:grid_answers] || []).each do |grid_answer|
         a = context[:question].answers.build(grid_answer.attributes)
+        context[:answer_references][reference_identifier] ||= {} unless reference_identifier.blank?
         context[:answer_references][reference_identifier][grid_answer.reference_identifier] = a unless reference_identifier.blank? or grid_answer.reference_identifier.blank?
       end
     end
