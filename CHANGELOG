@@ -1,3 +1,22 @@
+0.18.1
+
+* group dependencies. closes #96
+* fixing grid answers error with parser. closes #95
+* prevent double inclusion of validations
+* cleaner setup for hudson
+* only resolve dependencies during redcap parsing
+* forgot to uncomment
+* fix hudson env setup
+* setup hudson env after rails
+* add hudson env to testbed init
+* ci setup
+* changing path for features files with new testbed
+* don't double include model methods in unparser
+* new testbed setup
+* don't double include model methods in unparser
+* don't double include model methods in redcap parser
+* don't double include model methods
+
 0.18.0
 
 * finalizing redcap feature. parse dependencies. closes #93
