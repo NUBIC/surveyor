@@ -58,3 +58,12 @@ describe Validation, "reporting its status" do
     
   end
 end
+describe Validation, "with conditions" do
+  @validation = Factory(:validation)
+  Factory(:validation_condition, :validation => @validation, :rule_key => "A")
+  Factory(:validation_condition, :validation => @validation, :rule_key => "B")
+  Factory(:validation_condition, :validation => @validation, :rule_key => "C")
+  v_ids = @validation.validation_conditions.map(&:id)
+  @validation.destroy
+  v_ids.each{|id| DependencyCondition.find_by_id(id).should == nil}
+end

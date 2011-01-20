@@ -45,7 +45,11 @@ describe Survey, "that has sections" do
     @survey.sections_with_questions.map(&:questions).flatten.should have(4).questions
     @survey.sections_with_questions.map(&:questions).flatten.should == [@q4,@q1,@q3,@q2]
   end
-
+  it "should delete survey sections when it is deleted" do
+    section_ids = @survey.sections.map(&:id)
+    @survey.destroy
+    section_ids.each{|id| SurveySection.find_by_id(id).should be_nil}
+  end
 end
 
 # Methods

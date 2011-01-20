@@ -30,4 +30,10 @@ describe SurveySection, "with questions" do
     @survey_section.questions.should have(3).questions
     @survey_section.questions.should == [@q2,@q3,@q1]
   end
+  it "should delete questions when it is deleted" do
+    question_ids = @survey_section.questions.map(&:id)
+    @survey_section.destroy
+    question_ids.each{|id| Question.find_by_id(id).should be_nil}
+  end
+  
 end

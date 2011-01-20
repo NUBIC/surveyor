@@ -45,7 +45,11 @@ describe Question, "that has answers" do
   it "should retrieve those answers in display_order" do
     @question.answers.map(&:display_order).should == [1,2,3]
   end
-  
+  it "should delete answers when it is deleted" do
+    answer_ids = @question.answers.map(&:id)
+    @question.destroy
+    answer_ids.each{|id| Answer.find_by_id(id).should be_nil}
+  end
 end
 
 describe Question, "when interacting with an instance" do
@@ -80,6 +84,11 @@ describe Question, "with dependencies" do
     @dependency.stub!(:is_met?).with(@rs).and_return(true)
     @question.stub!(:dependency).and_return(@dependency)
     @question.triggered?(@rs).should == true
+  end
+  it "should delete dependency when it is deleted" do
+    dep_id = Factory(:dependency, :question => @question).id
+    @question.destroy
+    Dependency.find_by_id(dep_id).should be_nil
   end
   
 end

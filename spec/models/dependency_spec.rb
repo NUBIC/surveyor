@@ -77,5 +77,13 @@ describe Dependency, "when evaluating dependency conditions of a question in a r
     @dep3.conditions_hash(@response_set).should == {:A => true, :B => false}
     @dep4.conditions_hash(@response_set).should == {:A => true, :B => false, :C => true}
   end
-
+end
+describe Dependency, "with conditions" do
+  @dependency = Dependency.new(:rule => "A and B and C", :question_id => 1)
+  Factory(:dependency_condition, :dependency => @dependency, :rule_key => "A")
+  Factory(:dependency_condition, :dependency => @dependency, :rule_key => "B")
+  Factory(:dependency_condition, :dependency => @dependency, :rule_key => "C")
+  dc_ids = @dependency.dependency_conditions.map(&:id)
+  @dependency.destroy
+  dc_ids.each{|id| DependencyCondition.find_by_id(id).should == nil}
 end

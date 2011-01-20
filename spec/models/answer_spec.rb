@@ -26,5 +26,10 @@ describe Answer, "when creating a new answer" do
     @answer.response_class = "B"
     @answer.renderer.should == :a_b
   end
-    
+  it "should delete validation when it is deleted" do
+    v_id = Factory(:validation, :answer => @answer).id
+    @answer.destroy
+    Validation.find_by_id(v_id).should be_nil
+  end
+  
 end
