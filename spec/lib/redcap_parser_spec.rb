@@ -45,4 +45,9 @@ describe Surveyor::RedcapParser do
     Dependency.decompose_component('[initial_119(2)] = "1"').should == {:question_reference => 'initial_119', :operator => '==', :answer_reference => '2'}
     Dependency.decompose_component('[f1_q15] >= 21').should == {:question_reference => 'f1_q15', :operator => '>=', :integer_value => '21'}
   end
+  it "should return a survey object" do
+    x = %("Variable / Field Name","Form Name","Field Units","Section Header","Field Type","Field Label","Choices OR Calculations","Field Note","Text Validation Type","Text Validation Min","Text Validation Max",Identifier?,"Branching Logic (Show field only if...)","Required Field?"\nstudy_id,demographics,,,text,"Study ID",,,,,,,,)
+    Surveyor::RedcapParser.new.parse(x, "redcaptest").is_a?(Survey).should be_true
+  end
+  
 end

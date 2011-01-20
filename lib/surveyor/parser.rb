@@ -7,7 +7,7 @@ module Surveyor
     # Class methods
     def self.parse(str)
       puts
-      Surveyor::Parser.new.instance_eval(str)
+      Surveyor::Parser.new.parse(str)
       puts
     end
 
@@ -15,7 +15,10 @@ module Surveyor
     def initialize
       self.context = {}
     end
-    
+    def parse(str)
+      instance_eval(str)
+      return context[:survey]
+    end
     # This method_missing does all the heavy lifting for the DSL
     def method_missing(missing_method, *args, &block)
       method_name, reference_identifier = missing_method.to_s.split("_", 2)
@@ -37,7 +40,7 @@ module Surveyor
           puts
           print context[type.to_sym].save ? "saved. " : " not saved! #{context[type.to_sym].errors.each_full{|x| x }.join(", ")} "
         end
-        context[type.to_sym].clear(context)
+        context[type.to_sym].clear(context) unless type == 'survey'
       end
     end
     

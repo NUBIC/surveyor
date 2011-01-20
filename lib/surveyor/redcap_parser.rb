@@ -39,6 +39,7 @@ module Surveyor
         puts = "Oops. Not a valid CSV file."
       # ensure
       end
+      return context[:survey]
     end
     def missing_columns(r)
       required_columns - r.headers.map(&:to_s)
