@@ -163,6 +163,14 @@ class DependencyCondition < ActiveRecord::Base
 end
 class Answer < ActiveRecord::Base
   def self.build_and_set(context, r)
+    case r[:field_type]
+    when "text"
+      context[:answer] = context[:question].answers.build(:response_class => "string", :text => "Text")
+    when "notes"
+      context[:answer] = context[:question].answers.build(:response_class => "text", :text => "Notes")
+    when "file"
+      puts "\n!!! skipping answer: file"
+    end
     r[:choices_or_calculations].to_s.split("|").each do |pair|
       aref, atext = pair.strip.split(", ")
       if aref.blank? or atext.blank?
@@ -199,24 +207,24 @@ class Validation < ActiveRecord::Base
       when "email"
         context[:question].answers.each do |a|
           context[:validation] = a.validations.build(:rule => "A")
-          context[:validation].validation_conditions.build(:rule_key => "A", :operator => "=~", :regexp_value => "^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$")
+          context[:validation].validation_conditions.build(:rule_key => "A", :operator => "=~", :regexp => "^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$")
         end
       when "integer"
         context[:question].display_type = :integer if context[:question].display_type == :string
         context[:question].answers.each do |a|
           context[:validation] = a.validations.build(:rule => "A")
-          context[:validation].validation_conditions.build(:rule_key => "A", :operator => "=~", :regexp_value => "\d+")
+          context[:validation].validation_conditions.build(:rule_key => "A", :operator => "=~", :regexp => "\d+")
         end
       when "number"
         context[:question].display_type = :float if context[:question].display_type == :string
         context[:question].answers.each do |a|
           context[:validation] = a.validations.build(:rule => "A")
-          context[:validation].validation_conditions.build(:rule_key => "A", :operator => "=~", :regexp_value => "^\d*(,\d{3})*(\.\d*)?$")
+          context[:validation].validation_conditions.build(:rule_key => "A", :operator => "=~", :regexp => "^\d*(,\d{3})*(\.\d*)?$")
         end
       when "phone"
         context[:question].answers.each do |a|
           context[:validation] = a.validations.build(:rule => "A")
-          context[:validation].validation_conditions.build(:rule_key => "A", :operator => "=~", :regexp_value => "\d{3}.*\d{4}")
+          context[:validation].validation_conditions.build(:rule_key => "A", :operator => "=~", :regexp => "\d{3}.*\d{4}")
         end
       end
     end

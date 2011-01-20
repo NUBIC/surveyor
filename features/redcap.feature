@@ -9,7 +9,7 @@ Feature: Survey creation
       ||
     And there should be 143 questions with:
       ||
-    And there should be 161 answers with:
+    And there should be 233 answers with:
       ||
     And there should be 3 resolved dependency_conditions with:
       ||
