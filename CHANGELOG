@@ -1,3 +1,9 @@
+0.18.2
+
+* redcap text and string answers. closes #99
+* return survey objects from parsers. closes #98
+* delete survey components when deleting survey. closes #97
+
 0.18.1
 
 * group dependencies. closes #96
