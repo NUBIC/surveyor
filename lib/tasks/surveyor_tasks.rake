@@ -60,6 +60,18 @@ namespace :surveyor do
       puts "There are no surveys without response sets"      
     end
   end
+
+  desc "dump all responses to a given survey"
+  task :dump => :environment do
+    survey = Survey.find_by_access_code(ENV["SURVEY_ACCESS_CODE"])
+    raise "No Survey found with code " + ENV["SURVEY_ACCESS_CODE"] unless survey
+    File.open("#{survey.access_code}_#{Time.now.to_i}.csv", 'w') do |f| 
+      survey.response_sets.each_with_index do |r, index|
+        print_header = (index == 0) # print_header only once 
+        f.write(r.to_csv(print_header))
+      end
+    end
+  end
 end
 
 namespace :spec do
