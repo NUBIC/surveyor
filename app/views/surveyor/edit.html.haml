@@ -1,13 +1,16 @@
 #surveyor
+  - unless (types = flash.keys.select{|k| [:notice, :error, :warning].include?(k)}).blank?
+    .surveyor_flash
+      = flash_messages(types)
+      .close
   - semantic_form_for(:r, @response_set, :url => update_my_survey_path, :html => {:method => :put, :id => "survey_form", :class => @survey.custom_class}) do |f|
-    = render 'partials/section_menu' unless @sections.size < 3
-    #header.title= @survey.title
+    = render 'partials/section_menu' #unless @sections.size < 3
+    .survey_title= @survey.title
     .previous_section= previous_section
     = render 'partials/dependents' unless @dependents.empty?
-    
     - if @response_set.no_responses_for_section?(@section) # cache if response_set has no responses for current section
       = cache("section_#{@section.id}"){ render "/partials/section", :f => f }
     - else # no cache
       = render "/partials/section", :f => f
     .next_section= next_section
-      
+  %br

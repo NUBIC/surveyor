@@ -4,12 +4,15 @@ module SurveyorHelper
     surveyor_stylsheets + surveyor_javascripts    
   end
   def surveyor_stylsheets
-    stylesheet_link_tag 'surveyor/reset', 'surveyor', 'surveyor/ui.theme.css','surveyor/jquery-ui-slider-additions'
+    stylesheet_link_tag 'surveyor/reset', 'surveyor'
   end
   def surveyor_javascripts
-    javascript_include_tag 'surveyor/jquery-1.2.6.js', 'surveyor/jquery-ui-personalized-1.5.3.js', 'surveyor/accessibleUISlider.jQuery.js','surveyor/jquery.form.js', 'surveyor/surveyor.js'
+    javascript_include_tag 'surveyor/jquery.tools.min', 'surveyor/jquery.surveyor'
   end
-  
+  # Helper for displaying warning/notice/error flash messages
+  def flash_messages(types)
+    types.map{|type| content_tag(:div, "#{flash[type]}".html_safe, :class => type.to_s)}.join.html_safe
+  end
   # Section: dependencies, menu, previous and next
   def dependency_explanation_helper(question,response_set)
     # Attempts to explain why this dependent question needs to be answered by referenced the dependent question and users response

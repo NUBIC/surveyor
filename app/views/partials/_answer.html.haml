@@ -2,21 +2,16 @@
 - r = response_for(@response_set, q, a)
 - i = response_idx(q.pick != "one") # argument will be false (don't increment i) if we're on radio buttons
 - f.semantic_fields_for i, r do |g|
-  = g.input :question_id, :as => :hidden unless q.pick == "one" # don't repeat question_id if we're on radio buttons
-  = g.input :id, :as => :hidden unless q.pick == "one" or r.new_record?
+  = g.quiet_input :question_id unless q.pick == "one" # don't repeat question_id if we're on radio buttons
+  = g.quiet_input :id unless q.pick == "one" or r.new_record?
   - case q.pick
   - when "one"
-    = g.input :answer_id, :as => :radio, :collection => [[a.text, a.id]], :label => false, :input_html => {:class => a.css_class}
-    = g.input :string if a.response_class == 'string'
-    = g.input :integer if a.response_class == 'integer'
+    = g.input :answer_id, :as => :surveyor_radio, :collection => [[a.text, a.id]], :label => false, :input_html => {:class => a.css_class}, :response_class => a.response_class
   - when "any"
-    = g.input :answer_id, :as => :check_boxes, :collection => [[a.text, a.id]], :label => false, :input_html => {:class => a.css_class}
-    = g.input :other_value, :label => false if a.response_class == "other_and_string"
-    = g.input :string_value, :label => false if %w(string other_and_string).include? a.response_class
+    = g.input :answer_id, :as => :surveyor_check_boxes, :collection => [[a.text, a.id]], :label => false, :input_html => {:class => a.css_class}, :response_class => a.response_class
   - when "none"
     - if %w(date datetime time float integer string text).include? a.response_class
-      = g.input :answer_id, :as => :hidden, :input_html => {:class => a.css_class, :value => a.id}
-      = g.input rc_to_attr(a.response_class), :label => a.split_or_hidden_text(:pre)
-      %label{:for => "r_#{i}_#{rc_to_attr(a.response_class)}"}= a.split_or_hidden_text(:post)
+      = g.quiet_input :answer_id, :input_html => {:class => a.css_class, :value => a.id}
+      = g.input rc_to_attr(a.response_class), :label => a.split_or_hidden_text(:pre).blank? ? false : a.split_or_hidden_text(:pre), :hint => a.split_or_hidden_text(:post)
     - else
       = a.text
