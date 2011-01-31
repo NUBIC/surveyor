@@ -1,28 +1,16 @@
 #surveyor
-  - form_tag(update_my_survey_path, :method => :put, :id => "survey_form", :class => @survey.custom_class) do
-    = hidden_field_tag :current_section_id, @section.id
-    - unless @sections.size < 3
-      #menu
-        = t('surveyor.sections')
-        %ul
-          - @sections.each do |s|
-            %li{:class => ("active" if s == @section)}= menu_button_for(s)
-    #header
-      .title= @survey.title
+  - unless (types = flash.keys.select{|k| [:notice, :error, :warning].include?(k)}).blank?
+    .surveyor_flash
+      = flash_messages(types)
+      .close
+  - semantic_form_for(:r, @response_set, :url => update_my_survey_path, :html => {:method => :put, :id => "survey_form", :class => @survey.custom_class}) do |f|
+    = render 'partials/section_menu' #unless @sections.size < 3
+    .survey_title= @survey.title
     .previous_section= previous_section
-    - unless @dependents.empty?
-      #dependents
-        .title Follow-up questions from your answers on the previous page
-        -# @dependents.each_with_index do |question, index|
-          = dependency_explanation_helper(question, @response_set)
-          = render(:partial => question.custom_renderer || "/partials/question", :locals => {:question => question, :response_set => @response_set, :number => "D#{index+1}"})
-    -# cache section if there are no responses for that section in th current response_set
-    - if @response_set.no_responses_for_section?(@section)
-      - cache("section_#{@section.id}") do
-        -# cache
-        = render(:partial => "/partials/section", :locals => {:section => @section, :questions => @questions, :response_set => @response_set})
-    - else
-      -# no cache
-      = render(:partial => "/partials/section", :locals => {:section => @section, :questions => @questions, :response_set => @response_set})
+    = render 'partials/dependents' unless @dependents.empty?
+    - if @response_set.no_responses_for_section?(@section) # cache if response_set has no responses for current section
+      = cache("section_#{@section.id}"){ render "/partials/section", :f => f }
+    - else # no cache
+      = render "/partials/section", :f => f
     .next_section= next_section
-      
+  %br

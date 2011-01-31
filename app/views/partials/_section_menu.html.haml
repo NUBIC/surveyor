@@ -1,0 +1,5 @@
+.surveyor_menu
+  = t('surveyor.sections')
+  %ul
+    - @sections.each do |s|
+      %li{:class => ("active" if s == @section)}= menu_button_for(s)

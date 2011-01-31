@@ -1,243 +1,98 @@
-!main_background_color = #DCDCDC
-!page_color = #FFFFF4 
-!page_text_color = #213E00
-!menus_color = #EBEBCC
-!menus_text_color = #666666
-!headings_color = #213E00
-!headings_text_color = #B1AF03
-!flash_color = #FF0000
-!text_field_color = #fafafa
-!subtle_shift = 16
-!border_shift = 32
-!emphasis_shift = 64
+!background_color = #EEEEEE
+!surveyor_flash_background_color = #FFF1A8
+!surveyor_color = #FFFFF1 
+!surveyor_text_color = #333333
+
+!surveyor_menus_active_color = #EBEBCC
+!surveyor_menus_border_color = #ccc
+
 body
-  :background-color= !main_background_color
-  :font-family Helvetica
-  :word-spacing normal
-  :text-align left
-  :letter-spacing 0
-  :line-height 1.1em
-  :font-size 1em
-#flash
-  :background-color transparent
-  :color= !flash_color
-  :width 98%
-  :position absolute
-  :top 0
-  :left 0
-  :z-index 1000
-  :text-align center
+  :background-color= !background_color
 #surveyor
+  :font-family "Century Gothic"
   :width 960px
-  :padding 1em
+  :padding 20px
   :margin 0 auto
-  :background-color= !page_color
-  :color= !page_text_color
-  #survey_list
-    ul
-      :padding-left 2em
-      :margin-top -2em
-  #menu
-    :width 11.9em
-    :margin 0.65em -1em 0 0
-    :float right
-    ul
-      :padding 0
-      :margin 0
-      :list-style-type none
-      :border-style solid
-      :border-width 1px
-      :border-color= !main_background_color - !border_shift
-      :border-bottom-width 0
-      :border-right-width 0
-      :background-color= !main_background_color
-      :color= !menus_text_color
-      li
-        :border-bottom-style solid
-        :border-bottom-width 1px
-        :border-color= !main_background_color - !border_shift
-      li.active, li.active input[type="submit"]
-        :background-color= !menus_color
-        :color= !menus_text_color - !emphasis_shift
-  #header
-    :font-family "Century Gothic"
-    :padding 0.5em 1em 1em 0.3em
-    :margin 0
+  :text-align left
+  :font-family Helvetica
+  :font-size 100%
+  :background-color= !surveyor_color
+  :color= !surveyor_text_color
+  .surveyor_flash
+    :background-color= !surveyor_flash_background_color
+    :margin 0 auto
+    :padding 5px
+    :width 300px
+    :font-weight bold
+    :text-align center
+  .survey_title
     :font-size 2em
     :font-weight bold
-  .previous_section
-    :font-size 0.8em
-    :margin -0.6em 0 0.5em -1em
-    :padding 0
-    input
-      :background-color= !page_color
-  .next_section
+    :padding 5px 0
+  .surveyor_menu
     :float right
-    :margin -2em 1em 0 0
-  .survey_section
-    :margin 0.5em 0.5em 0.5em -1em
-    :padding 0.5em 0 0 0      
-    .title
-      :font-weight bold
-      :font-size 1.2em
-      :margin 0
-      :padding 0.3em 0.5em 0.1em 1.4em
-      :background-color= !menus_color      
-  p
-    :padding 0.3em
-    :margin 0.5em
-    :margin 0.55em
-  input[type="submit"]
-    :font-size 1.0em
-    :border 0px
-    :padding 0.2em
-    :margin 0.2em
-    :cursor pointer
-    :background-color= !main_background_color
-    :color= !menus_text_color - !border_shift
-  input[type="text"], textarea
-    :border 2px inset #333
-    :border-color= !main_background_color - !border_shift
-    :background-color= !text_field_color
-    :padding 0.1em
-    :margin 0.1em
-    :font-size 0.8em
-  .disabled
-    :color= !page_color - !border_shift
-    input[type="text"], textarea
-      :background-color= !page_color - !subtle_shift
-  input[type="submit"].add_row
-    :padding 0.1em
-    :margin 0em
-    :margin-left -1em
-    :font-size 0.7em
-    :border 1px solid #333
-    :border-color= !main_background_color - !border_shift
-  .questions
-    :margin 0
-    :padding 1em 0.3em
-  .question
-    :margin 0 0 0.6em 0
-    :padding 0.2em
-    legend
-      :width 940px
-      :white-space normal 
-      span
-        :display block
-    .number
-      :padding 0.2em
-      :font-weight bold
-      :font-size 1.2em
-      :letter-spacing 0
-      :float left
-    .text
-      :padding-top 0.2em
-      :font-size 1.1em
-      :line-height 1.2em    
-    .help
-      :font-size 0.8em
-      :font-style italic
-      :color= !page_text_color - !emphasis_shift
-      :display none
-  ol.answers
-    :list-style-type none
-    :padding 0.2em
-    :margin 0 0 0.3em 1.5em
-    li.answer
-      :margin 0.2em
-  ol.answers_inline
-    :margin-left 1.8em
-    :list-style-type none
-    li
-      :display inline 
-      :padding-right 1.5em
-  .label
-    :padding 0.5em 1em
-    :margin 0.5em 1em
-    :line-height 1.4em
-  #dependents
-    :background-color= !page_color - !border_shift
-    .title
-      :padding 0.5em
-      :font-weight bold
-  .dependent
-    :background-color= !page_color - !border_shift
-    :margin-left 1.2em
-  .hidden
-    :display none
-  .column_highlight
-    :background-color= !page_color - !subtle_shift
-  table.grid
-    :margin 0.5em 0.2em 0.5em 1em 
-    th, td
-      :padding 0.2em 0.5em
-      :text-align center
-    td
-      :border-bottom 2px dotted #999
-      :border-color= !page_color - !emphasis_shift
-    th.question_prefix, th.question_postfix
-      :padding 0.2em 0.5em
-      :text-align left
-      :padding 0.2em
-  .question_group
-    :margin 0 0 0.6em 0
-    :padding 0.2em 0.2em 1em 0.2em
-    .head
-      :padding-bottom 0.5em
-      .number
-        :padding 0.2em
-        :font-weight bold
-        :font-size 1.2em
-        :letter-spacing 0       
-        :float left
-      .text
-        :padding-top 0.2em
-        :font-size 1.1em
-        :line-height 1.2em
-      .help
-        :font-size 0.8em
-        :font-style italic
-        :color= !page_text_color - !emphasis_shift
     ul
-      :padding 0.3em
-      :list-style-type none
+      :background-color= !background_color
+      :border= 1px solid !surveyor_menus_border_color
+      :border-bottom-width 0
+      :list-style none
       li
-        :display inline
-        .question
-          :display inline
-          ol.answers
-            :display inline
-            :margin 0.2em
-    ul.repeater
-      :list-style-type none
-    li.repeater
+        :border= 0 solid !surveyor_menus_border_color
+        :border-bottom-width 1px
+      li.active, li.active input[type="submit"]
+        :background-color= !surveyor_menus_active_color
+  .previous_section
+  .next_section
+    :float right  
+  .survey_section
+    span.title
       :display block
-      :clear left
-      .question
-        :float left
-      ol
-        :margin 0
-        :padding 0
-  
-      .question
-        :padding-left 1.2em
-  .inline
-    :display inline
-  //Reducing the question size for questions under a group
-  .group_questions
-    :margin 0.5em 0.2em 0.5em 1em 
-    .question
-      :margin 0
-      :padding 0em 0.3em
-    .text
-      :font-size 0.9em
-    .help
-      :font-size 0.7em
-      :font-style italic
-      :color= !page_text_color - !emphasis_shift
-    .number
-      :padding 0.2em
-      :margin 0 0 0.3em 0
+      :padding 5px 0
       :font-weight bold
-      :font-size 1em
-      :letter-spacing 0
+      :font-size 1.5em
+
+  // question groups
+  fieldset.g_inline fieldset
+    :display inline
+  fieldset.g_grid li.surveyor_radio label
+    :visibility hidden
+    input
+      :visibility visible
+  fieldset.g_repeater
+    ol fieldset
+      :display inline
+    input[type="submit"].add_row
+      :font-size 0.7em    
+  
+  // question groups and questions
+  .survey_section>fieldset>ol
+    :padding-left 1em  
+  fieldset
+    :padding 5px 0 10px 0
+    ol
+      fieldset
+        :vertical-align top
+      li
+        label, input
+          :vertical-align top
+        :padding 1px 0
+        p.inline-hints
+          :margin 0
+          :padding 0
+          :display inline
+      li.inline
+        :display inline
+    &.q_inline ol li
+      :display inline
+    input, textarea, select
+      :margin 0 3px
+    input[type="text"], textarea
+      :font-size 0.8em
+    
+  // buttons
+  input[type="submit"]
+    :font-size 1em
+    :border 0px
+    :padding 5px
+    :cursor pointer
+    :background-color= !background_color

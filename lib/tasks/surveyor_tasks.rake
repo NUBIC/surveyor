@@ -61,17 +61,3 @@ namespace :surveyor do
     end
   end
 end
-
-namespace :spec do
-  namespace :plugins do
-    begin
-      require 'spec/rake/spectask'
-      desc "Runs the examples for surveyor"    
-      Spec::Rake::SpecTask.new(:surveyor) do |t|
-        t.spec_opts = ['--options', "\"#{RAILS_ROOT}/spec/spec.opts\""]
-        t.spec_files = FileList['vendor/plugins/surveyor/spec/**/*_spec.rb']
-      end
-    rescue MissingSourceFile
-    end
-  end  
-end

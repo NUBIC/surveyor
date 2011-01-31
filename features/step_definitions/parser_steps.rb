@@ -1,16 +1,11 @@
-When /^I start the "([^"]*)" survey$/ do |name|
-  When "I go to the surveys page"
-  Then "I should see \"#{name}\""
-  click_button "Take it"
+Given /^I parse$|^the survey$/ do |string|
+  Surveyor::Parser.parse(string)
 end
 
-Then /^there should be (\d+) response set with (\d+) responses with:$/ do |rs_num, r_num, table|
-  ResponseSet.count.should == rs_num.to_i
-  Response.count.should == r_num.to_i
-  # table is a Cucumber::Ast::Table
+Given /^I parse redcap file "([^"]*)"$/ do |name|
+  Surveyor::RedcapParser.parse File.read(File.join(RAILS_ROOT, '..', 'features', 'support', name)), name
 end
 
-<<<<<<< HEAD
 Then /^there should be (\d+) survey(?:s?) with:$/ do |x, table|
   Survey.count.should == x.to_i
   table.hashes.each do |hash|
@@ -49,16 +44,6 @@ Then /^there should be (\d+) dependenc(?:y|ies) with:$/ do |x, table|
   end
 end
 
-Then /^there should be (\d+) group dependenc(?:y|ies) with:$/ do |x, table|
-  Dependency.count(:conditions => ["question_group_id NOT NULL"]).should == x.to_i
-  table.hashes.each do |hash|
-    (d = Dependency.find(:first, :conditions => hash)).should_not be_nil
-    d.question_group_id.should_not be_nil
-    d.question_id.should be_nil
-  end
-end
-
-
 Then /^there should be (\d+) resolved dependency_condition(?:s?) with:$/ do |x, table|
   DependencyCondition.count.should == x.to_i
   table.hashes.each do |hash|
@@ -84,5 +69,3 @@ Then /^there should be (\d+) validation_condition(?:s?) with:$/ do |x, table|
     ValidationCondition.find(:first, :conditions => hash).should_not be_nil
   end
 end
-=======
->>>>>>> formtastic

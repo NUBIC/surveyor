@@ -151,15 +151,15 @@ describe SurveyorController do
     end
     def do_put_with_finish
       responses = {
-         "6"=>{"question_id"=>"6", "20"=>{"string_value"=>"saf"}}, #string
-         "7"=>{"question_id"=>"7", "21"=>{"text_value"=>""}}, #text
-         "1"=>{"question_id"=>"1", "answer_id"=>"1", "4"=>{"string_value"=>""}}, #radio+txt
-         "2"=>{"answer_id"=>"6"}, #radio
-         "3"=>{"answer_id"=>"10"}, #radio
+         "6"=>{"question_id"=>"6", "answer_id" => "6", "string_value"=>"saf"}, #string
+         "7"=>{"question_id"=>"7", "answer_id" => "11", "text_value"=>"foo"}, #text
+         "1"=>{"question_id"=>"1", "answer_id"=>"1", "string_value"=>"bar"}, #radio+txt
+         "2"=>{"question_id"=>"2", "answer_id"=>"6"}, #radio
+         "3"=>{"question_id"=>"3", "answer_id"=>"10"}, #radio
          "4"=>{"question_id"=>"4", "answer_id"=>"15"}, #check
-         "5"=>{"question_id"=>"5", "16"=>{"selected"=>"1"}, "19"=>{"string_value"=>""}} #check+txt
+         "5"=>{"question_id"=>"5", "answer_id"=>"16", "string_value"=>""} #check+txt
       }
-      put :update, :survey_code => "XYZ", :response_set_code => "PDQ", :finish => "finish", :responses => responses
+      put :update, :survey_code => "XYZ", :response_set_code => "PDQ", :finish => "finish", :r => responses
     end
     
     it "should find the response set requested" do
@@ -169,7 +169,6 @@ describe SurveyorController do
     it "should redirect to 'edit' without params" do
       do_put
       response.should redirect_to(:action => :edit)
-      flash[:notice].should == "Unable to update survey"
     end
     it "should complete the found response set on finish" do      
       do_put_with_finish
@@ -181,5 +180,38 @@ describe SurveyorController do
       flash[:notice].should == "Unable to find your responses to the survey"
     end
 
+  end
+  
+  describe "update my survey with ajax" do
+    before(:each) do
+      @survey = Factory(:survey, :title => "XYZ", :access_code => "XYZ")
+      @section = Factory(:survey_section, :survey => @survey)
+      @response_set = Factory(:response_set, :access_code => "PDQ", :survey => @survey)
+      ResponseSet.stub!(:find_by_access_code).and_return(@response_set)
+    end
+    def do_ajax_put(r)
+      xhr :put, :update, :survey_code => "XYZ", :response_set_code => "PDQ", :r => r
+    end
+    it "should return an id for new responses" do
+      do_ajax_put({
+         "2"=>{"question_id"=>"4", "answer_id"=>"14"}, #check
+         "4"=>{"question_id"=>"4", "answer_id"=>"15"} #check
+      })
+      JSON.parse(response.body).should == {"ids" => {"2" => 1, "4" => 2}, "remove" => {}, "show" => [], "hide" => []}
+    end
+    it "should return a delete for when responses are removed" do
+      r = @response_set.responses.create(:question_id => 4, :answer_id => 14)
+      do_ajax_put({
+         "2"=>{"question_id"=>"4", "answer_id"=>"", "id" => r.id} # uncheck
+      })
+      JSON.parse(response.body).should == {"ids" => {}, "remove" => {"2" => r.id}, "show" => [], "hide" => []}
+    end
+    it "should return dependencies" do
+      @response_set.should_receive(:all_dependencies).and_return({"show" => ['q_1'], "hide" => ['q_2']})
+      do_ajax_put({
+        "4"=>{"question_id"=>"9", "answer_id"=>"12"} #check
+      })
+      JSON.parse(response.body).should == {"ids" => {"4" => 1}, "remove" => {}, "show" => ['q_1'], "hide" => ["q_2"]}
+    end
   end
 end

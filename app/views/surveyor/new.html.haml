@@ -1,6 +1,9 @@
 #surveyor
-  #header
-    .title= t ('surveyor.take_these_surveys')
+  - unless (types = flash.keys.select{|k| [:notice, :error, :warning].include?(k)}).blank?
+    .surveyor_flash
+      = flash_messages(types)
+      .close
+  .survey_title= t('surveyor.take_these_surveys')
   %br
   #survey_list
     %ul
@@ -10,7 +13,7 @@
             - form_tag(take_survey_path(:survey_code => survey.access_code)) do 
               = survey.title
               &nbsp;
-              = submit_tag( t ('surveyor.take_it') )
+              = submit_tag( t('surveyor.take_it') )
       - else
         %li
           No surveys

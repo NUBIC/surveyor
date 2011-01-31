@@ -22,4 +22,5 @@ pkg
 testbed/log/*.log
 testbed/db/*
 testbed/.bundle
+testbed/*
 surveys/fixtures/*.yml

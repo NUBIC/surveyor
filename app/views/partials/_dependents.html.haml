@@ -1,0 +1,5 @@
+#dependents
+  .title Follow-up questions from your answers on the previous page
+  -# @dependents.each_with_index do |question, index|
+    = dependency_explanation_helper(question, @response_set)
+    = render question.custom_renderer || "/partials/question", :question => question, :response_set => @response_set, :number => "D#{index+1}"

@@ -1,82 +1,77 @@
 require File.expand_path(File.dirname(__FILE__) + '/../spec_helper')
 
 
-describe DependencyCondition, "Class methods" do
+describe DependencyCondition do
   it "should have a list of operators" do
     %w(== != < > <= >=).each do |operator|
       DependencyCondition.operators.include?(operator).should be_true
     end
-  end
-end
-
-describe DependencyCondition, "instance" do
-  before(:each) do
-    @dependency_condition = DependencyCondition.new(:dependency_id => 1, :question_id => 45, :operator => "==", :answer_id => 23, :rule_key => "1")
-  end
-
-  it "should be valid" do
-    @dependency_condition.should be_valid
-  end
-
-  it "should be invalid without a parent dependency_id, question_id" do
-    # this causes issues with building and saving
-    # @dependency_condition.dependency_id = nil
-    # @dependency_condition.should have(1).errors_on(:dependency_id)
-    # @dependency_condition.question_id = nil
-    # @dependency_condition.should have(1).errors_on(:question_id)
-  end
-
-  it "should be invalid without an operator" do
-    @dependency_condition.operator = nil
-    @dependency_condition.should have(2).errors_on(:operator)
-  end
-  
-  it "should be invalid without a rule_key" do
-    @dependency_condition.should be_valid
-    @dependency_condition.rule_key = nil
-    @dependency_condition.should_not be_valid
-    @dependency_condition.should have(1).errors_on(:rule_key)
-  end
-
-  it "should have unique rule_key within the context of a dependency" do
-   @dependency_condition.should be_valid
-   DependencyCondition.create(:dependency_id => 2, :question_id => 46, :operator => "==", :answer_id => 14, :rule_key => "2")
-   @dependency_condition.rule_key = "2" #rule key uniquness is scoped by dependency_id
-   @dependency_condition.dependency_id = 2
-   @dependency_condition.should_not be_valid
-   @dependency_condition.should have(1).errors_on(:rule_key)
-  end
-
-  it "should have an operator in DependencyCondition.operators" do
-    DependencyCondition.operators.each do |o|
-      @dependency_condition.operator = o
-      @dependency_condition.should have(0).errors_on(:operator)
+  end  
+  describe "instance" do
+    before(:each) do
+      @dependency_condition = DependencyCondition.new(:dependency_id => 1, :question_id => 45, :operator => "==", :answer_id => 23, :rule_key => "1")
     end
-    @dependency_condition.operator = "#"
-    @dependency_condition.should have(1).error_on(:operator)
-  end
 
-  it "should evaluate within the context of a response set object" do
-    @response = Response.new(:question_id => 45, :response_set_id => 40, :answer_id => 23)
-    @response.answer = Answer.new(:question_id => 45, :response_class => "answer")
-    @dependency_condition.is_met?([@response]).should be_true
-    # inversion
-    @alt_response = Response.new(:question_id => 45, :response_set_id => 40, :answer_id => 55)
-    @alt_response.answer = Answer.new(:question_id => 45, :response_class => "answer")
+    it "should be valid" do
+      @dependency_condition.should be_valid
+    end
 
-    @dependency_condition.is_met?([@alt_response]).should be_false
-  end
+    it "should be invalid without a parent dependency_id, question_id" do
+      # this causes issues with building and saving
+      # @dependency_condition.dependency_id = nil
+      # @dependency_condition.should have(1).errors_on(:dependency_id)
+      # @dependency_condition.question_id = nil
+      # @dependency_condition.should have(1).errors_on(:question_id)
+    end
+
+    it "should be invalid without an operator" do
+      @dependency_condition.operator = nil
+      @dependency_condition.should have(2).errors_on(:operator)
+    end
   
-  it "converts to a hash for evaluation by the dependency object" do
-    @response = Response.new(:question_id => 45, :response_set_id => 40, :answer_id => 23)
-    @rs = mock(ResponseSet, :responses => [@response])
-    @dependency_condition.stub!(:is_met?).and_return(true)
-    @dependency_condition.to_hash(@rs)
+    it "should be invalid without a rule_key" do
+      @dependency_condition.should be_valid
+      @dependency_condition.rule_key = nil
+      @dependency_condition.should_not be_valid
+      @dependency_condition.should have(1).errors_on(:rule_key)
+    end
+
+    it "should have unique rule_key within the context of a dependency" do
+     @dependency_condition.should be_valid
+     DependencyCondition.create(:dependency_id => 2, :question_id => 46, :operator => "==", :answer_id => 14, :rule_key => "2")
+     @dependency_condition.rule_key = "2" #rule key uniquness is scoped by dependency_id
+     @dependency_condition.dependency_id = 2
+     @dependency_condition.should_not be_valid
+     @dependency_condition.should have(1).errors_on(:rule_key)
+    end
+
+    it "should have an operator in DependencyCondition.operators" do
+      DependencyCondition.operators.each do |o|
+        @dependency_condition.operator = o
+        @dependency_condition.should have(0).errors_on(:operator)
+      end
+      @dependency_condition.operator = "#"
+      @dependency_condition.should have(1).error_on(:operator)
+    end
+
+    it "should evaluate within the context of a response set object" do
+      @response = Response.new(:question_id => 45, :response_set_id => 40, :answer_id => 23)
+      @response.answer = Answer.new(:question_id => 45, :response_class => "answer")
+      @dependency_condition.is_met?([@response]).should be_true
+      # inversion
+      @alt_response = Response.new(:question_id => 45, :response_set_id => 40, :answer_id => 55)
+      @alt_response.answer = Answer.new(:question_id => 45, :response_class => "answer")
+
+      @dependency_condition.is_met?([@alt_response]).should be_false
+    end
+  
+    it "converts to a hash for evaluation by the dependency object" do
+      @response = Response.new(:question_id => 45, :response_set_id => 40, :answer_id => 23)
+      @rs = mock(ResponseSet, :responses => [@response])
+      @dependency_condition.stub!(:is_met?).and_return(true)
+      @dependency_condition.to_hash(@rs)
+    end
   end
-end
-
-describe DependencyCondition, "evaluating the response_set state" do
-
   describe "when if given a response object whether the dependency is satisfied using '=='" do
     before(:each) do
       @dep_c = DependencyCondition.new(:answer_id => 2, :operator => "==")

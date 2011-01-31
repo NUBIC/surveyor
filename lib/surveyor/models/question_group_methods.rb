@@ -32,7 +32,7 @@ module Surveyor
         dependent? ? self.dependency.is_met?(response_set) : true
       end
       def css_class(response_set)
-        [(dependent? ? "dependent" : nil), (triggered?(response_set) ? nil : "hidden"), custom_class].compact.join(" ")
+        [(dependent? ? "g_dependent" : nil), (triggered?(response_set) ? nil : "g_hidden"), custom_class].compact.join(" ")
       end
     end
   end

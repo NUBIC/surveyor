@@ -35,10 +35,15 @@ module Surveyor
         self.data_export_identifier ||= Surveyor::Common.normalize(text)
       end
       
-      def renderer(q = question)  
-        r = [q.pick.to_s, self.response_class].compact.map(&:downcase).join("_")
-        r.blank? ? :default : r.to_sym
+      def css_class
+        [(is_exclusive ? "exclusive" : nil), custom_class].compact.join(" ")
       end
+      
+      def split_or_hidden_text(part = nil)
+        return "" if hide_label.to_s == "true"
+        part == :pre ? text.split("|",2)[0] : (part == :post ? text.split("|",2)[1] : text)
+      end
+      
     end
   end
 end
