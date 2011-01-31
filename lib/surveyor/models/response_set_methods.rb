@@ -35,7 +35,7 @@ module Surveyor
             result
           end
           def has_blank_value?(hash)
-            hash.any?{|k,v| v.is_a?(Array) ? v.all?{|x| x.to_s.blank?} : v.to_s.blank?}
+            hash["answer_id"].blank? or hash.any?{|k,v| v.is_a?(Array) ? v.all?{|x| x.to_s.blank?} : v.to_s.blank?}
           end
         end
       end
