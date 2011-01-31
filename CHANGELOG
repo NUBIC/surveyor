@@ -1,3 +1,15 @@
+0.19.0
+
+* reload to correctly calculate dependencies
+* date picker. closes #58
+* hide section menu for fewer than three sections
+* cleaning up features from merge
+* correcing spec to reject blank radio responses. fixing response set spec
+* modifications for repeaters and response groups
+* merge formtastic
+* default value for pick none answers. closes #103.
+* view changes and updates.
+
 0.18.2
 
 * redcap text and string answers. closes #99
