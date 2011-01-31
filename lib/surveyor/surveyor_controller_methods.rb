@@ -79,7 +79,7 @@ module Surveyor
             remove[k] = v["id"] if v.has_key?("id") && v.has_key?("_destroy")
             question_ids << v["question_id"]
           end
-          render :json => {"ids" => ids, "remove" => remove}.merge(@response_set.all_dependencies(question_ids))
+          render :json => {"ids" => ids, "remove" => remove}.merge(@response_set.reload.all_dependencies(question_ids))
         end
       end
     end
