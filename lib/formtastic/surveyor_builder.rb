@@ -76,5 +76,8 @@ module Formtastic
 
       Formtastic::Util.html_safe(list_item_content.join)
     end
+    def date_input(method, options)
+      string_input(method, options)
+    end
   end
 end

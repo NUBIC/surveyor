@@ -33,12 +33,14 @@ jQuery(document).ready(function(){
   // is_exclusive checkboxes should disble sibling checkboxes
   $('input.exclusive:checked').parents('fieldset[id^="q_"]').find(':checkbox').not(".exclusive").attr('checked', false).attr('disabled', true);
   $('input.exclusive:checkbox').click(function(){
-      var e = $(this);
-      var others = e.parents('fieldset[id^="q_"]').find(':checkbox').not(".exclusive");
-      if(e.is(':checked')){
-        others.attr('checked', false).attr('disabled', true);
-      }else{
-        others.attr('disabled', false);
-      }
-    });
+    var e = $(this);
+    var others = e.parents('fieldset[id^="q_"]').find(':checkbox').not(".exclusive");
+    if(e.is(':checked')){
+      others.attr('checked', false).attr('disabled', true);
+    }else{
+      others.attr('disabled', false);
+    }
+  });
+  
+  $('li.date input').dateinput();
 });

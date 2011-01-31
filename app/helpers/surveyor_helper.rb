@@ -4,7 +4,7 @@ module SurveyorHelper
     surveyor_stylsheets + surveyor_javascripts    
   end
   def surveyor_stylsheets
-    stylesheet_link_tag 'surveyor/reset', 'surveyor'
+    stylesheet_link_tag 'surveyor/reset', 'surveyor/dateinput', 'surveyor'
   end
   def surveyor_javascripts
     javascript_include_tag 'surveyor/jquery.tools.min', 'surveyor/jquery.surveyor'
@@ -55,6 +55,12 @@ module SurveyorHelper
     when /^date|time$/ then :datetime_value
     when /(string|text|integer|float|datetime)/ then "#{type_sym.to_s}_value".to_sym
     else :answer_id
+    end
+  end
+  def rc_to_as(type_sym)
+    case type_sym.to_s
+    when /(integer|float)/ then :string
+    else type_sym
     end
   end
   
