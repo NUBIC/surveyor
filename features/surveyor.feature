@@ -35,3 +35,19 @@ Feature: Survey creation
       | blue   |
       | orange |
       | brown  |
+      
+  Scenario: Default answers
+    Given the survey
+    """
+      survey "Favorites" do
+        section "Foods" do
+          question_1 "What is your favorite food?"
+          answer :string, :default_value => "beef"
+        end
+      end
+    """
+    When I start the "Favorites" survey
+    And I press "Click here to finish"
+    Then there should be 1 response set with 1 responses with:
+      | to_s   |
+      | clear   |
