@@ -6,17 +6,19 @@
   - case renderer
   - when :image, :label
   - when :dropdown, :inline_dropdown, :slider
-    - r = response_for(@response_set, q)
+    - r = response_for(@response_set, q, nil, rg)
     - i = response_idx
-    - f.semantic_fields_for i, r do |g|
-      = g.quiet_input :question_id
-      = g.input :answer_id, :as => :select, :collection => q.answers.map{|a| [a.text, a.id]}, :label => false
+    - f.semantic_fields_for i, r do |ff|
+      = ff.quiet_input :question_id
+      = ff.quiet_input :response_group, :value => rg if g && g.display_type == "repeater"
+      = ff.input :answer_id, :as => :select, :collection => q.answers.map{|a| [a.text, a.id]}, :label => false
   - else # :default, :inline, :inline_default
     - if q.pick == "one"
-      - r = response_for(@response_set, q)
-      - i = response_idx
-      - f.semantic_fields_for i, r do |g|
-        = g.quiet_input :question_id
-        = g.quiet_input :id unless r.new_record?
+      - r = response_for(@response_set, q, nil, rg)
+      - i = response_idx  # increment the response index since the answer partial skips for q.pick == one
+      - f.semantic_fields_for i, r do |ff|
+        = ff.quiet_input :question_id
+        = ff.quiet_input :response_group, :value => rg if g && g.display_type == "repeater"
+        = ff.quiet_input :id unless r.new_record?
     - q.answers.each do |a|
-      = render a.custom_renderer || '/partials/answer', :q => q, :a => a, :f => f
+      = render a.custom_renderer || '/partials/answer', :q => q, :a => a, :f => f, :rg => rg, :g => g

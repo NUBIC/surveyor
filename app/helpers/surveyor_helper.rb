@@ -59,15 +59,10 @@ module SurveyorHelper
   end
   
   # Responses
-  def response_for(response_set, question, answer = nil)
+  def response_for(response_set, question, answer = nil, response_group = nil)
     return nil unless response_set && question && question.id
-    if answer.nil?
-      result = response_set.responses.detect{|r| r.question_id == question.id}
-      result.blank? ? response_set.responses.build(:question_id => question.id) : result
-    else
-      result = response_set.responses.detect{|r| r.question_id == question.id && r.answer_id == answer.id}
-      result.blank? ? response_set.responses.build(:question_id => question.id) : result
-    end
+    result = response_set.responses.detect{|r| (r.question_id == question.id) && (answer.blank? ? true : r.answer_id == answer.id) && (r.response_group.blank? ? true : r.response_group.to_i == response_group.to_i)}
+    result.blank? ? response_set.responses.build(:question_id => question.id, :response_group => response_group) : result
   end
   def response_idx(increment = true)
     @rc ||= 0

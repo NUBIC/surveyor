@@ -1,17 +1,19 @@
 -# TODO: disabled
-- r = response_for(@response_set, q, a)
+- rg ||= nil
+- r = response_for(@response_set, q, a, rg)
 - i = response_idx(q.pick != "one") # argument will be false (don't increment i) if we're on radio buttons
-- f.semantic_fields_for i, r do |g|
-  = g.quiet_input :question_id unless q.pick == "one" # don't repeat question_id if we're on radio buttons
-  = g.quiet_input :id unless q.pick == "one" or r.new_record?
+- f.semantic_fields_for i, r do |ff|
+  = ff.quiet_input :question_id unless q.pick == "one" # don't repeat question_id if we're on radio buttons
+  = ff.quiet_input :id unless q.pick == "one" or r.new_record?
+  = ff.quiet_input :response_group, :value => rg if q.pick != "one" && g && g.display_type == "repeater"
   - case q.pick
   - when "one"
-    = g.input :answer_id, :as => :surveyor_radio, :collection => [[a.text, a.id]], :label => false, :input_html => {:class => a.css_class}, :response_class => a.response_class
+    = ff.input :answer_id, :as => :surveyor_radio, :collection => [[a.text, a.id]], :label => false, :input_html => {:class => a.css_class}, :response_class => a.response_class
   - when "any"
-    = g.input :answer_id, :as => :surveyor_check_boxes, :collection => [[a.text, a.id]], :label => false, :input_html => {:class => a.css_class}, :response_class => a.response_class
+    = ff.input :answer_id, :as => :surveyor_check_boxes, :collection => [[a.text, a.id]], :label => false, :input_html => {:class => a.css_class}, :response_class => a.response_class
   - when "none"
     - if %w(date datetime time float integer string text).include? a.response_class
-      = g.quiet_input :answer_id, :input_html => {:class => a.css_class, :value => a.id}
-      = g.input rc_to_attr(a.response_class), :label => a.split_or_hidden_text(:pre).blank? ? false : a.split_or_hidden_text(:pre), :hint => a.split_or_hidden_text(:post), :input_html => {:value => a.default_value}
+      = ff.quiet_input :answer_id, :input_html => {:class => a.css_class, :value => a.id}
+      = ff.input rc_to_attr(a.response_class), :label => a.split_or_hidden_text(:pre).blank? ? false : a.split_or_hidden_text(:pre), :hint => a.split_or_hidden_text(:post), :input_html => {:value => a.default_value}
     - else
       = a.text

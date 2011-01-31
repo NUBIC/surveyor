@@ -21,9 +21,10 @@
                   %th= q.split_text(:post)
     - when :repeater
       - (@response_set.count_group_responses(qs) + 1).times do |rg|
-        - qs.each do |q|
-          = render q.custom_renderer || "/partials/question", :g => g, :rg => rg, :q => q, :f => f
-      = submit_tag("+ add row", :name => "g_#{g.id}", :class => "add_row")
+        %li
+          - qs.each do |q|
+            = render q.custom_renderer || "/partials/question", :g => g, :rg => rg, :q => q, :f => f
+      = submit_tag("+ add row", :name => "section[#{@section.id}][g_#{g.id}]", :class => "add_row")
     - else # :inline
       - qs.each do |q|
         = render q.custom_renderer || "/partials/question", :g => g, :q => q, :f => f

@@ -22,15 +22,18 @@ describe SurveyorHelper do
   end
   it "should find or create responses, with index" do
     q1 = Factory(:question, :answers => [a = Factory(:answer, :text => "different")])
-    q2 = Factory(:question, :answers => [b = Factory(:answer)], :text => "strokes")
-    rs = Factory(:response_set, :responses => [r = Factory(:response, :question => q1, :answer => a)])
+    q2 = Factory(:question, :answers => [b = Factory(:answer, :text => "strokes")])
+    q3 = Factory(:question, :answers => [c = Factory(:answer, :text => "folks")])
+    rs = Factory(:response_set, :responses => [r1 = Factory(:response, :question => q1, :answer => a), r3 = Factory(:response, :question => q3, :answer => c, :response_group => 1)])
 
     helper.response_for(rs, nil).should == nil
     helper.response_for(nil, q1).should == nil
-    helper.response_for(rs, q1).should == r
-    helper.response_for(rs, q1, a).should == r
+    helper.response_for(rs, q1).should == r1
+    helper.response_for(rs, q1, a).should == r1
     helper.response_for(rs, q2).attributes.should == Response.new(:question => q2, :response_set => rs).attributes
     helper.response_for(rs, q2, b).attributes.should == Response.new(:question => q2, :response_set => rs).attributes
+    helper.response_for(rs, q3, c, "1").should == r3
+    
   end
   it "should keep an index of responses" do
     helper.response_idx.should == "1"
