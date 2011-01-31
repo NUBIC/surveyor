@@ -5,11 +5,11 @@
 
 Gem::Specification.new do |s|
   s.name = %q{surveyor}
-  s.version = "0.18.2"
+  s.version = "0.19.0"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Brian Chamberlain", "Mark Yoon"]
-  s.date = %q{2011-01-20}
+  s.date = %q{2011-01-31}
   s.email = %q{yoon@northwestern.edu}
   s.extra_rdoc_files = [
     "README.md"
@@ -25,7 +25,6 @@ Gem::Specification.new do |s|
      "app/controllers/results_controller.rb",
      "app/controllers/surveyor_controller.rb",
      "app/helpers/results_helper.rb",
-     "app/helpers/survey_form_builder.rb",
      "app/helpers/surveyor_helper.rb",
      "app/models/answer.rb",
      "app/models/dependency.rb",
@@ -42,9 +41,11 @@ Gem::Specification.new do |s|
      "app/views/layouts/results.html.erb",
      "app/views/layouts/surveyor_default.html.erb",
      "app/views/partials/_answer.html.haml",
+     "app/views/partials/_dependents.html.haml",
      "app/views/partials/_question.html.haml",
      "app/views/partials/_question_group.html.haml",
      "app/views/partials/_section.html.haml",
+     "app/views/partials/_section_menu.html.haml",
      "app/views/results/index.html.erb",
      "app/views/results/show.html.erb",
      "app/views/surveyor/edit.html.haml",
@@ -52,75 +53,34 @@ Gem::Specification.new do |s|
      "app/views/surveyor/show.html.haml",
      "ci-env.sh",
      "config/routes.rb",
-     "features/redcap.feature",
+     "features/redcap_parser.feature",
+     "features/step_definitions/parser_steps.rb",
      "features/step_definitions/surveyor_steps.rb",
      "features/step_definitions/web_steps.rb",
      "features/support/REDCapDemoDatabase_DataDictionary.csv",
      "features/support/env.rb",
      "features/support/paths.rb",
      "features/surveyor.feature",
+     "features/surveyor_parser.feature",
      "generators/extend_surveyor/extend_surveyor_generator.rb",
      "generators/extend_surveyor/templates/EXTENDING_SURVEYOR",
      "generators/extend_surveyor/templates/extensions/surveyor_controller.rb",
      "generators/extend_surveyor/templates/extensions/surveyor_custom.html.erb",
      "generators/surveyor/surveyor_generator.rb",
      "generators/surveyor/templates/README",
-     "generators/surveyor/templates/assets/images/222222_11x11_icon_arrows_leftright.gif",
-     "generators/surveyor/templates/assets/images/222222_11x11_icon_arrows_updown.gif",
-     "generators/surveyor/templates/assets/images/222222_11x11_icon_close.gif",
-     "generators/surveyor/templates/assets/images/222222_11x11_icon_doc.gif",
-     "generators/surveyor/templates/assets/images/222222_11x11_icon_folder_closed.gif",
-     "generators/surveyor/templates/assets/images/222222_11x11_icon_folder_open.gif",
-     "generators/surveyor/templates/assets/images/222222_11x11_icon_minus.gif",
-     "generators/surveyor/templates/assets/images/222222_11x11_icon_plus.gif",
-     "generators/surveyor/templates/assets/images/222222_11x11_icon_resize_se.gif",
-     "generators/surveyor/templates/assets/images/222222_35x9_colorpicker_indicator.gif.gif",
-     "generators/surveyor/templates/assets/images/222222_7x7_arrow_down.gif",
-     "generators/surveyor/templates/assets/images/222222_7x7_arrow_left.gif",
-     "generators/surveyor/templates/assets/images/222222_7x7_arrow_right.gif",
-     "generators/surveyor/templates/assets/images/222222_7x7_arrow_up.gif",
-     "generators/surveyor/templates/assets/images/454545_11x11_icon_arrows_leftright.gif",
-     "generators/surveyor/templates/assets/images/454545_11x11_icon_arrows_updown.gif",
-     "generators/surveyor/templates/assets/images/454545_11x11_icon_close.gif",
-     "generators/surveyor/templates/assets/images/454545_11x11_icon_doc.gif",
-     "generators/surveyor/templates/assets/images/454545_11x11_icon_folder_closed.gif",
-     "generators/surveyor/templates/assets/images/454545_11x11_icon_folder_open.gif",
-     "generators/surveyor/templates/assets/images/454545_11x11_icon_minus.gif",
-     "generators/surveyor/templates/assets/images/454545_11x11_icon_plus.gif",
-     "generators/surveyor/templates/assets/images/454545_7x7_arrow_down.gif",
-     "generators/surveyor/templates/assets/images/454545_7x7_arrow_left.gif",
-     "generators/surveyor/templates/assets/images/454545_7x7_arrow_right.gif",
-     "generators/surveyor/templates/assets/images/454545_7x7_arrow_up.gif",
-     "generators/surveyor/templates/assets/images/888888_11x11_icon_arrows_leftright.gif",
-     "generators/surveyor/templates/assets/images/888888_11x11_icon_arrows_updown.gif",
-     "generators/surveyor/templates/assets/images/888888_11x11_icon_close.gif",
-     "generators/surveyor/templates/assets/images/888888_11x11_icon_doc.gif",
-     "generators/surveyor/templates/assets/images/888888_11x11_icon_folder_closed.gif",
-     "generators/surveyor/templates/assets/images/888888_11x11_icon_folder_open.gif",
-     "generators/surveyor/templates/assets/images/888888_11x11_icon_minus.gif",
-     "generators/surveyor/templates/assets/images/888888_11x11_icon_plus.gif",
-     "generators/surveyor/templates/assets/images/888888_7x7_arrow_down.gif",
-     "generators/surveyor/templates/assets/images/888888_7x7_arrow_left.gif",
-     "generators/surveyor/templates/assets/images/888888_7x7_arrow_right.gif",
-     "generators/surveyor/templates/assets/images/888888_7x7_arrow_up.gif",
-     "generators/surveyor/templates/assets/images/dadada_40x100_textures_02_glass_75.png",
-     "generators/surveyor/templates/assets/images/e6e6e6_40x100_textures_02_glass_75.png",
-     "generators/surveyor/templates/assets/images/ffffff_40x100_textures_01_flat_0.png",
-     "generators/surveyor/templates/assets/images/ffffff_40x100_textures_02_glass_65.png",
-     "generators/surveyor/templates/assets/javascripts/accessibleUISlider.jQuery.js",
-     "generators/surveyor/templates/assets/javascripts/jquery-1.2.6.js",
-     "generators/surveyor/templates/assets/javascripts/jquery-ui-personalized-1.5.3.js",
-     "generators/surveyor/templates/assets/javascripts/jquery.form.js",
-     "generators/surveyor/templates/assets/javascripts/surveyor.js",
-     "generators/surveyor/templates/assets/stylesheets/jquery-ui-slider-additions.css",
+     "generators/surveyor/templates/assets/images/next.gif",
+     "generators/surveyor/templates/assets/images/prev.gif",
+     "generators/surveyor/templates/assets/javascripts/jquery.surveyor.js",
+     "generators/surveyor/templates/assets/javascripts/jquery.tools.min.js",
+     "generators/surveyor/templates/assets/stylesheets/dateinput.css",
      "generators/surveyor/templates/assets/stylesheets/reset.css",
      "generators/surveyor/templates/assets/stylesheets/results.css",
      "generators/surveyor/templates/assets/stylesheets/sass/surveyor.sass",
-     "generators/surveyor/templates/assets/stylesheets/ui.theme.css",
      "generators/surveyor/templates/locales/surveyor_en.yml",
      "generators/surveyor/templates/locales/surveyor_es.yml",
      "generators/surveyor/templates/locales/surveyor_he.yml",
      "generators/surveyor/templates/migrate/add_correct_answer_id_to_questions.rb",
+     "generators/surveyor/templates/migrate/add_default_value_to_answers.rb",
      "generators/surveyor/templates/migrate/add_display_order_to_surveys.rb",
      "generators/surveyor/templates/migrate/add_index_to_response_sets.rb",
      "generators/surveyor/templates/migrate/add_index_to_surveys.rb",
@@ -141,6 +101,7 @@ Gem::Specification.new do |s|
      "generators/surveyor/templates/tasks/surveyor.rb",
      "hudson.rakefile",
      "init_testbed.rakefile",
+     "lib/formtastic/surveyor_builder.rb",
      "lib/surveyor.rb",
      "lib/surveyor/acts_as_response.rb",
      "lib/surveyor/common.rb",
@@ -163,6 +124,7 @@ Gem::Specification.new do |s|
      "rails/init.rb",
      "spec/controllers/surveyor_controller_spec.rb",
      "spec/factories.rb",
+     "spec/helpers/surveyor_helper_spec.rb",
      "spec/lib/common_spec.rb",
      "spec/lib/parser_spec.rb",
      "spec/lib/redcap_parser_spec.rb",
@@ -181,10 +143,8 @@ Gem::Specification.new do |s|
      "spec/rcov.opts",
      "spec/spec.opts",
      "spec/spec_helper.rb",
-     "spec/views/surveyor/show.html.haml_spec.rb",
      "surveyor.gemspec",
-     "testbed/Gemfile",
-     "uninstall.rb"
+     "testbed/Gemfile"
   ]
   s.homepage = %q{http://github.com/breakpointer/surveyor}
   s.rdoc_options = ["--charset=UTF-8"]
@@ -194,6 +154,7 @@ Gem::Specification.new do |s|
   s.test_files = [
     "spec/controllers/surveyor_controller_spec.rb",
      "spec/factories.rb",
+     "spec/helpers/surveyor_helper_spec.rb",
      "spec/lib/common_spec.rb",
      "spec/lib/parser_spec.rb",
      "spec/lib/redcap_parser_spec.rb",
@@ -209,8 +170,7 @@ Gem::Specification.new do |s|
      "spec/models/survey_spec.rb",
      "spec/models/validation_condition_spec.rb",
      "spec/models/validation_spec.rb",
-     "spec/spec_helper.rb",
-     "spec/views/surveyor/show.html.haml_spec.rb"
+     "spec/spec_helper.rb"
   ]
 
   if s.respond_to? :specification_version then
@@ -220,15 +180,18 @@ Gem::Specification.new do |s|
     if Gem::Version.new(Gem::VERSION) >= Gem::Version.new('1.2.0') then
       s.add_runtime_dependency(%q<haml>, [">= 0"])
       s.add_runtime_dependency(%q<fastercsv>, [">= 0"])
+      s.add_runtime_dependency(%q<formtastic>, [">= 0"])
       s.add_development_dependency(%q<yard>, [">= 0"])
     else
       s.add_dependency(%q<haml>, [">= 0"])
       s.add_dependency(%q<fastercsv>, [">= 0"])
+      s.add_dependency(%q<formtastic>, [">= 0"])
       s.add_dependency(%q<yard>, [">= 0"])
     end
   else
     s.add_dependency(%q<haml>, [">= 0"])
     s.add_dependency(%q<fastercsv>, [">= 0"])
+    s.add_dependency(%q<formtastic>, [">= 0"])
     s.add_dependency(%q<yard>, [">= 0"])
   end
 end
