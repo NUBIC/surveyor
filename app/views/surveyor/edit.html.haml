@@ -4,7 +4,7 @@
       = flash_messages(types)
       .close
   - semantic_form_for(:r, @response_set, :url => update_my_survey_path, :html => {:method => :put, :id => "survey_form", :class => @survey.custom_class}) do |f|
-    = render 'partials/section_menu' #unless @sections.size < 3
+    = render 'partials/section_menu' unless @sections.size < 3
     .survey_title= @survey.title
     .previous_section= previous_section
     = render 'partials/dependents' unless @dependents.empty?
