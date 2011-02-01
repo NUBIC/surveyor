@@ -1,3 +1,4 @@
+%w(survey survey_section question_group question dependency dependency_condition answer validation validation_condition).each {|model| require model }
 module Surveyor
   class Parser
     # Attributes
@@ -6,7 +7,7 @@ module Surveyor
     # Class methods
     def self.parse(str)
       puts
-      Surveyor::Parser.new.instance_eval(str)
+      Surveyor::Parser.new.parse(str)
       puts
     end
 
@@ -14,7 +15,10 @@ module Surveyor
     def initialize
       self.context = {}
     end
-    
+    def parse(str)
+      instance_eval(str)
+      return context[:survey]
+    end
     # This method_missing does all the heavy lifting for the DSL
     def method_missing(missing_method, *args, &block)
       method_name, reference_identifier = missing_method.to_s.split("_", 2)
@@ -36,7 +40,7 @@ module Surveyor
           puts
           print context[type.to_sym].save ? "saved. " : " not saved! #{context[type.to_sym].errors.each_full{|x| x }.join(", ")} "
         end
-        context[type.to_sym].clear(context)
+        context[type.to_sym].clear(context) unless type == 'survey'
       end
     end
     
@@ -66,7 +70,6 @@ end
 # Surveyor models with extra parsing methods
 class Survey < ActiveRecord::Base
   # block
-  include Surveyor::Models::SurveyMethods
   
   def self.parse_and_build(context, args, original_method, reference_identifier)
     # clear context
@@ -87,7 +90,6 @@ class Survey < ActiveRecord::Base
 end
 class SurveySection < ActiveRecord::Base
   # block
-  include Surveyor::Models::SurveySectionMethods
   
   def self.parse_and_build(context, args, original_method, reference_identifier)
     # clear context
@@ -103,7 +105,6 @@ class SurveySection < ActiveRecord::Base
 end
 class QuestionGroup < ActiveRecord::Base
   # block
-  include Surveyor::Models::QuestionGroupMethods
   
   def self.parse_and_build(context, args, original_method, reference_identifier)
     # clear context
@@ -120,7 +121,6 @@ class QuestionGroup < ActiveRecord::Base
 end
 class Question < ActiveRecord::Base
   # nonblock
-  include Surveyor::Models::QuestionMethods
   
   def self.parse_and_build(context, args, original_method, reference_identifier)
     # clear context
@@ -141,6 +141,7 @@ class Question < ActiveRecord::Base
     if context[:question_group] && context[:question_group].display_type == "grid"
       (context[:grid_answers] || []).each do |grid_answer|
         a = context[:question].answers.build(grid_answer.attributes)
+        context[:answer_references][reference_identifier] ||= {} unless reference_identifier.blank?
         context[:answer_references][reference_identifier][grid_answer.reference_identifier] = a unless reference_identifier.blank? or grid_answer.reference_identifier.blank?
       end
     end
@@ -148,19 +149,21 @@ class Question < ActiveRecord::Base
 end
 class Dependency < ActiveRecord::Base
   # nonblock
-  include Surveyor::Models::DependencyMethods
   
   def self.parse_and_build(context, args, original_method, reference_identifier)
     # clear context
     context.delete_if{|k,v| %w(dependency dependency_condition).map(&:to_sym).include? k}
     
     # build and set context
-    context[:dependency] = context[:question].build_dependency({ :question_group => context[:question_group]}.merge(args[0] || {}))
+    if context[:question]
+      context[:dependency] = context[:question].build_dependency({:question_group => context[:question_group]}.merge(args[0] || {}))
+    elsif context[:question_group]
+      context[:dependency] = context[:question_group].build_dependency(args[0] || {})
+    end
   end
 end
 class DependencyCondition < ActiveRecord::Base
   # nonblock
-  include Surveyor::Models::DependencyConditionMethods
   
   attr_accessor :question_reference, :answer_reference, :context_reference
   before_save :resolve_references
@@ -171,12 +174,20 @@ class DependencyCondition < ActiveRecord::Base
     
     # build and set context
     a0, a1, a2 = args
-    context[:dependency_condition] = context[:dependency].dependency_conditions.build({
-                                      :context_reference => context,
-                                      :operator => a1 || "==",
-                                      :question_reference => a0.to_s.gsub("q_", ""),
-                                      :rule_key => reference_identifier}.merge(a2.is_a?(Hash) ? a2 : {:answer_reference => a2.to_s.gsub("a_", "")}))
+    context[:dependency_condition] = context[:dependency].
+      dependency_conditions.build(
+        { 
+          :context_reference => context,
+          :operator => a1 || "==",
+          :question_reference => a0.to_s.gsub("q_", ""),
+          :rule_key => reference_identifier 
+        }.merge(
+            a2.is_a?(Hash) ? a2 : { :answer_reference => 
+                                      a2.to_s.gsub("a_", "") }
+          )
+      )
   end
+
   def resolve_references
     if context_reference
       # Looking up references to questions and answers for linking the dependency objects
@@ -185,11 +196,10 @@ class DependencyCondition < ActiveRecord::Base
       print (self.answer = context_reference[:answer_references][question_reference][answer_reference]) ? "found answer:#{answer_reference} " : "lost! answer:#{answer_reference} "
     end
   end
-  
 end
+
 class Answer < ActiveRecord::Base
   # nonblock
-  include Surveyor::Models::AnswerMethods
   
   def self.parse_and_build(context, args, original_method, reference_identifier)
     # clear context
@@ -241,7 +251,6 @@ class Answer < ActiveRecord::Base
 end
 class Validation < ActiveRecord::Base
   # nonblock
-  include Surveyor::Models::ValidationMethods
   
   def self.parse_and_build(context, args, original_method, reference_identifier)
     # clear context
@@ -253,7 +262,6 @@ class Validation < ActiveRecord::Base
 end
 class ValidationCondition < ActiveRecord::Base
   # nonblock
-  include Surveyor::Models::ValidationConditionMethods
   
   def self.parse_and_build(context, args, original_method, reference_identifier)
     # clear context

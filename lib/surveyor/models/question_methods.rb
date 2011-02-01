@@ -10,12 +10,17 @@ module Surveyor
 
         # Scopes
         base.send :default_scope, :order => "display_order ASC"
-
-        # Validations
-        base.send :validates_presence_of, :text, :display_order
-        # this causes issues with building and saving
-        #, :survey_section_id
-        base.send :validates_inclusion_of, :is_mandatory, :in => [true, false]
+        
+        @@validations_already_included ||= nil
+        unless @@validations_already_included
+          # Validations
+          base.send :validates_presence_of, :text, :display_order
+          # this causes issues with building and saving
+          #, :survey_section_id
+          base.send :validates_inclusion_of, :is_mandatory, :in => [true, false]
+          
+          @@validations_already_included = true
+        end
       end
 
       # Instance Methods
@@ -51,7 +56,7 @@ module Surveyor
         dependent? ? self.dependency.is_met?(response_set) : true
       end
       def css_class(response_set)
-        [(dependent? ? "dependent" : nil), (triggered?(response_set) ? nil : "hidden"), custom_class].compact.join(" ")
+        [(dependent? ? "q_dependent" : nil), (triggered?(response_set) ? nil : "q_hidden"), custom_class].compact.join(" ")
       end
 
       def part_of_group?
@@ -60,7 +65,11 @@ module Surveyor
       def solo?
         self.question_group.nil?
       end
-
+      
+      def split_text(part = nil)
+        (part == :pre ? text.split("|",2)[0] : (part == :post ? text.split("|",2)[1] : text)).to_s
+      end
+      
       def renderer(g = question_group)
         r = [g ? g.renderer.to_s : nil, display_type].compact.join("_")
         r.blank? ? :default : r.to_sym

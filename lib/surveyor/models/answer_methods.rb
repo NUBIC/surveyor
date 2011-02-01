@@ -9,11 +9,15 @@ module Surveyor
         
         # Scopes
         base.send :default_scope, :order => "display_order ASC"
-
-        # Validations
-        base.send :validates_presence_of, :text
-        # this causes issues with building and saving
-        # base.send :validates_numericality_of, :question_id, :allow_nil => false, :only_integer => true
+        
+        @@validations_already_included ||= nil
+        unless @@validations_already_included
+          # Validations
+          base.send :validates_presence_of, :text
+          # this causes issues with building and saving
+          # base.send :validates_numericality_of, :question_id, :allow_nil => false, :only_integer => true
+          @@validations_already_included = true
+        end
       end
 
       # Instance Methods
@@ -31,10 +35,15 @@ module Surveyor
         self.data_export_identifier ||= Surveyor::Common.normalize(text)
       end
       
-      def renderer(q = question)  
-        r = [q.pick.to_s, self.response_class].compact.map(&:downcase).join("_")
-        r.blank? ? :default : r.to_sym
+      def css_class
+        [(is_exclusive ? "exclusive" : nil), custom_class].compact.join(" ")
       end
+      
+      def split_or_hidden_text(part = nil)
+        return "" if hide_label.to_s == "true"
+        part == :pre ? text.split("|",2)[0] : (part == :post ? text.split("|",2)[1] : text)
+      end
+      
     end
   end
 end

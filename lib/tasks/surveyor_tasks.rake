@@ -10,6 +10,15 @@ namespace :surveyor do
     Surveyor::Parser.parse File.read(file)
     puts "--- Done #{file} ---"
   end
+  desc "generate and load survey from REDCap Data Dictionary (specify FILE=surveys/redcap.csv)"
+  task :redcap => :environment do
+    raise "USAGE: file name required e.g. 'FILE=surveys/redcap_demo_survey.csv'" if ENV["FILE"].blank?
+    file = File.join(RAILS_ROOT, ENV["FILE"])
+    raise "File does not exist: #{file}" unless FileTest.exists?(file)
+    puts "--- Parsing #{file} ---"
+    Surveyor::RedcapParser.parse File.read(file), File.basename(file, ".csv")
+    puts "--- Done #{file} ---"
+  end
   desc "generate a surveyor DSL file from a survey"
   task :unparse => :environment do
     surveys = Survey.all
@@ -51,18 +60,4 @@ namespace :surveyor do
       puts "There are no surveys without response sets"      
     end
   end
-end
-
-namespace :spec do
-  namespace :plugins do
-    begin
-      require 'spec/rake/spectask'
-      desc "Runs the examples for surveyor"    
-      Spec::Rake::SpecTask.new(:surveyor) do |t|
-        t.spec_opts = ['--options', "\"#{RAILS_ROOT}/spec/spec.opts\""]
-        t.spec_files = FileList['vendor/plugins/surveyor/spec/**/*_spec.rb']
-      end
-    rescue MissingSourceFile
-    end
-  end  
 end

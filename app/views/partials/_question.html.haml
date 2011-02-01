@@ -1,72 +1,24 @@
-- renderer = question.renderer(question_group ||= nil)
-- case renderer
-- when :label
-  - div_for question, :class => "label #{question.css_class(response_set)}" do
-    %span.text= question.text
-    %span.help= question.help_text
-- when :image
-  .image= image_tag(question.text)
-- when :dropdown, :slider
-  - if renderer == :slider
-    %script{:type => "text/javascript"}= "$(function(){$('#slider_#{question.id}').accessibleUISlider({width: 400, labels:#{question.answers.size} }).hide();});"
-  - div_for question, :class => question.css_class(response_set) do
-    .number= next_number unless question.dependent?
-    %fieldset
-      %legend{:style => "display:inline;"}
-        %span.text= question.text
-        %span.help= question.help_text
-        = hidden_field_tag("responses[#{question.id}][question_id]", question.id)
-      %ol.answers
-        %li.answer
-          - options = question.answers.collect{|a| "<option #{ (response_set.response_for(question.id, a.id).selected?)? "selected='selected'" : nil } value ='#{a.id}'>#{a.text}</option>" }
-          = renderer == :slider ? select_tag("responses[#{question.id}][answer_id]", options, {:id => "slider_#{question.id}"}) : select_tag("responses[#{question.id}][answer_id]", ["<option value=''>#{t('surveyor.Select_one')}</option>"].concat(options))
-- when :grid_default
-  - reset_cycle("col")
-  - content_tag_for :tr, question, :class => question.css_class(response_set) do
-    %th.question_prefix
-      %span.text= split_text(question.text)[:prefix]
-      %span.help= question.help_text
-      = hidden_field_tag("responses[#{question.id}][question_id]", question.id)
-    - question.answers.each do |answer|
-      %td{:class => "#{cycle("column_highlight", "", :name => "col")}"}
-        .answer{:class => answer.custom_class}= render(:partial => answer.custom_renderer || "/partials/answer", :locals => {:answer => answer, :question => question, :response_obj => @response_set.response_for(question.id, answer.id), :hide_label => true})
-    %th.question_postfix
-      %span.text= split_text(question.text)[:postfix]
-- when :repeater_default, :repeater_dropdown
-  - disabled ||= false
-  - div_for question, :class => "#{disabled ? 'dis' : 'en'}abled #{question.css_class(response_set)}" do
-    %span.text= question.text
-    %span.help= question.help_text
-    = hidden_field_tag("response_groups[#{question.id}][#{response_group}][response_group]", response_group)
-    = hidden_field_tag("response_groups[#{question.id}][#{response_group}][question_id]", question.id)
-    %br
-    %ol.answers
-      - if renderer == :repeater_default  
-        - question.answers.each do |answer|
-          - content_tag_for :li, answer, :class => answer.custom_class do
-            = render(:partial => answer.custom_renderer || "/partials/answer", :locals => {:answer => answer, :question => question, :response_obj => @response_set.response_for(question.id, answer.id, response_group), :response_group => response_group, :hide_label => true, :disabled => disabled})
-      - else
-        %li.answer
-          - options = question.answers.collect{|a| "<option #{ (response_set.response_for(question.id, a.id, response_group).selected?)? "selected='selected'" : nil } value ='#{a.id}'>#{a.text}</option>" }
-          = select_tag("response_groups[#{question.id}][#{response_group}][answer_id]", ["<option value=''>Select one...</option>"].concat(options), :disabled => disabled)
-- when :inline_default, :inline_dropdown
-  - div_for question, :class => "inline #{question.css_class(response_set)}" do
-    = hidden_field_tag("responses[#{question.id}][question_id]", question.id)
-    - if renderer == :inline_default
-      - question.answers.each do |answer|
-        .answer{:class => answer.custom_class}= render(:partial => answer.custom_renderer || "/partials/answer", :locals => {:answer => answer, :question => question, :response_obj => @response_set.response_for(question.id, answer.id), :hide_label => answer.hide_label})
-    - else
-      - options = question.answers.collect{|a| "<option #{ (response_set.response_for(question.id, a.id).selected?)? "selected='selected'" : nil } value ='#{a.id}'>#{a.text}</option>" }
-      = select_tag("responses[#{question.id}][answer_id]", ["<option value=''>Select one...</option>"].concat(options))
-- else # :default, :inline
-  - div_for question, :class => question.css_class(response_set) do
-    .number= next_number unless question.dependent?
-    %fieldset
-      %legend
-        %span.text= question.text
-        %span.help= question.help_text
-        = hidden_field_tag("responses[#{question.id}][question_id]", question.id)
-      %ol.answers{:class => renderer == :inline ? "inline" : nil}
-        - question.answers.each do |answer|
-          - content_tag_for :li, answer, :class => answer.custom_class do
-            = render(:partial => answer.custom_renderer || "/partials/answer", :locals => {:answer => answer, :question => question, :response_obj => @response_set.response_for(question.id, answer.id), :hide_label => answer.hide_label})
+-# TODO: js for slider
+- rg ||= nil
+- renderer = q.renderer(g ||= nil)
+- f.inputs q_text(q), :id => rg ? "q_#{q.id}_#{rg.id}" : "q_#{q.id}", :class => "q_#{renderer} #{q.css_class(@response_set)}" do
+  %span.help= q.help_text
+  - case renderer
+  - when :image, :label
+  - when :dropdown, :inline_dropdown, :slider
+    - r = response_for(@response_set, q, nil, rg)
+    - i = response_idx
+    - f.semantic_fields_for i, r do |ff|
+      = ff.quiet_input :question_id
+      = ff.quiet_input :response_group, :value => rg if g && g.display_type == "repeater"
+      = ff.input :answer_id, :as => :select, :collection => q.answers.map{|a| [a.text, a.id]}, :label => false
+  - else # :default, :inline, :inline_default
+    - if q.pick == "one"
+      - r = response_for(@response_set, q, nil, rg)
+      - i = response_idx  # increment the response index since the answer partial skips for q.pick == one
+      - f.semantic_fields_for i, r do |ff|
+        = ff.quiet_input :question_id
+        = ff.quiet_input :response_group, :value => rg if g && g.display_type == "repeater"
+        = ff.quiet_input :id unless r.new_record?
+    - q.answers.each do |a|
+      = render a.custom_renderer || '/partials/answer', :q => q, :a => a, :f => f, :rg => rg, :g => g

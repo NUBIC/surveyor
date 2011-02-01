@@ -25,6 +25,8 @@ describe Surveyor::Parser do
   it "should identify models that take blocks" do
     @parser.send(:block_models).should == %w(survey survey_section question_group)
   end
-  
+  it "should return a survey object" do
+    Surveyor::Parser.new.parse("survey 'hi' do\n end").is_a?(Survey).should be_true
+  end
   
 end

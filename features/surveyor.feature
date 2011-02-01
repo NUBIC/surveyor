@@ -1,14 +1,14 @@
 Feature: Survey creation
-  As a 
-  I want to write out the survey in the DSL
-  So that I can give it to survey participants
+  As a survey participant
+  I want to take a survey
+  So that I can get paid
 
   Scenario: Basic questions
-    Given I parse
+    Given the survey
     """
-      survey "Simple survey" do
-        section "Basic questions" do
-          label "These questions are examples of the basic supported input types"
+      survey "Favorites" do
+        section "Colors" do
+          label "You with the sad eyes don't be discouraged"
 
           question_1 "What is your favorite color?", :pick => :one
           answer "red"
@@ -24,121 +24,30 @@ Feature: Survey creation
         end
       end
     """
-    Then there should be 1 survey with:
-      | title         |
-      | Simple survey |
-    And there should be 3 questions with:
-      | reference_identifier | text                                                            | pick | display_type |
-      | nil                  | These questions are examples of the basic supported input types | none | label        |
-      | 1                    | What is your favorite color?                                    | one  | default      |
-      | 2b                   | Choose the colors you don't like                                | any  | default      |
-    And there should be 8 answers with:
-      | reference_identifier | text   | response_class |
-      | nil                  | red    | answer         |
-      | nil                  | blue   | answer         |
-      | nil                  | green  | answer         |
-      | nil                  | Other  | answer         |
-      | 1                    | orange | answer         |
-      | 2                    | purple | answer         |
-      | 3                    | brown  | answer         |
-      | nil                  | Omit   | answer         |
-
-  Scenario: More complex questions
-    Given I parse
+    When I start the "Favorites" survey
+    And I choose "red"
+    And I choose "blue"
+    And I check "orange"
+    And I check "brown"
+    And I press "Click here to finish"
+    Then there should be 1 response set with 3 responses with:
+      | to_s   |
+      | blue   |
+      | orange |
+      | brown  |
+      
+  Scenario: Default answers
+    Given the survey
     """
-      survey "Complex survey" do
-        section "Complicated questions" do
-          grid "Tell us how you feel today" do
-            a "-2"
-            a "-1"
-            a "0"
-            a "1"
-            a "2"
-            q "down|up" , :pick => :one
-            q "sad|happy", :pick => :one
-            q "limp|perky", :pick => :one
-          end
-
-          q "Choose your favorite utensils and enter frequency of use (daily, weekly, monthly, etc...)", :pick => :any
-          a "spoon", :string
-          a "fork", :string
-          a "knife", :string
-          a :other, :string
-
-          repeater "Tell us about the cars you own" do
-            q "Make", :pick => :one, :display_type => :dropdown
-            a "Toyota"
-            a "Ford"
-            a "GMChevy"
-            a "Ferrari"
-            a "Tesla"
-            a "Honda"
-            a "Other weak brand"
-            q "Model"
-            a :string
-            q "Year"
-            a :string
-          end
-        end
-      end  
-    """
-    Then there should be 1 survey with:
-      | title          |
-      | Complex survey |
-    And there should be 2 question groups with:
-      | text                           | display_type |
-      | Tell us how you feel today     | grid         |
-      | Tell us about the cars you own | repeater     |
-    And there should be 7 questions with:
-      | text    | pick | display_type |
-      | Make    | one  | dropdown     |
-    And there should be 28 answers with:
-      | text  | response_class |
-      | -2    | answer         |
-      | Other | string         |
-
-  Scenario: Dependencies and validations
-    Given I parse
-    """
-      survey "Dependency and validation survey" do
-        section "Conditionals" do
-          q_montypython3 "What... is your name? (e.g. It is 'Arthur', King of the Britons)"
-          a_1 :string
-    
-          q_montypython4 "What... is your quest? (e.g. To seek the Holy Grail)"
-          a_1 :string
-          dependency :rule => "A"
-          condition_A :q_montypython3, "==", {:string_value => "It is 'Arthur', King of the Britons", :answer_reference => "1"}
-    
-          q "How many pets do you own?"
-          a :integer
-          validation :rule => "A"
-          condition_A ">=", :integer_value => 0
-    
-          q "What is your address?", :custom_class => 'address'
-          a :text, :custom_class => 'mapper'
-          validation :rule => "AC"
-          vcondition_AC "=~", :regexp => /[0-9a-zA-z\. #]/
+      survey "Favorites" do
+        section "Foods" do
+          question_1 "What is your favorite food?"
+          answer :string, :default_value => "beef"
         end
       end
     """
-    Then there should be 1 survey with:
-      | title                            |
-      | Dependency and validation survey |
-    And there should be 4 questions with:
-      | text                                                             | pick | display_type | custom_class |
-      | What... is your name? (e.g. It is 'Arthur', King of the Britons) | none | default      | nil          |
-      | What is your address?                                            | none | default      | address      |
-    And there should be 1 dependency with:
-      | rule |
-      | A    |
-    And there should be 1 resolved dependency_condition with:
-      | rule_key |
-      | A        |
-    And there should be 2 validations with:
-      | rule |
-      | A    |
-      | AC   |
-    And there should be 2 validation_conditions with:
-      | rule_key | integer_value |
-      | A        | 0             |
+    When I start the "Favorites" survey
+    And I press "Click here to finish"
+    Then there should be 1 response set with 1 responses with:
+      | to_s   |
+      | clear   |

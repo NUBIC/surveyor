@@ -1,39 +1,30 @@
-- renderer = question_group.renderer
-- locals = {:question_group => question_group, :response_set => response_set, :hide_label => true}
-- div_for question_group, :class => question_group.css_class(response_set) do
-  .head
-    .number= next_number
-    %span.text= question_group.text
-    %span.help= question_group.help_text
-
-  - case question_group.renderer
-  - when :grid
-    %table.grid
-      %thead
-        %tr
-          %th= "&nbsp;"
-          - reset_cycle("column_highlight")
-          - group_questions.first.answers.each do |answer|
-            %th{:class => "#{cycle("column_highlight", "", :name => "column_highlight")}"}= answer.text
-      %tbody
-        - group_questions.each_with_index do |question, i|
-          = render(:partial => question.custom_renderer || "/partials/question", :locals => locals.merge({:question => question}))
-          - if i%10 == 9
-            %th= "&nbsp;"
-            - reset_cycle("column_highlight")
-            - group_questions.first.answers.each do |answer|
-              %th{:class => "#{cycle("column_highlight", "", :name => "column_highlight")}"}= answer.text
-  - when :repeater
-    %ul.repeater
-      - (response_set.count_group_responses(group_questions) + 1).times do |group_number|
-        %li.repeater
-          - group_questions.each do |question|
-            = render(:partial => question.custom_renderer || "/partials/question", :locals => locals.merge({:question => question, :response_group => group_number, :disabled => false}))
-      %li.repeater
-        - group_questions.each do |question|
-          = render(:partial => question.custom_renderer || "/partials/question", :locals => locals.merge({:question => question, :response_group => 9999, :disabled => true}))
-        = submit_tag("&lt;= add row", :name => "section[#{group_questions.first.survey_section_id}]question_group_#{question_group.id}", :class => "add_row")
-  - else # :inline
-    %ul
-      - group_questions.each do |question|
-        %li{:class => question_group.renderer == :inline ? "inline" : nil}= render(:partial => question.custom_renderer || "/partials/question", :locals => locals.merge({:question => question}))
+- renderer = g.renderer
+- f.inputs q_text(g), :id => "g_#{g.id}", :class => "g_#{renderer} #{g.css_class(@response_set)}" do
+  %li.help= g.help_text
+  - case renderer
+    - when :grid
+      %li
+        %table
+          %tbody
+            - qs.each_slice(10) do |ten_questions| # header row every 10
+              %tr
+                %th &nbsp;
+                - ten_questions.first.answers.each do |a|
+                  %th= a.text
+                %th &nbsp;
+              - ten_questions.each_with_index do |q, i|
+                %tr{:id => "q_#{q.id}", :class => "q_#{renderer} #{q.css_class(@response_set)}"}
+                  %th= q.split_text(:pre)
+                  - response_idx if q.pick == "one" # increment the response index since the answer partial skips for q.pick == one
+                  - q.answers.each do |a|
+                    %td= render a.custom_renderer || '/partials/answer', :g => g, :q => q, :a => a, :f => f
+                  %th= q.split_text(:post)
+    - when :repeater
+      - (@response_set.count_group_responses(qs) + 1).times do |rg|
+        %li
+          - qs.each do |q|
+            = render q.custom_renderer || "/partials/question", :g => g, :rg => rg, :q => q, :f => f
+      = submit_tag("+ add row", :name => "section[#{@section.id}][g_#{g.id}]", :class => "add_row")
+    - else # :inline
+      - qs.each do |q|
+        = render q.custom_renderer || "/partials/question", :g => g, :q => q, :f => f

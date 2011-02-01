@@ -23,13 +23,13 @@ describe QuestionGroup do
     @dependency = Factory(:dependency)
     @question_group.dependency = @dependency
     @dependency.should_receive(:is_met?).and_return(true)
-    @question_group.css_class(Factory(:response_set)).should == "dependent"
+    @question_group.css_class(Factory(:response_set)).should == "g_dependent"
 
     @dependency.should_receive(:is_met?).and_return(false)
-    @question_group.css_class(Factory(:response_set)).should == "dependent hidden"
+    @question_group.css_class(Factory(:response_set)).should == "g_dependent g_hidden"
 
     @question_group.custom_class = "foo bar"
     @dependency.should_receive(:is_met?).and_return(false)
-    @question_group.css_class(Factory(:response_set)).should == "dependent hidden foo bar"
+    @question_group.css_class(Factory(:response_set)).should == "g_dependent g_hidden foo bar"
   end
 end

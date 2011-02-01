@@ -1,58 +1,19 @@
-- renderer = answer.renderer(question)
-- response_group ||= nil
-- hide_label ||= false
-- disabled ||= false
-- fields_for_response(response_obj, response_group) do |response_form|
-  - case renderer
-  - when :any_answer
-    = response_form.survey_check_box(:selected, :class => (answer.is_exclusive? ? "exclusive" : ""))
-    = response_form.label("selected", answer.text) unless hide_label # This is a temp fix til I figure out why the id of the checkbox is all jacked up
-  - when :any_other_and_string
-    = response_form.survey_check_box(:selected, :class => (answer.is_exclusive? ? "exclusive" : ""))
-    %label Other
-    = response_form.text_field(:other_value)
-    = response_form.text_field(:string_value)
-  - when :any_string
-    = response_form.survey_check_box(:selected, :class => (answer.is_exclusive? ? "exclusive" : ""))
-    = response_form.label(:answer_id, answer.text)
-    = response_form.text_field(:string_value, :size => 25, :maxlength => 250)
-  - when :one_answer, :one_string, :one_integer
-    - fields_for_radio(response_obj) do |radio_form|
-      = radio_form.radio_button(:answer_id, answer.id, :checked => response_obj.selected?, :title => answer.text)
-      = radio_form.label("answer_id_#{answer.id}", split_text(answer.text)[:prefix]) unless hide_label
-      - if renderer == :one_string
-        = response_form.text_field(:string_value, :size => 25, :maxlength => 250, :autocomplete => "off")
-      - if renderer == :one_integer
-        = response_form.text_field(:integer_value, :size => 5, :maxlength => 10, :autocomplete => "off")    
-      = radio_form.label("answer_id_#{answer.id}", split_text(answer.text)[:postfix]) unless hide_label
-  - when :none_date
-    = response_form.label(:datetime_value, split_text(answer.text)[:prefix], :class => "#{(disabled)? 'disabled' : 'enabled'}") unless hide_label
-    = response_form.text_field(:datetime_value)
-    = response_form.label(:datetime_value, split_text(answer.text)[:postfix], :class => "#{(disabled)? 'disabled' : 'enabled'}") unless hide_label
-  - when :none_datetime
-    = response_form.label(:datetime_value, split_text(answer.text)[:prefix], :class => "#{(disabled)? 'disabled' : 'enabled'}") unless hide_label
-    = response_form.datetime_select(:datetime_value, {:include_blank => true})
-    = response_form.label(:datetime_value, split_text(answer.text)[:postfix], :class => "#{(disabled)? 'disabled' : 'enabled'}") unless hide_label
-  - when :none_float
-    = response_form.label(:float_value, split_text(answer.text)[:prefix]) unless hide_label
-    = response_form.text_field(:float_value, :size => 5, :maxlength => 10, :autocomplete => "off")
-    = response_form.label(:float_value, split_text(answer.text)[:postfix]) unless hide_label
-  - when :none_integer
-    = response_form.label(:integer_value, split_text(answer.text)[:prefix], :class => "#{(disabled)? 'disabled' : 'enabled'}") unless hide_label
-    = response_form.text_field(:integer_value, :size => 5, :maxlength => 10, :autocomplete => "off", :disabled => disabled)
-    = response_form.label(:integer_value, split_text(answer.text)[:postfix], :class => "#{(disabled)? 'disabled' : 'enabled'}") unless hide_label
-  - when :none_string
-    = response_form.label(:string_value, split_text(answer.text)[:prefix], :class => "#{(disabled)? 'disabled' : 'enabled'}") unless hide_label
-    = response_form.text_field(:string_value, :size => 25, :maxlength => 250, :autocomplete => "off", :disabled => disabled)
-    = response_form.label(:string_value, split_text(answer.text)[:postfix], :class => "#{(disabled)? 'disabled' : 'enabled'}") unless hide_label
-  - when :none_text
-    = response_form.label(:text_value, split_text(answer.text)[:prefix]) unless hide_label
-    = response_form.text_area(:text_value, :cols => 80, :rows => 10)
-    = response_form.label(:text_value, split_text(answer.text)[:postfix]) unless hide_label
-  - when :none_time
-    = response_form.label(:datetime_value, split_text(answer.text)[:prefix], :class => "#{(disabled)? 'disabled' : 'enabled'}") unless hide_label
-    = response_form.time_select(:datetime_value,{ :include_blank => true })
-    = response_form.label(:datetime_value, split_text(answer.text)[:postfix], :class => "#{(disabled)? 'disabled' : 'enabled'}") unless hide_label
-  - else
-    = answer.text
-  
+-# TODO: disabled
+- rg ||= nil
+- r = response_for(@response_set, q, a, rg)
+- i = response_idx(q.pick != "one") # argument will be false (don't increment i) if we're on radio buttons
+- f.semantic_fields_for i, r do |ff|
+  = ff.quiet_input :question_id unless q.pick == "one" # don't repeat question_id if we're on radio buttons
+  = ff.quiet_input :id unless q.pick == "one" or r.new_record?
+  = ff.quiet_input :response_group, :value => rg if q.pick != "one" && g && g.display_type == "repeater"
+  - case q.pick
+  - when "one"
+    = ff.input :answer_id, :as => :surveyor_radio, :collection => [[a.text, a.id]], :label => false, :input_html => {:class => a.css_class}, :response_class => a.response_class
+  - when "any"
+    = ff.input :answer_id, :as => :surveyor_check_boxes, :collection => [[a.text, a.id]], :label => false, :input_html => {:class => a.css_class}, :response_class => a.response_class
+  - when "none"
+    - if %w(date datetime time float integer string text).include? a.response_class
+      = ff.quiet_input :answer_id, :input_html => {:class => a.css_class, :value => a.id}
+      = ff.input rc_to_attr(a.response_class), :as => rc_to_as(a.response_class), :label => a.split_or_hidden_text(:pre).blank? ? false : a.split_or_hidden_text(:pre), :hint => a.split_or_hidden_text(:post), :input_html => {:value => a.default_value}
+    - else
+      = a.text

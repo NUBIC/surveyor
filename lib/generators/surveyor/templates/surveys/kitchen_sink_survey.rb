@@ -1,4 +1,4 @@
-survey "&#8220;Kitchen Sink&#8221; survey" do
+survey "Kitchen Sink survey" do
 
   section "Basic questions" do
     # A label is a question that accepts no answers
@@ -31,6 +31,15 @@ survey "&#8220;Kitchen Sink&#8221; survey" do
     condition_B :q_2, "==", :a_2
     condition_C :q_2, "==", :a_3
     condition_D :q_2, "==", :a_4
+
+    # A dependant question demonstrating the count operator. The 
+    # dependency condition checks the answer count for the referenced question.
+    # It understands conditions of the form count> count< count>= count<=
+    # count!=
+    q_2b "Please explain why you dislike so many colors?"
+    a_1 "explanation", :text
+    dependency :rule => "Z"
+    condition_Z :q_2, "count>2"
 
     # When :pick isn't specified, the default is :none (no checkbox or radio button)
     q_montypython3 "What... is your name? (e.g. It is 'Arthur', King of the Britons)"
