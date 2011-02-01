@@ -8,7 +8,7 @@ module Surveyor
         base.send :has_many, :response_sets
 
         # Scopes
-        base.send :named_scope, :with_sections, {:include => :sections}
+        base.send :scope, :with_sections, {:include => :sections}
         
         @@validations_already_included ||= nil
         unless @@validations_already_included

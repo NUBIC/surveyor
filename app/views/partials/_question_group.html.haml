@@ -1,5 +1,5 @@
 - renderer = g.renderer
-- f.inputs q_text(g), :id => "g_#{g.id}", :class => "g_#{renderer} #{g.css_class(@response_set)}" do
+= f.inputs q_text(g), :id => "g_#{g.id}", :class => "g_#{renderer} #{g.css_class(@response_set)}" do
   %li.help= g.help_text
   - case renderer
     - when :grid

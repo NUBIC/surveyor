@@ -8,7 +8,7 @@ module Surveyor
 
         # Scopes
         base.send :default_scope, :order => "display_order ASC"
-        base.send :named_scope, :with_includes, { :include => {:questions => [:answers, :question_group, {:dependency => :dependency_conditions}]}}
+        base.send :scope, :with_includes, { :include => {:questions => [:answers, :question_group, {:dependency => :dependency_conditions}]}}
         
         @@validations_already_included ||= nil
         unless @@validations_already_included

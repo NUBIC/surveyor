@@ -2,7 +2,7 @@
 - rg ||= nil
 - r = response_for(@response_set, q, a, rg)
 - i = response_idx(q.pick != "one") # argument will be false (don't increment i) if we're on radio buttons
-- f.semantic_fields_for i, r do |ff|
+= f.semantic_fields_for i, r do |ff|
   = ff.quiet_input :question_id unless q.pick == "one" # don't repeat question_id if we're on radio buttons
   = ff.quiet_input :id unless q.pick == "one" or r.new_record?
   = ff.quiet_input :response_group, :value => rg if q.pick != "one" && g && g.display_type == "repeater"
