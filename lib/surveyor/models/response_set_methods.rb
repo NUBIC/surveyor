@@ -58,15 +58,15 @@ module Surveyor
         super
       end
 
-      def to_csv
+      def to_csv(access_code = false, print_header = true)
         qcols = Question.content_columns.map(&:name) - %w(created_at updated_at)
         acols = Answer.content_columns.map(&:name) - %w(created_at updated_at)
         rcols = Response.content_columns.map(&:name)
         require 'fastercsv'
         FCSV(result = "") do |csv|
-          csv << qcols.map{|qcol| "question.#{qcol}"} + acols.map{|acol| "answer.#{acol}"} + rcols.map{|rcol| "response.#{rcol}"}
+          csv << (access_code ? ["response set access code"] : []) + qcols.map{|qcol| "question.#{qcol}"} + acols.map{|acol| "answer.#{acol}"} + rcols.map{|rcol| "response.#{rcol}"} if print_header
           responses.each do |response|
-            csv << qcols.map{|qcol| response.question.send(qcol)} + acols.map{|acol| response.answer.send(acol)} + rcols.map{|rcol| response.send(rcol)}
+            csv << (access_code ? [self.access_code] : []) + qcols.map{|qcol| response.question.send(qcol)} + acols.map{|acol| response.answer.send(acol)} + rcols.map{|rcol| response.send(rcol)}
           end
         end
         result
