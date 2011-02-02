@@ -60,4 +60,17 @@ namespace :surveyor do
       puts "There are no surveys without response sets"      
     end
   end
+  desc "dump all responses to a given survey"
+  task :dump => :environment do
+    require 'fileutils.rb'
+    raise "USAGE: rake surveyor:dump SURVEY_ACCESS_CODE=<access_code> [OUTPUT_DIR=<dir>]" unless ENV["SURVEY_ACCESS_CODE"] 
+    survey = Survey.find_by_access_code(ENV["SURVEY_ACCESS_CODE"])
+    raise "No Survey found with code " + ENV["SURVEY_ACCESS_CODE"] unless survey
+    dir = ENV["OUTPUT_DIR"] || Rails.root
+    mkpath(dir) # Create all non-existent directories
+    full_path = File.join(dir,"#{survey.access_code}_#{Time.now.to_i}.csv")
+    File.open(full_path, 'w') do |f|
+      survey.response_sets.each_with_index{|r,i| f.write(r.to_csv(true, i == 0)) } # print access code every time, print_header first time
+    end
+  end
 end
