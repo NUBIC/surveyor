@@ -50,20 +50,15 @@ describe Validation, "reporting its status" do
   it "should validate a response by regexp" do
     test_var({}, [{:operator => "=~", :regexp => /^[a-z]{1,6}$/}], {:response_class => "string"}, {:string_value => ""}).should be_false
   end
-  it "should validate a response by (in)equality" do
-    # test_var({:operator => "!=", :datetime_value => Date.today + 1}, {:response_class => "date"}, {:datetime_value => Date.today}).should be_true
-    # test_var({:operator => "==", :answer_id => 2}, {:response_class => "answer"}, {:answer_id => 2}).should be_false
-  end
-  it "should validate a response by lookup" do
-    
-  end
 end
 describe Validation, "with conditions" do
-  @validation = Factory(:validation)
-  Factory(:validation_condition, :validation => @validation, :rule_key => "A")
-  Factory(:validation_condition, :validation => @validation, :rule_key => "B")
-  Factory(:validation_condition, :validation => @validation, :rule_key => "C")
-  v_ids = @validation.validation_conditions.map(&:id)
-  @validation.destroy
-  v_ids.each{|id| DependencyCondition.find_by_id(id).should == nil}
+  it "should destroy conditions when destroyed" do
+    @validation = Factory(:validation)
+    Factory(:validation_condition, :validation => @validation, :rule_key => "A")
+    Factory(:validation_condition, :validation => @validation, :rule_key => "B")
+    Factory(:validation_condition, :validation => @validation, :rule_key => "C")
+    v_ids = @validation.validation_conditions.map(&:id)
+    @validation.destroy
+    v_ids.each{|id| DependencyCondition.find_by_id(id).should == nil}
+  end
 end
