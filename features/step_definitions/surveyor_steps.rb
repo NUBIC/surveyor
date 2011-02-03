@@ -21,3 +21,14 @@ Then /^there should be (\d+) response set with (\d+) responses with:$/ do |rs_nu
     end
   end
 end
+
+Then /^there should be (\d+) dependencies$/ do |x|
+  Dependency.count.should == x.to_i
+end
+
+Then /^question "([^"]*)" should have a dependency with rule "([^"]*)"$/ do |qr, rule|
+  q = Question.find_by_reference_identifier(qr)
+  q.should_not be_blank
+  q.dependency.should_not be_nil
+  q.dependency.rule.should == rule
+end

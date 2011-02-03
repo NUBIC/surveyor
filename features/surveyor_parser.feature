@@ -155,3 +155,47 @@ Feature: Survey creation
     And there should be 2 validation_conditions with:
       | rule_key | integer_value |
       | A        | 0             |
+
+  Scenario: Dependencies and validations
+    Given I parse
+    """
+      survey "dependency test" do
+        section "section 1" do
+  
+          q_copd_sh_1 "Have you ever smoked cigarettes?",:pick=>:one,:help_text=>"NO means less than 20 packs of cigarettes or 12 oz. of tobacco in a lifetime or less than 1 cigarette a day for 1 year."
+          a_1 "Yes"
+          a_2 "No"
+  
+          q_copd_sh_1a "How old were you when you first started smoking cigarettes?", :help_text=>"age in years"
+          a :integer
+          dependency :rule => "A"
+          condition_A :q_copd_sh_1, "==", :a_1
+  
+          q_copd_sh_1b "Do you currently smoke cigarettes?",:pick=>:one, :help_text=>"as of 1 month ago"
+          a_1 "Yes"
+          a_2 "No"
+          dependency :rule => "B"
+          condition_B :q_copd_sh_1, "==", :a_1
+  
+          q_copd_sh_1c "On the average of the entire time you smoked, how many cigarettes did you smoke per day?"
+          a :integer
+          dependency :rule => "C"
+          condition_C :q_copd_sh_1, "==", :a_1
+  
+          q_copd_sh_1bb "How many cigarettes do you smoke per day now?"
+          a_2 "integer"
+          dependency :rule => "D"
+          condition_D :q_copd_sh_1b, "==", :a_1
+  
+  
+          q_copd_sh_1ba "How old were you when you stopped?"
+          a "Years", :integer
+          dependency :rule => "E"
+          condition_E :q_copd_sh_1b, "==", :a_2
+  
+        end
+      end
+    """
+    Then there should be 5 dependencies
+    And question "copd_sh_1a" should have a dependency with rule "A"
+    And question "copd_sh_1ba" should have a dependency with rule "E"
