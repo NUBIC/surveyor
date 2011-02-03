@@ -70,7 +70,7 @@ module Surveyor
       respond_to do |format|
         format.html do
           flash[:notice] = t('surveyor.unable_to_update_survey') unless saved
-          redirect_to :action => "edit", :anchor => anchor_from(params[:section]), :params => {:section => section_id_from(params[:section])}
+          redirect_to edit_my_survey_path(:anchor => anchor_from(params[:section]), :section => section_id_from(params[:section]))
         end
         format.js do
           ids, remove, question_ids = {}, {}, []

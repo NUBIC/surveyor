@@ -28,7 +28,7 @@ module SurveyorHelper
   end
   def previous_section
     # use copy in memory instead of making extra db calls
-    submit_tag(t('surveyor.previous_section'), :name => "section[#{@sections[@sections.index(@section)-1].id}]") unless @sections.first == @section
+    submit_tag(t('surveyor.previous_section').html_safe, :name => "section[#{@sections[@sections.index(@section)-1].id}]") unless @sections.first == @section
   end
   def next_section
     # use copy in memory instead of making extra db calls
