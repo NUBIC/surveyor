@@ -45,9 +45,14 @@ Feature: Survey creation
           question_1 "What is your favorite food?"
           answer "food", :string, :default_value => "beef"
         end
+        section "Section 2" do
+        end
+        section "Section 3" do
+        end
       end
     """
     When I start the "Favorites" survey
+    And I press "Section 3"
     And I press "Click here to finish"
     Then there should be 1 response set with 1 responses with:
       | string_value |
@@ -56,6 +61,7 @@ Feature: Survey creation
     When I start the "Favorites" survey
     And I fill in "food" with "chicken"
     And I press "Foods"
+    And I press "Section 3"
     And I press "Click here to finish"
     Then there should be 2 response set with 2 responses with:
       | string_value    |
