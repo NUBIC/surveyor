@@ -10,7 +10,7 @@ namespace "testbed" do
       sh "bundle install"
       sh "bundle exec rails new ."
       sh "bundle exec rails generate rspec:install"
-      sh "bundle exec rails generate cucumber:install --webrat"
+      sh "bundle exec rails generate cucumber:install --capybara"
       sh "rm -rf spec features"
     end
   end
