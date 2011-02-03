@@ -8,7 +8,7 @@
   - when :dropdown, :inline_dropdown, :slider
     - r = response_for(@response_set, q, nil, rg)
     - i = response_idx
-    - f.semantic_fields_for i, r do |ff|
+    = f.semantic_fields_for i, r do |ff|
       = ff.quiet_input :question_id
       = ff.quiet_input :response_group, :value => rg if g && g.display_type == "repeater"
       = ff.input :answer_id, :as => :select, :collection => q.answers.map{|a| [a.text, a.id]}, :label => false
@@ -16,7 +16,7 @@
     - if q.pick == "one"
       - r = response_for(@response_set, q, nil, rg)
       - i = response_idx  # increment the response index since the answer partial skips for q.pick == one
-      - f.semantic_fields_for i, r do |ff|
+      = f.semantic_fields_for i, r do |ff|
         = ff.quiet_input :question_id
         = ff.quiet_input :response_group, :value => rg if g && g.display_type == "repeater"
         = ff.quiet_input :id unless r.new_record?

@@ -1,4 +1,4 @@
-- div_for @section, :class => @section.custom_class do
+= div_for @section, :class => @section.custom_class do
   %span.title= @section.title
   - qs ||= []
   - (questions = @section.questions).each_with_index do |q, i|
