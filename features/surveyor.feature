@@ -25,6 +25,7 @@ Feature: Survey creation
       end
     """
     When I start the "Favorites" survey
+    Then I should see "You with the sad eyes don't be discouraged"
     And I choose "red"
     And I choose "blue"
     And I check "orange"
