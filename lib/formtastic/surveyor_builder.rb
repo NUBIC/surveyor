@@ -1,3 +1,4 @@
+require 'formtastic'
 module Formtastic
   class SurveyorBuilder < SemanticFormBuilder
     def quiet_input(method, options = {})
