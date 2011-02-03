@@ -32,7 +32,7 @@ Feature: Survey creation
     And I check "brown"
     And I press "Click here to finish"
     Then there should be 1 response set with 3 responses with:
-      | to_s   |
+      | answer |
       | blue   |
       | orange |
       | brown  |
@@ -43,12 +43,20 @@ Feature: Survey creation
       survey "Favorites" do
         section "Foods" do
           question_1 "What is your favorite food?"
-          answer :string, :default_value => "beef"
+          answer "food", :string, :default_value => "beef"
         end
       end
     """
     When I start the "Favorites" survey
     And I press "Click here to finish"
     Then there should be 1 response set with 1 responses with:
-      | to_s   |
-      | clear   |
+      | string_value |
+      | beef |
+
+    When I start the "Favorites" survey
+    And I fill in "food" with "chicken"
+    And I press "Foods"
+    And I press "Click here to finish"
+    Then there should be 2 response set with 2 responses with:
+      | string_value    |
+      | chicken |
