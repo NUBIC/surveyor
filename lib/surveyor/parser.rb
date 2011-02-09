@@ -73,7 +73,7 @@ class Survey < ActiveRecord::Base
   
   def self.parse_and_build(context, args, original_method, reference_identifier)
     # clear context
-    context.delete_if{|k,v| true}
+    context.delete_if{|k,v| true }
     context[:question_references] = {}
     context[:answer_references] = {}
     
@@ -83,7 +83,7 @@ class Survey < ActiveRecord::Base
                               :reference_identifier => reference_identifier}.merge(args[1] || {}))
   end
   def clear(context)
-    context.delete_if{|k,v| true}
+    context.delete_if{|k,v| true }
     context[:question_references] = {}
     context[:answer_references] = {}
   end
@@ -93,14 +93,14 @@ class SurveySection < ActiveRecord::Base
   
   def self.parse_and_build(context, args, original_method, reference_identifier)
     # clear context
-    context.delete_if{|k,v| k != :survey && k != :question_references && k != :answer_references}
+    context.delete_if{|k,v| !%w(survey question_references answer_references).map(&:to_sym).include?(k)}
     
     # build and set context
     title = args[0]
     context[:survey_section] = context[:survey].sections.build({ :title => title }.merge(args[1] || {}))
   end
   def clear(context)
-    context.delete_if{|k,v| k != :survey && k != :question_references && k != :answer_references}
+    context.delete_if{|k,v| !%w(survey question_references answer_references).map(&:to_sym).include?(k)}
   end
 end
 class QuestionGroup < ActiveRecord::Base
@@ -108,7 +108,7 @@ class QuestionGroup < ActiveRecord::Base
   
   def self.parse_and_build(context, args, original_method, reference_identifier)
     # clear context
-    context.delete_if{|k,v| k != :survey && k != :survey_section && k != :question_references && k != :answer_references}
+    context.delete_if{|k,v| !%w(survey survey_section question_references answer_references).map(&:to_sym).include?(k)}
     
     # build and set context
     context[:question_group] = context[:question_group] = new({  :text => args[0] || "Question Group",
@@ -116,11 +116,15 @@ class QuestionGroup < ActiveRecord::Base
 
   end
   def clear(context)
-    context.delete_if{|k,v| k != :survey && k != :survey_section && k != :question_references && k != :answer_references}
+    context.delete_if{|k,v| !%w(survey survey_section question_references answer_references).map(&:to_sym).include?(k)}
   end
 end
 class Question < ActiveRecord::Base
   # nonblock
+  
+  # attributes
+  attr_accessor :correct, :context_reference
+  before_save :resolve_correct_answers
   
   def self.parse_and_build(context, args, original_method, reference_identifier)
     # clear context
@@ -129,6 +133,7 @@ class Question < ActiveRecord::Base
     # build and set context
     text = args[0] || "Question"
     context[:question] = context[:survey_section].questions.build({
+      :context_reference => context,
       :question_group => context[:question_group],
       :reference_identifier => reference_identifier,
       :text => text,
@@ -144,6 +149,14 @@ class Question < ActiveRecord::Base
         context[:answer_references][reference_identifier] ||= {} unless reference_identifier.blank?
         context[:answer_references][reference_identifier][grid_answer.reference_identifier] = a unless reference_identifier.blank? or grid_answer.reference_identifier.blank?
       end
+    end
+  end
+  
+  def resolve_correct_answers
+    unless correct.blank? or reference_identifier.blank? or context_reference.blank?
+      # Looking up references for quiz answers
+      context_reference[:answer_references][reference_identifier] ||= {}
+      print (self.correct_answer = context_reference[:answer_references][reference_identifier][correct]) ? "found correct answer:#{correct} " : "lost! correct answer:#{correct} "
     end
   end
 end
