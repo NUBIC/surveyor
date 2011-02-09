@@ -1,3 +1,14 @@
+0.19.2
+
+* quiz example
+* support correct answers for quizes through dsl. closes #105
+* test dependency issues. closes #73
+* fixing feature, section menu doens't appear until three sections exist
+* fixing default values to only appear when response is blank
+* fixing typo in specs. fixing cucumber on hudson due to residual objects in db from specs
+* tweak to check hudson cucumber issue
+* added dump rake task. thanks bnadav. closes #100
+
 0.19.1
 
 * require formtastic. closes #104
