@@ -66,3 +66,17 @@ Feature: Survey creation
     Then there should be 2 response set with 2 responses with:
       | string_value    |
       | chicken |
+
+  Scenario: Quiz time
+    Given the survey
+    """
+      survey "Favorites" do
+        section "Foods" do
+          question_1 "What is the best meat?", :pick => :one, :correct => "oink"
+          a_oink "bacon"
+          a_tweet "chicken"
+          a_moo "beef"
+        end
+      end
+    """
+    Then question "1" should have correct answer "oink"

@@ -69,3 +69,9 @@ Then /^there should be (\d+) validation_condition(?:s?) with:$/ do |x, table|
     ValidationCondition.find(:first, :conditions => hash).should_not be_nil
   end
 end
+
+Then /^question "([^"]*)" should have correct answer "([^"]*)"$/ do |qr, ar|
+  (q = Question.find_by_reference_identifier(qr)).should_not be_nil
+  q.correct_answer.should == q.answers.find_by_reference_identifier(ar)
+end
+
