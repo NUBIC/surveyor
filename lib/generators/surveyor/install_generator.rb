@@ -25,6 +25,7 @@ module Surveyor
     end
     def surveys
       copy_file "surveys/kitchen_sink_survey.rb"
+      copy_file "surveys/quiz.rb"
     end
     def locales
       directory "config/locales"
