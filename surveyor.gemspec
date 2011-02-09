@@ -5,11 +5,11 @@
 
 Gem::Specification.new do |s|
   s.name = %q{surveyor}
-  s.version = "0.19.1"
+  s.version = "0.19.2"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Brian Chamberlain", "Mark Yoon"]
-  s.date = %q{2011-02-02}
+  s.date = %q{2011-02-09}
   s.email = %q{yoon@northwestern.edu}
   s.extra_rdoc_files = [
     "README.md"
@@ -98,6 +98,7 @@ Gem::Specification.new do |s|
      "generators/surveyor/templates/migrate/create_validation_conditions.rb",
      "generators/surveyor/templates/migrate/create_validations.rb",
      "generators/surveyor/templates/surveys/kitchen_sink_survey.rb",
+     "generators/surveyor/templates/surveys/quiz.rb",
      "generators/surveyor/templates/tasks/surveyor.rb",
      "hudson.rakefile",
      "init_testbed.rakefile",
@@ -149,7 +150,7 @@ Gem::Specification.new do |s|
   s.homepage = %q{http://github.com/breakpointer/surveyor}
   s.rdoc_options = ["--charset=UTF-8"]
   s.require_paths = ["lib"]
-  s.rubygems_version = %q{1.4.2}
+  s.rubygems_version = %q{1.3.7}
   s.summary = %q{A rails (gem) plugin to enable surveys in your application}
   s.test_files = [
     "spec/controllers/surveyor_controller_spec.rb",
@@ -174,6 +175,7 @@ Gem::Specification.new do |s|
   ]
 
   if s.respond_to? :specification_version then
+    current_version = Gem::Specification::CURRENT_SPECIFICATION_VERSION
     s.specification_version = 3
 
     if Gem::Version.new(Gem::VERSION) >= Gem::Version.new('1.2.0') then
