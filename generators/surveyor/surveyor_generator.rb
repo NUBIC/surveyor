@@ -54,8 +54,8 @@ class SurveyorGenerator < Rails::Generator::Base
       end
       
       # Surveys
-      m.directory "surveys/fixtures"
       m.file "surveys/kitchen_sink_survey.rb", "surveys/kitchen_sink_survey.rb"
+      m.file "surveys/quiz.rb", "surveys/quiz.rb"
       
       m.readme "README"
       
