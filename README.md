@@ -85,7 +85,7 @@ There are two other useful rake tasks for removing (only surveys without respons
 
 Surveyor's controller, models, and views may be customized via classes in your app/models, app/helpers and app/controllers directories. To generate a sample custom controller and layout, run:
 
-`script/generate extend_surveyor`
+`script/rails generate surveyor:custom`
 
 and read surveys/EXTENDING\_SURVEYOR
 
