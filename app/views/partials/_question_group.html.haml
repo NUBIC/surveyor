@@ -5,6 +5,10 @@
     - when :grid
       %li
         %table
+          %col{:class => "pre_col"}
+          - qs.first.answers.size.times do |t| 
+            %col{:class => "#{t%2==0 ? 'even':'odd'}_col"}
+          %col{:class => "post_col"}
           %tbody
             - qs.each_slice(10) do |ten_questions| # header row every 10
               %tr

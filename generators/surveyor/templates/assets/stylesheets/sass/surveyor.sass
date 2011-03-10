@@ -1,7 +1,9 @@
-!background_color = #EEEEEE
+!background_color = #FFDDCC
 !surveyor_flash_background_color = #FFF1A8
 !surveyor_color = #FFFFF1 
 !surveyor_text_color = #333333
+!surveyor_dependents_background_color = #DFDFD4
+!surveyor_dependents_legend_background_color = "#DFDFA2"
 
 !surveyor_menus_active_color = #EBEBCC
 !surveyor_menus_border_color = #ccc
@@ -54,10 +56,15 @@ body
   // question groups
   fieldset.g_inline fieldset
     :display inline
-  fieldset.g_grid li.surveyor_radio label
-    :visibility hidden
-    input
-      :visibility visible
+  fieldset.g_grid
+    table col.even_col
+      :background-color= "#FFDDCC"
+    table col.odd_col
+      :background-color= "#FFFFCC"
+    li.surveyor_radio label
+      :visibility hidden
+      input
+        :visibility visible
   fieldset.g_repeater
     ol fieldset
       :display inline
@@ -87,6 +94,13 @@ body
           :display inline
     &.q_inline ol li
       :display inline
+    &.q_hidden
+      :display none
+    &.q_dependent
+      :background-color= !surveyor_dependents_background_color
+      :margin-bottom 1em
+      legend
+        :background-color= !surveyor_dependents_legend_background_color 
     input, textarea, select
       :margin 0 3px
     input[type="text"], textarea
