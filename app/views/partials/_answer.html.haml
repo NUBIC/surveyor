@@ -14,6 +14,6 @@
   - when "none"
     - if %w(date datetime time float integer string text).include? a.response_class
       = ff.quiet_input :answer_id, :input_html => {:class => a.css_class, :value => a.id}
-      = ff.input rc_to_attr(a.response_class), :as => rc_to_as(a.response_class), :label => a.split_or_hidden_text(:pre).blank? ? false : a.split_or_hidden_text(:pre), :hint => a.split_or_hidden_text(:post), :input_html => (r.as(a.response_class).blank? ? {:value => a.default_value} : {})
+      = ff.input rc_to_attr(a.response_class), :as => rc_to_as(a.response_class), :label => a.split_or_hidden_text(:pre).blank? ? false : a.split_or_hidden_text(:pre), :hint => a.split_or_hidden_text(:post), :input_html => generate_pick_none_input_html(r.as(a.response_class), a.default_value, a.css_class)
     - else
       = a.text
