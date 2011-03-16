@@ -63,6 +63,12 @@ module SurveyorHelper
     else type_sym
     end
   end
+  def generate_pick_none_input_html(response_class, default_value, css_class)
+    html = {}
+    html[:class] = css_class unless css_class.blank?
+    html[:value] = default_value if response_class.blank?
+    html
+  end
   
   # Responses
   def response_for(response_set, question, answer = nil, response_group = nil)

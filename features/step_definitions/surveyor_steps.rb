@@ -32,3 +32,7 @@ Then /^question "([^"]*)" should have a dependency with rule "([^"]*)"$/ do |qr,
   q.dependency.should_not be_nil
   q.dependency.rule.should == rule
 end
+
+Then /^the element "([^"]*)" should have the class "([^"]*)"$/ do |selector, css_class|
+  response.should have_selector(selector, :class => css_class)
+end
