@@ -1,8 +1,8 @@
-!background_color = #DFDFD4
+!background_color = #EEEEEE
 !surveyor_flash_background_color = #FFF1A8
 !surveyor_color = #FFFFF1 
 !surveyor_text_color = #333333
-
+!surveyor_dependent_color = #FFFFDF
 !surveyor_menus_active_color = #EBEBCC
 !surveyor_menus_border_color = #ccc
 
@@ -57,17 +57,6 @@ body
   fieldset.g_grid
     table
       :border-collapse collapse
-      td
-        :border 1px dashed
-      td, th  
-        :padding 5px 10px
-      col
-        &.even_col
-          :background-color= !background_color
-        &.odd_col
-          :background-color= !surveyor_color
-        &.pre_col, &.post_col
-          :padding 5px 0
     li.surveyor_radio label
       :visibility hidden
       input
@@ -82,7 +71,8 @@ body
   .survey_section>fieldset>ol
     :padding-left 1em  
   fieldset
-    :padding 5px 0 10px 0
+    :padding-top 5px
+    :margin-bottom 10px
     ol
       fieldset
         :vertical-align top
@@ -109,20 +99,17 @@ body
   fieldset.q_hidden
     :display none
   fieldset.q_dependent
-    :background-color= !background_color
-    li
-      :padding-top 4px
-
-    :margin-bottom 1em
+    :background-color= !surveyor_dependent_color
     legend
-      :background-color= !surveyor_color
+      :background-color= !surveyor_dependent_color
+      :padding 3px 3px 3px 0
 
     
     
   // buttons
   input[type="submit"]
     :font-size 1em
-    :border 1px outset
+    :border 1px
     :padding 5px
     :cursor pointer
     :background-color= !background_color
