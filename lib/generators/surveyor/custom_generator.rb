@@ -10,7 +10,7 @@ module Surveyor
       copy_file "app/controllers/surveyor_controller.rb"
     end
     def layout
-      copy_file "app/views/layout/surveyor_custom.html.erb"
+      copy_file "app/views/layouts/surveyor_custom.html.erb"
     end
     
   end
