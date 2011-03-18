@@ -9,7 +9,7 @@ Gem::Specification.new do |s|
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Brian Chamberlain", "Mark Yoon"]
-  s.date = %q{2011-02-01}
+  s.date = %q{2011-03-18}
   s.email = %q{yoon@northwestern.edu}
   s.extra_rdoc_files = [
     "README.md"
@@ -97,6 +97,7 @@ Gem::Specification.new do |s|
      "lib/generators/surveyor/templates/public/stylesheets/surveyor/results.css",
      "lib/generators/surveyor/templates/surveys/EXTENDING_SURVEYOR.md",
      "lib/generators/surveyor/templates/surveys/kitchen_sink_survey.rb",
+     "lib/generators/surveyor/templates/surveys/quiz.rb",
      "lib/surveyor.rb",
      "lib/surveyor/acts_as_response.rb",
      "lib/surveyor/common.rb",
@@ -139,7 +140,6 @@ Gem::Specification.new do |s|
      "spec/rcov.opts",
      "spec/spec.opts",
      "spec/spec_helper.rb",
-     "spec/views/surveyor/show.html.haml_spec.rb",
      "surveyor.gemspec",
      "testbed/Gemfile"
   ]
@@ -167,8 +167,7 @@ Gem::Specification.new do |s|
      "spec/models/survey_spec.rb",
      "spec/models/validation_condition_spec.rb",
      "spec/models/validation_spec.rb",
-     "spec/spec_helper.rb",
-     "spec/views/surveyor/show.html.haml_spec.rb"
+     "spec/spec_helper.rb"
   ]
 
   if s.respond_to? :specification_version then
