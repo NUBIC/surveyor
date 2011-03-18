@@ -1,3 +1,12 @@
+0.19.3
+
+* add authenticity token into ajax requests. closes #120
+* Adding the custom_class attribute to text answer fields. Fixes #113.
+* reverting some styles
+* Add padding to dependent questions
+* Change colors in surveyor.sass
+* Fix dependent questions css and alternate column color in grid questions
+
 0.19.2
 
 * quiz example
