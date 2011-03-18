@@ -80,3 +80,22 @@ Feature: Survey creation
       end
     """
     Then question "1" should have correct answer "oink"
+    
+  Scenario: Custom css class
+    Given the survey
+    """
+      survey "Movies" do
+        section "First" do
+          q "What is your favorite movie?"
+          a :string, :custom_class => "my_custom_class"
+          q "What is your favorite state?"
+          a :string
+        end
+      end
+    """
+    When I start the "Movies" survey
+    Then the element "input[type='text']:first" should have the class "my_custom_class"
+    # Then the element "input[type='text']:last" should not contain the class attribute
+    
+    
+    
