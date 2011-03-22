@@ -181,6 +181,22 @@ survey "Kitchen Sink survey" do
       q "limp|perky", :pick => :one
     end
     
+    grid "For each of the car types checked, what type of options would you prefer?" do
+      a "Leather seats"
+      a "Shiny rims"
+      a "Subwoofer"
+      a "Sunroof"
+      a "Turbocharger"
+      q "SUV", :pick => :any
+      q "Sedan", :pick => :any
+      q "Coupe", :pick => :any
+      q "Convertible", :pick => :any
+      q "Minivan", :pick => :any
+      q "Crossover", :pick => :any
+      q "Wagon", :pick => :any
+      q "Other", :pick => :any
+    end
+    
     q "Please rank the following foods based on how much you like them"
     a "|pizza", :integer
     a "|salad", :integer
