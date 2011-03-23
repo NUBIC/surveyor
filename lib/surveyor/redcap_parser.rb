@@ -81,6 +81,10 @@ class Question < ActiveRecord::Base
       :pick => pick_from_field_type(r[:field_type]),
       :display_type => display_type_from_field_type(r[:field_type])
     })
+    unless context[:question].reference_identifier.blank?
+      context[:lookup] ||= []
+      context[:lookup] << [context[:question].reference_identifier, nil, context[:question]]
+    end    
     print "question_#{context[:question].reference_identifier} "
   end
   def self.pick_from_field_type(ft)
@@ -152,7 +156,11 @@ class DependencyCondition < ActiveRecord::Base
   def resolve_references
     return unless lookup_reference
     print "resolve(#{question_reference},#{answer_reference})"
-    if row = lookup_reference.find{|r| r[0] == question_reference and r[1] == answer_reference}
+    if answer_reference.blank? and (row = lookup_reference.find{|r| r[0] == question_reference and r[1] == nil}) and row[2].answers.size == 1
+      print "...found "
+      self.question = row[2]
+      self.answer = self.question.answers.first
+    elsif row = lookup_reference.find{|r| r[0] == question_reference and r[1] == answer_reference}    
       print "...found "
       self.answer = row[2]
       self.question = self.answer.question
