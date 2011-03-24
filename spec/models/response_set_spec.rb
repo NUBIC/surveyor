@@ -138,7 +138,23 @@ describe ResponseSet, "with dependencies" do
   it "should list answered and unanswered dependencies to show inline (javascript turned on)" do
     @response_set.all_dependencies[:show].should == ["q_#{@what_flavor.id}", "q_#{@what_bakery.id}"]
   end
-  
+  it "should list group as dependency" do
+    # Question Group
+    crust_group = Factory(:question_group, :text => "Favorite Crusts")
+    
+    # Question
+    what_crust = Factory(:question, :text => "What is your favorite curst type?", :survey_section => @section)
+    crust_group.questions << what_crust
+
+    # Answers
+    what_crust.answers << Factory(:answer, :response_class => :string, :question_id => what_crust.id)
+    
+    # Dependency
+    crust_group_dep = Factory(:dependency, :rule => "C", :question_group_id => crust_group.id, :question => nil)
+    Factory(:dependency_condition, :rule_key => "C", :question_id => @do_you_like_pie.id, :operator => "==", :answer_id => @do_you_like_pie.answers.first.id, :dependency_id => crust_group_dep.id)
+    
+    @response_set.unanswered_dependencies.should == [@what_bakery, crust_group]
+  end
 end
 describe ResponseSet, "as a quiz" do
   before(:each) do
