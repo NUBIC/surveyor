@@ -97,5 +97,21 @@ Feature: Survey creation
     Then the element "input[type='text']:first" should have the class "my_custom_class"
     # Then the element "input[type='text']:last" should not contain the class attribute
     
+  Scenario: Repeater with a dropdown
+    Given the survey
+    """
+      survey "Movies" do
+        section "Preferences" do
+          repeater "What are you favorite genres?" do
+            q "Make", :pick => :one, :display_type => :dropdown
+            a "Action"
+            a "Comedy"
+            a "Mystery"
+          end
+        end
+      end
+    """
+    When I start the "Movies" survey
+    Then a dropdown should exist with the options "Action, Comedy, Mystery"
     
     

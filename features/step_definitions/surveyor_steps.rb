@@ -36,3 +36,13 @@ end
 Then /^the element "([^"]*)" should have the class "([^"]*)"$/ do |selector, css_class|
   response.should have_selector(selector, :class => css_class)
 end
+
+Then /^a dropdown should exist with the options "([^"]*)"$/ do |options_text|
+  response.should have_selector('select')
+  options = options_text.split(',').collect(&:strip)
+  within "select" do |select|
+    options.each do |o|
+      select o
+    end
+  end
+end
