@@ -103,6 +103,9 @@ module Surveyor
       def is_unanswered?(question)
         self.responses.detect{|r| r.question_id == question.id}.nil?
       end
+      def is_group_unanswered?(group)
+        group.questions.any?{|question| is_unanswered?(question)}
+      end
 
       # Returns the number of response groups (count of group responses enterted) for this question group
       def count_group_responses(questions)
@@ -110,7 +113,15 @@ module Surveyor
       end
 
       def unanswered_dependencies
-        dependencies.select{|d| d.is_met?(self) and self.is_unanswered?(d.question)}.map(&:question)
+        unanswered_question_dependencies + unanswered_question_group_dependencies
+      end
+      
+      def unanswered_question_dependencies
+        dependencies.select{|d| d.is_met?(self) and d.question and self.is_unanswered?(d.question)}.map(&:question)
+      end
+      
+      def unanswered_question_group_dependencies
+        dependencies.select{|d| d.is_met?(self) and d.question_group and self.is_group_unanswered?(d.question_group)}.map(&:question_group)
       end
 
       def all_dependencies(question_ids = nil)
