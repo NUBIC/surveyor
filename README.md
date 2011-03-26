@@ -13,11 +13,11 @@ The Surveyor DSL defines questions, answers, question groups, survey sections, d
 The Surveyor DSL supports a wide range of question types (too many to list here) and complex dependency logic. Here are the first few questions of the "kitchen sink" survey which should give you and idea of how it works. The full example with all the types of questions available if you follow the installation instructions below.
 
     survey "Kitchen Sink survey" do
-    
+
       section "Basic questions" do
         # A label is a question that accepts no answers
         label "These questions are examples of the basic supported input types"
-    
+
         # A basic question with radio buttons
         question_1 "What is your favorite color?", :pick => :one
         answer "red"
@@ -25,7 +25,7 @@ The Surveyor DSL supports a wide range of question types (too many to list here)
         answer "green"
         answer "yellow"
         answer :other
-    
+
         # A basic question with checkboxes
         # "question" and "answer" may be abbreviated as "q" and "a"
         q_2 "Choose the colors you don't like", :pick => :any
@@ -34,8 +34,8 @@ The Surveyor DSL supports a wide range of question types (too many to list here)
         a_3 "green"
         a_4 "yellow"
         a :omit
-    
-        # A dependent question, with conditions and rule to logically join them  
+
+        # A dependent question, with conditions and rule to logically join them
         # the question's reference identifier is "2a", and the answer's reference_identifier is "1"
         # question reference identifiers used in conditions need to be unique on a survey for the lookups to work
         q_2a "Please explain why you don't like this color?"
@@ -45,24 +45,27 @@ The Surveyor DSL supports a wide range of question types (too many to list here)
         condition_B :q_2, "==", :a_2
         condition_C :q_2, "==", :a_3
         condition_D :q_2, "==", :a_4
-    
+
         # ... other question, sections and such. See surveys/kitchen_sink_survey.rb for more.
-     end 
-    
+     end
+
     end
-   
+
 The first question is "pick one" (radio buttons) with "other". The second question is "pick any" (checkboxes) with the option to "omit". It also features a dependency with a follow up question. Notice the dependency rule is defined as a string. We support complex dependency such as "A and (B or C) and D" or "A or ((B and C) or D)". The conditions are evaluated separately using the operators "==","!=","<>", ">=","<" the substituted by letter into to the dependency rule and evaluated.
 
 # Installation
 
-1. Add it to your bundler Gemfile:
+1. Add surveyor to your Gemfile (add add haml too if you haven't already):
 
 gem "surveyor"
+gem "haml"
+
+Then run:
 
 `bundle install`
 
 2. Generate assets, run migrations:
-    
+
 `script/rails generate surveyor:install`
 `rake db:migrate`
 
