@@ -4,7 +4,7 @@ When /^I start the "([^"]*)" survey$/ do |name|
   click_button "Take it"
 end
 
-Then /^there should be (\d+) response set with (\d+) responses with:$/ do |rs_num, r_num, table|
+Then /^there should be (\d+) response set with (\d+) responses* with:$/ do |rs_num, r_num, table|
   ResponseSet.count.should == rs_num.to_i
   Response.count.should == r_num.to_i
   table.hashes.each do |hash|

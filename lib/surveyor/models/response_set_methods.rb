@@ -26,6 +26,7 @@ module Surveyor
           def reject_or_destroy_blanks(hash_of_hashes)
             result = {}
             (hash_of_hashes || {}).each_pair do |k, hash|
+              hash = Response.applicable_attributes(hash)
               if has_blank_value?(hash)
                 result.merge!({k => hash.merge("_destroy" => "true")}) if hash.has_key?("id")
               else
