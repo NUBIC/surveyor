@@ -18,6 +18,7 @@ describe ResponseSet do
     @response_set.complete!
     @response_set.completed_at.should_not be_nil
     @response_set.completed_at.is_a?(Time).should be_true
+    @response_set.should be_complete
   end
 
   it "does not allow completion through mass assignment" do

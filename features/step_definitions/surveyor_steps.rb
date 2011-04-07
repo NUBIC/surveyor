@@ -36,3 +36,7 @@ end
 Then /^the element "([^"]*)" should have the class "([^"]*)"$/ do |selector, css_class|
   response.should have_selector(selector, :class => css_class)
 end
+
+Then /^the survey should be complete$/ do
+  ResponseSet.first.should be_complete
+end
