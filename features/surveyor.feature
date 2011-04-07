@@ -57,6 +57,7 @@ Feature: Survey creation
     Then there should be 1 response set with 1 responses with:
       | string_value |
       | beef |
+    Then the survey should be complete
 
     When I start the "Favorites" survey
     And I fill in "food" with "chicken"
@@ -96,6 +97,5 @@ Feature: Survey creation
     When I start the "Movies" survey
     Then the element "input[type='text']:first" should have the class "my_custom_class"
     # Then the element "input[type='text']:last" should not contain the class attribute
-    
     
     

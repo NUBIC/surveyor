@@ -63,7 +63,8 @@ module Surveyor
       saved = false
       ActiveRecord::Base.transaction do
         saved = @response_set.update_attributes(:responses_attributes => ResponseSet.reject_or_destroy_blanks(params[:r]))
-        saved = @response_set.complete! if saved && params[:finish]
+        @response_set.complete! if saved && params[:finish]
+        saved &= @response_set.save
       end
       return redirect_with_message(surveyor_finish, :notice, t('surveyor.completed_survey')) if saved && params[:finish]
 
