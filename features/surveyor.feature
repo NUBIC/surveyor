@@ -116,6 +116,23 @@ Feature: Survey creation
     And I press "Click here to finish"
     Then there should be 1 response set with 1 response with:
     | bacon |
+
+  Scenario: Repeater with a dropdown
+    Given the survey
+    """
+      survey "Movies" do
+        section "Preferences" do
+          repeater "What are you favorite genres?" do
+            q "Make", :pick => :one, :display_type => :dropdown
+            a "Action"
+            a "Comedy"
+            a "Mystery"
+          end
+        end
+      end
+    """
+    When I start the "Movies" survey
+    Then a dropdown should exist with the options "Action, Comedy, Mystery"
     
   Scenario: A pick one question with an option for other
     Given the survey

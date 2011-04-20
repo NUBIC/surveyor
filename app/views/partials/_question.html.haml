@@ -5,7 +5,7 @@
   %span.help= q.help_text
   - case renderer
   - when :image, :label
-  - when :dropdown, :inline_dropdown, :slider
+  - when :dropdown, :inline_dropdown, :slider, :repeater_dropdown
     - r = response_for(@response_set, q, nil, rg)
     - i = response_idx
     = f.semantic_fields_for i, r do |ff|
