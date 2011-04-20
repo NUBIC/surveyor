@@ -211,8 +211,14 @@ survey "Kitchen Sink survey" do
     a "knife", :string
     a :other, :string
     
+    q_car "Do you own a car?", :pick => :one
+    a_y "Yes"
+    a_n "No"
+    
     # Repeaters allow multiple responses to a question or set of questions
     repeater "Tell us about the cars you own" do
+      dependency :rule => "A"
+      condition_A :q_car, "==", :a_y
       q "Make", :pick => :one, :display_type => :dropdown
       a "Toyota"
       a "Ford"
