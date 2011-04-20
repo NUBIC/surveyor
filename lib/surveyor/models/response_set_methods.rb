@@ -74,6 +74,10 @@ module Surveyor
       def complete!
         self.completed_at = Time.now
       end
+      
+      def complete?
+        !completed_at.nil?
+      end
 
       def correct?
         responses.all?(&:correct?)
