@@ -40,3 +40,13 @@ end
 Then /^the survey should be complete$/ do
   ResponseSet.first.should be_complete
 end
+
+Then /^a dropdown should exist with the options "([^"]*)"$/ do |options_text|
+  response.should have_selector('select')
+  options = options_text.split(',').collect(&:strip)
+  within "select" do |select|
+    options.each do |o|
+      select o
+    end
+  end
+end
