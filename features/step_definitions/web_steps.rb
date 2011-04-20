@@ -33,11 +33,21 @@ When /^(?:|I )follow "([^"]*)" within "([^"]*)"$/ do |link, parent|
 end
 
 When /^(?:|I )fill in "([^"]*)" with "([^"]*)"$/ do |field, value|
+  field = resolve_regexp(field)
   fill_in(field, :with => value)
 end
 
 When /^(?:|I )fill in "([^"]*)" for "([^"]*)"$/ do |value, field|
+  field = resolve_regexp(field)
   fill_in(field, :with => value)
+end
+
+def resolve_regexp(expr)
+  if expr =~ /\/.*\//
+    Regexp.new(expr[1..-2])
+  else
+    expr
+  end
 end
 
 # Use this to fill in an entire form with data from a table. Example:

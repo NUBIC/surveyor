@@ -74,3 +74,21 @@ describe Response, "when saving a response" do
   end
 
 end
+
+describe Response, "applicable_attributes" do
+  before(:each) do
+    @who = Factory(:question, :text => "Who rules?")
+    @odoyle = Factory(:answer, :text => "Odoyle", :response_class => "answer")
+    @other = Factory(:answer, :text => "Other", :response_class => "string")
+  end
+  
+  it "should have string_value if response_type is string" do
+    good = {"question_id" => @who.id, "answer_id" => @other.id, "string_value" => "Frank"}
+    Response.applicable_attributes(good).should == good
+  end
+  
+  it "should not have string_value if response_type is answer" do
+    bad = {"question_id"=>@who.id, "answer_id"=>@odoyle.id, "string_value"=>"Frank"}
+    Response.applicable_attributes(bad).should == {"question_id" => @who.id, "answer_id"=> @odoyle.id}
+  end
+end

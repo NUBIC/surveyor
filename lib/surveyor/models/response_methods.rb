@@ -14,6 +14,18 @@ module Surveyor
           @@validations_already_included = true
         end
         base.send :include, Surveyor::ActsAsResponse # includes "as" instance method
+        
+        # Class methods
+        base.instance_eval do
+          def applicable_attributes(attrs)
+            result = HashWithIndifferentAccess.new(attrs)
+            if result[:string_value] && Answer.exists?(result[:answer_id])
+              answer = Answer.find(result[:answer_id])
+              result.delete(:string_value) unless answer.response_class && answer.response_class.to_sym == :string
+            end
+            result
+          end
+        end
       end
 
       # Instance Methods
