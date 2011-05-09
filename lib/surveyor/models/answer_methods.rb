@@ -33,6 +33,7 @@ module Surveyor
         self.response_class ||= "answer"
         self.short_text ||= text
         self.data_export_identifier ||= Surveyor::Common.normalize(text)
+        self.api_id ||= UUID.generate
       end
       
       def css_class

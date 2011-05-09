@@ -14,7 +14,7 @@ class Survey < ActiveRecord::Base
   # block
 
   def unparse(dsl)
-    attrs = (self.attributes.diff Survey.new(:title => title).attributes).delete_if{|k,v| %w(created_at updated_at inactive_at id title access_code).include? k}.symbolize_keys!
+    attrs = (self.attributes.diff Survey.new(:title => title).attributes).delete_if{|k,v| %w(created_at updated_at inactive_at id title access_code api_id).include? k}.symbolize_keys!
     dsl << "survey \"#{title}\""
     dsl << (attrs.blank? ? " do\n" : ", #{attrs.inspect.gsub(/\{|\}/, "")} do\n")
     sections.each{|section| section.unparse(dsl)}
@@ -62,7 +62,7 @@ class Question < ActiveRecord::Base
   # nonblock
 
   def unparse(dsl)
-    attrs = (self.attributes.diff Question.new(:text => text).attributes).delete_if{|k,v| %w(created_at updated_at reference_identifier id survey_section_id question_group_id).include?(k) or (k == "display_type" && v == "label")}.symbolize_keys!
+    attrs = (self.attributes.diff Question.new(:text => text).attributes).delete_if{|k,v| %w(created_at updated_at reference_identifier id survey_section_id question_group_id api_id).include?(k) or (k == "display_type" && v == "label")}.symbolize_keys!
     dsl << (solo? ? "\n" : "  ")
     if display_type == "label"
       dsl << "    label"
@@ -105,7 +105,7 @@ class Answer < ActiveRecord::Base
   # nonblock
 
   def unparse(dsl)
-    attrs = (self.attributes.diff Answer.new(:text => text).attributes).delete_if{|k,v| %w(created_at updated_at reference_identifier response_class id question_id).include? k}.symbolize_keys!
+    attrs = (self.attributes.diff Answer.new(:text => text).attributes).delete_if{|k,v| %w(created_at updated_at reference_identifier response_class id question_id api_id).include? k}.symbolize_keys!
     attrs.delete(:is_exclusive) if text == "Omit" && is_exclusive == true
     attrs.merge!({:is_exclusive => false}) if text == "Omit" && is_exclusive == false
     dsl << "  " if question.part_of_group?

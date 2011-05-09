@@ -9,5 +9,6 @@ gem 'cucumber', '~> 0.8.0'
 gem 'cucumber-rails'
 gem 'database_cleaner'
 gem 'factory_girl'
+gem 'uuid'
 
 gem 'surveyor', :path => ".."
