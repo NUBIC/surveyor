@@ -40,3 +40,4 @@ gem 'formtastic'
 gem 'surveyor', :path => ".."
 gem 'haml'
 gem 'fastercsv'
+gem 'uuid'

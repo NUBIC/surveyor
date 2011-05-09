@@ -38,6 +38,10 @@ describe Question, "when creating a new question" do
     @question.split_text(:pre).should == "before"
     @question.split_text(:post).should == "after|extra"
   end
+  
+  it "should have an api_id" do
+    @question.api_id.length.should == 36
+  end
 end
 
 describe Question, "that has answers" do

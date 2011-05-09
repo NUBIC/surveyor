@@ -36,6 +36,7 @@ module Surveyor
 
       def default_args
         self.inactive_at ||= DateTime.now
+        self.api_id ||= UUID.generate
       end
 
       def title=(value)

@@ -21,6 +21,10 @@ describe Survey, "when saving a new one" do
     bandwagoneer.save.should be_true
     bandwagoneer.title.should == "Foo 2"
   end
+  
+  it "should have an api_id" do
+    @survey.api_id.length.should == 36
+  end
 end
 
 # Associations

@@ -37,4 +37,8 @@ describe Answer, "when creating a new answer" do
     @answer.destroy
     Validation.find_by_id(v_id).should be_nil
   end
+  
+  it "should have an api_id" do
+    @answer.api_id.length.should == 36
+  end
 end
