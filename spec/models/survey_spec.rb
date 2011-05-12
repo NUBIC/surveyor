@@ -5,12 +5,12 @@ describe Survey, "when saving a new one" do
   before(:each) do
     @survey = Factory(:survey, :title => "Foo")
   end
-  
+
   it "should be invalid without a title" do
     @survey.title = nil
     @survey.should have(1).error_on(:title)
   end
-  
+
   it "should adjust the title to save unique titles" do
     original = Survey.new(:title => "Foo")
     original.save.should be_true
@@ -21,7 +21,14 @@ describe Survey, "when saving a new one" do
     bandwagoneer.save.should be_true
     bandwagoneer.title.should == "Foo 2"
   end
-  
+
+  it "should not adjust the title when updating itself" do
+    original = Survey.new(:title => "Foo")
+    original.save.should be_true
+    original.title = "Foo"
+    original.title.should == "Foo"
+  end
+
   it "should have an api_id" do
     @survey.api_id.length.should == 36
   end
@@ -44,7 +51,7 @@ describe Survey, "that has sections" do
     @survey.sections.should have(3).sections
     @survey.sections.should == [@s3, @s1, @s2]
   end
-  
+
   it "should return survey_sections_with_questions in display order" do
     @survey.sections_with_questions.map(&:questions).flatten.should have(4).questions
     @survey.sections_with_questions.map(&:questions).flatten.should == [@q4,@q1,@q3,@q2]
@@ -72,19 +79,19 @@ describe Survey do
     @survey.active?.should be_true
     @survey.inactive_at.should be_nil
   end
-  
+
   it "should be able to deactivate as of a certain date/time" do
     @survey.active_at = 2.days.ago
     @survey.inactive_at = 3.days.ago
     @survey.active?.should be_false
     @survey.active_at.should be_nil
   end
-  
+
   it "should activate and deactivate" do
     @survey.activate!
     @survey.active?.should be_true
     @survey.deactivate!
     @survey.active?.should be_false
   end
-  
+
 end
