@@ -5,11 +5,11 @@
 
 Gem::Specification.new do |s|
   s.name = %q{surveyor}
-  s.version = "0.19.3"
+  s.version = "0.19.4"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Brian Chamberlain", "Mark Yoon"]
-  s.date = %q{2011-03-18}
+  s.date = %q{2011-05-18}
   s.email = %q{yoon@northwestern.edu}
   s.extra_rdoc_files = [
     "README.md"
@@ -60,6 +60,7 @@ Gem::Specification.new do |s|
      "features/support/REDCapDemoDatabase_DataDictionary.csv",
      "features/support/env.rb",
      "features/support/paths.rb",
+     "features/support/redcap_siblings.csv",
      "features/surveyor.feature",
      "features/surveyor_parser.feature",
      "generators/extend_surveyor/extend_surveyor_generator.rb",
@@ -79,6 +80,7 @@ Gem::Specification.new do |s|
      "generators/surveyor/templates/locales/surveyor_en.yml",
      "generators/surveyor/templates/locales/surveyor_es.yml",
      "generators/surveyor/templates/locales/surveyor_he.yml",
+     "generators/surveyor/templates/migrate/add_api_ids.rb",
      "generators/surveyor/templates/migrate/add_correct_answer_id_to_questions.rb",
      "generators/surveyor/templates/migrate/add_default_value_to_answers.rb",
      "generators/surveyor/templates/migrate/add_display_order_to_surveys.rb",
@@ -182,17 +184,20 @@ Gem::Specification.new do |s|
       s.add_runtime_dependency(%q<haml>, [">= 0"])
       s.add_runtime_dependency(%q<fastercsv>, [">= 0"])
       s.add_runtime_dependency(%q<formtastic>, [">= 0"])
+      s.add_runtime_dependency(%q<uuid>, [">= 0"])
       s.add_development_dependency(%q<yard>, [">= 0"])
     else
       s.add_dependency(%q<haml>, [">= 0"])
       s.add_dependency(%q<fastercsv>, [">= 0"])
       s.add_dependency(%q<formtastic>, [">= 0"])
+      s.add_dependency(%q<uuid>, [">= 0"])
       s.add_dependency(%q<yard>, [">= 0"])
     end
   else
     s.add_dependency(%q<haml>, [">= 0"])
     s.add_dependency(%q<fastercsv>, [">= 0"])
     s.add_dependency(%q<formtastic>, [">= 0"])
+    s.add_dependency(%q<uuid>, [">= 0"])
     s.add_dependency(%q<yard>, [">= 0"])
   end
 end
