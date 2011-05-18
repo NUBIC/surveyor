@@ -1,3 +1,15 @@
+0.19.4
+
+* add api ids
+* Saving response set completion time when a survey is finished.
+* Fixed pick one and pick any not saving when an answer of type string exists within the options.
+* Fixed problem with dropdowns inside of repeaters appearing as radio buttons.
+* Updated method to get unanswered dependencies within  ResultSet to also return question groups.
+* Added a conditional question group to the kitchen sink survey.
+* add support for question reference syntax in redcap parser. closes #124
+* adding checkbox grid to kitchen sink
+* hide labels on checkbox grids too. closes #121. thanks jdzak
+
 0.19.3
 
 * add authenticity token into ajax requests. closes #120
