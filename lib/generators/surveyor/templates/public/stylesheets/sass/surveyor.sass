@@ -1,13 +1,13 @@
-!background_color = #EEEEEE
-!surveyor_flash_background_color = #FFF1A8
-!surveyor_color = #FFFFF1 
-!surveyor_text_color = #333333
-!surveyor_dependent_color = #FFFFDF
-!surveyor_menus_active_color = #EBEBCC
-!surveyor_menus_border_color = #ccc
+$background_color:#EEEEEE
+$surveyor_flash_background_color:#FFF1A8
+$surveyor_color:#FFFFF1 
+$surveyor_text_color:#333333
+$surveyor_dependent_color:#FFFFDF
+$surveyor_menus_active_color:#EBEBCC
+$surveyor_menus_border_color:#ccc
 
 body
-  :background-color= !background_color
+  :background-color $background_color
 #surveyor
   :font-family "Century Gothic"
   :width 960px
@@ -16,10 +16,10 @@ body
   :text-align left
   :font-family Helvetica
   :font-size 100%
-  :background-color= !surveyor_color
-  :color= !surveyor_text_color
+  :background-color $surveyor_color
+  :color $surveyor_text_color
   .surveyor_flash
-    :background-color= !surveyor_flash_background_color
+    :background-color $surveyor_flash_background_color
     :margin 0 auto
     :padding 5px
     :width 300px
@@ -32,15 +32,15 @@ body
   .surveyor_menu
     :float right
     ul
-      :background-color= !background_color
-      :border= 1px solid !surveyor_menus_border_color
+      :background-color $background_color
+      :border 1px solid $surveyor_menus_border_color
       :border-bottom-width 0
       :list-style none
       li
-        :border= 0 solid !surveyor_menus_border_color
+        :border 0 solid $surveyor_menus_border_color
         :border-bottom-width 1px
       li.active, li.active input[type="submit"]
-        :background-color= !surveyor_menus_active_color
+        :background-color $surveyor_menus_active_color
   .previous_section
   .next_section
     :float right  
@@ -99,9 +99,9 @@ body
   fieldset.q_hidden
     :display none
   fieldset.q_dependent
-    :background-color= !surveyor_dependent_color
+    :background-color $surveyor_dependent_color
     legend
-      :background-color= !surveyor_dependent_color
+      :background-color $surveyor_dependent_color
       :padding 3px 3px 3px 0
 
     
@@ -112,4 +112,4 @@ body
     :border 1px
     :padding 5px
     :cursor pointer
-    :background-color= !background_color
+    :background-color $background_color
