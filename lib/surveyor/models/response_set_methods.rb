@@ -140,9 +140,10 @@ module Surveyor
       end
 
       protected
-
+      
       def dependencies(question_ids = nil)
         deps = Dependency.all(:include => :dependency_conditions, :conditions => {:dependency_conditions => {:question_id => question_ids || responses.map(&:question_id)}})
+        # this is a work around for a bug in active_record in rails 2.3 which incorrectly eager-loads associatins when a condition clause includes an association limiter
         deps.each{|d| d.dependency_conditions.reload} 
         deps
       end
