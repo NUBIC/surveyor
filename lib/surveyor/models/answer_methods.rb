@@ -1,3 +1,5 @@
+require 'uuid'
+
 module Surveyor
   module Models
     module AnswerMethods
