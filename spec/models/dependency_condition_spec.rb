@@ -72,6 +72,35 @@ describe DependencyCondition do
       @dependency_condition.to_hash(@rs)
     end
   end
+  describe "to_hash" do
+    before do
+      @response = mock(Response)
+      @question = mock(Question)
+      @dependency_condition = DependencyCondition.new(:rule_key => "A")
+      @answer = mock(Answer)
+      @question.stub!(:answers).and_return([@answer])
+      @response.stub!(:answer).and_return(@answer)
+      @rs = mock(ResponseSet, :responses => [@response])
+      @dependency_condition.stub!(:question).and_return(@question)
+    end
+    
+    it "converts unmet condition to {:A => false}" do
+      @dependency_condition.stub!(:is_met?).and_return(false)
+      @dependency_condition.to_hash(@rs).should == {:A => false}
+    end
+    
+    it "converts met condition to {:A => true}" do
+      @dependency_condition.stub!(:is_met?).and_return(true)
+      @dependency_condition.to_hash(@rs).should == {:A => true}
+    end
+    
+    it "converts unanswered condition to {:A => false}" do
+      @question.stub!(:answers).and_return([])
+      @response.stub!(:answer).and_return(nil)
+      @rs.stub!(:responses).and_return([])
+      @dependency_condition.to_hash(@rs).should == {:A => false}
+    end 
+  end
   describe "when if given a response object whether the dependency is satisfied using '=='" do
     before(:each) do
       @dep_c = DependencyCondition.new(:answer_id => 2, :operator => "==")

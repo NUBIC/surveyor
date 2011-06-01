@@ -142,7 +142,9 @@ module Surveyor
       protected
 
       def dependencies(question_ids = nil)
-        Dependency.all(:include => :dependency_conditions, :conditions => {:dependency_conditions => {:question_id => question_ids || responses.map(&:question_id)}})
+        deps = Dependency.all(:include => :dependency_conditions, :conditions => {:dependency_conditions => {:question_id => question_ids || responses.map(&:question_id)}})
+        deps.each{|d| d.dependency_conditions.reload} 
+        deps
       end
     end
   end
