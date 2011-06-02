@@ -157,6 +157,50 @@ describe ResponseSet, "with dependencies" do
     @response_set.unanswered_dependencies.should == [@what_bakery, crust_group]
   end
 end
+describe ResponseSet, "dependency_conditions" do
+  before do
+    @section = Factory(:survey_section)
+    # Questions
+    @like_pie = Factory(:question, :text => "Do you like pie?", :survey_section => @section)
+    @like_jam = Factory(:question, :text => "Do you like jam?", :survey_section => @section)
+    @what_is_wrong_with_you = Factory(:question, :text => "What's wrong with you?", :survey_section => @section)    
+    # Answers
+    @like_pie.answers << Factory(:answer, :text => "yes", :question_id => @like_pie.id)
+    @like_pie.answers << Factory(:answer, :text => "no", :question_id => @like_pie.id)
+    @like_jam.answers << Factory(:answer, :text => "yes", :question_id => @like_jam.id)
+    @like_jam.answers << Factory(:answer, :text => "no", :question_id => @like_jam.id)
+    # Dependency
+    @what_is_wrong_with_you = Factory(:dependency, :rule => "A or B", :question_id => @what_is_wrong_with_you.id)
+    @dep_a = Factory(:dependency_condition, :rule_key => "A", :question_id => @like_pie.id, :operator => "==", :answer_id => @like_pie.answers.first.id, :dependency_id => @what_is_wrong_with_you.id)
+    @dep_b = Factory(:dependency_condition, :rule_key => "B", :question_id => @like_jam.id, :operator => "==", :answer_id => @like_jam.answers.first.id, :dependency_id => @what_is_wrong_with_you.id)
+    # Responses
+    @response_set = Factory(:response_set)
+    @response_set.responses << Factory(:response, :question_id => @like_pie.id, :answer_id => @like_pie.answers.last.id, :response_set_id => @response_set.id)
+  end
+  it "should list all dependencies for answered questions" do
+    dependency_conditions = @response_set.send(:dependencies).last.dependency_conditions
+    dependency_conditions.size.should == 2
+    dependency_conditions.should include(@dep_a)
+    dependency_conditions.should include(@dep_b)
+    
+  end
+  it "should list all dependencies for passed question_id" do
+    # Questions
+    like_ice_cream = Factory(:question, :text => "Do you like ice_cream?", :survey_section => @section)
+    what_flavor = Factory(:question, :text => "What flavor?", :survey_section => @section)
+    # Answers
+    like_ice_cream.answers << Factory(:answer, :text => "yes", :question_id => like_ice_cream.id)
+    like_ice_cream.answers << Factory(:answer, :text => "no", :question_id => like_ice_cream.id)
+    what_flavor.answers << Factory(:answer, :response_class => :string, :question_id => what_flavor.id)
+    # Dependency
+    flavor_dependency = Factory(:dependency, :rule => "C", :question_id => what_flavor.id)
+    flavor_dependency_condition = Factory(:dependency_condition, :rule_key => "A", :question_id => like_ice_cream.id, :operator => "==", 
+                                          :answer_id => like_ice_cream.answers.first.id, :dependency_id => flavor_dependency.id)
+    # Responses    
+    dependency_conditions = @response_set.send(:dependencies, like_ice_cream.id).should == [flavor_dependency]
+  end
+end
+
 describe ResponseSet, "as a quiz" do
   before(:each) do
     @survey = Factory(:survey)
