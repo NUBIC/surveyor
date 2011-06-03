@@ -1,3 +1,10 @@
+0.19.5
+
+* Fixed dependent questions not appearing under certain conditions. Closes #143.
+* Fixed question grids not showing when dependent on another question. Closes #149.
+* Fixed testbed generation failure. Closes #145.
+* Fixed UUID errors. Closes #144.
+
 0.19.4
 
 * add api ids
