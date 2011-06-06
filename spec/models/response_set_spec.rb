@@ -82,7 +82,15 @@ describe ResponseSet do
       "20" => {"question_id" => "10", "answer_id" => "201", "string_value" => "hi"}, # new string, filled
       "21" => {"id" => "105", "question_id" => "11", "answer_id" => "211", "string_value" => ""}, # existing string, cleared
       "22" => {"id" => "106", "question_id" => "12", "answer_id" => "221", "string_value" => "ho"}, # existing string, changed
-      "23" => {"id" => "107", "question_id" => "13", "answer_id" => "231", "string_value" => "hi"} # existing string, unchanged
+      "23" => {"id" => "107", "question_id" => "13", "answer_id" => "231", "string_value" => "hi"}, # existing string, unchanged
+      "24" => {"question_id" => "14", "answer_id" => [""], "string_value" => "foo"}, # new checkbox with string value, blank
+      "25" => {"question_id" => "15", "answer_id" => ["", "241"], "string_value" => "bar"}, # new checkbox with string value, checked
+      "26" => {"id" => "108", "question_id" => "14", "answer_id" => [""], "string_value" => "moo"}, # existing checkbox with string value, unchecked
+      "27" => {"id" => "109", "question_id" => "15", "answer_id" => ["", "251"], "string_value" => "mar"}, # existing checkbox with string value, left alone
+      "28" => {"question_id" => "16", "answer_id" => "", "string_value" => "foo"}, # new radio with string value, blank
+      "29" => {"question_id" => "17", "answer_id" => "261", "string_value" => "bar"}, # new radio with string value, selected
+      "30" => {"id" => "110", "question_id" => "18", "answer_id" => "271", "string_value" => "moo"}, # existing radio with string value, changed
+      "31" => {"id" => "111", "question_id" => "19", "answer_id" => "281", "string_value" => "mar"}, # existing radio with string value, unchanged
     }
     ResponseSet.reject_or_destroy_blanks(hash_of_hashes).should == {
       # "11" => {"question_id" => "1", "answer_id" => [""]}, # new checkbox, blank
@@ -97,7 +105,15 @@ describe ResponseSet do
       "20" => {"question_id" => "10", "answer_id" => "201", "string_value" => "hi"}, # new string, filled
       "21" => {"id" => "105", "question_id" => "11", "answer_id" => "211", "string_value" => "", "_destroy" => "true"}, # existing string, cleared
       "22" => {"id" => "106", "question_id" => "12", "answer_id" => "221", "string_value" => "ho"}, # existing string, changed
-      "23" => {"id" => "107", "question_id" => "13", "answer_id" => "231", "string_value" => "hi"} # existing string, unchanged
+      "23" => {"id" => "107", "question_id" => "13", "answer_id" => "231", "string_value" => "hi"}, # existing string, unchanged
+      # "24" => {"question_id" => "14", "answer_id" => [""], "string_value" => "foo"}, # new checkbox with string value, blank
+      "25" => {"question_id" => "15", "answer_id" => ["", "241"], "string_value" => "bar"}, # new checkbox with string value, checked
+      "26" => {"id" => "108", "question_id" => "14", "answer_id" => [""], "string_value" => "moo", "_destroy" => "true"}, # existing checkbox with string value, unchecked
+      "27" => {"id" => "109", "question_id" => "15", "answer_id" => ["", "251"], "string_value" => "mar"}, # existing checkbox with string value, left alone
+      # "28" => {"question_id" => "16", "answer_id" => "", "string_value" => "foo"}, # new radio with string value, blank
+      "29" => {"question_id" => "17", "answer_id" => "261", "string_value" => "bar"}, # new radio with string value, selected
+      "30" => {"id" => "110", "question_id" => "18", "answer_id" => "271", "string_value" => "moo"}, # existing radio with string value, changed
+      "31" => {"id" => "111", "question_id" => "19", "answer_id" => "281", "string_value" => "mar"}, # existing radio with string value, unchanged
     }
   end
   it "should remove responses" do
