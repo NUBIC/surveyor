@@ -91,4 +91,20 @@ describe Response, "applicable_attributes" do
     bad = {"question_id"=>@who.id, "answer_id"=>@odoyle.id, "string_value"=>"Frank"}
     Response.applicable_attributes(bad).should == {"question_id" => @who.id, "answer_id"=> @odoyle.id}
   end
+  
+  it "should have string_value if response_type is string and answer_id is an array (in the case of checkboxes)" do
+    good = {"question_id"=>@who.id, "answer_id"=>["", @odoyle.id], "string_value"=>"Frank"}
+    Response.applicable_attributes(good).should == {"question_id" => @who.id, "answer_id"=> ["", @odoyle.id]}
+  end
+  
+  it "should have ignore attribute if missing answer_id" do
+    ignore = {"question_id"=>@who.id, "answer_id"=>"", "string_value"=>"Frank"}
+    Response.applicable_attributes(ignore).should == {"question_id"=>@who.id, "answer_id"=>"", "string_value"=>"Frank"}
+  end
+  
+  it "should have ignore attribute if missing answer_id is an array" do
+    ignore = {"question_id"=>@who.id, "answer_id"=>[""], "string_value"=>"Frank"}
+    Response.applicable_attributes(ignore).should == {"question_id"=>@who.id, "answer_id"=>[""], "string_value"=>"Frank"}
+  end
+  
 end
