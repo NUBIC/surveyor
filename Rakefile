@@ -10,6 +10,7 @@ begin
     gem.homepage = "http://github.com/breakpointer/surveyor"
     gem.authors = ["Brian Chamberlain", "Mark Yoon"]
     gem.add_dependency 'haml'
+    gem.add_dependency 'sass'
     gem.add_dependency 'fastercsv'
     gem.add_dependency 'formtastic'
     gem.add_dependency 'uuid'
