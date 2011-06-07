@@ -25,5 +25,5 @@ export rvm_project_rvmrc=0
 set +xe
 echo "Loading RVM ree@surveyor-dev"
 source ~/.rvm/scripts/rvm
-rvm use ree@surveyor-dev
+rvm use ree-1.8.7-2010.02@surveyor-dev
 set -xe
