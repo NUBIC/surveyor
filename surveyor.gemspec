@@ -5,11 +5,11 @@
 
 Gem::Specification.new do |s|
   s.name = %q{surveyor}
-  s.version = "0.19.5"
+  s.version = "0.19.6"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Brian Chamberlain", "Mark Yoon"]
-  s.date = %q{2011-06-03}
+  s.date = %q{2011-06-08}
   s.email = %q{yoon@northwestern.edu}
   s.extra_rdoc_files = [
     "README.md"
@@ -148,7 +148,7 @@ Gem::Specification.new do |s|
     "surveyor.gemspec",
     "testbed/Gemfile"
   ]
-  s.homepage = %q{http://github.com/breakpointer/surveyor}
+  s.homepage = %q{http://github.com/NUBIC/surveyor}
   s.require_paths = ["lib"]
   s.rubygems_version = %q{1.6.2}
   s.summary = %q{A rails (gem) plugin to enable surveys in your application}
@@ -158,12 +158,14 @@ Gem::Specification.new do |s|
 
     if Gem::Version.new(Gem::VERSION) >= Gem::Version.new('1.2.0') then
       s.add_runtime_dependency(%q<haml>, [">= 0"])
+      s.add_runtime_dependency(%q<sass>, [">= 0"])
       s.add_runtime_dependency(%q<fastercsv>, [">= 0"])
       s.add_runtime_dependency(%q<formtastic>, [">= 0"])
       s.add_runtime_dependency(%q<uuid>, [">= 0"])
       s.add_development_dependency(%q<yard>, [">= 0"])
     else
       s.add_dependency(%q<haml>, [">= 0"])
+      s.add_dependency(%q<sass>, [">= 0"])
       s.add_dependency(%q<fastercsv>, [">= 0"])
       s.add_dependency(%q<formtastic>, [">= 0"])
       s.add_dependency(%q<uuid>, [">= 0"])
@@ -171,6 +173,7 @@ Gem::Specification.new do |s|
     end
   else
     s.add_dependency(%q<haml>, [">= 0"])
+    s.add_dependency(%q<sass>, [">= 0"])
     s.add_dependency(%q<fastercsv>, [">= 0"])
     s.add_dependency(%q<formtastic>, [">= 0"])
     s.add_dependency(%q<uuid>, [">= 0"])
