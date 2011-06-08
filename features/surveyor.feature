@@ -153,4 +153,19 @@ Feature: Survey creation
     And I press "Click here to finish"
     Then there should be 1 response set with 1 response with:
     | shrimp |
-    
+
+  Scenario: Checkboxes with text area
+    Given the survey
+    """
+      survey "Websites" do
+        section "Search engines" do
+          q "Have you ever used the following services?", :pick => :any
+          a "Yellowpages.com|Describe your experience", :text
+          a "Google.com|Describe your experience", :text
+          a "Bing.com|Describe your experience", :text
+        end
+      end
+    """
+    When I start the "Websites" survey
+    Then there should be 3 checkboxes
+    And there should be 3 text areas

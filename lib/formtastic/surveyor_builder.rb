@@ -40,7 +40,7 @@ module Formtastic
         )
         li_content << Formtastic::Util.html_safe(basic_input_helper(:text_field, :string, :string_value, options)) if options[:response_class] == "other_and_string"
         li_content << Formtastic::Util.html_safe(basic_input_helper(:text_field, :string, :string_value, options)) if %w(string other_and_string).include?(options[:response_class])
-
+        li_content << Formtastic::Util.html_safe(basic_input_helper(:text_area, :text, :text_value, options)) if options[:response_class] == "text"
         # li_options = value_as_class ? { :class => [method.to_s.singularize, value.to_s.downcase].join('_') } : {}
         Formtastic::Util.html_safe(li_content)
       end

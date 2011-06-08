@@ -50,3 +50,13 @@ Then /^a dropdown should exist with the options "([^"]*)"$/ do |options_text|
     end
   end
 end
+
+Then /^there should be (\d+) checkboxes$/ do |count|
+  response.should have_selector('input[type=checkbox]', :count => count.to_i)
+  
+end
+
+Then /^there should be (\d+) text areas$/ do |count|
+  response.should have_selector('textarea', :count => count.to_i)
+end
+
