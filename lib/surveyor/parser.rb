@@ -169,7 +169,7 @@ class Dependency < ActiveRecord::Base
     
     # build and set context
     if context[:question]
-      context[:dependency] = context[:question].build_dependency({:question_group => context[:question_group]}.merge(args[0] || {}))
+      context[:dependency] = context[:question].build_dependency(args[0] || {})
     elsif context[:question_group]
       context[:dependency] = context[:question_group].build_dependency(args[0] || {})
     end

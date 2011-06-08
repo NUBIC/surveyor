@@ -199,3 +199,43 @@ Feature: Survey creation
     Then there should be 5 dependencies
     And question "copd_sh_1a" should have a dependency with rule "A"
     And question "copd_sh_1ba" should have a dependency with rule "E"
+
+  Scenario: Dependencies on questions inside of a group
+    Given the survey
+    """
+      survey "Phone Screen Questions" do
+        section "Phone Screen" do
+          q_diabetes "Diabetes", :pick => :one
+          a_yes "Yes"
+          a_no "No"
+
+          q_high_blood_preassure "High blood pressure?", :pick => :one
+          a_yes "Yes"
+          a_no "No"
+
+          group do 
+            dependency :rule => "A"
+            condition_A :q_diabetes, "==", :a_yes
+            label "It looks like you are not eligible for this specific study at the time"
+          end
+
+          group "Eligible" do
+            dependency :rule => "A"
+            condition_A :q_diabetes, "==", :a_no
+
+            label "You're Eligible!"
+
+            label "You need medical clearance"
+            dependency :rule => "A"
+            condition_A :q_high_blood_preassure, "==", :a_yes
+
+            label "You don't need medical clearance"
+            dependency :rule => "A"
+            condition_A :q_high_blood_preassure, "==", :a_no
+          end
+        end
+      end
+    """
+    Then there should be 4 dependencies
+    And 2 dependencies should depend on questions
+    And 2 dependencies should depend on question groups

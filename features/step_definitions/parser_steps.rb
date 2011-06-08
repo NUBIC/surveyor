@@ -75,3 +75,14 @@ Then /^question "([^"]*)" should have correct answer "([^"]*)"$/ do |qr, ar|
   q.correct_answer.should == q.answers.find_by_reference_identifier(ar)
 end
 
+Then /^(\d+) dependencies should depend on questions$/ do |x|
+  arr = Dependency.find_all_by_question_group_id(nil)
+  arr.size.should == 2
+  arr.each{|d| d.question.should_not be_nil}
+end
+
+Then /^(\d+) dependencies should depend on question groups$/ do |x|
+  arr = Dependency.find_all_by_question_id(nil)
+  arr.size.should == 2
+  arr.each{|d| d.question_group.should_not be_nil}
+end
