@@ -5,7 +5,7 @@
 
 Gem::Specification.new do |s|
   s.name = %q{surveyor}
-  s.version = "0.16.1"
+  s.version = "0.19.6"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Brian Chamberlain", "Mark Yoon"]
@@ -58,6 +58,7 @@ Gem::Specification.new do |s|
     "features/support/env.rb",
     "features/support/paths.rb",
     "features/support/redcap_siblings.csv",
+    "features/support/selectors.rb",
     "features/surveyor.feature",
     "features/surveyor_parser.feature",
     "init_testbed.rakefile",
