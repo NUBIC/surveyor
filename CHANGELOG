@@ -1,3 +1,14 @@
+0.19.6
+
+* fix parsing of group questions with dependencies. closes #160
+* update homepage
+* lock ci to ree-1.8.7-2010.02
+* Fixed safari issue with conditional questions not hiding/showing.
+* add checkbox + text renderer. closes #107
+* add sass, since Haml will no longer do so
+* adjusting testbed cucumber to avoid 'uninitialized constant Gherkin::Formatter::Model::PyString' error
+* Fixed error when user answers a checkbox question.
+
 0.19.5
 
 * Fixed dependent questions not appearing under certain conditions. Closes #143.
