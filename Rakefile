@@ -7,7 +7,7 @@ begin
     gem.name = "surveyor"
     gem.summary = %Q{A rails (gem) plugin to enable surveys in your application}
     gem.email = "yoon@northwestern.edu"
-    gem.homepage = "http://github.com/breakpointer/surveyor"
+    gem.homepage = "http://github.com/NUBIC/surveyor"
     gem.authors = ["Brian Chamberlain", "Mark Yoon"]
     gem.add_dependency 'haml'
     gem.add_dependency 'sass'
