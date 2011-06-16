@@ -1,7 +1,7 @@
 -# TODO: js for slider
 - rg ||= nil
 - renderer = q.renderer(g ||= nil)
-= f.inputs q_text(q), :id => rg ? "q_#{q.id}_#{rg.id}" : "q_#{q.id}", :class => "q_#{renderer} #{q.css_class(@response_set)}" do
+= f.inputs q_text(q), :id => rg ? "q_#{q.id}_#{rg}" : "q_#{q.id}", :class => "q_#{renderer} #{q.css_class(@response_set)}" do
   %span.help= q.help_text
   - case renderer
   - when :image, :label
