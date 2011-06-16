@@ -1,3 +1,5 @@
+require 'fastercsv'
+require 'csv'
 module Surveyor
   module Models
     module ResponseSetMethods
@@ -63,8 +65,8 @@ module Surveyor
         qcols = Question.content_columns.map(&:name) - %w(created_at updated_at)
         acols = Answer.content_columns.map(&:name) - %w(created_at updated_at)
         rcols = Response.content_columns.map(&:name)
-        require 'fastercsv'
-        FCSV(result = "") do |csv|
+        csvlib = CSV.const_defined?(:Reader) ? FasterCSV : CSV
+        result = csvlib.generate do |csv|
           csv << (access_code ? ["response set access code"] : []) + qcols.map{|qcol| "question.#{qcol}"} + acols.map{|acol| "answer.#{acol}"} + rcols.map{|rcol| "response.#{rcol}"} if print_header
           responses.each do |response|
             csv << (access_code ? [self.access_code] : []) + qcols.map{|qcol| response.question.send(qcol)} + acols.map{|acol| response.answer.send(acol)} + rcols.map{|rcol| response.send(rcol)}
