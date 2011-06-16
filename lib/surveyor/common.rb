@@ -1,14 +1,14 @@
 module Surveyor
   class Common
-    RAND_CHARS = [('a'..'z'), ('A'..'Z'), (0..9)].map{|r| r.to_a}.flatten.to_s
+    RAND_CHARS = [('a'..'z'), ('A'..'Z'), (0..9)].map{|r| r.to_a}.flatten.join
     OPERATORS = %w(== != < > <= >= =~)
     
     class << self
       def make_tiny_code(len = 10)
         if RUBY_VERSION < "1.8.7"
-          (1..len).to_a.map{|i| RAND_CHARS[rand(RAND_CHARS.size), 1] }.to_s
+          (1..len).to_a.map{|i| RAND_CHARS[rand(RAND_CHARS.size), 1] }.join
         else
-          len.times.map{|i| RAND_CHARS[rand(RAND_CHARS.size), 1] }.to_s
+          len.times.map{|i| RAND_CHARS[rand(RAND_CHARS.size), 1] }.join
         end
       end
 
