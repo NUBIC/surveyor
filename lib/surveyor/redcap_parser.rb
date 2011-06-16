@@ -1,6 +1,7 @@
 %w(survey survey_section question_group question dependency dependency_condition answer validation validation_condition).each {|model| require model }
-require 'fastercsv'
 require 'active_support' # for humanize
+require 'fastercsv'
+require 'csv'
 module Surveyor
   class RedcapParser
     # Attributes
@@ -19,8 +20,9 @@ module Surveyor
       self.context = {}
     end
     def parse(str, filename)
+      csvlib = CSV.const_defined?(:Reader) ? FasterCSV : CSV
       begin
-        FasterCSV.parse(str, :headers => :first_row, :return_headers => true, :header_converters => :symbol) do |r|
+        csvlib.parse(str, :headers => :first_row, :return_headers => true, :header_converters => :symbol) do |r|
           if r.header_row? # header row
             return puts "Missing headers: #{missing_columns(r).inspect}\n\n" unless missing_columns(r).blank?
             context[:survey] = Survey.new(:title => filename)
@@ -35,7 +37,7 @@ module Surveyor
         end
         print context[:survey].save ? "saved. " : " not saved! #{context[:survey].errors.each_full{|x| x }.join(", ")} "
         # print context[:survey].sections.map(&:questions).flatten.map(&:answers).flatten.map{|x| x.errors.each_full{|y| y}.join}.join
-      rescue FasterCSV::MalformedCSVError
+      rescue csvlib::MalformedCSVError
         puts = "Oops. Not a valid CSV file."
       # ensure
       end

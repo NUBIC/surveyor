@@ -96,11 +96,12 @@ and read surveys/EXTENDING\_SURVEYOR
 
 Surveyor depends on:
 
-* Ruby (1.8.7 - 1.9.1)
+* Ruby (1.8.7 - 1.9.2)
 * Rails 2.3
-* HAML/SASS
+* HAML
+* SASS
+* fastercsv (or CSV for ruby 1.9) for csv exports
 * formtastic
-* fastercsv for csv exports
 * UUID
 
 # Contributing, testing
