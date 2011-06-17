@@ -38,7 +38,11 @@ module Surveyor
             result
           end
           def has_blank_value?(hash)
-            hash["answer_id"].blank? or hash.any?{|k,v| v.is_a?(Array) ? v.all?{|x| x.to_s.blank?} : v.to_s.blank?}
+            return true if hash["answer_id"].blank?
+            if q = Question.find_by_id(hash["question_id"])
+              return false if q.pick == "one" or q.pick == "any"
+            end
+            hash.any?{|k,v| v.is_a?(Array) ? v.all?{|x| x.to_s.blank?} : v.to_s.blank?}
           end
         end
       end
