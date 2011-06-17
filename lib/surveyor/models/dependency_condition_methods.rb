@@ -48,6 +48,7 @@ module Surveyor
                      end 
                    end || responses.first
         klass = response.answer.response_class
+        klass = "answer" if self.as(klass).nil?
         return case self.operator
         when "==", "<", ">", "<=", ">="
           response.as(klass).send(self.operator, self.as(klass))

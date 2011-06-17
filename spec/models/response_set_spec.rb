@@ -90,7 +90,7 @@ describe ResponseSet do
       "28" => {"question_id" => "16", "answer_id" => "", "string_value" => "foo"}, # new radio with string value, blank
       "29" => {"question_id" => "17", "answer_id" => "261", "string_value" => "bar"}, # new radio with string value, selected
       "30" => {"id" => "110", "question_id" => "18", "answer_id" => "271", "string_value" => "moo"}, # existing radio with string value, changed
-      "31" => {"id" => "111", "question_id" => "19", "answer_id" => "281", "string_value" => "mar"}, # existing radio with string value, unchanged
+      "31" => {"id" => "111", "question_id" => "19", "answer_id" => "281", "string_value" => "mar"} # existing radio with string value, unchanged
     }
     ResponseSet.reject_or_destroy_blanks(hash_of_hashes).should == {
       # "11" => {"question_id" => "1", "answer_id" => [""]}, # new checkbox, blank
@@ -113,7 +113,16 @@ describe ResponseSet do
       # "28" => {"question_id" => "16", "answer_id" => "", "string_value" => "foo"}, # new radio with string value, blank
       "29" => {"question_id" => "17", "answer_id" => "261", "string_value" => "bar"}, # new radio with string value, selected
       "30" => {"id" => "110", "question_id" => "18", "answer_id" => "271", "string_value" => "moo"}, # existing radio with string value, changed
-      "31" => {"id" => "111", "question_id" => "19", "answer_id" => "281", "string_value" => "mar"}, # existing radio with string value, unchanged
+      "31" => {"id" => "111", "question_id" => "19", "answer_id" => "281", "string_value" => "mar"} # existing radio with string value, unchanged
+    }
+  end
+  it "should clean up radio and string responses_attributes before passing to nested_attributes" do
+    @qone = Factory(:question, :pick => "one")
+    hash_of_hashes = {
+      "32" => {"question_id" => @qone.id, "answer_id" => "291", "string_value" => ""} # new radio with blank string value, selected      
+    }
+    ResponseSet.reject_or_destroy_blanks(hash_of_hashes).should == {
+      "32" => {"question_id" => @qone.id, "answer_id" => "291", "string_value" => ""} # new radio with blank string value, selected
     }
   end
   it "should remove responses" do

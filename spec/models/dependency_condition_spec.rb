@@ -339,7 +339,28 @@ describe DependencyCondition do
       @dep_c.is_met?([@response]).should be_true
     end
   end
-  
+
+  describe "when evaluating a pick one/many with response_class e.g. string" do
+    it "should compare answer ids when the string_value is nil" do
+      a = Factory(:answer, :response_class => "string")
+      dc = Factory(:dependency_condition, :question_id => a.question.id, :answer_id => a.id, :operator => "==")
+      r = Factory(:response, :question_id => a.question.id, :answer_id => a.id, :string_value => "")
+      r.should_receive(:as).with("answer").and_return(a.id)
+      dc.is_met?([r]).should be_true
+    end
+    it "should compare strings when the string_value is not nil, even if it is blank" do
+      a = Factory(:answer, :response_class => "string")
+      dc = Factory(:dependency_condition, :question_id => a.question.id, :answer_id => a.id, :operator => "==", :string_value => "foo")
+      r = Factory(:response, :question_id => a.question.id, :answer_id => a.id, :string_value => "foo")
+      r.should_receive(:as).with("string").and_return("foo")
+      dc.is_met?([r]).should be_true      
+
+      dc2 = Factory(:dependency_condition, :question_id => a.question.id, :answer_id => a.id, :operator => "==", :string_value => "")
+      r2 = Factory(:response, :question_id => a.question.id, :answer_id => a.id, :string_value => "")
+      r2.should_receive(:as).with("string").and_return("")
+      dc2.is_met?([r2]).should be_true      
+    end
+  end
   describe "when given responses whether the dependency is satisfied using 'count'" do
     before(:each) do
       @dep_c = DependencyCondition.new(:answer_id => nil, 
