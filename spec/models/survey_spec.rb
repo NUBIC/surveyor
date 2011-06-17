@@ -23,9 +23,9 @@ describe Survey, "when saving a new one" do
   end
 
   it "should not adjust the title when updating itself" do
-    original = Survey.new(:title => "Foo")
+    original = Factory(:survey, :title => "Foo")
     original.save.should be_true
-    original.title = "Foo"
+    original.update_attributes(:title => "Foo")
     original.title.should == "Foo"
   end
 
