@@ -5,11 +5,11 @@
 
 Gem::Specification.new do |s|
   s.name = %q{surveyor}
-  s.version = "0.19.6"
+  s.version = "0.19.7"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Brian Chamberlain", "Mark Yoon"]
-  s.date = %q{2011-06-08}
+  s.date = %q{2011-06-23}
   s.email = %q{yoon@northwestern.edu}
   s.extra_rdoc_files = [
     "README.md"
@@ -52,6 +52,8 @@ Gem::Specification.new do |s|
     "app/views/surveyor/show.html.haml",
     "ci-env.sh",
     "config/routes.rb",
+    "doc/surveyor_models.png",
+    "doc/surveyor_models2.png",
     "features/redcap_parser.feature",
     "features/step_definitions/parser_steps.rb",
     "features/step_definitions/surveyor_steps.rb",
