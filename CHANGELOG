@@ -1,3 +1,14 @@
+0.19.7
+
+* fix accidentally allowing through blank pick => any answers
+* rewrote a test to reflect re-saving a survey via an admin controller
+* stop survey titles from appending '1' to itself when calling update attributes
+* fix response saving and dependencies on pick one/many with string. closes #158
+* changed fastercsv to csv for ruby 1.9. closes #111
+* changed .to_s to .join for ruby 1.9
+* Merge pull request #137 from keviniano/master
+* surveyor models
+
 0.19.6
 
 * fix parsing of group questions with dependencies. closes #160
