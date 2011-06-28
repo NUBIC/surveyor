@@ -20,7 +20,7 @@ module Surveyor
           def applicable_attributes(attrs)
             result = HashWithIndifferentAccess.new(attrs)
             answer_id = result[:answer_id].is_a?(Array) ? result[:answer_id].last : result[:answer_id] # checkboxes are arrays / radio buttons are not arrays
-            if result[:string_value] && Answer.exists?(answer_id)
+            if result[:string_value] && !answer_id.blank? && Answer.exists?(answer_id)
               answer = Answer.find(answer_id)
               result.delete(:string_value) unless answer.response_class && answer.response_class.to_sym == :string
             end
