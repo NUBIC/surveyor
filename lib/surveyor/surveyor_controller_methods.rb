@@ -76,6 +76,7 @@ module Surveyor
         format.js do
           ids, remove, question_ids = {}, {}, []
           ResponseSet.reject_or_destroy_blanks(params[:r]).each do |k,v|
+            v[:answer_id].reject!(&:blank?) if v[:answer_id].is_a?(Array)
             ids[k] = @response_set.responses.find(:first, :conditions => v).id if !v.has_key?("id")
             remove[k] = v["id"] if v.has_key?("id") && v.has_key?("_destroy")
             question_ids << v["question_id"]
