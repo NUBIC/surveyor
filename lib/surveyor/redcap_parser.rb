@@ -3,7 +3,19 @@ require 'active_support' # for humanize
 require 'fastercsv'
 require 'csv'
 module Surveyor
+  module EitherAttribute
+    def extract_required_either(r, choice_column1, choice_column2)
+      choice = nil
+      if (r.headers.map(&:to_s).include?(choice_column1))
+        choice = choice_column1
+      elsif (r.headers.map(&:to_s).include?(choice_column2))
+        choice = choice_column2
+      end
+      choice
+    end  
+  end
   class RedcapParser
+    include EitherAttribute
     # Attributes
     attr_accessor :context
 
@@ -24,7 +36,7 @@ module Surveyor
       begin
         csvlib.parse(str, :headers => :first_row, :return_headers => true, :header_converters => :symbol) do |r|
           if r.header_row? # header row
-            return puts "Missing headers: #{missing_columns(r).inspect}\n\n" unless missing_columns(r).blank?
+            return puts "Missing headers: #{missing_columns(r).inspect}\n\n" unless (missing_columns(r).blank?)
             context[:survey] = Survey.new(:title => filename)
             print "survey_#{context[:survey].access_code} "
           else # non-header rows
@@ -44,10 +56,17 @@ module Surveyor
       return context[:survey]
     end
     def missing_columns(r)
-      required_columns - r.headers.map(&:to_s)
+      required_columns(r) - r.headers.map(&:to_s)
     end
-    def required_columns
-      %w(variable__field_name form_name field_units section_header field_type field_label choices_or_calculations field_note text_validation_type text_validation_min text_validation_max identifier branching_logic_show_field_only_if required_field)
+    def required_columns(r)
+      #removing field_units from required columns
+      choices_calculations = extract_required_either(r, "choices_or_calculations", "choices_calculations_or_slider_labels")
+      text_validation = extract_required_either(r, "text_validation_type", "text_validation_type_or_show_slider_number")
+      array_of_required_fields = %w(variable__field_name form_name section_header field_type field_label field_note text_validation_min text_validation_max identifier branching_logic_show_field_only_if required_field)
+      if (choices_calculations != nil && text_validation != nil)
+        array_of_required_fields.concat([choices_calculations]).concat([text_validation])
+      end
+      array_of_required_fields
     end
   end
 end
@@ -110,16 +129,18 @@ class Dependency < ActiveRecord::Base
     end
   end
   def self.decompose_component(str)
-     # [initial_52] = "1"
-    if match = str.match(/^\[(\w+)\] ?([!=><]+) ?"(\w+)"$/)
+     # [initial_52] = "1" or [f1_q15] = '' or [f1_q15] = '-2'
+    if match = str.match(/^\[(\w+)\] ?([!=><]+) ?['"](-?\w+)['"]$/)
       {:question_reference => match[1], :operator => match[2].gsub(/^=$/, "=="), :answer_reference => match[3]}
-    # [initial_119(2)] = "1"
-    elsif match = str.match(/^\[(\w+)\((\w+)\)\] ?([!=><]+) ?"1"$/)
+    # [initial_119(2)] = "1" or [hiprep_heat2(97)] = '1'
+    elsif match = str.match(/^\[(\w+)\((\w+)\)\] ?([!=><]+) ?['"]1['"]$/)
       {:question_reference => match[1], :operator => match[3].gsub(/^=$/, "=="), :answer_reference => match[2]}
-    # [f1_q15] >= 21
-    elsif match = str.match(/^\[(\w+)\] ?([!=><]+) ?(\d+)$/)
+    # [f1_q15] >= 21 or [f1_q15] >= -21 
+    elsif match = str.match(/^\[(\w+)\] ?([!=><]+) ?(-?\d+)$/)
       {:question_reference => match[1], :operator => match[2].gsub(/^=$/, "=="), :integer_value => match[3]}
-    # uhoh
+    # [f1_q15] != ''
+    elsif match = str.match(/^\[(\w+)\] ?([!=><]+) ?['"](w?)['"]$/)
+      {:question_reference => match[1], :operator => match[2].gsub(/^=$/, "=="), :string_value => match[3]}
     else
       puts "\n!!! skipping dependency_condition #{str}"
     end
@@ -172,6 +193,8 @@ class DependencyCondition < ActiveRecord::Base
   end
 end
 class Answer < ActiveRecord::Base
+  extend Surveyor::EitherAttribute
+  
   def self.build_and_set(context, r)
     case r[:field_type]
     when "text"
@@ -181,7 +204,8 @@ class Answer < ActiveRecord::Base
     when "file"
       puts "\n!!! skipping answer: file"
     end
-    r[:choices_or_calculations].to_s.split("|").each do |pair|
+    choice = extract_required_either(r, "choices_or_calculations", "choices_calculations_or_slider_labels")
+    r[choice.to_sym].to_s.split("|").each do |pair|
       aref, atext = pair.strip.split(", ")
       if aref.blank? or atext.blank?
         puts "\n!!! skipping answer #{pair}"
