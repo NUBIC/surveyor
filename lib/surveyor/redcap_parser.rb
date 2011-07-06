@@ -114,19 +114,18 @@ class Dependency < ActiveRecord::Base
     end
   end
   def self.decompose_component(str)
-     # [initial_52] = "1"
-    if match = str.match(/^\[(\w+)\] ?([!=><]+) ?"(\w+)"$/)
-      {:question_reference => match[1], :operator => match[2].gsub(/^=$/, "=="), :answer_reference => match[3]}
-    # [initial_119(2)] = "1"
-    elsif match = str.match(/^\[(\w+)\((\w+)\)\] ?([!=><]+) ?"1"$/)
-      {:question_reference => match[1], :operator => match[3].gsub(/^=$/, "=="), :answer_reference => match[2]}
-    # [f1_q15] >= 21
-    elsif match = str.match(/^\[(\w+)\] ?([!=><]+) ?(\d+)$/)
-      {:question_reference => match[1], :operator => match[2].gsub(/^=$/, "=="), :integer_value => match[3]}
-    # uhoh
+    # [initial_52] = "1" or [f1_q15] = '' or [f1_q15] = '-2' or [hi_event1_type] <> ''
+    if match = str.match(/^\[(\w+)\] ?([!=><]+) ?['"](-?\w*)['"]$/)
+      {:question_reference => match[1], :operator => match[2].gsub(/^=$/, "==").gsub(/^<>$/, "!="), :answer_reference => match[3]}
+    # [initial_119(2)] = "1" or [hiprep_heat2(97)] = '1'
+    elsif match = str.match(/^\[(\w+)\((\w+)\)\] ?([!=><]+) ?['"]1['"]$/)
+      {:question_reference => match[1], :operator => match[3].gsub(/^=$/, "==").gsub(/^<>$/, "!="), :answer_reference => match[2]}
+    # [f1_q15] >= 21 or [f1_q15] >= -21
+    elsif match = str.match(/^\[(\w+)\] ?([!=><]+) ?(-?\d+)$/)
+      {:question_reference => match[1], :operator => match[2].gsub(/^=$/, "==").gsub(/^<>$/, "!="), :integer_value => match[3]}
     else
       puts "\n!!! skipping dependency_condition #{str}"
-    end
+    end    
   end
   def self.decompose_rule(str)
     # see spec/lib/redcap_parser_spec.rb for examples
