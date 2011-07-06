@@ -239,3 +239,51 @@ Feature: Survey creation
     Then there should be 4 dependencies
     And 2 dependencies should depend on questions
     And 2 dependencies should depend on question groups
+
+  Scenario: Dependencies with "a"
+    Given the survey
+    """
+      survey "Dependencies with 'a'" do
+        section "First" do
+          q_data_collection "Disease data collection", :pick => :one
+          a_via_chart_review "Via chart review"
+          a_via_patient_interview "Via patient interview/questionnaire"
+
+          q_myocardial_infaction "Myocardinal Infarction", :pick => :one
+          dependency :rule => "A"
+          condition_A :q_data_collection, "==", :a_via_chart_review
+          a_yes "Yes"
+          a_no "No"
+        end
+      end
+    """
+    And there should be 1 dependency with:
+      | rule |
+      | A    |
+    And there should be 1 resolved dependency_condition with:
+      | rule_key |
+      | A        |
+  
+  Scenario: Dependencies with "q"
+    Given the survey
+    """
+      survey "Dependencies with 'q'" do
+        section "First" do
+          q_rawq_collection "Your rockin rawq collection", :pick => :one
+          a_rawqs "Rawqs"
+          a_doesnt_rawq "Doesn't rawq"
+
+          q_do_you_rawq "Do you rawq with your rockin rawq collection?", :pick => :one
+          dependency :rule => "A"
+          condition_A :q_rawq_collection, "==", :a_rawqs
+          a_yes "Yes"
+          a_no "No"
+        end
+      end
+    """
+    And there should be 1 dependency with:
+      | rule |
+      | A    |
+    And there should be 1 resolved dependency_condition with:
+      | rule_key |
+      | A        |

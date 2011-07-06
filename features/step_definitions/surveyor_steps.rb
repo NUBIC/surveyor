@@ -22,7 +22,7 @@ Then /^there should be (\d+) response set with (\d+) responses? with:$/ do |rs_n
   end
 end
 
-Then /^there should be (\d+) dependencies$/ do |x|
+Then /^there should be (\d+) dependenc(?:y|ies)$/ do |x|
   Dependency.count.should == x.to_i
 end
 
