@@ -4,6 +4,20 @@ describe Surveyor::RedcapParser do
   before(:each) do
     # @parser = Surveyor::Parser.new
   end
+  it "should require specific columns" do
+    # with standard fields
+    x = %w(field_units choices_or_calculations text_validation_type variable__field_name form_name  section_header field_type field_label field_note text_validation_min text_validation_max identifier branching_logic_show_field_only_if required_field)
+    Surveyor::RedcapParser.new.missing_columns(x).should be_blank
+    # without field_units
+    y = %w(choices_or_calculations text_validation_type variable__field_name form_name  section_header field_type field_label field_note text_validation_min text_validation_max identifier branching_logic_show_field_only_if required_field)
+    Surveyor::RedcapParser.new.missing_columns(y).should be_blank
+    # choices_or_calculations => choices_calculations_or_slider_labels
+    z = %w(field_units choices_calculations_or_slider_labels text_validation_type variable__field_name form_name  section_header field_type field_label field_note text_validation_min text_validation_max identifier branching_logic_show_field_only_if required_field)
+    Surveyor::RedcapParser.new.missing_columns(z).should be_blank
+    # text_validation_type => text_validation_type_or_show_slider_number
+    a = %w(field_units choices_or_calculations text_validation_type_or_show_slider_number variable__field_name form_name  section_header field_type field_label field_note text_validation_min text_validation_max identifier branching_logic_show_field_only_if required_field)
+    Surveyor::RedcapParser.new.missing_columns(a).should be_blank
+  end
   it "should decompose dependency rules" do
     # basic
     Dependency.decompose_rule('[f1_q12]="1"').should == {:rule => "A", :components => ['[f1_q12]="1"']}

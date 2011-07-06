@@ -24,7 +24,7 @@ module Surveyor
       begin
         csvlib.parse(str, :headers => :first_row, :return_headers => true, :header_converters => :symbol) do |r|
           if r.header_row? # header row
-            return puts "Missing headers: #{missing_columns(r).inspect}\n\n" unless missing_columns(r).blank?
+            return puts "Missing headers: #{missing_columns(r.headers).inspect}\n\n" unless missing_columns(r.headers).blank?
             context[:survey] = Survey.new(:title => filename)
             print "survey_#{context[:survey].access_code} "
           else # non-header rows
@@ -44,10 +44,14 @@ module Surveyor
       return context[:survey]
     end
     def missing_columns(r)
-      required_columns - r.headers.map(&:to_s)
+      missing = []
+      missing << "choices_or_calculations" unless r.map(&:to_s).include?("choices_or_calculations") or r.map(&:to_s).include?("choices_calculations_or_slider_labels")
+      missing << "text_validation_type" unless r.map(&:to_s).include?("text_validation_type") or r.map(&:to_s).include?("text_validation_type_or_show_slider_number") 
+      missing += (static_required_columns - r.map(&:to_s))
     end
-    def required_columns
-      %w(variable__field_name form_name field_units section_header field_type field_label choices_or_calculations field_note text_validation_type text_validation_min text_validation_max identifier branching_logic_show_field_only_if required_field)
+    def static_required_columns
+      # no longer requiring field_units
+      %w(variable__field_name form_name section_header field_type field_label field_note text_validation_min text_validation_max identifier branching_logic_show_field_only_if required_field)
     end
   end
 end
@@ -181,7 +185,7 @@ class Answer < ActiveRecord::Base
     when "file"
       puts "\n!!! skipping answer: file"
     end
-    r[:choices_or_calculations].to_s.split("|").each do |pair|
+    (r[:choices_or_calculations] || r[:choices_calculations_or_slider_labels]).to_s.split("|").each do |pair|
       aref, atext = pair.strip.split(", ")
       if aref.blank? or atext.blank?
         puts "\n!!! skipping answer #{pair}"
