@@ -31,3 +31,11 @@ Feature: Survey creation
     And there should be 1 dependencies with:
       | rule    |
       | A       |
+  Scenario: with different headers
+    Given I parse redcap file "redcap_new_headers.csv"
+    Then there should be 1 survey with:
+      ||
+    And there should be 1 questions with:
+      ||
+    And there should be 2 answers with:
+      ||
