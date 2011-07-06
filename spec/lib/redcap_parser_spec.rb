@@ -58,6 +58,14 @@ describe Surveyor::RedcapParser do
     Dependency.decompose_component('[initial_52] = "1"').should == {:question_reference => 'initial_52', :operator => '==', :answer_reference => '1'}
     Dependency.decompose_component('[initial_119(2)] = "1"').should == {:question_reference => 'initial_119', :operator => '==', :answer_reference => '2'}
     Dependency.decompose_component('[f1_q15] >= 21').should == {:question_reference => 'f1_q15', :operator => '>=', :integer_value => '21'}
+    # basic, blanks
+    Dependency.decompose_component("[f1_q15]=''").should == {:question_reference => 'f1_q15', :operator => '==', :answer_reference => ''}
+    # basic, negatives
+    Dependency.decompose_component("[f1_q15]='-2'").should == {:question_reference => 'f1_q15', :operator => '==', :answer_reference => '-2'}
+    # internal parenthesis
+    Dependency.decompose_component("[hiprep_heat2(97)] = '1'").should == {:question_reference => 'hiprep_heat2', :operator => '==', :answer_reference => '97'}
+    Dependency.decompose_component("[hi_event1_type] <> ''").should == {:question_reference => 'hi_event1_type', :operator => '!=', :answer_reference => ''}
+    
   end
   it "should return a survey object" do
     x = %("Variable / Field Name","Form Name","Field Units","Section Header","Field Type","Field Label","Choices OR Calculations","Field Note","Text Validation Type","Text Validation Min","Text Validation Max",Identifier?,"Branching Logic (Show field only if...)","Required Field?"\nstudy_id,demographics,,,text,"Study ID",,,,,,,,)
