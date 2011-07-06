@@ -169,3 +169,37 @@ Feature: Survey creation
     When I start the "Websites" survey
     Then there should be 3 checkboxes
     And there should be 3 text areas
+  @focus
+  Scenario: "Double letter rule keys"
+    Given the survey
+    """
+      survey "Doubles" do
+        section "Two" do
+          q_twin "Are you a twin?", :pick => :one
+          a_yes "Oh yes"
+          a_no "Oh no"
+
+          q_two_first_names "Do you have two first names?", :pick => :one
+          a_yes "Why yes"
+          a_no "Why no"
+
+          q "Do you want to be part of an SNL skit?", :pick => :one
+          a_yes "Um yes"
+          a_no "Um no"
+          dependency :rule => "A or AA"
+          condition_A :q_twin, "==", :a_yes
+          condition_AA :q_two_first_names, "==", :a_yes
+        end
+        section "Deux" do
+          label "Here for the ride"
+        end
+        section "Three" do
+          label "Here for the ride"
+        end
+      end
+    """
+    When I start the "Doubles" survey
+    Then I choose "Oh yes"
+    And I press "Deux"
+    And I press "Two"
+    Then the question "Do you want to be part of an SNL skit?" should be triggered
