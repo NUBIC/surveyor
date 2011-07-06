@@ -60,3 +60,7 @@ Then /^there should be (\d+) text areas$/ do |count|
   response.should have_selector('textarea', :count => count.to_i)
 end
 
+Then /^the question "([^"]*)" should be triggered$/ do |text|
+  response.should have_selector %(fieldset[name="#{text}"][class!="q_hidden"])
+end
+

@@ -43,6 +43,7 @@ module Surveyor
         # logger.debug "keyp: #{ch.inspect}"
         # logger.debug "subd: #{self.rule.gsub(rgx){|m| ch[m.to_sym]}}"
         rgx = Regexp.new(self.dependency_conditions.map{|dc| ["a","o"].include?(dc.rule_key) ? "#{dc.rule_key}(?!nd|r)" : dc.rule_key}.join("|")) # exclude and, or
+        # rgx = Regexp.new(self.dependency_conditions.map{|dc| ["a","o"].include?(dc.rule_key) ? "\\b#{dc.rule_key}(?!nd|r)\\b" : "\\b#{dc.rule_key}\\b"}.join("|")) # exclude and, or
         eval(self.rule.gsub(rgx){|m| ch[m.to_sym]})
       end
 
