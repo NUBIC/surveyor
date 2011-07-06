@@ -192,11 +192,11 @@ class DependencyCondition < ActiveRecord::Base
         { 
           :context_reference => context,
           :operator => a1 || "==",
-          :question_reference => a0.to_s.gsub("q_", ""),
+          :question_reference => a0.to_s.gsub(/^q_/, ""),
           :rule_key => reference_identifier 
         }.merge(
             a2.is_a?(Hash) ? a2 : { :answer_reference => 
-                                      a2.to_s.gsub("a_", "") }
+                                      a2.to_s.gsub(/^a_/, "") }
           )
       )
   end
