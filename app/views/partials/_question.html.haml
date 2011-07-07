@@ -11,7 +11,8 @@
     = f.semantic_fields_for i, r do |ff|
       = ff.quiet_input :question_id
       = ff.quiet_input :response_group, :value => rg if g && g.display_type == "repeater"
-      = ff.input :answer_id, :as => :select, :collection => q.answers.map{|a| [a.text, a.id]}, :label => false
+      = ff.quiet_input :id unless r.new_record?
+      = ff.input :answer_id, :as => :select, :collection => q.answers.map{|a| [a.text, a.id]}, :label => q.text
   - else # :default, :inline, :inline_default
     - if q.pick == "one"
       - r = response_for(@response_set, q, nil, rg)
