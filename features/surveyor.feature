@@ -169,7 +169,7 @@ Feature: Survey creation
     When I start the "Websites" survey
     Then there should be 3 checkboxes
     And there should be 3 text areas
-  @focus
+
   Scenario: "Double letter rule keys"
     Given the survey
     """
@@ -203,3 +203,30 @@ Feature: Survey creation
     And I press "Deux"
     And I press "Two"
     Then the question "Do you want to be part of an SNL skit?" should be triggered
+
+  Scenario: "Changing dropdowns"
+    Given the survey
+    """
+      survey "Drop" do
+        section "Like it is hot" do
+          q "Name", :pick => :one, :display_type => :dropdown
+          a "Snoop"
+          a "Dogg"
+          a "D-O double G"
+          a "S-N double O-P, D-O double G"
+        end
+        section "Two" do
+          label "Here for the ride"
+        end
+        section "Three" do
+          label "Here for the ride"
+        end
+      end
+    """
+    When I start the "Drop" survey
+    Then I select "Snoop" from "Name"
+    And I press "Two"
+    And I press "Like it is hot"
+    And I select "Dogg" from "Name"
+    And I press "Two"
+    Then there should be 1 response with answer "Dogg"

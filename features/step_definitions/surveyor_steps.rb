@@ -64,3 +64,9 @@ Then /^the question "([^"]*)" should be triggered$/ do |text|
   response.should have_selector %(fieldset[name="#{text}"][class!="q_hidden"])
 end
 
+Then /^there should be (\d+) response with answer "([^"]*)"$/ do |count, answer_text|
+  Response.count.should == count.to_i
+  Response.find_by_answer_id(Answer.find_by_text(answer_text)).should_not be_blank
+end
+
+
