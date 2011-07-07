@@ -111,4 +111,4 @@ To work on the code fork this github project. Run:
 
 which will generate a test app in testbed. Run rake spec and rake cucumber there, and start writing tests!
 
-Copyright (c) 2008-2010 Brian Chamberlain and Mark Yoon, released under the MIT license
+Copyright (c) 2008-2011 Brian Chamberlain and Mark Yoon, released under the MIT license
