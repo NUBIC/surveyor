@@ -230,3 +230,32 @@ Feature: Survey creation
     And I select "Dogg" from "Name"
     And I press "Two"
     Then there should be 1 response with answer "Dogg"
+  @focus
+  Scenario: "Saving grids"
+    Given the survey
+    """
+      survey "Grid" do
+        section "One" do
+          grid "Tell us how often do you cover these each day" do
+            a "1"
+            a "2"
+            a "3"
+            q "Head", :pick => :one
+            q "Knees", :pick => :one
+            q "Toes", :pick => :one
+          end
+        end
+        section "Two" do
+          label "Here for the ride"
+        end
+        section "Three" do
+          label "Here for the ride"
+        end
+      end
+    """
+    When I start the "Grid" survey
+    Then I choose "1"
+    And I press "Two"
+    And I press "One"
+    Then there should be 1 response with answer "1"
+
