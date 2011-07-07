@@ -4,7 +4,7 @@ module SurveyorHelper
     surveyor_stylsheets + surveyor_javascripts    
   end
   def surveyor_stylsheets
-    stylesheet_link_tag 'surveyor/reset', 'surveyor/dateinput', 'surveyor'
+    stylesheet_link_tag 'surveyor/reset', 'surveyor/dateinput', 'surveyor', 'custom'
   end
   def surveyor_javascripts
     javascript_include_tag 'surveyor/jquery.tools.min', 'surveyor/jquery.surveyor'
