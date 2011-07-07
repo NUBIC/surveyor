@@ -15,6 +15,7 @@ begin
     gem.add_dependency 'formtastic'
     gem.add_dependency 'uuid'
     gem.add_development_dependency "yard", ">= 0"
+    gem.post_install_message = "Thanks for installing surveyor! The time has come to run the surveyor generator and migrate your database, even if you are upgrading."
     # gem is a Gem::Specification... see http://www.rubygems.org/read/chapter/20 for additional settings
   end
   Jeweler::GemcutterTasks.new

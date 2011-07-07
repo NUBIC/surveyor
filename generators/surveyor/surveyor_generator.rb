@@ -45,7 +45,7 @@ class SurveyorGenerator < Rails::Generator::Base
       end
       m.directory "public/stylesheets/sass"
       m.file "assets/stylesheets/sass/surveyor.sass", "public/stylesheets/sass/surveyor.sass"
-      
+      m.file "assets/stylesheets/sass/custom.sass", "public/stylesheets/sass/custom.sass"
 
       # Locales
       m.directory "config/locales"
