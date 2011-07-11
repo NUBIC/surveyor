@@ -42,6 +42,13 @@ module Surveyor
             return false if (q = Question.find_by_id(hash["question_id"])) and q.pick == "one"
             hash.any?{|k,v| v.is_a?(Array) ? v.all?{|x| x.to_s.blank?} : v.to_s.blank?}
           end
+          def trim_for_lookups(hash_of_hashes)
+            result = {}
+            (reject_or_destroy_blanks(hash_of_hashes) || {}).each_pair do |k, hash|
+              result.merge!({k => {"question_id" => hash["question_id"], "answer_id" => hash["answer_id"]}.merge(hash.has_key?("response_group") ? {"response_group" => hash["response_group"]} : {} ).merge(hash.has_key?("id") ? {"id" => hash["id"]} : {} ).merge(hash.has_key?("_destroy") ? {"_destroy" => hash["_destroy"]} : {} )})
+            end
+            result
+          end
         end
       end
 
