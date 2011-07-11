@@ -186,7 +186,7 @@ class Answer < ActiveRecord::Base
     end
     (r[:choices_or_calculations] || r[:choices_calculations_or_slider_labels]).to_s.split("|").each do |pair|
       aref, atext = pair.split(",").map(&:strip)
-      if aref.blank? or atext.blank?
+      if aref.blank? or atext.blank? or (aref.to_i.to_s != aref)
         puts "\n!!! skipping answer #{pair}"
       else
         context[:answer] = context[:question].answers.build(:reference_identifier => aref, :text => atext)
