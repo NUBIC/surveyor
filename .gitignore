@@ -24,3 +24,4 @@ testbed/db/*
 testbed/.bundle
 testbed/*
 surveys/fixtures/*.yml
+.rvmrc
