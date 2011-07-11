@@ -50,6 +50,10 @@ module SurveyorHelper
   # end
   
   # Answers
+  def a_text(obj, pos=nil)
+    return image_tag(obj.text) if obj.is_a?(Answer) and obj.display_type == "image"
+    obj.split_or_hidden_text(pos)
+  end  
   def rc_to_attr(type_sym)
     case type_sym.to_s
     when /^date|time$/ then :datetime_value

@@ -314,3 +314,18 @@ Feature: Survey creation
       | 2011-02-13 00:00:00 |
       | 2001-01-01 13:30:00 |
       | 2011-02-15 17:00:00 |
+
+  Scenario: "Images"
+    Given the survey
+    """
+      survey "Images" do
+        section "One" do
+          q "Which way?"
+          a "/images/surveyor/next.gif", :display_type => "image"
+          a "/images/surveyor/prev.gif", :display_type => "image"
+        end
+      end
+    """
+    When I start the "Images" survey
+    Then I should see the image "/images/surveyor/next.gif"
+    And I should see the image "/images/surveyor/prev.gif"

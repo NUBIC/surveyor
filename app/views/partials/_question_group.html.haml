@@ -14,7 +14,7 @@
               %tr
                 %th &nbsp;
                 - ten_questions.first.answers.each do |a|
-                  %th= a.text
+                  %th= a_text(a)
                 %th &nbsp;
               - ten_questions.each_with_index do |q, i|
                 %tr{:id => "q_#{q.id}", :class => "q_#{renderer} #{q.css_class(@response_set)}"}
