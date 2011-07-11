@@ -39,3 +39,19 @@ Feature: Survey creation
       ||
     And there should be 2 answers with:
       ||
+  @focus
+  Scenario: with different whitespace
+    Given I parse redcap file "redcap_whitespace.csv"
+    Then there should be 1 survey with:
+      ||
+    And there should be 2 questions with:
+      ||
+    And there should be 7 answers with:
+      | reference_identifier | text    |
+      | 1                    | Lexapro |
+      | 2                    | Celexa  |
+      | 3                    | Prozac  |
+      | 4                    | Paxil   |
+      | 5                    | Zoloft  |
+      | 0                    | No      |
+      | 1                    | Yes     |
