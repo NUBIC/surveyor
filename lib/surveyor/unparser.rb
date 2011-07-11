@@ -111,7 +111,7 @@ class Answer < ActiveRecord::Base
     dsl << "  " if question.part_of_group?
     dsl << "    a"
     dsl << "_#{reference_identifier}" unless reference_identifier.blank?
-    if response_class.to_s.titlecase == text && attrs == {:hide_label => true}
+    if response_class.to_s.titlecase == text && attrs == {:display_type => "hidden_label"}
       dsl << " :#{response_class}"
     else    
       dsl << [ text.blank? ? nil : text == "Other" ? " :other" : text == "Omit" ? " :omit" : " \"#{text}\"",
