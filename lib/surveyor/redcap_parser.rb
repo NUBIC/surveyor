@@ -185,7 +185,7 @@ class Answer < ActiveRecord::Base
       puts "\n!!! skipping answer: file"
     end
     (r[:choices_or_calculations] || r[:choices_calculations_or_slider_labels]).to_s.split("|").each do |pair|
-      aref, atext = pair.strip.split(", ")
+      aref, atext = pair.split(",").map(&:strip)
       if aref.blank? or atext.blank?
         puts "\n!!! skipping answer #{pair}"
       else
