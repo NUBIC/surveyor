@@ -5,17 +5,16 @@
 
 Gem::Specification.new do |s|
   s.name = %q{surveyor}
-  s.version = "0.19.7"
+  s.version = "0.20.0"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Brian Chamberlain", "Mark Yoon"]
-  s.date = %q{2011-06-23}
+  s.date = %q{2011-07-11}
   s.email = %q{yoon@northwestern.edu}
   s.extra_rdoc_files = [
     "README.md"
   ]
   s.files = [
-    ".rvmrc",
     "CHANGELOG",
     "MIT-LICENSE",
     "README.md",
@@ -61,7 +60,9 @@ Gem::Specification.new do |s|
     "features/support/REDCapDemoDatabase_DataDictionary.csv",
     "features/support/env.rb",
     "features/support/paths.rb",
+    "features/support/redcap_new_headers.csv",
     "features/support/redcap_siblings.csv",
+    "features/support/redcap_whitespace.csv",
     "features/surveyor.feature",
     "features/surveyor_parser.feature",
     "generators/extend_surveyor/extend_surveyor_generator.rb",
@@ -77,6 +78,7 @@ Gem::Specification.new do |s|
     "generators/surveyor/templates/assets/stylesheets/dateinput.css",
     "generators/surveyor/templates/assets/stylesheets/reset.css",
     "generators/surveyor/templates/assets/stylesheets/results.css",
+    "generators/surveyor/templates/assets/stylesheets/sass/custom.sass",
     "generators/surveyor/templates/assets/stylesheets/sass/surveyor.sass",
     "generators/surveyor/templates/locales/surveyor_en.yml",
     "generators/surveyor/templates/locales/surveyor_es.yml",
@@ -85,6 +87,7 @@ Gem::Specification.new do |s|
     "generators/surveyor/templates/migrate/add_correct_answer_id_to_questions.rb",
     "generators/surveyor/templates/migrate/add_default_value_to_answers.rb",
     "generators/surveyor/templates/migrate/add_display_order_to_surveys.rb",
+    "generators/surveyor/templates/migrate/add_display_type_to_answers.rb",
     "generators/surveyor/templates/migrate/add_index_to_response_sets.rb",
     "generators/surveyor/templates/migrate/add_index_to_surveys.rb",
     "generators/surveyor/templates/migrate/add_section_id_to_responses.rb",
@@ -129,6 +132,7 @@ Gem::Specification.new do |s|
     "spec/controllers/surveyor_controller_spec.rb",
     "spec/factories.rb",
     "spec/helpers/surveyor_helper_spec.rb",
+    "spec/lib/benchmark_spec.rb",
     "spec/lib/common_spec.rb",
     "spec/lib/parser_spec.rb",
     "spec/lib/redcap_parser_spec.rb",
@@ -151,6 +155,7 @@ Gem::Specification.new do |s|
     "testbed/Gemfile"
   ]
   s.homepage = %q{http://github.com/NUBIC/surveyor}
+  s.post_install_message = %q{Thanks for installing surveyor! The time has come to run the surveyor generator and migrate your database, even if you are upgrading.}
   s.require_paths = ["lib"]
   s.rubygems_version = %q{1.6.2}
   s.summary = %q{A rails (gem) plugin to enable surveys in your application}
