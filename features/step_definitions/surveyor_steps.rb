@@ -77,3 +77,7 @@ Then /^there should be (\d+) datetime responses with$/ do |count, table|
     end
   end
 end
+
+Then /^I should see the image "([^"]*)"$/ do |src|
+  response.should have_selector %(img[src^="#{src}"])
+end

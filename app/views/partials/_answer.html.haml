@@ -8,12 +8,12 @@
   = ff.quiet_input :response_group, :value => rg if q.pick != "one" && g && g.display_type == "repeater"
   - case q.pick
   - when "one"
-    = ff.input :answer_id, :as => :surveyor_radio, :collection => [[a.text, a.id]], :label => false, :input_html => {:class => a.css_class}, :response_class => a.response_class
+    = ff.input :answer_id, :as => :surveyor_radio, :collection => [[a_text(a), a.id]], :label => false, :input_html => {:class => a.css_class}, :response_class => a.response_class
   - when "any"
-    = ff.input :answer_id, :as => :surveyor_check_boxes, :collection => [[a.text, a.id]], :label => false, :input_html => {:class => a.css_class}, :response_class => a.response_class
+    = ff.input :answer_id, :as => :surveyor_check_boxes, :collection => [[a_text(a), a.id]], :label => false, :input_html => {:class => a.css_class}, :response_class => a.response_class
   - when "none"
     - if %w(date datetime time float integer string text).include? a.response_class
       = ff.quiet_input :answer_id, :input_html => {:class => a.css_class, :value => a.id}
-      = ff.input rc_to_attr(a.response_class), :as => rc_to_as(a.response_class), :label => a.split_or_hidden_text(:pre).blank? ? false : a.split_or_hidden_text(:pre), :hint => a.split_or_hidden_text(:post), :input_html => generate_pick_none_input_html(r.as(a.response_class), a.default_value, a.css_class)
+      = ff.input rc_to_attr(a.response_class), :as => rc_to_as(a.response_class), :label => a_text(a, :pre).blank? ? false : a_text(a, :pre), :hint => a_text(a, :post), :input_html => generate_pick_none_input_html(r.as(a.response_class), a.default_value, a.css_class)
     - else
-      = a.text
+      = a_text(a)
