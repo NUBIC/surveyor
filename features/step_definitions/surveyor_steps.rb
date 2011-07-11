@@ -69,4 +69,11 @@ Then /^there should be (\d+) response with answer "([^"]*)"$/ do |count, answer_
   Response.find_by_answer_id(Answer.find_by_text(answer_text)).should_not be_blank
 end
 
-
+Then /^there should be (\d+) datetime responses with$/ do |count, table|
+  Response.count.should == count.to_i
+  table.hashes.each do |hash|
+    if hash.keys == ["datetime_value"]
+      Response.find_by_datetime_value(DateTime.parse(hash["datetime_value"])).should_not be_blank
+    end
+  end
+end

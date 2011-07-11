@@ -125,6 +125,26 @@ describe ResponseSet do
       "32" => {"question_id" => @qone.id, "answer_id" => "291", "string_value" => ""} # new radio with blank string value, selected
     }
   end
+  it "should clean up responses for lookups to get ids after saving via ajax" do
+    hash_of_hashes = {"1"=>{"question_id"=>"2", "answer_id"=>"1"},
+      "2"=>{"question_id"=>"3", "answer_id"=>["", "6"]},
+      "9"=>{"question_id"=>"6", "string_value"=>"jack", "answer_id"=>"13"},
+      "17"=>{"question_id"=>"13", "datetime_value(1i)"=>"2006", "datetime_value(2i)"=>"2", "datetime_value(3i)"=>"4", "datetime_value(4i)"=>"02", "datetime_value(5i)"=>"05", "answer_id"=>"21"},
+      "18"=>{"question_id"=>"14", "datetime_value(1i)"=>"1", "datetime_value(2i)"=>"1", "datetime_value(3i)"=>"1", "datetime_value(4i)"=>"01", "datetime_value(5i)"=>"02", "answer_id"=>"22"},
+      "19"=>{"question_id"=>"15", "datetime_value"=>"", "answer_id"=>"23", "id" => "1"},
+      "47"=>{"question_id"=>"38", "answer_id"=>"220", "integer_value"=>"2", "id" => "2"},
+      "61"=>{"question_id"=>"44", "response_group"=>"0", "answer_id"=>"241", "integer_value"=>"12"}}
+    ResponseSet.trim_for_lookups(hash_of_hashes).should == 
+    { "1"=>{"question_id"=>"2", "answer_id"=>"1"},
+      "2"=>{"question_id"=>"3", "answer_id"=>["", "6"]},
+      "9"=>{"question_id"=>"6", "answer_id"=>"13"},
+      "17"=>{"question_id"=>"13", "answer_id"=>"21"},
+      "18"=>{"question_id"=>"14", "answer_id"=>"22"},
+      "19"=>{"question_id"=>"15", "answer_id"=>"23", "id" => "1", "_destroy" => "true"},
+      "47"=>{"question_id"=>"38", "answer_id"=>"220", "id" => "2"},
+      "61"=>{"question_id"=>"44", "response_group"=>"0", "answer_id"=>"241"}
+    }
+  end
   it "should remove responses" do
     r = @response_set.responses.create(:question_id => 1, :answer_id => 2)
     r.id.should_not be nil

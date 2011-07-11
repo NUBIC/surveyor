@@ -230,7 +230,7 @@ Feature: Survey creation
     And I select "Dogg" from "Name"
     And I press "Two"
     Then there should be 1 response with answer "Dogg"
-  @focus
+
   Scenario: "Saving grids"
     Given the survey
     """
@@ -259,3 +259,58 @@ Feature: Survey creation
     And I press "One"
     Then there should be 1 response with answer "1"
 
+  Scenario: "Dates"
+    Given the survey
+    """
+      survey "When" do
+        section "One" do
+          q "Tell us when you want to meet"
+          a "Give me a date", :date
+        end
+        section "Two" do
+          q "Tell us when you'd like to eat"
+          a :time
+        end
+        section "Three" do
+          q "Tell us when you'd like a phone call"
+          a :datetime
+        end
+      end
+    """
+    When I start the "When" survey
+    # 2/14/11
+    And I fill in "Give me a date" with "2011-02-14"
+    # 1:30am
+    And I press "Two"
+    And I select "01" from "Hour"
+    And I select "30" from "Minute"
+    # 2/15/11 5:30pm
+    And I press "Three"
+    And I select "2011" from "Year"
+    And I select "February" from "Month"
+    And I select "15" from "Day"
+    And I select "17" from "Hour"
+    And I select "30" from "Minute"
+    And I press "One"
+
+    Then there should be 3 datetime responses with
+      | datetime_value      |
+      | 2011-02-14 00:00:00 |
+      | 2001-01-01 01:30:00 |
+      | 2011-02-15 17:30:00 |
+    
+    # 2/13/11
+    And I fill in "Give me a date" with "2011-02-13"
+    # 1:30pm
+    And I press "Two"
+    And I select "13" from "Hour"
+    # 2/15/11 5:00pm
+    And I press "Three"
+    And I select "00" from "Minute"
+    And I press "Click here to finish"
+    
+    Then there should be 3 datetime responses with
+      | datetime_value      |
+      | 2011-02-13 00:00:00 |
+      | 2001-01-01 13:30:00 |
+      | 2011-02-15 17:00:00 |
