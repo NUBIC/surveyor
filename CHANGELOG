@@ -1,3 +1,25 @@
+0.20.0
+
+* allow answers to be images. closes #171
+* moving from answer.hide_label => true to answer.display_type => 'hidden_label'
+* don't parse redcap formulas. really closes #179
+* allow more of less whitespace in answer options. closes #179
+* fixing date, time, and datetime saving via ajax. closes #133
+* not using separate gemset, using passenger in development
+* fixed an issue where the last date was sent instead of the currently choosen date for a date field
+* Save grid responses and ids. Closes #161
+* dropdowns should save their response ids. closes #180
+* README should reflect that it is 2011
+* separate file for custom css and gem upgrade message. closes #151
+* benchmarking surveyor dump for #166
+* two-lettered rule keys. this one actually closes #159
+* two-lettered rule keys. closes #159
+* fix parsing of question and answer references with q_ and a_ in their names. closes #170
+* more redcap branching logic. closes #177
+* dynamically require some columns. closes #178
+* Fixes problem with updating checkboxes on postgers.
+* Fix problem when calling Answer.exists?('') under postgers.
+
 0.19.7
 
 * fix accidentally allowing through blank pick => any answers
