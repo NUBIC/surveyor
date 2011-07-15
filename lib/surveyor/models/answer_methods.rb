@@ -47,6 +47,12 @@ module Surveyor
         part == :pre ? text.split("|",2)[0] : (part == :post ? text.split("|",2)[1] : text)
       end
       
+      def api_json
+        {:text => text}\
+          .merge(display_type == "default" ? {} : {:type => display_type})\
+          .merge(is_exclusive == false ? {} : {:exclusive => is_exclusive})
+      end
+      
     end
   end
 end

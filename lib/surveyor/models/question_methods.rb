@@ -78,6 +78,14 @@ module Surveyor
         r = [g ? g.renderer.to_s : nil, display_type].compact.join("_")
         r.blank? ? :default : r.to_sym
       end
+      
+      def api_json
+        {:text => text, :uuid => api_id}\
+          .merge(answers.empty? ? {} : {:answers => answers.map(&:api_json)})\
+          .merge(display_type == "default" ? {} : {:type => display_type})\
+          .merge(reference_identifier.blank? ? {} : {:reference => reference_identifier})\
+          .merge(pick == "none" ? {} : {:pick => pick})
+      end
     end
   end
 end

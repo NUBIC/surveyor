@@ -75,6 +75,10 @@ module Surveyor
         self.active_at = nil if !datetime.nil? and !self.active_at.nil? and self.active_at > datetime
         super(datetime)
       end
+      
+      def to_json
+        {:survey => {:title => title, :uuid => api_id, :sections => sections.map(&:api_json)}}.to_json
+      end
     end
   end
 end
