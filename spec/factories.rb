@@ -71,7 +71,7 @@ Factory.define :answer do |a|
   a.common_identifier         {}
   a.display_order             {Factory.next :answer_display_order}
   a.is_exclusive              {}
-  a.hide_label                {}
+  a.display_type              "default"
   a.display_length            {}
   a.custom_class              {}
   a.custom_renderer           {}
