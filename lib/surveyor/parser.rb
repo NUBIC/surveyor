@@ -257,7 +257,7 @@ class Answer < ActiveRecord::Base
       self.text_args("Other").merge({:response_class => "string"})
     when :none, :omit # is_exclusive erases and disables other checkboxes and input elements
       self.text_args(arg.to_s.humanize).merge({:is_exclusive => true})
-    when :integer, :date, :time, :datetime, :text, :datetime, :string
+    when :integer, :float, :date, :time, :datetime, :text, :datetime, :string
       self.text_args(arg.to_s.humanize).merge({:response_class => arg.to_s, :display_type => "hidden_label"})
     end
   end
