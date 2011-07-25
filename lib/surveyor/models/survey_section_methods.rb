@@ -38,13 +38,14 @@ module Surveyor
           if q.part_of_group?
             qs << q
             if (i+1 >= questions.size) or (q.question_group_id != questions[i+1].question_group_id)
-              q.question_group.api_json(qs)
+              result = q.question_group.api_json(qs)
               qs = []
+              result
             end
           else
             q.api_json
           end
-        end
+        end.compact
         }
       end
     end

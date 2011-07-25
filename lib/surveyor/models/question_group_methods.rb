@@ -35,7 +35,10 @@ module Surveyor
         [(dependent? ? "g_dependent" : nil), (triggered?(response_set) ? nil : "g_hidden"), custom_class].compact.join(" ")
       end
       def api_json(qs)
-        {:text => text, :questions => qs.map(&:api_json)}
+        { :text => text,
+          :type => display_type,
+          :answers => qs.first.answers.map(&:api_json),
+          :questions => qs.map(&:api_json)}
       end
     end
   end

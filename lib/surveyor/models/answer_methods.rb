@@ -48,8 +48,9 @@ module Surveyor
       end
       
       def api_json
-        {:text => text}\
-          .merge(display_type == "default" ? {} : {:type => display_type})\
+        {:text => split_or_hidden_text(:pre), :uuid => api_id}\
+          .merge(split_or_hidden_text(:post).blank? ? {} : {:post_text => split_or_hidden_text(:post)})\
+          .merge(response_class == "answer" ? {} : {:type => response_class})\
           .merge(is_exclusive == false ? {} : {:exclusive => is_exclusive})
       end
       
