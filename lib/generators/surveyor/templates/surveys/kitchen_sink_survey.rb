@@ -25,7 +25,7 @@ survey "Kitchen Sink survey" do
     # the question's reference identifier is "2a", and the answer's reference_identifier is "1"
     # question reference identifiers used in conditions need to be unique on a survey for the lookups to work
     q_2a "Please explain why you don't like this color?"
-    a_1 "explanation", :text
+    a_1 "explanation", :text, :help => "Please give an explanation for each color you don't like"
     dependency :rule => "A or B or C or D"
     condition_A :q_2, "==", :a_1
     condition_B :q_2, "==", :a_2
@@ -110,7 +110,7 @@ survey "Kitchen Sink survey" do
     # Questions may be grouped
     group "How much oil do you use per day?", :display_type => :inline do
       q "Quantity"
-      a "Quantity", :float
+      a :float
 
       q "Unit", :pick => :one, :display_type => :dropdown
       a "Barrels"
