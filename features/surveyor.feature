@@ -36,7 +36,7 @@ Feature: Survey creation
       | blue   |
       | orange |
       | brown  |
-      
+
   Scenario: Default answers
     Given the survey
     """
@@ -81,7 +81,7 @@ Feature: Survey creation
       end
     """
     Then question "1" should have correct answer "oink"
-    
+
   Scenario: Custom css class
     Given the survey
     """
@@ -91,13 +91,16 @@ Feature: Survey creation
           a :string, :custom_class => "my_custom_class"
           q "What is your favorite state?"
           a :string
+          q "Anything else to say?", :pick => :any
+          a "yes", :string, :custom_class => "other_custom_class"
         end
       end
     """
     When I start the "Movies" survey
-    Then the element "input[type='text']:first" should have the class "my_custom_class"
-    # Then the element "input[type='text']:last" should not contain the class attribute
-    
+    Then the element "input[type='text']:first.my_custom_class" should exist
+    And the element "input[type='checkbox'].other_custom_class" should exist
+    And the element "input[type='text'].other_custom_class" should exist
+
   Scenario: A pick one question with an option for other
     Given the survey
     """

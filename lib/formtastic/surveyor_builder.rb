@@ -8,7 +8,8 @@ module Formtastic
     end
     def surveyor_check_boxes_input(method, options)
       collection = find_collection_for_column(method, options)
-      html_options = options.delete(:input_html) || {}
+      html_options_are_present = options.key?(:input_html)
+      html_options = options[:input_html] if html_options_are_present
 
       input_name      = generate_association_input_name(method)
       hidden_fields   = options.delete(:hidden_fields)
@@ -32,7 +33,7 @@ module Formtastic
         html_options[:checked] = selected_values.include?(value)
         html_options[:disabled] = disabled_values.include?(value) if disabled_option_is_present
         html_options[:id] = input_id
-        
+
         li_content = create_hidden_field_for_check_boxes(input_name, value_as_class) unless hidden_fields
         li_content << template.content_tag(:label,
           Formtastic::Util.html_safe("#{create_check_boxes(input_name, html_options, value, unchecked_value, hidden_fields)} #{escape_html_entities(label)}"),
@@ -67,7 +68,7 @@ module Formtastic
           Formtastic::Util.html_safe("#{radio_button(input_name, value, html_options)} #{escape_html_entities(label)}"),
           :for => input_id
         )
-        
+
         li_content << Formtastic::Util.html_safe(basic_input_helper(:text_field, :string, :integer_value, options)) if options[:response_class] == 'integer'
         li_content << Formtastic::Util.html_safe(basic_input_helper(:text_field, :string, :string_value, options)) if options[:response_class] == 'string'
 
