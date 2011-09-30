@@ -149,7 +149,7 @@ Feature: Survey creation
     """
     When I start the "Favorites" survey
     Then I choose "other"
-    And I fill in "/.*string_value.*/" with "shrimp"
+    And I fill in "r_1_string_value" with "shrimp"
     And I press "Click here to finish"
     Then there should be 1 response set with 1 response with:
     | shrimp |
