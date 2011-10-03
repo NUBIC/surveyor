@@ -9,39 +9,41 @@ module Surveyor
         base.send :belongs_to, :user
         base.send :has_many, :responses, :dependent => :destroy
         base.send :accepts_nested_attributes_for, :responses, :allow_destroy => true
-        
+
         @@validations_already_included ||= nil
         unless @@validations_already_included
           # Validations
           base.send :validates_presence_of, :survey_id
           base.send :validates_associated, :responses
           base.send :validates_uniqueness_of, :access_code
-          
+
           @@validations_already_included = true
         end
 
         # Attributes
         base.send :attr_protected, :completed_at
-        
+
         # Class methods
         base.instance_eval do
-          def reject_or_destroy_blanks(hash_of_hashes)
-            result = {}
+          def to_savable(hash_of_hashes)
+            result = []
             (hash_of_hashes || {}).each_pair do |k, hash|
               hash = Response.applicable_attributes(hash)
               if has_blank_value?(hash)
-                result.merge!({k => hash.merge("_destroy" => "true")}) if hash.has_key?("id")
+                result << hash.merge!({:_destroy => '1'}).except('answer_id') if hash.has_key?('id')
               else
-                result.merge!({k => hash})
+                result << hash
               end
             end
             result
           end
+
           def has_blank_value?(hash)
             return true if hash["answer_id"].blank?
             return false if (q = Question.find_by_id(hash["question_id"])) and q.pick == "one"
             hash.any?{|k,v| v.is_a?(Array) ? v.all?{|x| x.to_s.blank?} : v.to_s.blank?}
           end
+
           def trim_for_lookups(hash_of_hashes)
             result = {}
             (reject_or_destroy_blanks(hash_of_hashes) || {}).each_pair do |k, hash|
@@ -49,6 +51,20 @@ module Surveyor
             end
             result
           end
+
+          private
+            def reject_or_destroy_blanks(hash_of_hashes)
+              result = {}
+              (hash_of_hashes || {}).each_pair do |k, hash|
+                hash = Response.applicable_attributes(hash)
+                if has_blank_value?(hash)
+                  result.merge!({k => hash.merge("_destroy" => "true")}) if hash.has_key?("id")
+                else
+                  result.merge!({k => hash})
+                end
+              end
+              result
+            end
         end
       end
 
@@ -86,7 +102,7 @@ module Surveyor
       def complete!
         self.completed_at = Time.now
       end
-      
+
       def complete?
         !completed_at.nil?
       end
@@ -131,11 +147,11 @@ module Surveyor
       def unanswered_dependencies
         unanswered_question_dependencies + unanswered_question_group_dependencies
       end
-      
+
       def unanswered_question_dependencies
         dependencies.select{|d| d.is_met?(self) and d.question and self.is_unanswered?(d.question)}.map(&:question)
       end
-      
+
       def unanswered_question_group_dependencies
         dependencies.select{|d| d.is_met?(self) and d.question_group and self.is_group_unanswered?(d.question_group)}.map(&:question_group)
       end
@@ -151,11 +167,11 @@ module Surveyor
       end
 
       protected
-      
+
       def dependencies(question_ids = nil)
         deps = Dependency.all(:include => :dependency_conditions, :conditions => {:dependency_conditions => {:question_id => question_ids || responses.map(&:question_id)}})
         # this is a work around for a bug in active_record in rails 2.3 which incorrectly eager-loads associatins when a condition clause includes an association limiter
-        deps.each{|d| d.dependency_conditions.reload} 
+        deps.each{|d| d.dependency_conditions.reload}
         deps
       end
     end

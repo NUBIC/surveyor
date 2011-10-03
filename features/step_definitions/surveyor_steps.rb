@@ -17,7 +17,7 @@ Then /^there should be (\d+) response set with (\d+) responses? with:$/ do |rs_n
         Response.first(:conditions => hash.merge({:answer_id => answer.id})).should_not be_nil
       elsif
         Response.first(:conditions => hash).should_not be_nil
-      end      
+      end
     end
   end
 end
@@ -34,7 +34,11 @@ Then /^question "([^"]*)" should have a dependency with rule "([^"]*)"$/ do |qr,
 end
 
 Then /^the element "([^"]*)" should have the class "([^"]*)"$/ do |selector, css_class|
-  response.should have_selector(selector, :class => css_class)
+  page.should have_selector(selector, :class => css_class)
+end
+
+Then /^the element "([^"]*)" should exist$/ do |selector|
+  page.should have_selector(selector)
 end
 
 Then /^the survey should be complete$/ do
@@ -42,7 +46,7 @@ Then /^the survey should be complete$/ do
 end
 
 Then /^a dropdown should exist with the options "([^"]*)"$/ do |options_text|
-  response.should have_selector('select')
+  page.should have_selector('select')
   options = options_text.split(',').collect(&:strip)
   within "select" do |select|
     options.each do |o|
@@ -52,16 +56,15 @@ Then /^a dropdown should exist with the options "([^"]*)"$/ do |options_text|
 end
 
 Then /^there should be (\d+) checkboxes$/ do |count|
-  response.should have_selector('input[type=checkbox]', :count => count.to_i)
-  
+  page.should have_selector('input[type=checkbox]', :count => count.to_i)
 end
 
 Then /^there should be (\d+) text areas$/ do |count|
-  response.should have_selector('textarea', :count => count.to_i)
+  page.should have_selector('textarea', :count => count.to_i)
 end
 
 Then /^the question "([^"]*)" should be triggered$/ do |text|
-  response.should have_selector %(fieldset[name="#{text}"][class!="q_hidden"])
+  page.should have_selector %(fieldset[name="#{text}"][class!="q_hidden"])
 end
 
 Then /^there should be (\d+) response with answer "([^"]*)"$/ do |count, answer_text|
@@ -79,5 +82,9 @@ Then /^there should be (\d+) datetime responses with$/ do |count, table|
 end
 
 Then /^I should see the image "([^"]*)"$/ do |src|
-  response.should have_selector %(img[src^="#{src}"])
+  page.should have_selector %(img[src^="#{src}"])
+end
+
+Then /^(\d+) responses should exist$/ do |response_count|
+  Response.count.should == response_count.to_i
 end

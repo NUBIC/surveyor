@@ -36,7 +36,7 @@ Feature: Survey creation
       | blue   |
       | orange |
       | brown  |
-      
+
   Scenario: Default answers
     Given the survey
     """
@@ -81,7 +81,7 @@ Feature: Survey creation
       end
     """
     Then question "1" should have correct answer "oink"
-    
+
   Scenario: Custom css class
     Given the survey
     """
@@ -91,13 +91,16 @@ Feature: Survey creation
           a :string, :custom_class => "my_custom_class"
           q "What is your favorite state?"
           a :string
+          q "Anything else to say?", :pick => :any
+          a "yes", :string, :custom_class => "other_custom_class"
         end
       end
     """
     When I start the "Movies" survey
-    Then the element "input[type='text']:first" should have the class "my_custom_class"
-    # Then the element "input[type='text']:last" should not contain the class attribute
-    
+    Then the element "input[type='text']:first.my_custom_class" should exist
+    And the element "input[type='checkbox'].other_custom_class" should exist
+    And the element "input[type='text'].other_custom_class" should exist
+
   Scenario: A pick one question with an option for other
     Given the survey
     """
@@ -133,7 +136,7 @@ Feature: Survey creation
     """
     When I start the "Movies" survey
     Then a dropdown should exist with the options "Action, Comedy, Mystery"
-    
+
   Scenario: A pick one question with an option for other
     Given the survey
     """
@@ -149,7 +152,7 @@ Feature: Survey creation
     """
     When I start the "Favorites" survey
     Then I choose "other"
-    And I fill in "/.*string_value.*/" with "shrimp"
+    And I fill in "r_1_string_value" with "shrimp"
     And I press "Click here to finish"
     Then there should be 1 response set with 1 response with:
     | shrimp |
@@ -254,7 +257,7 @@ Feature: Survey creation
       end
     """
     When I start the "Grid" survey
-    Then I choose "1"
+    And I choose "1"
     And I press "Two"
     And I press "One"
     Then there should be 1 response with answer "1"
@@ -298,7 +301,7 @@ Feature: Survey creation
       | 2011-02-14 00:00:00 |
       | 2001-01-01 01:30:00 |
       | 2011-02-15 17:30:00 |
-    
+
     # 2/13/11
     And I fill in "Give me a date" with "2011-02-13"
     # 1:30pm
@@ -308,7 +311,7 @@ Feature: Survey creation
     And I press "Three"
     And I select "00" from "Minute"
     And I press "Click here to finish"
-    
+
     Then there should be 3 datetime responses with
       | datetime_value      |
       | 2011-02-13 00:00:00 |
@@ -329,3 +332,50 @@ Feature: Survey creation
     When I start the "Images" survey
     Then I should see the image "/images/surveyor/next.gif"
     And I should see the image "/images/surveyor/prev.gif"
+
+  @javascript
+  Scenario: "Unchecking Checkboxes"
+    Given the survey
+    """
+      survey "Travels" do
+        section "Countries" do
+          q "Which of these countries have you visited?", :pick => :any
+          a "Ireland"
+          a "Kenya"
+          a "Singapore"
+        end
+        section "Activities" do
+          q "What do you like to do on vacation?", :pick => :any
+          a "Eat good food"
+          a "Lie on the beach"
+          a "Wander around cool neighborhoods"
+        end
+      end
+    """
+    When I go to the surveys page
+    And I wait 1 seconds
+    And I start the "Travels" survey
+    And I wait 1 seconds
+    Then there should be 3 checkboxes
+    And I wait 1 seconds
+    When I check "Singapore"
+    And I wait 1 seconds
+    And I press "Activities"
+    And I wait 1 seconds
+    And I press "Countries"
+    And I wait 1 seconds
+    Then the "Singapore" checkbox should be checked
+    And I wait 1 seconds
+    When I uncheck "Singapore"
+    And I wait 1 seconds
+    And I press "Activities"
+    And I wait 1 seconds
+    And I press "Countries"
+    And I wait 1 seconds
+    Then the "Singapore" checkbox should not be checked
+    When I check "Singapore"
+    And I wait 1 seconds
+    Then 1 responses should exist
+    When I uncheck "Singapore"
+    And I wait 1 seconds
+    Then 0 responses should exist
