@@ -2,7 +2,7 @@ require File.expand_path(File.dirname(__FILE__) + '/../spec_helper')
 
 describe SurveyorHelper do
   before(:each) do
-    
+
   end
   it "should return the question text with number" do
     q1 = Factory(:question)
@@ -33,7 +33,7 @@ describe SurveyorHelper do
     helper.response_for(rs, q2).attributes.should == Response.new(:question => q2, :response_set => rs).attributes
     helper.response_for(rs, q2, b).attributes.should == Response.new(:question => q2, :response_set => rs).attributes
     helper.response_for(rs, q3, c, "1").should == r3
-    
+
   end
   it "should keep an index of responses" do
     helper.response_idx.should == "1"
@@ -49,5 +49,21 @@ describe SurveyorHelper do
     helper.rc_to_attr(:datetime).should == :datetime_value
     helper.rc_to_attr(:date).should == :datetime_value
     helper.rc_to_attr(:time).should == :datetime_value
+  end
+
+  it "renders an answer" do
+    q, a, f, rg, g = nil, nil, nil, nil, nil
+    template = Haml::Engine.new('answer')
+    Haml::Engine.should_receive(:new).and_return(template)
+    template.should_receive(:render).with(helper, :q => q, :a => a, :f => f, :rg => rg, :g => g)
+    helper.render_answer(q, a, f, rg, g)
+  end
+
+  it "renders a question" do
+    g, rg, q, f = nil, nil, nil, nil
+    template = Haml::Engine.new('question')
+    Haml::Engine.should_receive(:new).and_return(template)
+    template.should_receive(:render).with(helper, :g => g, :rg => rg, :q => q, :f => f)
+    helper.render_question(g, rg, q, f)
   end
 end
