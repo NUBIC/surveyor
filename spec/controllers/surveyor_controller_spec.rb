@@ -77,6 +77,23 @@ describe SurveyorController do
         response.should redirect_to(available_surveys_url)
       end
     end
+    
+    describe "determining if javascript is enabled" do
+
+      it "sets the user session to know that javascript is enabled" do
+        post :create, :survey_code => "xyz", :surveyor_javascript_enabled => "true"
+        session[:surveyor_javascript].should_not be_nil
+        session[:surveyor_javascript].should == "enabled"
+      end
+      
+      it "sets the user session to know that javascript is not enabled" do
+        post :create, :survey_code => "xyz", :surveyor_javascript_enabled => "not_true"
+        session[:surveyor_javascript].should_not be_nil
+        session[:surveyor_javascript].should == "not_enabled"
+      end
+      
+    end
+    
   end
 
   describe "view my survey: GET /surveys/xyz/pdq" do
@@ -116,7 +133,7 @@ describe SurveyorController do
 
     before(:each) do
       @survey = Factory(:survey, :title => "XYZ", :access_code => "XYZ")
-      @section = Factory(:survey_section, :survey => @survey)      
+      @section = Factory(:survey_section, :survey => @survey)
       @response_set = Factory(:response_set, :access_code => "PDQ", :survey => @survey)
     end
 
@@ -131,6 +148,26 @@ describe SurveyorController do
     it "should redirect if :response_code not found" do
       get :edit, :survey_code => "XYZ", :response_set_code => "DIFFERENT"
       response.should redirect_to(available_surveys_url)      
+    end
+    
+    it "should only set dependents if javascript is not enabled" do
+      ResponseSet.should_receive(:find_by_access_code).and_return(@response_set)
+      controller.stub!(:get_unanswered_dependencies_minus_section_questions).and_return([Question.new])
+      
+      get :edit, :survey_code => "XYZ", :response_set_code => "PDQ"
+      assigns[:dependents].should_not be_empty
+      session[:surveyor_javascript].should be_nil
+    end
+    
+    it "should not set dependents if javascript is enabled" do
+      ResponseSet.should_receive(:find_by_access_code).and_return(@response_set)
+      controller.stub!(:get_unanswered_dependencies_minus_section_questions).and_return([Question.new])
+      
+      session[:surveyor_javascript] = "enabled"
+      
+      get :edit, :survey_code => "XYZ", :response_set_code => "PDQ"
+      assigns[:dependents].should be_empty
+      session[:surveyor_javascript].should == "enabled"
     end
 
   end

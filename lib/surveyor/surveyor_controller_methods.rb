@@ -2,6 +2,7 @@ module Surveyor
   module SurveyorControllerMethods
     def self.included(base)
       base.send :before_filter, :get_current_user, :only => [:new, :create]
+      base.send :before_filter, :determine_if_javascript_is_enabled, :only => [:create, :update]
       base.send :layout, 'surveyor_default'
     end
 
@@ -50,7 +51,7 @@ module Surveyor
         else
           @section = @sections.with_includes.first
         end
-        @dependents = (@response_set.unanswered_dependencies - @section.questions) || []
+        set_dependents
       else
         flash[:notice] = t('surveyor.unable_to_find_your_responses')
         redirect_to surveyor_index
@@ -126,5 +127,33 @@ module Surveyor
         end
       end
     end
+    
+    ##
+    # @dependents are necessary in case the client does not have javascript enabled
+    # Whether or not javascript is enabled is determined by a hidden field set in the surveyor/edit.html form 
+    def set_dependents
+      if session[:surveyor_javascript] && session[:surveyor_javascript] == "enabled"
+        @dependents = []
+      else
+        @dependents = get_unanswered_dependencies_minus_section_questions
+      end
+    end
+    
+    def get_unanswered_dependencies_minus_section_questions
+      @response_set.unanswered_dependencies - @section.questions || []
+    end
+    
+    ##
+    # If the hidden field surveyor_javascript_enabled is set to true
+    # cf. surveyor/edit.html.haml
+    # the set the session variable [:surveyor_javascript] to "enabled"
+    def determine_if_javascript_is_enabled
+      if params[:surveyor_javascript_enabled] && params[:surveyor_javascript_enabled].to_s == "true"
+        session[:surveyor_javascript] = "enabled"
+      else
+        session[:surveyor_javascript] = "not_enabled"
+      end
+    end
+    
   end
 end
