@@ -52,18 +52,41 @@ describe SurveyorHelper do
   end
 
   it "renders an answer" do
-    q, a, f, rg, g = nil, nil, nil, nil, nil
-    template = Haml::Engine.new('answer')
+fragment =  <<HERE
+%p
+  = q.to_s
+%p
+  = a.to_s
+%p
+  = f.to_s
+%p
+  = rg.to_s
+%p
+  = g.to_s
+HERE
+
+    q, a, f, rg, g = 1, 2, 3, 4, 5
+    template = Haml::Engine.new(fragment)
     Haml::Engine.should_receive(:new).and_return(template)
-    template.should_receive(:render).with(helper, :q => q, :a => a, :f => f, :rg => rg, :g => g)
-    helper.render_answer(q, a, f, rg, g)
+    helper.render_answer(q, a, f, rg, g).should == "<p>\n  1\n</p>\n<p>\n  2\n</p>\n<p>\n  3\n</p>\n<p>\n  4\n</p>\n<p>\n  5\n</p>\n"
   end
 
+
   it "renders a question" do
-    g, rg, q, f = nil, nil, nil, nil
-    template = Haml::Engine.new('question')
+fragment =  <<HERE
+%p
+  = g.to_s
+%p
+  = rg.to_s
+%p
+  = q.to_s
+%p
+  = f.to_s
+HERE
+
+    g, rg, q, f = 1, 2, 3, 4
+    template = Haml::Engine.new(fragment)
     Haml::Engine.should_receive(:new).and_return(template)
-    template.should_receive(:render).with(helper, :g => g, :rg => rg, :q => q, :f => f)
-    helper.render_question(g, rg, q, f)
+    helper.render_question(g, rg, q, f).should == "<p>\n  1\n</p>\n<p>\n  2\n</p>\n<p>\n  3\n</p>\n<p>\n  4\n</p>\n"
   end
 end
