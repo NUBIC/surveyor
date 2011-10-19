@@ -86,12 +86,12 @@ module SurveyorHelper
   end
 
   def render_answer(q, a, f, rg, g)
-    @answer_template ||= Haml::Engine.new(find_template('partials/_answer').source)
+    @answer_template ||= Haml::Engine.new(controller.find_template('partials/_answer').source)
     @answer_template.render(self, :q => q, :a => a, :f => f, :rg => rg, :g => g)
   end
 
   def render_question(g, rg, q, f)
-    @question_template ||= Haml::Engine.new(find_template('partials/_question').source)
+    @question_template ||= Haml::Engine.new(controller.find_template('partials/_question').source)
     @question_template.render(self, :g => g, :rg => rg, :q => q, :f => f)
   end
 end

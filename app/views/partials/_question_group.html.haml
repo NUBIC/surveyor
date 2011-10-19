@@ -30,7 +30,7 @@
                       - if a.custom_renderer
                         = render a.custom_renderer, :g => g, :q => q, :a => a, :f => f
                       - else
-                        = render_answer(g, q, a, f)
+                        = render_answer(q, a, f, nil, g)
                   %th= q.split_text(:post)
     - when :repeater
       - (@response_set.count_group_responses(qs) + 1).times do |rg|
