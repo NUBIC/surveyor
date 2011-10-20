@@ -338,8 +338,8 @@ describe ResponseSet, "with mandatory, dependent questions" do
         d = Factory(:dependency, :question => q)
         dc = Factory(:dependency_condition, :dependency => d, :question_id => dq.id, :answer_id => da.id)
       end
-      @response_set.responses << Factory(:response, :question => dq, :answer => (triggered == "triggered" ? da : dx))
-      @response_set.responses << Factory(:response, :question => q, :answer => a)
+      @response_set.responses << Factory(:response, :response_set => @response_set, :question => dq, :answer => (triggered == "triggered" ? da : dx))
+      @response_set.responses << Factory(:response, :response_set => @response_set, :question => q, :answer => a)
     end
   end
   it "should report progress without mandatory questions" do

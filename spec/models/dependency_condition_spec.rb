@@ -74,14 +74,13 @@ describe DependencyCondition do
   end
   describe "to_hash" do
     before do
-      @response = mock(Response)
-      @question = mock(Question)
-      @dependency_condition = DependencyCondition.new(:rule_key => "A")
-      @answer = mock(Answer)
-      @question.stub!(:answers).and_return([@answer])
-      @response.stub!(:answer).and_return(@answer)
-      @rs = mock(ResponseSet, :responses => [@response])
-      @dependency_condition.stub!(:question).and_return(@question)
+      @question = Factory(:question)
+      @answer = Factory(:answer, :question => @question)
+      @dependency_condition = Factory(:dependency_condition, :rule_key => "A", :question => @question)
+      @rs = Factory(:response_set)
+      @response = Factory(:response, :question => @question, :answer => @answer, :response_set => @rs)
+      @rs.responses << @response
+      @rs.save!
     end
     
     it "converts unmet condition to {:A => false}" do
@@ -95,10 +94,10 @@ describe DependencyCondition do
     end
     
     it "converts unanswered condition to {:A => false}" do
-      @question.stub!(:answers).and_return([])
-      @response.stub!(:answer).and_return(nil)
-      @rs.stub!(:responses).and_return([])
-      @dependency_condition.to_hash(@rs).should == {:A => false}
+      question = Factory(:question)
+      dependency_condition = Factory(:dependency_condition, :rule_key => "A", :question => @question)
+      rs = Factory(:response_set)      
+      dependency_condition.to_hash(rs).should == {:A => false}
     end 
   end
   describe "when if given a response object whether the dependency is satisfied using '=='" do
