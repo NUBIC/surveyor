@@ -97,7 +97,7 @@ and read surveys/EXTENDING\_SURVEYOR
 Surveyor depends on:
 
 * Ruby (1.8.7 - 1.9.2)
-* Rails 2.3
+* Rails 3.x
 * HAML
 * SASS
 * fastercsv (or CSV for ruby 1.9) for csv exports
