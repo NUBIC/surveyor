@@ -1,5 +1,6 @@
 require 'rails'
 require 'surveyor'
+require 'haml' # required for view resolution
 
 module Surveyor
   class Engine < Rails::Engine

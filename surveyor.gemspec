@@ -17,16 +17,22 @@ Gem::Specification.new do |s|
   s.executables   = `git ls-files -- bin/*`.split("\n").map{ |f| File.basename(f) }
   s.require_paths = ["lib"]
 
-  s.add_dependency('rails', '~> 3.0.0') # Issue 228
-  s.add_dependency('haml')
+  s.add_dependency('rails', '~> 3.0.10') # Issue 228
+  s.add_dependency('haml', '~> 3.1.3')
   s.add_dependency('sass')
-  s.add_dependency('fastercsv')
-  s.add_dependency('formtastic')
+  s.add_dependency('fastercsv', '~> 1.5.4')
+  s.add_dependency('formtastic', '~> 1.2.4')
   s.add_dependency('uuid')
   
   s.add_development_dependency('yard')
   s.add_development_dependency('rake', '0.8.7')
-  s.add_development_dependency('rspec', '< 2')
+  s.add_development_dependency('rspec-rails', '~> 2.6.0')
   s.add_development_dependency('bundler', '~> 1.0')
+  s.add_development_dependency('factory_girl', '~> 2.1.2')
+  s.add_development_dependency('sqlite3')
+  s.add_development_dependency('cucumber-rails', '~> 1.1.1')
+  s.add_development_dependency('database_cleaner', '~> 0.6.7')
+  s.add_development_dependency('launchy', '~> 2.0.5')
+  s.add_development_dependency('capybara', '~> 1.1.1')
 end
 

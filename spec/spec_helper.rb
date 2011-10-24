@@ -1,6 +1,10 @@
 # This file is copied to spec/ when you run 'rails generate rspec:install'
 ENV["RAILS_ENV"] ||= 'test'
-require File.expand_path("../../config/environment", __FILE__)
+begin
+  require File.expand_path("../../testbed/config/environment", __FILE__)
+rescue LoadError => e
+  fail "Could not load the testbed app. Have you generated it?\n#{e.class}: #{e}"
+end
 require 'rspec/rails'
 require 'factories'
 
