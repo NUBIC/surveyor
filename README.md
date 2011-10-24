@@ -108,8 +108,8 @@ Surveyor depends on:
 
 To work on the code fork this github project. Run:
 
-`rake -f init_testbed.rakefile`
+    $ rake testbed
 
-which will generate a test app in testbed. Run rake spec and rake cucumber there, and start writing tests!
+which will generate a test app in `testbed`. Run rake spec and rake cucumber from the root and start writing tests!
 
 Copyright (c) 2008-2011 Brian Chamberlain and Mark Yoon, released under the MIT license

@@ -4,6 +4,8 @@ require 'bundler/gem_tasks'
 require 'rspec/core/rake_task'
 require 'cucumber/rake/task'
 
+###### RSPEC
+
 RSpec::Core::RakeTask.new(:spec)
 
 RSpec::Core::RakeTask.new(:rcov) do |spec|
@@ -11,6 +13,8 @@ RSpec::Core::RakeTask.new(:rcov) do |spec|
 end
 
 task :default => :spec
+
+###### CUCUMBER
 
 namespace :cucumber do
   Cucumber::Rake::Task.new(:ok, 'Run features that should pass') do |t|
@@ -26,3 +30,40 @@ namespace :cucumber do
 end
 desc 'Alias for cucumber:ok'
 task :cucumber => 'cucumber:ok'
+
+###### TESTBED
+
+desc 'Set up the rails app that the specs and features use'
+task :testbed => 'testbed:rebuild'
+
+namespace :testbed do
+  desc 'Generate a minimal surveyor-using rails app'
+  task :generate do
+    sh 'bundle exec rails new testbed'
+    chdir('testbed') do
+      File.open('Gemfile', 'w') do |f|
+        f.puts %q{source :rubygems}
+        f.puts %q{gem 'rails', '3.0.10'}
+        f.puts %q{gem 'sqlite3'}
+        f.puts %q{gem 'surveyor', :path => '..'}
+      end
+
+      sh 'bundle update'
+    end
+  end
+
+  desc 'Prepare the databases for the testbed'
+  task :migrate do
+    chdir('testbed') do
+      sh 'bundle exec rails generate surveyor:install'
+      sh 'bundle exec rake db:migrate db:test:prepare'
+    end
+  end
+
+  desc 'Remove the testbed entirely'
+  task :remove do
+    rm_rf 'testbed'
+  end
+
+  task :rebuild => [:remove, :generate, :migrate]
+end
