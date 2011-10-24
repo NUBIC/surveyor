@@ -1,37 +1,27 @@
 desc "Set up a rails app for testing in the spec dir"
-task :default => [:"testbed:generate", :"testbed:setup", :"testbed:migrate"]
+task :default => [:"testbed:generate", :"testbed:migrate"]
 
 namespace "testbed" do
   # "testbed" is also hardcoded in the spec/spec_helper.rb features/support/env.rb and gitignore file. Change it there too...
   
-  "Generate rails, rspec, cucumber"
+  desc "Generate a minimal surveyor-using rails app"
   task :generate do
+    mkdir_p 'testbed'
     chdir("testbed") do
-      sh "bundle install"
+      File.open('Gemfile', 'w') do |f|
+        f.puts 'source :rubygems'
+        f.puts %q{gem 'rails', '3.0.10'}
+        f.puts %q{gem 'sqlite3'}
+        f.puts %q{gem 'surveyor', :path => '..'}
+      end
+
+      sh "bundle update"
       sh "bundle exec rails new ."
-      sh "bundle exec rails generate rspec:install"
-      sh "bundle exec rails generate cucumber:install --capybara"
-      sh "rm -rf spec features"
-    end
-  end
- 
-  desc "Setup bundler, rspec, cucumber"
-  task :setup do
-    chdir("testbed") do
-      # Bundler
-            
-      # Rspec
-      sh "ln -s ../spec spec"
-      
-      # Cucumber
-      cucumber_rake = File.read('lib/tasks/cucumber.rake').sub("begin", "ENV['FEATURE'] ||= '../features'\n\nbegin")
-      File.open('lib/tasks/cucumber.rake', 'w'){|f| f.write cucumber_rake}
     end
   end
 
-  desc "Generate, migrate testbed"
+  desc "Prepare the databases for the testbed"
   task :migrate do
-    # sh "cp -R generators testbed/lib"
     chdir("testbed") do
       sh "bundle exec rails generate surveyor:install"
       sh "bundle exec rake db:migrate db:test:prepare"
@@ -40,9 +30,6 @@ namespace "testbed" do
 
   desc "Remove testbed app"
   task :remove do
-    puts "Removing the test_app in the spec folder"
-    chdir("testbed") do
-      sh 'rm -rf Gemfile.lock README Rakefile app config db doc features lib log public script spec surveys test tmp vendor'
-    end
+    rm_rf 'testbed'
   end
 end

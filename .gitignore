@@ -20,9 +20,6 @@ pkg
 Gemfile.lock
 
 ## PROJECT::SPECIFIC
-testbed/log/*.log
-testbed/db/*
-testbed/.bundle
-testbed/*
+testbed
 surveys/fixtures/*.yml
 .rvmrc
