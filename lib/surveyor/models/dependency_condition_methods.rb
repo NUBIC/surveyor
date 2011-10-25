@@ -33,9 +33,7 @@ module Surveyor
       # Instance methods
       def to_hash(response_set)
         # all responses to associated question
-        responses = response_set.responses.select do |r| 
-          question && question.answers.include?(r.answer)
-        end
+        responses = question.blank? ? [] : response_set.responses.where("responses.answer_id in (?)", question.answer_ids).all
         {rule_key.to_sym => (!responses.empty? and self.is_met?(responses))}
       end
 

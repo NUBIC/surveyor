@@ -4,6 +4,9 @@
       = flash_messages(types)
       .close
   = semantic_form_for(@response_set, :as => :r, :url => update_my_survey_path, :html => {:method => :put, :id => "survey_form", :class => @survey.custom_class}) do |f|
+  
+    = hidden_field_tag :surveyor_javascript_enabled, false
+  
     = render 'partials/section_menu' # unless @sections.size < 3
     .survey_title= @survey.title
     .previous_section= previous_section
@@ -14,3 +17,8 @@
       = render "/partials/section", :f => f
     .next_section= next_section
   %br
+
+:javascript
+  $(document).ready(function() {
+    $("input#surveyor_javascript_enabled").val(true);
+  });
