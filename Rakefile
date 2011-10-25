@@ -72,11 +72,15 @@ end
 ###### CI
 
 namespace :ci do
-  task :all => ['rake:testbed', :spec]
+  task :all => ['rake:testbed', :spec, :cucumber]
 
   task :env do
     ENV['CI_REPORTS'] = 'reports/spec-xml'
     ENV['SPEC_OPTS'] = "#{ENV['SPEC_OPTS']} --format nested"
+  end
+
+  Cucumber::Rake::Task.new(:cucumber, 'Run features using the CI profile') do |t|
+    t.profile = 'ci'
   end
 
   task :spec => [:env, 'ci:setup:rspecbase', 'rake:spec']
