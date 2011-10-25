@@ -18,6 +18,7 @@ coverage
 rdoc
 pkg
 Gemfile.lock
+reports
 
 ## PROJECT::SPECIFIC
 testbed

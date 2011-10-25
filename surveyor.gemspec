@@ -23,7 +23,7 @@ Gem::Specification.new do |s|
   s.add_dependency('fastercsv', '~> 1.5.4')
   s.add_dependency('formtastic', '~> 1.2.4')
   s.add_dependency('uuid')
-  
+
   s.add_development_dependency('yard')
   s.add_development_dependency('rake', '0.8.7')
   s.add_development_dependency('rspec-rails', '~> 2.6.0')
@@ -34,5 +34,6 @@ Gem::Specification.new do |s|
   s.add_development_dependency('database_cleaner', '~> 0.6.7')
   s.add_development_dependency('launchy', '~> 2.0.5')
   s.add_development_dependency('capybara', '~> 1.1.1')
+  s.add_development_dependency('ci_reporter', '~> 1.6')
 end
 
