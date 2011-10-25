@@ -44,9 +44,10 @@ namespace :testbed do
     chdir('testbed') do
       File.open('Gemfile', 'w') do |f|
         f.puts %q{source :rubygems}
-        f.puts %q{gem 'rails', '3.0.10'}
+        f.puts %q{plugin_root = File.expand_path('../..', __FILE__)}
+        f.puts %q{eval(File.read File.join(plugin_root, 'Gemfile.rails_version'))}
         f.puts %q{gem 'sqlite3'}
-        f.puts %q{gem 'surveyor', :path => '..'}
+        f.puts %q{gem 'surveyor', :path => plugin_root}
       end
 
       Bundler.with_clean_env do
