@@ -22,10 +22,12 @@ describe Response, "when saving a response" do
     @response.question.correct_answer_id.should be_nil
     @response.correct?.should be_true
   end
+
   it "should be correct if the answer's response class != answer" do
     @response.answer.response_class.should_not == "answer"
     @response.correct?.should be_true
-  end  
+  end
+
   it "should be (in)correct if answer_id is (not) equal to question's correct_answer_id" do
     @answer = Factory(:answer, :response_class => "answer")
     @question = Factory(:question, :correct_answer_id => @answer.id)
@@ -34,8 +36,8 @@ describe Response, "when saving a response" do
     @response.answer_id = 143
     @response.correct?.should be_false
   end
-  describe "returns the response as the type requested" do
 
+  describe "returns the response as the type requested" do
     it "returns 'string'" do
       @response.string_value = "blah"
       @response.as("string").should == "blah"
@@ -70,9 +72,7 @@ describe Response, "when saving a response" do
       resp.as(:answer).should == nil
       resp.as(:stuff).should == nil
     end
-
   end
-
 end
 
 describe Response, "applicable_attributes" do
@@ -81,30 +81,33 @@ describe Response, "applicable_attributes" do
     @odoyle = Factory(:answer, :text => "Odoyle", :response_class => "answer")
     @other = Factory(:answer, :text => "Other", :response_class => "string")
   end
-  
+
   it "should have string_value if response_type is string" do
     good = {"question_id" => @who.id, "answer_id" => @other.id, "string_value" => "Frank"}
     Response.applicable_attributes(good).should == good
   end
-  
+
   it "should not have string_value if response_type is answer" do
     bad = {"question_id"=>@who.id, "answer_id"=>@odoyle.id, "string_value"=>"Frank"}
-    Response.applicable_attributes(bad).should == {"question_id" => @who.id, "answer_id"=> @odoyle.id}
+    Response.applicable_attributes(bad).
+      should == {"question_id" => @who.id, "answer_id"=> @odoyle.id}
   end
-  
+
   it "should have string_value if response_type is string and answer_id is an array (in the case of checkboxes)" do
     good = {"question_id"=>@who.id, "answer_id"=>["", @odoyle.id], "string_value"=>"Frank"}
-    Response.applicable_attributes(good).should == {"question_id" => @who.id, "answer_id"=> ["", @odoyle.id]}
+    Response.applicable_attributes(good).
+      should == {"question_id" => @who.id, "answer_id"=> ["", @odoyle.id]}
   end
-  
+
   it "should have ignore attribute if missing answer_id" do
     ignore = {"question_id"=>@who.id, "answer_id"=>"", "string_value"=>"Frank"}
-    Response.applicable_attributes(ignore).should == {"question_id"=>@who.id, "answer_id"=>"", "string_value"=>"Frank"}
+    Response.applicable_attributes(ignore).
+      should == {"question_id"=>@who.id, "answer_id"=>"", "string_value"=>"Frank"}
   end
-  
+
   it "should have ignore attribute if missing answer_id is an array" do
     ignore = {"question_id"=>@who.id, "answer_id"=>[""], "string_value"=>"Frank"}
-    Response.applicable_attributes(ignore).should == {"question_id"=>@who.id, "answer_id"=>[""], "string_value"=>"Frank"}
+    Response.applicable_attributes(ignore).
+      should == {"question_id"=>@who.id, "answer_id"=>[""], "string_value"=>"Frank"}
   end
-  
 end

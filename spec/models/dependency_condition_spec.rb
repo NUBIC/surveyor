@@ -6,10 +6,13 @@ describe DependencyCondition do
     %w(== != < > <= >=).each do |operator|
       DependencyCondition.operators.include?(operator).should be_true
     end
-  end  
+  end
+
   describe "instance" do
     before(:each) do
-      @dependency_condition = DependencyCondition.new(:dependency_id => 1, :question_id => 45, :operator => "==", :answer_id => 23, :rule_key => "1")
+      @dependency_condition = DependencyCondition.new(
+        :dependency_id => 1, :question_id => 45, :operator => "==",
+        :answer_id => 23, :rule_key => "1")
     end
 
     it "should be valid" do
@@ -28,7 +31,7 @@ describe DependencyCondition do
       @dependency_condition.operator = nil
       @dependency_condition.should have(2).errors_on(:operator)
     end
-  
+
     it "should be invalid without a rule_key" do
       @dependency_condition.should be_valid
       @dependency_condition.rule_key = nil
@@ -37,12 +40,14 @@ describe DependencyCondition do
     end
 
     it "should have unique rule_key within the context of a dependency" do
-     @dependency_condition.should be_valid
-     DependencyCondition.create(:dependency_id => 2, :question_id => 46, :operator => "==", :answer_id => 14, :rule_key => "2")
-     @dependency_condition.rule_key = "2" #rule key uniquness is scoped by dependency_id
-     @dependency_condition.dependency_id = 2
-     @dependency_condition.should_not be_valid
-     @dependency_condition.should have(1).errors_on(:rule_key)
+      @dependency_condition.should be_valid
+      DependencyCondition.create(
+        :dependency_id => 2, :question_id => 46, :operator => "==",
+        :answer_id => 14, :rule_key => "2")
+      @dependency_condition.rule_key = "2" # rule key uniquness is scoped by dependency_id
+      @dependency_condition.dependency_id = 2
+      @dependency_condition.should_not be_valid
+      @dependency_condition.should have(1).errors_on(:rule_key)
     end
 
     it "should have an operator in DependencyCondition.operators" do
@@ -64,7 +69,7 @@ describe DependencyCondition do
 
       @dependency_condition.is_met?([@alt_response]).should be_false
     end
-  
+
     it "converts to a hash for evaluation by the dependency object" do
       @response = Response.new(:question_id => 45, :response_set_id => 40, :answer_id => 23)
       @rs = mock(ResponseSet, :responses => [@response])
@@ -72,34 +77,39 @@ describe DependencyCondition do
       @dependency_condition.to_hash(@rs)
     end
   end
+
   describe "to_hash" do
     before do
       @question = Factory(:question)
       @answer = Factory(:answer, :question => @question)
-      @dependency_condition = Factory(:dependency_condition, :rule_key => "A", :question => @question)
+      @dependency_condition =
+        Factory(:dependency_condition, :rule_key => "A", :question => @question)
       @rs = Factory(:response_set)
-      @response = Factory(:response, :question => @question, :answer => @answer, :response_set => @rs)
+      @response =
+        Factory(:response, :question => @question, :answer => @answer, :response_set => @rs)
       @rs.responses << @response
       @rs.save!
     end
-    
+
     it "converts unmet condition to {:A => false}" do
       @dependency_condition.stub!(:is_met?).and_return(false)
       @dependency_condition.to_hash(@rs).should == {:A => false}
     end
-    
+
     it "converts met condition to {:A => true}" do
       @dependency_condition.stub!(:is_met?).and_return(true)
       @dependency_condition.to_hash(@rs).should == {:A => true}
     end
-    
+
     it "converts unanswered condition to {:A => false}" do
       question = Factory(:question)
-      dependency_condition = Factory(:dependency_condition, :rule_key => "A", :question => @question)
-      rs = Factory(:response_set)      
+      dependency_condition =
+        Factory(:dependency_condition, :rule_key => "A", :question => @question)
+      rs = Factory(:response_set)
       dependency_condition.to_hash(rs).should == {:A => false}
-    end 
+    end
   end
+
   describe "when if given a response object whether the dependency is satisfied using '=='" do
     before(:each) do
       @dep_c = DependencyCondition.new(:answer_id => 2, :operator => "==")
@@ -133,7 +143,7 @@ describe DependencyCondition do
       @dep_c.text_value = "hello this is some text for comparison"
       @dep_c.is_met?([@response]).should be_true
       @response.text_value = "Not the same text"
-      @dep_c.is_met?([@response]).should be_false 
+      @dep_c.is_met?([@response]).should be_false
     end
 
     it "knows an integer value response" do
@@ -153,7 +163,6 @@ describe DependencyCondition do
       @response.float_value = 130.123
       @dep_c.is_met?([@response]).should be_false
     end
-
   end
 
   describe "when if given a response object whether the dependency is satisfied using '!='" do
@@ -189,7 +198,7 @@ describe DependencyCondition do
       @dep_c.text_value = "hello this is some text for comparison"
       @dep_c.is_met?([@response]).should be_false
       @response.text_value = "Not the same text"
-      @dep_c.is_met?([@response]).should be_true 
+      @dep_c.is_met?([@response]).should be_true
     end
 
     it "knows an integer value response" do
@@ -209,7 +218,6 @@ describe DependencyCondition do
       @response.float_value = 130.123
       @dep_c.is_met?([@response]).should be_true
     end
-
   end
 
   describe "when if given a response object whether the dependency is satisfied using '<'" do
@@ -219,7 +227,6 @@ describe DependencyCondition do
       @response = Response.new(:question_id => 314, :response_set_id => 159, :answer_id => 2)
       @response.answer = @select_answer
       @dep_c.answer = @select_answer
-
     end
 
     it "knows operator on integer value response" do
@@ -239,7 +246,6 @@ describe DependencyCondition do
       @response.float_value = 130.123
       @dep_c.is_met?([@response]).should be_false
     end
-
   end
 
   describe "when if given a response object whether the dependency is satisfied using '<='" do
@@ -249,7 +255,6 @@ describe DependencyCondition do
       @response = Response.new(:question_id => 314, :response_set_id => 159, :answer_id => 2)
       @response.answer = @select_answer
       @dep_c.answer = @select_answer
-
     end
 
     it "knows operator on integer value response" do
@@ -283,7 +288,6 @@ describe DependencyCondition do
       @response = Response.new(:question_id => 314, :response_set_id => 159, :answer_id => 2)
       @response.answer = @select_answer
       @dep_c.answer = @select_answer
-
     end
 
     it "knows operator on integer value response" do
@@ -303,7 +307,6 @@ describe DependencyCondition do
       @response.float_value = 130.123
       @dep_c.is_met?([@response]).should be_true
     end
-
   end
 
   describe "when if given a response object whether the dependency is satisfied using '>='" do
@@ -313,7 +316,6 @@ describe DependencyCondition do
       @response = Response.new(:question_id => 314, :response_set_id => 159, :answer_id => 2)
       @response.answer = @select_answer
       @dep_c.answer = @select_answer
-
     end
 
     it "knows operator on integer value response" do
@@ -342,46 +344,54 @@ describe DependencyCondition do
   describe "when evaluating a pick one/many with response_class e.g. string" do
     it "should compare answer ids when the string_value is nil" do
       a = Factory(:answer, :response_class => "string")
-      dc = Factory(:dependency_condition, :question_id => a.question.id, :answer_id => a.id, :operator => "==")
+      dc = Factory(:dependency_condition,
+        :question_id => a.question.id, :answer_id => a.id, :operator => "==")
       r = Factory(:response, :question_id => a.question.id, :answer_id => a.id, :string_value => "")
       r.should_receive(:as).with("answer").and_return(a.id)
       dc.is_met?([r]).should be_true
     end
+
     it "should compare strings when the string_value is not nil, even if it is blank" do
       a = Factory(:answer, :response_class => "string")
-      dc = Factory(:dependency_condition, :question_id => a.question.id, :answer_id => a.id, :operator => "==", :string_value => "foo")
-      r = Factory(:response, :question_id => a.question.id, :answer_id => a.id, :string_value => "foo")
+      dc = Factory(:dependency_condition,
+        :question_id => a.question.id, :answer_id => a.id,
+        :operator => "==", :string_value => "foo")
+      r = Factory(:response,
+        :question_id => a.question.id, :answer_id => a.id, :string_value => "foo")
       r.should_receive(:as).with("string").and_return("foo")
-      dc.is_met?([r]).should be_true      
+      dc.is_met?([r]).should be_true
 
-      dc2 = Factory(:dependency_condition, :question_id => a.question.id, :answer_id => a.id, :operator => "==", :string_value => "")
-      r2 = Factory(:response, :question_id => a.question.id, :answer_id => a.id, :string_value => "")
+      dc2 = Factory(:dependency_condition,
+        :question_id => a.question.id, :answer_id => a.id, :operator => "==", :string_value => "")
+      r2 = Factory(:response,
+        :question_id => a.question.id, :answer_id => a.id, :string_value => "")
       r2.should_receive(:as).with("string").and_return("")
-      dc2.is_met?([r2]).should be_true      
+      dc2.is_met?([r2]).should be_true
     end
   end
+
   describe "when given responses whether the dependency is satisfied using 'count'" do
     before(:each) do
-      @dep_c = DependencyCondition.new(:answer_id => nil, 
-                                       :operator => "count>2")
+      @dep_c = DependencyCondition.new(:answer_id => nil,
+        :operator => "count>2")
       @question = Question.new
       @select_answers = []
-      3.times do 
-        @select_answers << Answer.new(:question => @question, 
-                                      :response_class => "answer")
+      3.times do
+        @select_answers << Answer.new(:question => @question,
+          :response_class => "answer")
       end
       @responses = []
       @select_answers.slice(0,2).each do |a|
-        @responses << Response.new(:question => @question, :answer => a, 
-                                   :response_set_id => 159)
+        @responses << Response.new(:question => @question, :answer => a,
+          :response_set_id => 159)
       end
-     end
+    end
 
     it "knows operator with >" do
       @dep_c.is_met?(@responses).should be_false
-      @responses << Response.new(:question => @question, 
-                                 :answer => @select_answers.last, 
-                                 :response_set_id => 159)
+      @responses << Response.new(:question => @question,
+        :answer => @select_answers.last,
+        :response_set_id => 159)
       @dep_c.is_met?(@responses).should be_true
     end
 
