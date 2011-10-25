@@ -49,15 +49,19 @@ namespace :testbed do
         f.puts %q{gem 'surveyor', :path => '..'}
       end
 
-      sh 'bundle update'
+      Bundler.with_clean_env do
+        sh 'bundle update'
+      end
     end
   end
 
   desc 'Prepare the databases for the testbed'
   task :migrate do
     chdir('testbed') do
-      sh 'bundle exec rails generate surveyor:install'
-      sh 'bundle exec rake db:migrate db:test:prepare'
+      Bundler.with_clean_env do
+        sh 'bundle exec rails generate surveyor:install'
+        sh 'bundle exec rake db:migrate db:test:prepare'
+      end
     end
   end
 
