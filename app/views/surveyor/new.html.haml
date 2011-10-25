@@ -10,10 +10,17 @@
       - unless @surveys.empty?
         - @surveys.each do |survey|
           %li
-            - form_tag(take_survey_path(:survey_code => survey.access_code)) do 
+            = form_tag(take_survey_path(:survey_code => survey.access_code)) do 
+              = hidden_field_tag :surveyor_javascript_enabled, false              
+
               = survey.title
               &nbsp;
               = submit_tag( t('surveyor.take_it') )
       - else
         %li
           No surveys
+
+:javascript
+  $(document).ready(function() {
+    $("input#surveyor_javascript_enabled").val(true);
+  });

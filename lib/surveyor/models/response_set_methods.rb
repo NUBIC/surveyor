@@ -149,11 +149,11 @@ module Surveyor
       end
 
       def unanswered_question_dependencies
-        dependencies.select{|d| d.is_met?(self) and d.question and self.is_unanswered?(d.question)}.map(&:question)
+        dependencies.select{ |d| d.question && self.is_unanswered?(d.question) && d.is_met?(self) }.map(&:question)
       end
 
       def unanswered_question_group_dependencies
-        dependencies.select{|d| d.is_met?(self) and d.question_group and self.is_group_unanswered?(d.question_group)}.map(&:question_group)
+        dependencies.select{ |d| d.question_group && self.is_group_unanswered?(d.question_group) && d.is_met?(self) }.map(&:question_group)
       end
 
       def all_dependencies(question_ids = nil)
