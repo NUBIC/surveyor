@@ -30,10 +30,10 @@ describe Response, "when saving a response" do
 
   it "should be (in)correct if answer_id is (not) equal to question's correct_answer_id" do
     @answer = Factory(:answer, :response_class => "answer")
-    @question = Factory(:question, :correct_answer_id => @answer.id)
+    @question = Factory(:question, :correct_answer => @answer)
     @response = Factory(:response, :question => @question, :answer => @answer)
     @response.correct?.should be_true
-    @response.answer_id = 143
+    @response.answer = Factory(:answer, :response_class => "answer").tap { |a| a.id = 143 }
     @response.correct?.should be_false
   end
 
