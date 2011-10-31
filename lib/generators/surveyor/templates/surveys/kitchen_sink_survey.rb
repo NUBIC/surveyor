@@ -25,7 +25,7 @@ survey "Kitchen Sink survey" do
     # the question's reference identifier is "2a", and the answer's reference_identifier is "1"
     # question reference identifiers used in conditions need to be unique on a survey for the lookups to work
     q_2a "Please explain why you don't like this color?"
-    a_1 "explanation", :text, :help => "Please give an explanation for each color you don't like"
+    a_1 "explanation", :text, :help_text => "Please give an explanation for each color you don't like"
     dependency :rule => "A or B or C or D"
     condition_A :q_2, "==", :a_1
     condition_B :q_2, "==", :a_2

@@ -37,8 +37,8 @@ module Surveyor
       def api_json(qs)
         { :text => text,
           :type => display_type,
-          :answers => qs.first.answers.map(&:api_json),
-          :questions => qs.map(&:api_json)}
+          :questions => qs.map(&:api_json)}\
+        .merge(display_type == "grid" ? {:answers => qs.first.answers.map(&:api_json)} : {})\
       end
     end
   end

@@ -51,7 +51,11 @@ module Surveyor
         hash = {}
         self.dependency_conditions.each{|dc| hash.merge!(dc.to_hash(response_set))}
         return hash
-      end    
+      end
+      
+      def api_json
+        {:rule => rule, :conditions => dependency_conditions.map(&:api_json)}
+      end  
     end
   end
 end
