@@ -88,3 +88,19 @@ end
 Then /^(\d+) responses should exist$/ do |response_count|
   Response.count.should == response_count.to_i
 end
+
+Then /the element "([^\"]*)" should be hidden$/ do |selector|
+  wait_until do
+    its_hidden = page.evaluate_script("$('#{selector}').is(':hidden');")
+    its_not_in_dom = page.evaluate_script("$('#{selector}').length == 0;")
+    (its_hidden || its_not_in_dom).should be_true
+  end
+end
+
+Then /the element "([^\"]*)" should not be hidden$/ do |selector|
+  wait_until do
+    its_not_hidden = page.evaluate_script("$('#{selector}').is(':not(:hidden)');")
+    its_in_dom = page.evaluate_script("$('#{selector}').length > 0;")
+    (its_not_hidden && its_in_dom).should be_true
+  end
+end
