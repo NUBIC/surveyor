@@ -108,17 +108,24 @@ Specific versions of the gem dependencies are listed in the gemspec.
 
 # Contributing, testing
 
-To work on the code fork this github project. Install [bundler][] if
+To work on the code, fork this github project. Install [bundler][] if
 you don't have it, then run
 
     $ bundle update
 
 to install all the necessary gems. Then
 
-    $ rake testbed
+    $ bundle exec rake testbed
 
-to generate a test app in `testbed`. Run rake spec and rake cucumber
-from the root and start writing tests!
+to generate a test app in `testbed`. Now you can run
+
+    $ bundle exec rake spec
+
+to run the specs and
+
+    $ bundle exec rake cucumber
+
+to run the features and start writing tests!
 
 [bundler]: http://gembundler.com/
 
