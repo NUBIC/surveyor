@@ -13,7 +13,10 @@ describe SurveyorHelper do
     helper.q_text(q1).should == "1) #{q1.text}"
     helper.q_text(q2).should == q2.text
     helper.q_text(q3).should == q3.text
-    helper.q_text(q4).should == '<img alt="Something" src="/images/something.jpg" />'
+    
+    dir = Rails.application.config.assets.enabled ? "assets" : "images"
+    
+    helper.q_text(q4).should == %Q(<img alt="Something" src="/#{dir}/something.jpg" />)
     helper.q_text(q5).should == q5.text
   end
   it "should return the group text with number" do
