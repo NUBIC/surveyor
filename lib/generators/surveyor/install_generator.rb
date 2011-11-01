@@ -22,7 +22,7 @@ module Surveyor
     end
     def assets
       asset_directory = "public"
-      if Rails.version >= "3.1.0" && Rails.application.config.assets.enabled == true
+      if Rails.application.config.respond_to?(:assets) && Rails.application.config.assets.enabled == true
         asset_directory = "vendor"
       end
       directory asset_directory
