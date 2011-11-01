@@ -21,7 +21,11 @@ module Surveyor
       end
     end
     def assets
-      directory "public"
+      asset_directory = "public"
+      if Rails.version >= "3.1.0" && Rails.application.config.assets.enabled == true
+        asset_directory = "vendor"
+      end
+      directory asset_directory
     end
     def surveys
       copy_file "surveys/kitchen_sink_survey.rb"
