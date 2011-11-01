@@ -60,7 +60,7 @@ describe DependencyCondition do
     end
 
     it "should evaluate within the context of a response set object" do
-      @response = Response.new(:question_id => 45, :response_set_id => 40)
+      @response = Response.new(:question_id => 45, :response_set_id => 40, :answer_id => 23)
       @response.answer = Answer.new(:question_id => 45, :response_class => "answer").
         tap { |a| a.id = 23 }
       @dependency_condition.is_met?([@response]).should be_true
@@ -114,10 +114,10 @@ describe DependencyCondition do
 
   describe "when if given a response object whether the dependency is satisfied using '=='" do
     before(:each) do
-      @dep_c = DependencyCondition.new(:operator => "==")
       @select_answer = Answer.new(:question_id => 1, :response_class => "answer").
         tap { |a| a.id = 2 }
-      @response = Response.new(:question_id => 314, :response_set_id => 159)
+      @dep_c = DependencyCondition.new(:operator => "==", :answer_id => @select_answer.id)
+      @response = Response.new(:question_id => 314, :response_set_id => 159, :answer_id => @select_answer.id)
       @response.answer = @select_answer
       @dep_c.answer = @select_answer
       @dep_c.as(:answer).should == 2
@@ -170,10 +170,10 @@ describe DependencyCondition do
 
   describe "when if given a response object whether the dependency is satisfied using '!='" do
     before(:each) do
-      @dep_c = DependencyCondition.new(:operator => "!=")
       @select_answer = Answer.new(:question_id => 1, :response_class => "answer").
         tap { |a| a.id = 2 }
-      @response = Response.new(:question_id => 314, :response_set_id => 159)
+      @response = Response.new(:question_id => 314, :response_set_id => 159, :answer_id => @select_answer.id)
+      @dep_c = DependencyCondition.new(:operator => "!=", :answer_id => @select_answer.id)
       @response.answer = @select_answer
       @dep_c.answer = @select_answer
       @dep_c.as(:answer).should == 2
