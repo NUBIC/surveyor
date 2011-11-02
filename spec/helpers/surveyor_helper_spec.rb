@@ -2,7 +2,7 @@ require File.expand_path(File.dirname(__FILE__) + '/../spec_helper')
 
 describe SurveyorHelper do
   before(:each) do
-    
+
   end
   it "should return the question text with number" do
     q1 = Factory(:question)
@@ -39,7 +39,7 @@ describe SurveyorHelper do
     helper.response_for(rs, q2).attributes.should == Response.new(:question => q2, :response_set => rs).attributes
     helper.response_for(rs, q2, b).attributes.should == Response.new(:question => q2, :response_set => rs).attributes
     helper.response_for(rs, q3, c, "1").should == r3
-    
+
   end
   it "should keep an index of responses" do
     helper.response_idx.should == "1"
@@ -55,5 +55,44 @@ describe SurveyorHelper do
     helper.rc_to_attr(:datetime).should == :datetime_value
     helper.rc_to_attr(:date).should == :datetime_value
     helper.rc_to_attr(:time).should == :datetime_value
+  end
+
+  it "renders an answer" do
+fragment =  <<HERE
+%p
+  = q.to_s
+%p
+  = a.to_s
+%p
+  = f.to_s
+%p
+  = rg.to_s
+%p
+  = g.to_s
+HERE
+
+    q, a, f, rg, g = 1, 2, 3, 4, 5
+    template = Haml::Engine.new(fragment)
+    Haml::Engine.should_receive(:new).and_return(template)
+    helper.render_answer(q, a, f, rg, g).should == "<p>\n  1\n</p>\n<p>\n  2\n</p>\n<p>\n  3\n</p>\n<p>\n  4\n</p>\n<p>\n  5\n</p>\n"
+  end
+
+
+  it "renders a question" do
+fragment =  <<HERE
+%p
+  = g.to_s
+%p
+  = rg.to_s
+%p
+  = q.to_s
+%p
+  = f.to_s
+HERE
+
+    g, rg, q, f = 1, 2, 3, 4
+    template = Haml::Engine.new(fragment)
+    Haml::Engine.should_receive(:new).and_return(template)
+    helper.render_question(g, rg, q, f).should == "<p>\n  1\n</p>\n<p>\n  2\n</p>\n<p>\n  3\n</p>\n<p>\n  4\n</p>\n"
   end
 end

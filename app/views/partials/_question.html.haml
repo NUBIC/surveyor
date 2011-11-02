@@ -22,4 +22,7 @@
         = ff.quiet_input :response_group, :value => rg if g && g.display_type == "repeater"
         = ff.quiet_input :id unless r.new_record?
     - q.answers.each do |a|
-      = render a.custom_renderer || '/partials/answer', :q => q, :a => a, :f => f, :rg => rg, :g => g
+      - if a.custom_renderer
+        = render a.custom_renderer, :q => q, :a => a, :f => f, :rg => rg, :g => g
+      - else
+        = render_answer(q, a, f, rg, g)

@@ -9,4 +9,7 @@
         = render q.question_group.custom_renderer || "/partials/question_group", :g => q.question_group, :qs => qs, :f => f
         - qs = []
     - else # gather up the group questions
-      = render q.custom_renderer || "/partials/question", :q => q, :f => f
+      - if q.custom_renderer
+        = render  q.custom_renderer, :q => q, :f => f
+      -else
+        = render_question(nil, nil, q, f)
