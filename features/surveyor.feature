@@ -234,8 +234,6 @@ Feature: Survey creation
     And I press "Two"
     Then there should be 1 response with answer "Dogg"
 
-  # Issue 188
-  @wip
   Scenario: "Saving grids"
     Given the survey
     """
