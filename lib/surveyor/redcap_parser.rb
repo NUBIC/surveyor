@@ -35,7 +35,7 @@ module Surveyor
             Dependency.build_and_set(context, r)
           end
         end
-        print context[:survey].save ? "saved. " : " not saved! #{context[:survey].errors.each_full{|x| x }.join(", ")} "
+        print context[:survey].save ? "saved. " : " not saved! #{context[:survey].errors.full_messages.join(", ")} "
         # print context[:survey].sections.map(&:questions).flatten.map(&:answers).flatten.map{|x| x.errors.each_full{|y| y}.join}.join
       rescue csvlib::MalformedCSVError
         puts = "Oops. Not a valid CSV file."
@@ -65,7 +65,9 @@ class SurveySection < ActiveRecord::Base
       if match = context[:survey].sections.detect{|ss| ss.reference_identifier == r[:form_name]}
         context[:current_survey_section] = match
       else
-        context[:survey_section] = context[:survey].sections.build({:title => r[:form_name].to_s.humanize, :reference_identifier => r[:form_name]})
+        context[:survey_section] = context[:survey].sections.build({:title => r[:form_name].to_s.humanize, 
+                                                                    :reference_identifier => r[:form_name],
+                                                                    :display_order => context[:survey].sections.size })
         print "survey_section_#{context[:survey_section].reference_identifier} "
       end
     end
@@ -85,7 +87,8 @@ class Question < ActiveRecord::Base
       :help_text => r[:field_note],
       :is_mandatory => (/^y/i.match r[:required_field]) ? true : false,
       :pick => pick_from_field_type(r[:field_type]),
-      :display_type => display_type_from_field_type(r[:field_type])
+      :display_type => display_type_from_field_type(r[:field_type]),
+      :display_order => context[:survey_section].questions.size
     })
     unless context[:question].reference_identifier.blank?
       context[:lookup] ||= []
@@ -178,9 +181,9 @@ class Answer < ActiveRecord::Base
   def self.build_and_set(context, r)
     case r[:field_type]
     when "text"
-      context[:answer] = context[:question].answers.build(:response_class => "string", :text => "Text")
+      context[:answer] = context[:question].answers.build(:response_class => "string", :text => "Text", :display_order => context[:question].answers.size)
     when "notes"
-      context[:answer] = context[:question].answers.build(:response_class => "text", :text => "Notes")
+      context[:answer] = context[:question].answers.build(:response_class => "text", :text => "Notes", :display_order => context[:question].answers.size)
     when "file"
       puts "\n!!! skipping answer: file"
     end
@@ -189,7 +192,7 @@ class Answer < ActiveRecord::Base
       if aref.blank? or atext.blank? or (aref.to_i.to_s != aref)
         puts "\n!!! skipping answer #{pair}"
       else
-        context[:answer] = context[:question].answers.build(:reference_identifier => aref, :text => atext)
+        context[:answer] = context[:question].answers.build(:reference_identifier => aref, :text => atext, :display_order => context[:question].answers.size)
         unless context[:question].reference_identifier.blank? or aref.blank? or !context[:answer].valid?
           context[:lookup] ||= []
           context[:lookup] << [context[:question].reference_identifier, aref, context[:answer]]
