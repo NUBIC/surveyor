@@ -39,7 +39,7 @@ Feature: Survey creation
       ||
     And there should be 2 answers with:
       ||
-  @focus
+
   Scenario: with different whitespace
     Given I parse redcap file "redcap_whitespace.csv"
     Then there should be 1 survey with:

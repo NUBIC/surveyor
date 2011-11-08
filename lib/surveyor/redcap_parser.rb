@@ -78,7 +78,7 @@ end
 class Question < ActiveRecord::Base
   def self.build_and_set(context, r)
     if !r[:section_header].blank?
-      context[:survey_section].questions.build({:display_type => "label", :text => r[:section_header]})
+      context[:survey_section].questions.build({:display_type => "label", :text => r[:section_header], :display_order => context[:survey_section].questions.size})
       print "label_ "
     end
     context[:question] = context[:survey_section].questions.build({

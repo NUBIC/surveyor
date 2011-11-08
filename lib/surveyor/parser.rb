@@ -225,10 +225,10 @@ class Answer < ActiveRecord::Base
     # add answers to grid
     if context[:question_group] && context[:question_group].display_type == "grid"
       context[:grid_answers] ||= []      
-      context[:answer] = new(attrs.merge({:display_order => [:grid_answers].size}))
+      context[:answer] = new({:display_order => [:grid_answers].size}.merge(attrs))
       context[:grid_answers] << context[:answer]
     else
-      context[:answer] = context[:question].answers.build(attrs.merge({:display_order => context[:question].answers.size}))
+      context[:answer] = context[:question].answers.build({:display_order => context[:question].answers.size}.merge(attrs))
       context[:answer_references][context[:question].reference_identifier] ||= {} unless context[:question].reference_identifier.blank?
       context[:answer_references][context[:question].reference_identifier][reference_identifier] = context[:answer] unless reference_identifier.blank? or context[:question].reference_identifier.blank?
     end
