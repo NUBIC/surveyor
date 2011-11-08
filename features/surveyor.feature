@@ -262,8 +262,6 @@ Feature: Survey creation
     And I press "One"
     Then there should be 1 response with answer "1"
 
-  # Issue 238
-  @wip
   Scenario: "Dates"
     Given the survey
     """
@@ -301,7 +299,7 @@ Feature: Survey creation
     Then there should be 3 datetime responses with
       | datetime_value      |
       | 2011-02-14 00:00:00 |
-      | 2001-01-01 01:30:00 |
+      | 0001-01-01 01:30:00 |
       | 2011-02-15 17:30:00 |
 
     # 2/13/11
@@ -317,7 +315,7 @@ Feature: Survey creation
     Then there should be 3 datetime responses with
       | datetime_value      |
       | 2011-02-13 00:00:00 |
-      | 2001-01-01 13:30:00 |
+      | 0001-01-01 13:30:00 |
       | 2011-02-15 17:00:00 |
 
   Scenario: "Images"

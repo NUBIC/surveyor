@@ -76,7 +76,7 @@ Then /^there should be (\d+) datetime responses with$/ do |count, table|
   Response.count.should == count.to_i
   table.hashes.each do |hash|
     if hash.keys == ["datetime_value"]
-      Response.find_by_datetime_value(DateTime.parse(hash["datetime_value"])).should_not be_blank
+      Response.all.one?{|x| x.datetime_value == hash["datetime_value"]}.should be_true
     end
   end
 end
