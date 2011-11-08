@@ -13,6 +13,13 @@ Then /^there should be (\d+) survey(?:s?) with:$/ do |x, table|
   end
 end
 
+Then /^there should be (\d+) section(?:s?) with:$/ do |x, table|
+  SurveySection.count.should == x.to_i
+  table.hashes.each do |hash|
+    SurveySection.find(:first, :conditions => hash).should_not be_nil
+  end
+end
+
 Then /^there should be (\d+) question groups with:$/ do |x, table|
   QuestionGroup.count.should == x.to_i
   table.hashes.each do |hash|

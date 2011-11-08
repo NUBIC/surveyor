@@ -2,7 +2,7 @@ Feature: Survey creation
   As a 
   I want to write out the survey in the DSL
   So that I can give it to survey participants
-
+  
   Scenario: Basic questions
     Given I parse
     """
@@ -17,31 +17,40 @@ Feature: Survey creation
           answer :other
 
           q_2b "Choose the colors you don't like", :pick => :any
-          a_1 "orange"
-          a_2 "purple"
-          a_3 "brown"
+          a_1 "orange", :display_order => 1
+          a_2 "purple", :display_order => 2
+          a_3 "brown", :display_order => 0
           a :omit
         end
+        section "Second section" do
+        end
+      end
+      survey "Second survey" do
       end
     """
-    Then there should be 1 survey with:
-      | title         |
-      | Simple survey |
+    Then there should be 2 surveys with:
+      | title         | display_order |
+      | Simple survey | 0             |
+      | Second survey | 1             |
+    And there should be 2 sections with:
+      | title           | display_order |
+      | Basic questions | 0             |
+      | Second section  | 1             |
     And there should be 3 questions with:
-      | reference_identifier | text                                                            | pick | display_type |
-      | nil                  | These questions are examples of the basic supported input types | none | label        |
-      | 1                    | What is your favorite color?                                    | one  | default      |
-      | 2b                   | Choose the colors you don't like                                | any  | default      |
+      | reference_identifier | text                                                            | pick | display_type | display_order |
+      | nil                  | These questions are examples of the basic supported input types | none | label        | 0             |
+      | 1                    | What is your favorite color?                                    | one  | default      | 1             |
+      | 2b                   | Choose the colors you don't like                                | any  | default      | 2             |
     And there should be 8 answers with:
-      | reference_identifier | text   | response_class |
-      | nil                  | red    | answer         |
-      | nil                  | blue   | answer         |
-      | nil                  | green  | answer         |
-      | nil                  | Other  | answer         |
-      | 1                    | orange | answer         |
-      | 2                    | purple | answer         |
-      | 3                    | brown  | answer         |
-      | nil                  | Omit   | answer         |
+      | reference_identifier | text   | response_class | display_order |
+      | nil                  | red    | answer         | 0             |
+      | nil                  | blue   | answer         | 1             |
+      | nil                  | green  | answer         | 2             |
+      | nil                  | Other  | answer         | 3             |
+      | 1                    | orange | answer         | 1             |
+      | 2                    | purple | answer         | 2             |
+      | 3                    | brown  | answer         | 0             |
+      | nil                  | Omit   | answer         | 3             |
 
   Scenario: More complex questions
     Given I parse

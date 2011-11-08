@@ -29,7 +29,6 @@ module Surveyor
       end
 
       def default_args
-        self.display_order ||= self.question ? self.question.answers.count : 0
         self.is_exclusive ||= false
         self.display_type ||= "default"
         self.response_class ||= "answer"

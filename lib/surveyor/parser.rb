@@ -80,7 +80,7 @@ class Survey < ActiveRecord::Base
     # build and set context
     title = args[0]
     context[:survey] = new({  :title => title, 
-                              :reference_identifier => reference_identifier}.merge(args[1] || {}))
+                              :reference_identifier => reference_identifier }.merge(args[1] || {}))
   end
   def clear(context)
     context.delete_if{|k,v| true }
@@ -97,7 +97,8 @@ class SurveySection < ActiveRecord::Base
     
     # build and set context
     title = args[0]
-    context[:survey_section] = context[:survey].sections.build({ :title => title }.merge(args[1] || {}))
+    context[:survey_section] = context[:survey].sections.build({ :title => title,
+                                                                 :display_order => context[:survey].sections.size }.merge(args[1] || {}))
   end
   def clear(context)
     context.delete_if{|k,v| !%w(survey question_references answer_references).map(&:to_sym).include?(k)}
@@ -137,7 +138,8 @@ class Question < ActiveRecord::Base
       :question_group => context[:question_group],
       :reference_identifier => reference_identifier,
       :text => text,
-      :display_type => (original_method =~ /label|image/ ? original_method : "default")}.merge(args[1] || {}))
+      :display_type => (original_method =~ /label|image/ ? original_method : "default"),
+      :display_order => context[:survey_section].questions.size }.merge(args[1] || {}))
     
     # keep reference for dependencies
     context[:question_references][reference_identifier] = context[:question] unless reference_identifier.blank?
@@ -218,7 +220,7 @@ class Answer < ActiveRecord::Base
     # clear context
     context.delete_if{|k,v| %w(answer validation validation_condition reference_identifier).map(&:to_sym).include? k}
 
-    attrs = { :reference_identifier => reference_identifier}.merge(self.parse_args(args))
+    attrs = { :reference_identifier => reference_identifier, :display_order => context[:question].answers.size }.merge(self.parse_args(args))
                               
     # add answers to grid
     if context[:question_group] && context[:question_group].display_type == "grid"
