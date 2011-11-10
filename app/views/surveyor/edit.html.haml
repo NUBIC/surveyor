@@ -11,8 +11,9 @@
     .survey_title= @survey.title
     .previous_section= previous_section
     = render 'partials/dependents' unless @dependents.empty?
-    - if false #@response_set.no_responses_for_section?(@section) # cache if response_set has no responses for current section
-      = cache("section_#{@section.id}"){ render "/partials/section", :f => f }
+    - if @response_set.no_responses_for_section?(@section) # cache if response_set has no responses for current section
+      - cache("section_#{@section.id}") do
+        = render "/partials/section", :f => f
     - else # no cache
       = render "/partials/section", :f => f
     .next_section= next_section
