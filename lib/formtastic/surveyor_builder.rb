@@ -50,7 +50,7 @@ module Formtastic
     end
     def surveyor_radio_input(method, options)
       collection   = find_collection_for_column(method, options)
-      html_options = strip_formtastic_options(options).merge(options.delete(:input_html) || {})
+      html_options = strip_formtastic_options(options).merge(options[:input_html] || {})
 
       input_name = generate_association_input_name(method)
       value_as_class = options.delete(:value_as_class)
