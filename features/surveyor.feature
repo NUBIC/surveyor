@@ -93,13 +93,16 @@ Feature: Survey creation
           a :string
           q "Anything else to say?", :pick => :any
           a "yes", :string, :custom_class => "other_custom_class"
+          q "Random question", :pick => :one
+          a "yes", :string, :custom_class => "other_other_custom_class"
         end
       end
     """
     When I start the "Movies" survey
-    Then the element "input[type='text']:first.my_custom_class" should exist
+    Then the element "input[type='text'].my_custom_class" should exist
     And the element "input[type='checkbox'].other_custom_class" should exist
-    And the element "input[type='text'].other_custom_class" should exist
+    And the element "input[type='radio'].other_other_custom_class" should exist
+    And the element "input[type='text'].other_other_custom_class" should exist
 
   Scenario: A pick one question with an option for other
     Given the survey
