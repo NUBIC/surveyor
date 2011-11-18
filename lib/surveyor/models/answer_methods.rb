@@ -11,15 +11,15 @@ module Surveyor
         
         # Scopes
         base.send :default_scope, :order => "display_order ASC"
-        base.send :scope, :by_question_answer_data_export_identifier, lambda { |survey_id, question_data_export_identifier, answer_data_export_identifier| 
-							joins(:question, :question => :survey_section).where(
+        base.scope :by_question_answer_data_export_identifier, lambda { |survey_id, question_data_export_identifier, answer_data_export_identifier| 
+							base.joins(:question, :question => :survey_section).where(
 							:questions => {:data_export_identifier => question_data_export_identifier}, 
 							:answers => {:data_export_identifier => answer_data_export_identifier},
 							:survey_sections => {:survey_id => survey_id}
 					)}
   
-        base.send :scope, :by_question_data_export_identifier, lambda { |survey_id, question_data_export_identifier, answer_text| 
-							joins(:question, :question => :survey_section).where(
+        base.scope :by_question_data_export_identifier, lambda { |survey_id, question_data_export_identifier, answer_text| 
+							base.joins(:question, :question => :survey_section).where(
 							:questions => {:data_export_identifier => question_data_export_identifier}, 
 							:answers => {:text =>  answer_text},
 							:survey_sections => {:survey_id => survey_id}
@@ -32,6 +32,17 @@ module Surveyor
           # this causes issues with building and saving
           # base.send :validates_numericality_of, :question_id, :allow_nil => false, :only_integer => true
           @@validations_already_included = true
+        end
+        
+        # Class methods
+        base.instance_eval do
+          def find_by_survey_question_answer(survey_id, question_data_export_identifier, answer_data_export_identifier)
+            Answer.by_question_answer_data_export_identifier(survey_id, question_data_export_identifier, answer_data_export_identifier).first
+          end
+                
+          def find_by_survey_question_answer_text(survey_id, question_data_export_identifier, answer_text)
+            Answer.by_question_data_export_identifier(survey_id, question_data_export_identifier, answer_text).first
+          end
         end
       end
 
@@ -58,15 +69,6 @@ module Surveyor
         return "" if display_type == "hidden_label"
         part == :pre ? text.split("|",2)[0] : (part == :post ? text.split("|",2)[1] : text)
       end
-      
-      def self.find_by_survey_question_answer(survey_id, question_data_export_identifier, answer_data_export_identifier)
-        Answer.by_question_answer_data_export_identifier(survey_id, question_data_export_identifier, answer_data_export_identifier).first
-      end
-            
-      def self.find_by_survey_question_answer_text(survey_id, question_data_export_identifier, answer_text)
-        Answer.by_question_data_export_identifier(survey_id, question_data_export_identifier, answer_text).first
-      end
-        
     end
   end
 end

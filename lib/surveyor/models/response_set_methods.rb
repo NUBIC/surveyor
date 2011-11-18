@@ -11,9 +11,9 @@ module Surveyor
         base.send :accepts_nested_attributes_for, :responses, :allow_destroy => true
         
         # Scopes
-        base.send :scope, :by_user, lambda { |user| where(:user_id => user.nil? ? nil : user.id) }
-        base.send :scope, :completed, lambda { where("completed_at IS NOT NULL") }
-        base.send :scope, :incomplete, lambda { where("completed_at IS NULL") }
+        base.scope :by_user, lambda { |user| base.where(:user_id => user.nil? ? nil : user.id) }
+        base.scope :completed, lambda { base.where("completed_at IS NOT NULL") }
+        base.scope :incomplete, lambda { base.where("completed_at IS NULL") }
 
         @@validations_already_included ||= nil
         unless @@validations_already_included
