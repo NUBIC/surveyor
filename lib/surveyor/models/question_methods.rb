@@ -13,6 +13,8 @@ module Surveyor
 
         # Scopes
         base.send :default_scope, :order => "display_order ASC"
+        base.send :scope, :by_survey_id, lambda { |access_code| joins(:survey_section).where(:survey_sections => {:survey_id => access_code} )}
+        base.send :scope, :by_survey, lambda { |access_code| joins(:survey_section => :survey).where(:surveys => {:access_code => access_code} )}
         
         @@validations_already_included ||= nil
         unless @@validations_already_included

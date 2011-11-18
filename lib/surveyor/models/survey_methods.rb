@@ -11,6 +11,7 @@ module Surveyor
 
         # Scopes
         base.send :scope, :with_sections, {:include => :sections}
+        base.send :scope, :by_user, lambda { |user| select('DISTINCT surveys.*').joins(:response_sets).where(:response_sets => {:user_id => user.nil? ? nil :user.id} )}
         
         @@validations_already_included ||= nil
         unless @@validations_already_included
