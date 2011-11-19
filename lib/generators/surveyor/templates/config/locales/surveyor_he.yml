@@ -6,6 +6,7 @@ he:
     take_these_surveys: "תוכלו לבצע סקרים אלו"
     take_it: "בצע"
     completed_survey: "סיום הסקר"
+    incomplete_survey: "סקר הושלמה - נא לענות על כל השאלות"
     unable_to_find_your_responses: "לא נמצאו תשובותיך לסקר"
     unable_to_update_survey: ""
     unable_to_find_that_survey: "לא ניתן לאתר את הסקר המבוקש"
