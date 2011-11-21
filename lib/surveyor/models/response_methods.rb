@@ -10,6 +10,8 @@ module Surveyor
         unless @@validations_already_included
           # Validations
           base.send :validates_presence_of, :response_set_id, :question_id, :answer_id
+          base.send :validates, :float_value, :numericality => true, :if => "validate?(%w[float])"
+          base.send :validates, :integer_value, :numericality => { :only_integer => true }, :if => "validate?(%w[integer])"
           
           @@validations_already_included = true
         end
@@ -35,6 +37,12 @@ module Surveyor
       end
       def correct?
         question.correct_answer.nil? or self.answer.response_class != "answer" or (question.correct_answer.id.to_i == answer.id.to_i)
+      end
+      
+      def validate?(fields)
+        return false if self.answer.nil?
+        return true if !marked_for_destruction? && fields.include?(self.answer.response_class)
+        return false
       end
 
       def to_s # used in dependency_explanation_helper

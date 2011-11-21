@@ -6,6 +6,24 @@ describe Response, "when saving a response" do
     @response = Factory(:response, :question => Factory(:question), :answer => Factory(:answer))
   end
 
+  it "should be invalid without valid integer" do 
+    @response.answer.update_attributes(:response_class => "integer")
+    @response.integer_value = "invalid"
+    @response.should be_invalid
+    @response.integer_value = "1.13"
+    @response.should be_invalid
+    @response.integer_value = "1"
+    @response.should be_valid
+  end
+
+  it "should be invalid without valid float" do 
+    @response.answer.update_attributes(:response_class => "float")
+    @response.float_value = "invalid"
+    @response.should be_invalid
+    @response.float_value = "1.13"
+    @response.should be_valid
+  end
+
   it "should be valid" do
     @response.should be_valid
   end
