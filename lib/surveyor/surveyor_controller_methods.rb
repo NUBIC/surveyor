@@ -68,7 +68,10 @@ module Surveyor
           saved &= @response_set.save
         end
       end
-      return redirect_with_message(surveyor_finish, :notice, t('surveyor.completed_survey')) if saved && params[:finish]
+      
+      if saved && params[:finish]
+        return redirect_with_message(surveyor_finish, :notice, @response_set.mandatory_questions_complete? ? t('surveyor.completed_survey') : t('surveyor.incomplete_survey'))
+      end
 
       respond_to do |format|
         format.html do
