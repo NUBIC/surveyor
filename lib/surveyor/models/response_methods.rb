@@ -10,8 +10,8 @@ module Surveyor
         unless @@validations_already_included
           # Validations
           base.send :validates_presence_of, :response_set_id, :question_id, :answer_id
-          base.send :validates, :float_value, :numericality => true, :if => "validate?(%w[float])"
-          base.send :validates, :integer_value, :numericality => { :only_integer => true }, :if => "validate?(%w[integer])"
+          base.send :validates, :float_value, :numericality => { :only_float => true, :message => "^Please enter a numeric value."}, :if => "validate?(%w[float])"
+          base.send :validates, :integer_value, :numericality => { :only_integer => true, :message => "^Please enter a numeric value." }, :if => "validate?(%w[integer])"
           
           @@validations_already_included = true
         end
@@ -27,6 +27,15 @@ module Surveyor
               result.delete(:string_value) unless answer.response_class && answer.response_class.to_sym == :string
             end
             result
+          end
+
+          def validate(hash_of_hashes, response_set)
+            invalid = []
+            (hash_of_hashes || {}).each_pair do |k, hash|
+              response = Response.new(hash.merge(:response_set => response_set))
+              invalid << {:question => hash['question_id'], :message => response.errors.full_messages} unless response.valid?
+            end
+            invalid
           end
         end
       end
