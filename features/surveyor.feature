@@ -140,6 +140,24 @@ Feature: Survey creation
     When I start the "Movies" survey
     Then a dropdown should exist with the options "Action, Comedy, Mystery"
 
+  # Issue 251 - text field with checkbox
+  Scenario: Group with a dropdown
+    Given the survey
+    """
+      survey "All Holidays" do
+        section "Favorites" do
+          group "Holidays" do
+            q "What is your favorite holiday?", :pick => :one, :display_type => :dropdown
+            a "Christmas"
+            a "New Year"
+            a "March 8th"
+          end
+        end
+      end
+    """
+    When I start the "All Holidays" survey
+    Then a dropdown should exist with the options "Christmas, New Year, March 8th"
+
   Scenario: A pick one question with an option for other
     Given the survey
     """
