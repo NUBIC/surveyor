@@ -95,7 +95,7 @@ body
       li.datetime, li.time
         input, fieldset, fieldset ol li
           :display inline
-    &.q_inline ol li
+    &.q_inline ol li, &.q_inline_inline ol li
       :display inline
     input, textarea, select
       :margin 0 3px
@@ -103,13 +103,13 @@ body
       :font-size 0.8em
 
   fieldset.q_hidden, fieldset.g_hidden
-    :display none
+    :display none !important
   fieldset.q_dependent, fieldset.g_dependent
     :background-color $surveyor_dependent_color
     legend
       :background-color $surveyor_dependent_color
       :padding 3px 3px 3px 0
-  fieldset.q_dropdown, fieldset.q_inline_dropdown, fieldset.q_slider, fieldset.q_repeater_dropdown
+  fieldset.q_dropdown, fieldset.q_inline_dropdown, fieldset.q_default_dropdown, fieldset.q_slider, fieldset.q_repeater_dropdown
     label
       :display none
     
