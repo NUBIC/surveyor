@@ -60,21 +60,26 @@ module Surveyor
 
     def update
       saved = false
-      invalid = []
+      errors = []
       ActiveRecord::Base.transaction do
         @response_set = ResponseSet.find_by_access_code(params[:response_set_code], :include => {:responses => :answer}, :lock => true)
         unless @response_set.blank?
-          invalid = Response.validate(params[:r], @response_set)
-          saved = @response_set.update_attributes(:responses_attributes => ResponseSet.to_savable(params[:r])) if invalid.empty?          
-          @response_set.complete! if saved && params[:finish]
+          errors = Response.validate(params[:r], @response_set)
+
+          #Remove know invalid responses from update call, to be handled separately by validation
+          errors.each do |error|
+            params[:r].reject!{|response| response == error[:question]}
+          end
+
+          saved = @response_set.update_attributes(:responses_attributes => ResponseSet.to_savable(params[:r]))
+          @response_set.complete! if saved && params[:finish] unless @response_set.mandatory_questions_complete?
           saved &= @response_set.save
         end
       end
-      
+
       if saved && params[:finish]
         return redirect_with_message(surveyor_finish, :notice, @response_set.mandatory_questions_complete? ? t('surveyor.completed_survey') : t('surveyor.incomplete_survey'))
       end
-
 
       respond_to do |format|
         format.html do
@@ -86,15 +91,6 @@ module Surveyor
           end
         end
         format.js do
-          unless invalid.empty?
-            temp = []
-            invalid.each do |error_hash|
-              temp << error_hash
-            end
-            render :json => {"ids" => {}, "remove" => {}, "correct" => [], :show => [], :hide => [], :errors => temp}.to_json
-            return
-          end
-
           ids, remove, question_ids = {}, {}, []
           ResponseSet.trim_for_lookups(params[:r]).each do |k,v|
             v[:answer_id].reject!(&:blank?) if v[:answer_id].is_a?(Array)
@@ -102,7 +98,8 @@ module Surveyor
             remove[k] = v["id"] if v.has_key?("id") && v.has_key?("_destroy")
             question_ids << v["question_id"]
           end
-          render :json => {:errors => [], "ids" => ids, "remove" => remove, "correct" => question_ids}.merge(@response_set.reload.all_dependencies(question_ids))
+
+          render :json => {:errors => errors, "ids" => ids, "remove" => remove, "correct" => question_ids}.merge(@response_set.reload.all_dependencies(question_ids)).to_json
         end
       end
     end

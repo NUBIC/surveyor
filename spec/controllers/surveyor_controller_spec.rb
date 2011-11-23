@@ -238,7 +238,7 @@ describe SurveyorController do
          "4"=>{"question_id"=>"4", "answer_id"=>"15"} #check
       })
       JSON.parse(response.body).
-        should == {"ids" => {"2" => 1, "4" => 2}, "remove" => {}, "show" => [], "hide" => []}
+        should == {"ids" => {"2" => 1, "4" => 2}, "remove" => {}, "show" => [], "hide" => [], "errors" =>[], "correct" =>["4", "4"]}
     end
 
     it "should return a delete for when responses are removed" do
@@ -257,7 +257,7 @@ describe SurveyorController do
         "4"=>{"question_id"=>"9", "answer_id"=>"12"} #check
       })
       JSON.parse(response.body).
-        should == {"ids" => {"4" => 1}, "remove" => {}, "show" => ['q_1'], "hide" => ["q_2"]}
+        should == {"ids" => {"4" => 1}, "remove" => {}, "show" => ['q_1'], "hide" => ["q_2"], "errors" =>[], "correct" =>["9"]}
     end
   end
 end
