@@ -1,7 +1,9 @@
 When /^I start the "([^"]*)" survey$/ do |name|
-  When "I go to the surveys page"
-  Then "I should see \"#{name}\""
-  click_button "Take it"
+  steps %Q{
+    When I go to the surveys page
+    Then I should see "#{name}\"
+    When I press "Take it"
+  }
 end
 
 Then /^there should be (\d+) response set with (\d+) responses? with:$/ do |rs_num, r_num, table|
