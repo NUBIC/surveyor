@@ -260,7 +260,7 @@ describe SurveyorController do
         should == {"ids" => {"4" => 1}, "remove" => {}, "show" => ['q_1'], "hide" => ["q_2"], "errors" =>[], "correct" =>["9"]}
     end
 
-    context "with a question with validation" do
+    context "with a float valued question with validation" do
       before(:each) do
         @question = Factory(:question, :survey_section => @survey_section, :is_mandatory => true)
         @answer = Factory(:answer, :question => @question, :response_class => "float")
@@ -274,7 +274,7 @@ describe SurveyorController do
           should == {"errors" =>["question" => "#{@question.id}", "message" => ["Float value ^Please enter a numeric value."]], "ids" => {}, "remove" => {}, "correct" =>[], "show" => [], "hide" => []}
       end
 
-      it "should return an error when validation fails" do
+      it "should return an error when the wrong data type is entered" do
         do_ajax_put({
            "1"=>{"question_id"=>@question.id, "answer_id"=>@answer.id, "float_value" => "me"}, #check
         })
