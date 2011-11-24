@@ -7,6 +7,7 @@ es:
     take_it: "Tomar"
     completed_survey: "Encuesta completada"
     incomplete_survey: "Encuesta incomletada - Por favor, conteste todas las preguntas"
+    incomplete_section: "Sección incompleta - Por favor, conteste todas las preguntas antes de continuar."
     unable_to_find_your_responses: "No se puede encontrar sus respuestas a la encuesta"
     unable_to_update_survey: "No se puede actualizar la encuesta"
     unable_to_find_that_survey: "No se puede encontrar la encuesta"

@@ -1,3 +1,10 @@
+:javascript
+  function highlightQuestions(question, message) {
+    $('#q_' + question).addClass('error');
+    $('#q_' + question).append('<div id="q_' + question + '_error">' + message + '</div>');      
+  }
+
+
 #surveyor
   - unless (types = flash.keys.select{|k| [:notice, :error, :warning].include?(k)}).blank?
     .surveyor_flash
@@ -6,7 +13,7 @@
   = semantic_form_for(@response_set, :as => :r, :url => update_my_survey_path, :html => {:method => :put, :id => "survey_form", :class => @survey.custom_class}) do |f|
   
     = hidden_field_tag :surveyor_javascript_enabled, false
-  
+
     = render 'partials/section_menu' # unless @sections.size < 3
     .survey_title= @survey.title
     .previous_section= previous_section
@@ -16,6 +23,11 @@
         = render "/partials/section", :f => f
     - else # no cache
       = render "/partials/section", :f => f
+
+    - unless flash[:validation_errors].nil?
+      - flash[:validation_errors].each do |error|
+        = "<script>highlightQuestions('#{error[:question]}', \"#{error[:message][0]}\")</script>".html_safe
+
     .next_section= next_section
   %br
 
@@ -23,3 +35,7 @@
   $(document).ready(function() {
     $("input#surveyor_javascript_enabled").val(true);
   });
+
+
+
+

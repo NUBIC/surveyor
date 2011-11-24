@@ -17,7 +17,6 @@ module Surveyor
       @survey = Survey.find_by_access_code(params[:survey_code])
       @response_set = ResponseSet.create(:survey => @survey, :user_id => (@current_user.nil? ? @current_user : @current_user.id))
       if (@survey && @response_set)
-        flash[:notice] = t('surveyor.survey_started_success')
         redirect_to(edit_my_survey_path(:survey_code => @survey.access_code, :response_set_code  => @response_set.access_code))
       else
         flash[:notice] = t('surveyor.Unable_to_find_that_survey')
@@ -60,14 +59,14 @@ module Surveyor
 
     def update
       saved = false
-      errors = []
+      @errors = []
       ActiveRecord::Base.transaction do
         @response_set = ResponseSet.find_by_access_code(params[:response_set_code], :include => {:responses => :answer}, :lock => true)
         unless @response_set.blank?
-          errors = Response.validate(params[:r], @response_set)
+          @errors = Response.validate(params[:r], @response_set)
 
           #Remove know invalid responses from update call, to be handled separately by validation
-          errors.each do |error|
+          @errors.each do |error|
             params[:r].reject!{|response| response == error[:question]}
           end
 
@@ -83,6 +82,12 @@ module Surveyor
 
       respond_to do |format|
         format.html do
+          #if there are errors, redirect to the edit page with errors
+          unless @errors.empty?
+            flash[:validation_errors] = @errors
+            redirect_with_message(request.referrer, :error, t('surveyor.incomplete_section')) and return
+          end
+
           if @response_set.blank?
             return redirect_with_message(available_surveys_path, :notice, t('surveyor.unable_to_find_your_responses'))
           else
@@ -90,7 +95,7 @@ module Surveyor
             redirect_to edit_my_survey_path(:anchor => anchor_from(params[:section]), :section => section_id_from(params[:section]))
           end
         end
-        format.js do
+      format.js do
           ids, remove, question_ids = {}, {}, []
           ResponseSet.trim_for_lookups(params[:r]).each do |k,v|
             v[:answer_id].reject!(&:blank?) if v[:answer_id].is_a?(Array)
@@ -99,7 +104,7 @@ module Surveyor
             question_ids << v["question_id"]
           end
 
-          render :json => {:errors => errors, "ids" => ids, "remove" => remove, "correct" => question_ids}.merge(@response_set.reload.all_dependencies(question_ids)).to_json
+          render :json => {:errors => @errors, "ids" => ids, "remove" => remove, "correct" => question_ids}.merge(@response_set.reload.all_dependencies(question_ids)).to_json
         end
       end
     end

@@ -7,6 +7,7 @@ en:
     take_it: "Take it"
     completed_survey: "Completed survey"
     incomplete_survey: "Survey Incomplete - Please answer all questions"
+    incomplete_section: "Section Incomplete - Please answer all questions before proceeding."
     unable_to_find_your_responses: "Unable to find your responses to the survey"
     unable_to_update_survey: "Unable to update survey"
     unable_to_find_that_survey: "Unable to find that survey"
