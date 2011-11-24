@@ -77,13 +77,12 @@ module Surveyor
       end
 
       if saved && params[:finish]
-        return redirect_with_message(surveyor_finish, :notice, @response_set.mandatory_questions_complete? ? t('surveyor.completed_survey') : t('surveyor.incomplete_survey'))
+        return redirect_with_message(surveyor_finish, :error, @response_set.mandatory_questions_complete? ? t('surveyor.completed_survey') : t('surveyor.incomplete_survey'))
       end
 
       respond_to do |format|
         format.html do
-          #if there are errors, redirect to the edit page with errors
-          unless @errors.empty?
+          unless @errors.empty? || returning_to_previous_section?(params[:current_section], params[:section])
             flash[:validation_errors] = @errors
             redirect_with_message(request.referrer, :error, t('surveyor.incomplete_section')) and return
           end
@@ -95,7 +94,8 @@ module Surveyor
             redirect_to edit_my_survey_path(:anchor => anchor_from(params[:section]), :section => section_id_from(params[:section]))
           end
         end
-      format.js do
+        
+        format.js do
           ids, remove, question_ids = {}, {}, []
           ResponseSet.trim_for_lookups(params[:r]).each do |k,v|
             v[:answer_id].reject!(&:blank?) if v[:answer_id].is_a?(Array)
@@ -144,7 +144,12 @@ module Surveyor
         end
       end
     end
-    
+
+    def returning_to_previous_section?(current_section, destination_section)
+      return false if current_section.nil? && destination_section.nil?
+      return current_section.to_i > section_id_from(destination_section).to_i
+    end
+
     ##
     # @dependents are necessary in case the client does not have javascript enabled
     # Whether or not javascript is enabled is determined by a hidden field set in the surveyor/edit.html form 
