@@ -84,6 +84,10 @@ Then /^there should be (\d+) datetime responses with$/ do |count, table|
   end
 end
 
+Then /^there should be a datetime response with today's date$/ do
+  Response.all.one?{|x| x.datetime_value == Date.today}.should be_true
+end
+
 Then /^I should see the image "([^"]*)"$/ do |src|
   page.should have_selector %(img[src^="#{src}"])
 end

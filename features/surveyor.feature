@@ -419,6 +419,23 @@ Feature: Survey creation
       | 13:30:00 |
       | 2011-02-15 17:00:00 |
 
+  @javascript
+  Scenario: "Date"
+    Given the survey
+    """
+      survey "When" do
+        section "One" do
+          q "Tell us when you want to meet"
+          a "Give me a date", :date
+        end
+      end
+    """
+    When I start the "When" survey
+    And I click on "Give me a date" field
+    And I follow "calcurrent"
+    And I press "Click here to finish"
+    Then there should be a datetime response with today's date
+
   Scenario: "Images"
     Given the survey
     """
