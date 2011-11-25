@@ -67,17 +67,20 @@ module Surveyor
 
           #Remove know invalid responses from update call, to be handled separately by validation
           @errors.each do |error|
-            params[:r].reject!{|response| response == error[:question]}
+            params[:r].reject!{ |k,v| v[:question_id] == error[:question] }
           end
 
           saved = @response_set.update_attributes(:responses_attributes => ResponseSet.to_savable(params[:r]))
-          @response_set.complete! if saved && params[:finish] unless @response_set.mandatory_questions_complete?
+          @response_set.complete! if saved && params[:finish] unless @response_set.mandatory_questions_complete? && @errors.empty?
           saved &= @response_set.save
         end
       end
 
       if saved && params[:finish]
-        return redirect_with_message(surveyor_finish, :error, @response_set.mandatory_questions_complete? ? t('surveyor.completed_survey') : t('surveyor.incomplete_survey'))
+				return redirect_with_message(surveyor_finish, :success, t('surveyor.completed_survey')) if @errors.empty?
+
+        flash[:error] = t('surveyor.incomplete_survey')
+        return redirect_to edit_my_survey_path(:anchor => anchor_from(params[:section]), :section => section_id_from(params[:section]))
       end
 
       respond_to do |format|

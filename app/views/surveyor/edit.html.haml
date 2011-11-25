@@ -36,6 +36,25 @@
 :javascript
   $(document).ready(function() {
     $("input#surveyor_javascript_enabled").val(true);
+
+    $(".surveyor_help_text").hide();
+    $(".close_surveyor_help").hide();
+
+    $(".surveyor_help").click(function(){
+      var id = $(this).data('id');
+      $("#surveyor_help_text_" + id).fadeIn();
+      $("#surveyor_help_" + id ).fadeOut(function(){
+        $("#close_surveyor_help_" + id).fadeIn();
+      });
+    });
+
+    $(".close_surveyor_help").click(function(){
+      var id = $(this).data('id');
+      $("#surveyor_help_text_" + id).fadeOut();
+      $("#close_surveyor_help_" + id ).fadeOut(function(){
+        $("#surveyor_help_" + id).fadeIn();
+      });
+    });
   });
 
 

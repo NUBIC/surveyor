@@ -10,9 +10,9 @@ describe Response, "when saving a response" do
     @response.answer.update_attributes(:response_class => "integer")
     @response.integer_value = "invalid"
     @response.should be_invalid
-    @response.integer_value = "1.13"
+    @response.integer_value = 1.13
     @response.should be_invalid
-    @response.integer_value = "1"
+    @response.integer_value = 1
     @response.should be_valid
   end
 

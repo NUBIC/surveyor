@@ -1,6 +1,12 @@
 - renderer = g.renderer
 = f.inputs q_text(g), :id => "g_#{g.id}", :class => "g_#{renderer} #{g.css_class(@response_set)}" do
-  %li.help= g.help_text
+  - unless g.help_text.nil?
+    %li.surveyor_help_text{ :id => 'surveyor_help_text_g' + g.id.to_s }
+      = g.help_text.html_safe
+    %a.surveyor_help{:data => {:id => 'g' + g.id.to_s}, :id => 'surveyor_help_g' + g.id.to_s}
+      %img{:src => 'http://static.infotech.com/images/VendorLandscapeImages/help-icon-hover.png', :width => '20px'}/
+    %a.close_surveyor_help{:data => {:id => 'g' + g.id.to_s}, :id => 'close_surveyor_help_g' + g.id.to_s}
+      %img{:src => 'http://static.infotech.com/images/VendorLandscapeImages/close-help-hover.png', :width => '20px'}/
   - case renderer
     - when :grid
       %li
@@ -24,7 +30,15 @@
                     = f.semantic_fields_for i, r do |ff|
                       = ff.quiet_input :question_id
                       = ff.quiet_input :id unless r.new_record?
-                  %th= q.split_text(:pre)
+                  %th
+                    = q.split_text(:pre)
+                    - unless q.help_text.nil?
+                      %a.surveyor_help{:data => {:id => 'q' + q.id.to_s}, :id => 'surveyor_help_q' + q.id.to_s}
+                        %img{:src => 'http://static.infotech.com/images/VendorLandscapeImages/help-icon-hover.png', :width => '20px'}/
+                      %a.close_surveyor_help{:data => {:id => 'q' + q.id.to_s}, :id => 'close_surveyor_help_q' + q.id.to_s}
+                        %img{:src => 'http://static.infotech.com/images/VendorLandscapeImages/close-help-hover.png', :width => '20px'}/
+                      %div.surveyor_help_text{ :id => 'surveyor_help_text_q' + q.id.to_s }
+                        = q.help_text.html_safe 
                   - q.answers.each do |a|
                     %td= render a.custom_renderer || '/partials/answer', :g => g, :q => q, :a => a, :f => f
                   %th= q.split_text(:post)

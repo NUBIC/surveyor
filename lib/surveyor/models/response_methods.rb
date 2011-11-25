@@ -47,8 +47,27 @@ module Surveyor
       def correct?
         question.correct_answer.nil? or self.answer.response_class != "answer" or (question.correct_answer.id.to_i == answer.id.to_i)
       end
+
+      def dependent?
+        return false unless self.response_set && self.question
+        return self.question.dependency || (self.question.question_group && self.question.question_group.dependency)
+      end
+
+      #A response can be dependent on either its question, or the question group it belongs to. 
+      #In order to determine if we need to validate this response, we need to check both dependencies 
+      # (if either exist).
+      def dependency_met?
+        if dependent?
+          return true if self.question.dependency && self.question.dependency.is_met?(self.response_set) 
+          return true if self.question.question_group && self.question.question_group.dependency && self.question.question_group.dependency.is_met?(self.response_set)
+          return false
+        end
+
+        return true
+      end
       
       def validate?(fields)
+        return false unless dependency_met?
         return false if self.answer.nil?
         return true if !marked_for_destruction? && fields.include?(self.answer.response_class)
         return false

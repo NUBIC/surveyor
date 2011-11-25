@@ -107,6 +107,10 @@ module Surveyor
       def complete!
         self.completed_at = Time.now
       end
+      
+			def incomplete!
+        self.completed_at = nil
+      end
 
       def complete?
         !completed_at.nil?

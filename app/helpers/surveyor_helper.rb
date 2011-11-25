@@ -67,10 +67,13 @@ module SurveyorHelper
     else type_sym
     end
   end
-  def generate_pick_none_input_html(response_class, default_value, css_class)
+  def generate_pick_none_input_html(response_class, default_value, css_class, response_type = nil)
     html = {}
     html[:class] = css_class unless css_class.blank?
     html[:value] = default_value if response_class.blank?
+		unless response_type.nil?
+			html[:maxlength] = 10 if response_type == 'integer'
+		end
     html
   end
 

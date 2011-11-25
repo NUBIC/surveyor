@@ -210,7 +210,7 @@ describe SurveyorController do
 
     it "should complete the found response set on finish" do
       do_put_with_finish
-      flash[:notice].should == "Completed survey"
+      flash[:success].should == "Completed survey"
     end
 
     it "should redirect to available surveys if :response_code not found" do
@@ -241,13 +241,12 @@ describe SurveyorController do
         should == {"ids" => {"2" => 1, "4" => 2}, "remove" => {}, "show" => [], "hide" => [], "errors" =>[], "correct" =>["4", "4"]}
     end
 
-    it "should return a delete for when responses are removed" do
+    it "should return an error for when mandatory responses are removed" do
       r = @response_set.responses.create(:question_id => 4, :answer_id => 14)
       do_ajax_put({
          "2"=>{"question_id"=>"4", "answer_id"=>"", "id" => r.id} # uncheck
       })
-      # r.id is a String with AR 3.0 and an int with AR 3.1
-      JSON.parse(response.body)['remove']['2'].to_s.should == r.id.to_s
+      JSON.parse(response.body)['errors'].blank?.should be_false
     end
 
     it "should return dependencies" do
