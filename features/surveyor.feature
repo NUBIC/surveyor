@@ -255,6 +255,86 @@ Feature: Survey creation
     And I press "Two"
     Then there should be 1 response with answer "Dogg"
 
+  # Issue 234 - text field with checkbox
+  @javascript
+  Scenario: A question with an option checkbox for other and text input 
+    Given the survey
+    """
+      survey "Favorite Cuisine" do
+        section "Foods" do
+          q "What is the best cuisine?", :pick => :any
+          a "french"
+          a "italian"
+          a "chinese"
+          a "other", :string
+        end
+      end
+    """
+    When I start the "Favorite Cuisine" survey
+    And I wait 2 seconds
+    And I change "r_4_string_value" to "thai"
+    Then the "other" checkbox should be checked
+
+  # Issue 234 - empty text field with checkbox
+  @javascript
+  Scenario: A question with an option checkbox for other and an empty text input 
+    Given the survey
+    """
+      survey "Favorite Cuisine" do
+        section "Foods" do
+          q "What is the best cuisine?", :pick => :any
+          a "french"
+          a "italian"
+          a "chinese"
+          a "other", :string
+        end
+      end
+    """
+    When I start the "Favorite Cuisine" survey
+    And I wait 2 seconds
+    And I change "r_4_string_value" to ""
+    Then the "other" checkbox should not be checked
+
+  # Issue 234 - text field with radio buttons
+  @javascript
+   Scenario: A question with an option radio button for other and text input 
+    Given the survey
+    """
+      survey "Favorite Cuisine" do
+        section "Foods" do
+          q "What is the best cuisine?", :pick => :one
+          a "french"
+          a "italian"
+          a "chinese"
+          a "other", :string
+        end
+      end
+    """
+    When I start the "Favorite Cuisine" survey
+    And I wait 2 seconds
+    And I change "r_1_string_value" to "thai"
+    Then the "other" radiobutton should be checked
+ 
+  # Issue 234 - empty text field with radio buttons
+  @javascript
+  Scenario: A question with an option radio button for other and text input 
+    Given the survey
+    """
+      survey "Favorite Cuisine" do
+        section "Foods" do
+          q "What is the best cuisine?", :pick => :one
+          a "french"
+          a "italian"
+          a "chinese"
+          a "other", :string
+        end
+      end
+    """
+    When I start the "Favorite Cuisine" survey
+    And I wait 2 seconds
+    And I change "r_1_string_value" to ""
+    Then the "other" radiobutton should not be checked
+
   Scenario: "Saving grids"
     Given the survey
     """
