@@ -400,3 +400,16 @@ Feature: Survey creation
     When I uncheck "Singapore"
     And I wait 1 seconds
     Then 0 responses should exist
+
+   Scenario: "Prepopulating Global"
+     Given the survey
+     """
+       survey "Global" do
+         section "New section" do
+         label "Thank you for using :prepopulate=>[test_global_config.center]"
+        end
+       end
+     """
+     When I start the "Global" survey
+     Then I should see "Thank you for using Northwestern"
+     
