@@ -133,6 +133,7 @@ class Question < ActiveRecord::Base
     
     # build and set context
     text = args[0] || "Question"
+    text = self.parse_text(text)
     context[:question] = context[:survey_section].questions.build({
       :context_reference => context,
       :question_group => context[:question_group],
@@ -151,6 +152,54 @@ class Question < ActiveRecord::Base
         context[:answer_references][reference_identifier] ||= {} unless reference_identifier.blank?
         context[:answer_references][reference_identifier][grid_answer.reference_identifier] = a unless reference_identifier.blank? or grid_answer.reference_identifier.blank?
       end
+    end
+  end
+  
+  class PrepopulatedParsedText 
+    attr_accessor :fileName, :variable
+    def initialize(fileName, variable)
+      @fileName = fileName
+      @variable = variable
+    end
+  end
+  
+  ESCAPE_TOKEN = ":prepopulate=>"
+  def self.parse_prepopulated_token(text)
+    if text.include? ESCAPE_TOKEN
+      configInfo = text.match(/#{ESCAPE_TOKEN}\[(.*)\]/)[1]
+      fileName = configInfo.match(/\.()/).pre_match
+      searchValue = configInfo.match(/\.()/).post_match
+      PrepopulatedParsedText.new(fileName, searchValue)
+    end
+  end
+  
+  def self.global_config_path(fileName)
+    "#{Rails.root}/config/data/#{fileName}.yml"
+  end
+  
+  def self.load_global_file(absoluteFilePath)
+      YAML.load(File.read(absoluteFilePath)) if File.exist?(absoluteFilePath)
+  end
+  
+  def self.substitute_text(text, valueToSubstituteWith)
+    if valueToSubstituteWith
+      text.sub(/#{ESCAPE_TOKEN}\[(.*)\]/, valueToSubstituteWith)
+    end    
+  end
+  
+  def self.parse_text(text)
+    parsed_text = parse_prepopulated_token(text) 
+    if parsed_text
+      path = global_config_path(parsed_text.fileName)
+      if load_global_file(path)
+        hash_of_global_values = load_global_file(path)
+        value_to_substitute_with = hash_of_global_values[parsed_text.variable]
+        substitute_text(text, value_to_substitute_with)
+      else
+        text
+      end
+    else
+      text
     end
   end
   
