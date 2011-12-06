@@ -45,6 +45,8 @@ module Surveyor
     def locales
       directory "config/locales"
     end
-
+    def data
+      directory "config/data"
+    end
   end
 end
