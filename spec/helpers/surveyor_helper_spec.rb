@@ -22,6 +22,22 @@ describe SurveyorHelper do
     helper.q_text(q4).should == %Q(<img alt="Something" src="/#{dir}/something.jpg" />)
     helper.q_text(q5).should == q5.text
   end
+  require 'mustache'
+  class FakeMustacheContext < ::Mustache
+    def site
+      "Northwestern"
+    end
+    def somethingElse
+      "something new"
+    end
+  end
+  it "should return text with with substituted value" do
+    q1 = Factory(:question, :text => "You are in {{site}}")
+    label = Factory(:question, :display_type => "label", :text => "Testing {{somethingElse}}")
+    Mustache.render(helper.q_text(q1), FakeMustacheContext.new).should == "1) You are in Northwestern"
+    Mustache.render(helper.q_text(label), FakeMustacheContext.new).should == "Testing something new"
+  end
+  
   it "should return the group text with number" do
     g1 = Factory(:question_group)
     helper.q_text(g1).should == "1) #{g1.text}"
