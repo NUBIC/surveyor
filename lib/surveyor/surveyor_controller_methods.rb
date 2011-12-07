@@ -71,7 +71,7 @@ module Surveyor
           end
 
           saved = @response_set.update_attributes(:responses_attributes => ResponseSet.to_savable(params[:r]))
-          @response_set.complete! if saved && params[:finish] unless @response_set.mandatory_questions_complete? && @errors.empty?
+          @response_set.complete! if saved && params[:finish] && @errors.empty? && @response_set.mandatory_questions_complete?
           saved &= @response_set.save
         end
       end
