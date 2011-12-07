@@ -13,6 +13,36 @@ describe ResponseSet do
     @response_set.access_code.length.should == 10
   end
 
+  describe '#access_code' do
+    let!(:rs1) { Factory(:response_set).tap { |rs| rs.update_attribute(:access_code, 'one') } }
+    let!(:rs2) { Factory(:response_set).tap { |rs| rs.update_attribute(:access_code, 'two') } }
+
+    # Regression test for #263
+    it 'accepts an access code in the constructor' do
+      ResponseSet.new(:access_code => 'eleven').access_code.should == 'eleven'
+    end
+
+    # Regression test for #263
+    it 'setter accepts a conflicting access code' do
+      rs2.access_code = 'one'
+      rs2.access_code.should == 'one'
+    end
+
+    it 'is invalid when conflicting' do
+      rs2.access_code = 'one'
+      rs2.should_not be_valid
+      rs2.should have(1).errors_on(:access_code)
+    end
+
+    it 'defaults to a random, non-conflicting value on init' do
+      Surveyor::Common.should_receive(:make_tiny_code).and_return('one')
+      Surveyor::Common.should_receive(:make_tiny_code).and_return('two')
+      Surveyor::Common.should_receive(:make_tiny_code).and_return('three')
+
+      ResponseSet.new.access_code.should == 'three'
+    end
+  end
+
   it "is completable" do
     @response_set.completed_at.should be_nil
     @response_set.complete!
