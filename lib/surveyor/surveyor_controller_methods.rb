@@ -3,9 +3,21 @@ module Surveyor
     def self.included(base)
       base.send :before_filter, :get_current_user, :only => [:new, :create]
       base.send :before_filter, :determine_if_javascript_is_enabled, :only => [:create, :update]
+      base.send :before_filter, :set_render_context, :only => [:edit]
       base.send :layout, 'surveyor_default'
+
+      base.extend ClassMethods
     end
 
+    module ClassMethods
+      def render_context(class_name = nil)
+        class_name ? @class_name = class_name : @class_name
+      end
+      
+      def render_context_class
+        Kernel.const_get(render_context)
+      end
+    end
     # Actions
     def new
       @surveys = Survey.find(:all)
@@ -24,6 +36,7 @@ module Surveyor
         redirect_to surveyor_index
       end
     end
+
 
     def show
       @response_set = ResponseSet.find_by_access_code(params[:response_set_code], :include => {:responses => [:question, :answer]})
@@ -98,6 +111,10 @@ module Surveyor
     def get_current_user
       @current_user = self.respond_to?(:current_user) ? self.current_user : nil
     end
+    
+    def set_render_context
+      @render_context = self.class.render_context
+    end    
 
     # Params: the name of some submit buttons store the section we'd like to go to. for repeater questions, an anchor to the repeater group is also stored
     # e.g. params[:section] = {"1"=>{"question_group_1"=>"<= add row"}}

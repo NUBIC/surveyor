@@ -36,7 +36,8 @@ module SurveyorHelper
   end
 
   # Questions
-  def q_text(obj)
+  def q_text(obj, context=nil)
+    require 'mustache'
     @n ||= 0
     return image_tag(obj.text) if obj.is_a?(Question) and obj.display_type == "image"
     return obj.text if obj.is_a?(Question) and (obj.dependent? or obj.display_type == "label" or obj.part_of_group?)
