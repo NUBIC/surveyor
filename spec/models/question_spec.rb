@@ -85,6 +85,21 @@ describe Question, "when interacting with an instance" do
     @question.solo?.should be_true
     @question.part_of_group?.should be_false
   end
+  
+  require 'mustache'
+  class FakeMustacheContext < ::Mustache
+    def site
+      "Northwestern"
+    end
+    def somethingElse
+      "something new"
+    end
+  end
+  it "should substitute 'Northwestern' in place {{site}}" do
+      @question.text = "You are in {{site}}"
+      @question.render_text(FakeMustacheContext).should == "You are in Northwestern"
+  end
+        
 end
 
 describe Question, "with dependencies" do

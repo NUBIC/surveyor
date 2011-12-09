@@ -34,13 +34,13 @@ describe SurveyorHelper do
   it "should return text with with substituted value" do
     q1 = Factory(:question, :text => "You are in {{site}}")
     label = Factory(:question, :display_type => "label", :text => "Testing {{somethingElse}}")
-    Mustache.render(helper.q_text(q1), FakeMustacheContext.new).should == "1) You are in Northwestern"
-    Mustache.render(helper.q_text(label), FakeMustacheContext.new).should == "Testing something new"
+    helper.q_text(q1, FakeMustacheContext).should == "1) You are in Northwestern"
+    helper.q_text(label, FakeMustacheContext).should == "Testing something new"
   end
   
   it "should return the group text with number" do
     g1 = Factory(:question_group)
-    helper.q_text(g1).should == "1) #{g1.text}"
+    helper.q_text(g1, FakeMustacheContext).should == "1) #{g1.text}"
   end
   it "should find or create responses, with index" do
     q1 = Factory(:question, :answers => [a = Factory(:answer, :text => "different")])
