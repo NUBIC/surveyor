@@ -5,6 +5,7 @@ module Surveyor
         # Associations
         base.send :has_many, :questions
         base.send :has_one, :dependency
+        include RenderText
       end
       
       # Instance Methods

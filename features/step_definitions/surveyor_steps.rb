@@ -111,3 +111,20 @@ Then /the element "([^\"]*)" should not be hidden$/ do |selector|
     (its_not_hidden && its_in_dom).should be_true
   end
 end
+
+Given /^I have survey context of "([^"]*)"$/ do |context|
+  class SurveyorController < ApplicationController
+    require 'mustache'
+    class FakeMustacheContext < ::Mustache
+      def name
+        "Santa Claus"
+      end
+      def site
+        "Northwestern"
+      end
+    end    
+    def render_context
+      FakeMustacheContext
+    end
+  end
+end

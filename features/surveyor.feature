@@ -334,6 +334,33 @@ Feature: Survey creation
     And I wait 2 seconds
     And I change "r_1_string_value" to ""
     Then the "other" radiobutton should not be checked
+    
+
+  # Issue 259 - substitution of the text with Mustache
+  @javascript
+  Scenario: A question with an mustache syntax
+    Given I have survey context of "FakeMustacheContext"
+    Given the survey
+    """
+      survey "Overall info" do
+        section "Group of questions" do
+          group "Information on {{name}}?" do
+            label "{{name}} does not work for {{site}}!"
+
+            q "Where does {{name}} live?", :pick => :one, :display_type => :dropdown
+            a "North Pole"
+            a "South Pole"
+            a "He doesn't exist"
+          end
+        end
+      end
+    """
+    When I start the "Overall info" survey
+    And I wait 2 seconds
+    Then I should see "Information on Santa Claus"
+    And I should see "Santa Claus does not work for Northwestern!"
+    And I should see "Where does Santa Claus live?"
+
 
   Scenario: "Saving grids"
     Given the survey

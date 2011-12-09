@@ -261,24 +261,3 @@ describe SurveyorController do
     end
   end
 end
-
-class FakeRenderContext
-end
-
-class SurveyorContextTestController < ApplicationController
-  unloadable
-  include Surveyor::SurveyorControllerMethods
-  render_context(:FakeRenderContext)
-end
-
-describe SurveyorContextTestController, "resolve context" do
-  it "should not be nil" do
-    SurveyorContextTestController.render_context.should == :FakeRenderContext
-  end
-  
-  it "should return class" do
-    SurveyorContextTestController.render_context_class.should == FakeRenderContext
-  end
-end
-
-
