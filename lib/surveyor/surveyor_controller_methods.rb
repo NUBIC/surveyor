@@ -75,12 +75,12 @@ module Surveyor
           saved &= @response_set.save
         end
       end
-
+      
       if saved && params[:finish]
 				return redirect_with_message(surveyor_finish, :success, t('surveyor.completed_survey')) if @errors.empty?
 
         flash[:error] = t('surveyor.incomplete_survey')
-        return redirect_to edit_my_survey_path(:anchor => anchor_from(params[:section]), :section => section_id_from(params[:section]))
+        return redirect_to edit_my_survey_path(:anchor => anchor_from(params[:section]), :section => section_id_from(params[:current_section]))
       end
 
       respond_to do |format|
