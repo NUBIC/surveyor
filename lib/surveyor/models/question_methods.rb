@@ -24,9 +24,10 @@ module Surveyor
           
           @@validations_already_included = true
           
-          include RenderText
         end
       end
+
+      include RenderText
 
       # Instance Methods
       def initialize(*args)
