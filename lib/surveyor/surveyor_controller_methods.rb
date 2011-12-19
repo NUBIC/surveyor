@@ -15,7 +15,8 @@ module Surveyor
 
     def create
       @survey = Survey.find_by_access_code(params[:survey_code])
-      @response_set = ResponseSet.create(:survey => @survey, :user_id => (@current_user.nil? ? @current_user : @current_user.id))
+      @response_set = ResponseSet.find_by_survey_id_and_user_id(@survey.id, @current_user.id) unless @current_user.nil? || @survey.nil?
+      @response_set ||= ResponseSet.create(:survey => @survey, :user_id => (@current_user.nil? ? @current_user : @current_user.id))
       if (@survey && @response_set)
         redirect_to(edit_my_survey_path(:survey_code => @survey.access_code, :response_set_code  => @response_set.access_code))
       else
