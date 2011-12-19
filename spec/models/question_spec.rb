@@ -97,7 +97,7 @@ describe Question, "when interacting with an instance" do
   end
   it "should substitute 'Northwestern' in place {{site}}" do
       @question.text = "You are in {{site}}"
-      @question.render_text(FakeMustacheContext).should == "You are in Northwestern"
+      @question.render_question_text(FakeMustacheContext).should == "You are in Northwestern"
   end
         
 end

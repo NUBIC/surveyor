@@ -30,6 +30,10 @@ describe SurveyorHelper do
     def somethingElse
       "something new"
     end
+    
+    def group
+      "NUBIC"
+    end
   end
   it "should return text with with substituted value" do
     q1 = Factory(:question, :text => "You are in {{site}}")
@@ -37,11 +41,25 @@ describe SurveyorHelper do
     helper.q_text(q1, FakeMustacheContext).should == "1) You are in Northwestern"
     helper.q_text(label, FakeMustacheContext).should == "Testing something new"
   end
+  it "should return help_text for question with substituted value" do
+    q2 = Factory(:question, :display_type => "label", :text => "Is you site Northwestern?", :help_text => "If your site is not {{site}}, pick 'no' for the answer") 
+    helper.render_help_text(q2, FakeMustacheContext).should == "If your site is not Northwestern, pick 'no' for the answer"
+  end
+  it "should return help_text for group text with number" do
+    g1 = Factory(:question_group, :text => "You are part of the {{group}}")
+    helper.q_text(g1, FakeMustacheContext).should == "1) You are part of the NUBIC"
+  end
+  it "should return help_text for group text with number" do
+    g1 = Factory(:question_group, :text => "You are part of the {{group}}", :help_text => "Make sure you know what the {{group}} stands for")
+    helper.render_help_text(g1, FakeMustacheContext).should == "Make sure you know what the NUBIC stands for"
+  end
+
   
   it "should return the group text with number" do
     g1 = Factory(:question_group)
     helper.q_text(g1, FakeMustacheContext).should == "1) #{g1.text}"
   end
+
   it "should find or create responses, with index" do
     q1 = Factory(:question, :answers => [a = Factory(:answer, :text => "different")])
     q2 = Factory(:question, :answers => [b = Factory(:answer, :text => "strokes")])

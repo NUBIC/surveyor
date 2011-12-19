@@ -344,10 +344,11 @@ Feature: Survey creation
     """
       survey "Overall info" do
         section "Group of questions" do
-          group "Information on {{name}}?" do
-            label "{{name}} does not work for {{site}}!"
+          group "Information on {{name}}?", :help_text => "Answer all you know on {{name}}" do
+            label "{{name}} does not work for {{site}}!", :help_text => "Make sure you sure {{name}} doesn't work for {{site}}"
 
-            q "Where does {{name}} live?", :pick => :one, :display_type => :dropdown
+            q "Where does {{name}} live?", :pick => :one, :display_type => :dropdown,
+            :help_text => "If you don't know where {{name}} lives, skip the question"
             a "North Pole"
             a "South Pole"
             a "He doesn't exist"
@@ -356,10 +357,13 @@ Feature: Survey creation
       end
     """
     When I start the "Overall info" survey
-    And I wait 2 seconds
+    And I wait 5 seconds
     Then I should see "Information on Santa Claus"
+    And I should see "Answer all you know on Santa Claus"
     And I should see "Santa Claus does not work for Northwestern!"
+    And I should see "Make sure you sure Santa Claus doesn't work for Northwestern"
     And I should see "Where does Santa Claus live?"
+    And I should see "If you don't know where Santa Claus lives, skip the question"
 
 
   Scenario: "Saving grids"

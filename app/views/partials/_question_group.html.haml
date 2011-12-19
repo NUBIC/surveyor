@@ -1,6 +1,6 @@
 - renderer = g.renderer
 = f.inputs q_text(g, @render_context), :id => "g_#{g.id}", :class => "g_#{renderer} #{g.css_class(@response_set)}" do
-  %li.help= g.help_text
+  %li.help= render_help_text(g, @render_context)
   - case renderer
     - when :grid
       %li
