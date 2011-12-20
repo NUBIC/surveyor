@@ -25,7 +25,9 @@
       - flash[:validation_errors].each do |error|
         = "<script>highlightQuestions('#{error[:question]}', \"#{error[:message][0]}\")</script>".html_safe
 
-    .next_section= next_section
+    .next_section= next_section 
+    - if @response_set.mandatory_questions_complete?
+      = submit_tag "Done Editing", :name => "finish", :class => "button"
   %br
 
 :javascript
