@@ -24,7 +24,12 @@
     - unless flash[:validation_errors].nil?
       - flash[:validation_errors].each do |error|
         = "<script>highlightQuestions('#{error[:question]}', \"#{error[:message][0]}\")</script>".html_safe
-
+    - if !@response_set.completed_at.nil?
+      %ol{ :class => "paginator" }
+        - @response_set.survey.sections.each do |section|
+          %li
+            .specific_section= specific_section(section)
+      
     .next_section= next_section
   %br
 

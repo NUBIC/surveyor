@@ -34,7 +34,11 @@ module SurveyorHelper
     # use copy in memory instead of making extra db calls
     @sections.last == @section ? submit_tag(t('surveyor.click_here_to_finish').html_safe, :name => "finish") : submit_tag(t('surveyor.next_section').html_safe, :name => "section[#{@sections[@sections.index(@section)+1].id}]")
   end
-
+  
+  def specific_section(section)
+    @section == section ? "#{section.display_number}" : submit_tag(section.display_number.html_safe, :name => "section[#{section.id}]")
+  end
+  
   # Questions
   def q_text(obj)
     @n ||= 0

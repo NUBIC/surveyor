@@ -30,6 +30,12 @@ module Surveyor
       def default_args
         self.data_export_identifier ||= Surveyor::Common.normalize(title)
       end
+      
+      # The number of the section from the survey, converted to a string.
+      def display_number
+        (self.survey.sections.index(self) + 1).to_s
+      end
+      
 
     end
   end
