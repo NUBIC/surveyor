@@ -21,6 +21,8 @@ module Surveyor
           @@validations_already_included = true
         end
       end
+      
+      include RenderText      
 
       # Instance Methods
       def initialize(*args)
@@ -41,9 +43,9 @@ module Surveyor
         [(is_exclusive ? "exclusive" : nil), custom_class].compact.join(" ")
       end
       
-      def split_or_hidden_text(part = nil)
+      def split_or_hidden_text(part = nil, context = nil)
         return "" if display_type == "hidden_label"
-        part == :pre ? text.split("|",2)[0] : (part == :post ? text.split("|",2)[1] : text)
+        part == :pre ? self.render_answer_text(text.split("|",2)[0], context) : (part == :post ? self.render_answer_text(text.split("|",2)[1], context) : self.render_answer_text(text, context))
       end
       
     end

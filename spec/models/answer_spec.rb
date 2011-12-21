@@ -41,4 +41,15 @@ describe Answer, "when creating a new answer" do
   it "should have an api_id" do
     @answer.api_id.length.should == 36
   end
+  
+  require 'mustache'
+  class FakeMustacheContext < ::Mustache
+    def site
+      "Northwestern"
+    end
+  end
+  it "should substitute 'Northwestern' in place {{site}}" do
+      @answer.text = "You are in {{site}}"
+      @answer.split_or_hidden_text(nil, FakeMustacheContext).should == "You are in Northwestern"
+  end
 end

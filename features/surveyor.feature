@@ -337,6 +337,7 @@ Feature: Survey creation
     
 
   # Issue 259 - substitution of the text with Mustache
+  @wip
   @javascript
   Scenario: A question with an mustache syntax
     Given I have survey context of "FakeMustacheContext"
@@ -347,11 +348,11 @@ Feature: Survey creation
           group "Information on {{name}}?", :help_text => "Answer all you know on {{name}}" do
             label "{{name}} does not work for {{site}}!", :help_text => "Make sure you sure {{name}} doesn't work for {{site}}"
 
-            q "Where does {{name}} live?", :pick => :one, :display_type => :dropdown,
+            q "Where does {{name}} live?", :pick => :one,
             :help_text => "If you don't know where {{name}} lives, skip the question"
-            a "North Pole"
-            a "South Pole"
-            a "He doesn't exist"
+            a "{{name}} lives on North Pole"
+            a "{{name}} lives on South Pole"
+            a "{{name}} doesn't exist"
           end
         end
       end
@@ -364,6 +365,9 @@ Feature: Survey creation
     And I should see "Make sure you sure Santa Claus doesn't work for Northwestern"
     And I should see "Where does Santa Claus live?"
     And I should see "If you don't know where Santa Claus lives, skip the question"
+    And I should see "Santa Claus lives on North Pole"
+    And I should see "Santa Claus lives on South Pole"
+    And I should see "Santa Claus doesn't exist"    
 
 
   Scenario: "Saving grids"
