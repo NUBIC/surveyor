@@ -29,6 +29,7 @@
         - @response_set.survey.sections.each do |section|
           %li
             .specific_section= specific_section(section)
+      .clear
 
     .next_section= next_section 
     - if @response_set.mandatory_questions_complete?
