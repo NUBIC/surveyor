@@ -29,8 +29,10 @@
         - @response_set.survey.sections.each do |section|
           %li
             .specific_section= specific_section(section)
-      
-    .next_section= next_section
+
+    .next_section= next_section 
+    - if @response_set.mandatory_questions_complete?
+      = submit_tag "Done Editing", :name => "finish", :class => "button"
   %br
 
 :javascript
