@@ -6,6 +6,8 @@ module Surveyor
         base.send :has_many, :questions
         base.send :has_one, :dependency
       end
+
+      include RenderText
       
       # Instance Methods
       def initialize(*args)

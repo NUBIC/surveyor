@@ -22,10 +22,49 @@ describe SurveyorHelper do
     helper.q_text(q4).should == %Q(<img alt="Something" src="/#{dir}/something.jpg" />)
     helper.q_text(q5).should == q5.text
   end
+  require 'mustache'
+  class FakeMustacheContext < ::Mustache
+    def site
+      "Northwestern"
+    end
+    def somethingElse
+      "something new"
+    end
+    
+    def group
+      "NUBIC"
+    end
+  end
+  it "should return text with with substituted value" do
+    q1 = Factory(:question, :text => "You are in {{site}}")
+    label = Factory(:question, :display_type => "label", :text => "Testing {{somethingElse}}")
+    helper.q_text(q1, FakeMustacheContext).should == "1) You are in Northwestern"
+    helper.q_text(label, FakeMustacheContext).should == "Testing something new"
+  end
+  it "should return help_text for question with substituted value" do
+    q2 = Factory(:question, :display_type => "label", :text => "Is you site Northwestern?", :help_text => "If your site is not {{site}}, pick 'no' for the answer") 
+    helper.render_help_text(q2, FakeMustacheContext).should == "If your site is not Northwestern, pick 'no' for the answer"
+  end
+  it "should return help_text for group text with number" do
+    g1 = Factory(:question_group, :text => "You are part of the {{group}}")
+    helper.q_text(g1, FakeMustacheContext).should == "1) You are part of the NUBIC"
+  end
+  it "should return help_text for group text" do
+    g1 = Factory(:question_group, :text => "You are part of the {{group}}", :help_text => "Make sure you know what the {{group}} stands for")
+    helper.render_help_text(g1, FakeMustacheContext).should == "Make sure you know what the NUBIC stands for"
+  end
+
+  it "should return rendered text for answer" do
+    q1 = Factory(:question, :text => "Do you work for {{site}}", :answers => [a1 = Factory(:answer, :text => "No, I don't work for {{site}}"), a2 = Factory(:answer, :text => "Yes, I do work for {{site}}") ])
+    helper.a_text(a1, nil, FakeMustacheContext).should == "No, I don't work for Northwestern"
+    helper.a_text(a2, nil, FakeMustacheContext).should == "Yes, I do work for Northwestern"    
+  end
+  
   it "should return the group text with number" do
     g1 = Factory(:question_group)
-    helper.q_text(g1).should == "1) #{g1.text}"
+    helper.q_text(g1, FakeMustacheContext).should == "1) #{g1.text}"
   end
+
   it "should find or create responses, with index" do
     q1 = Factory(:question, :answers => [a = Factory(:answer, :text => "different")])
     q2 = Factory(:question, :answers => [b = Factory(:answer, :text => "strokes")])

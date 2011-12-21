@@ -23,8 +23,11 @@ module Surveyor
           base.send :validates_inclusion_of, :is_mandatory, :in => [true, false]
           
           @@validations_already_included = true
+          
         end
       end
+
+      include RenderText
 
       # Instance Methods
       def initialize(*args)
