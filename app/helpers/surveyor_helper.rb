@@ -55,9 +55,9 @@ module SurveyorHelper
   end
   
   # Answers
-  def a_text(obj, pos=nil)
+  def a_text(obj, pos=nil, context = nil)
     return image_tag(obj.text) if obj.is_a?(Answer) and obj.display_type == "image"
-    obj.split_or_hidden_text(pos)
+    obj.split_or_hidden_text(pos, context)
   end
   
   def rc_to_attr(type_sym)

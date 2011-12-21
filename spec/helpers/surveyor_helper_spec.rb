@@ -49,11 +49,16 @@ describe SurveyorHelper do
     g1 = Factory(:question_group, :text => "You are part of the {{group}}")
     helper.q_text(g1, FakeMustacheContext).should == "1) You are part of the NUBIC"
   end
-  it "should return help_text for group text with number" do
+  it "should return help_text for group text" do
     g1 = Factory(:question_group, :text => "You are part of the {{group}}", :help_text => "Make sure you know what the {{group}} stands for")
     helper.render_help_text(g1, FakeMustacheContext).should == "Make sure you know what the NUBIC stands for"
   end
 
+  it "should return rendered text for answer" do
+    q1 = Factory(:question, :text => "Do you work for {{site}}", :answers => [a1 = Factory(:answer, :text => "No, I don't work for {{site}}"), a2 = Factory(:answer, :text => "Yes, I do work for {{site}}") ])
+    helper.a_text(a1, nil, FakeMustacheContext).should == "No, I don't work for Northwestern"
+    helper.a_text(a2, nil, FakeMustacheContext).should == "Yes, I do work for Northwestern"    
+  end
   
   it "should return the group text with number" do
     g1 = Factory(:question_group)
