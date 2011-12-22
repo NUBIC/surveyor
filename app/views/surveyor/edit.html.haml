@@ -32,7 +32,7 @@
       .clear
 
     .next_section= next_section 
-    - if @response_set.mandatory_questions_complete?
+    - if !@response_set.completed_at.nil?
       = submit_tag "Done Editing", :name => "finish", :class => "button"
   %br
 
