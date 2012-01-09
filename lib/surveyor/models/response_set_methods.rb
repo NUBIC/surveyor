@@ -133,7 +133,7 @@ module Surveyor
         ds = dependencies(qs.map(&:id))
         triggered = qs - ds.select{|d| !d.is_met?(self)}.map(&:question)
         groups = ds.select{|d| !d.is_met?(self)}.map(&:question_group)
-        questions = groups.collect { |group| group.questions }.flatten
+        questions = groups.collect { |group| group.questions unless group.nil? }.flatten
         triggered = triggered - questions
                 
         { :questions => qs.compact.size,
