@@ -64,13 +64,14 @@ module SurveyorHelper
   def rc_to_as(type_sym)
     case type_sym.to_s
     when /(integer|float)/ then :string
+    when /^date$/ then :string
     else type_sym
     end
   end
-  def generate_pick_none_input_html(response_class, default_value, css_class)
+  def generate_pick_none_input_html(value, default_value, css_class, response_class)
     html = {}
-    html[:class] = css_class unless css_class.blank?
-    html[:value] = default_value if response_class.blank?
+    html[:class] = [response_class,css_class].reject{ |c| c.blank? }
+    html[:value] = default_value if value.blank?
     html
   end
 

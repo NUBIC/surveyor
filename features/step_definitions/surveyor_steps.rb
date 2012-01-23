@@ -1,7 +1,9 @@
 When /^I start the "([^"]*)" survey$/ do |name|
-  When "I go to the surveys page"
-  Then "I should see \"#{name}\""
-  click_button "Take it"
+  steps %Q{
+    When I go to the surveys page
+    Then I should see "#{name}\"
+    When I press "Take it"
+  }
 end
 
 Then /^there should be (\d+) response set with (\d+) responses? with:$/ do |rs_num, r_num, table|
@@ -80,6 +82,10 @@ Then /^there should be (\d+) datetime responses with$/ do |count, table|
       Response.all.one?{|x| x.datetime_value == dtv}.should be_true
     end
   end
+end
+
+Then /^there should be a datetime response with today's date$/ do
+  Response.all.one?{|x| x.datetime_value == Date.today}.should be_true
 end
 
 Then /^I should see the image "([^"]*)"$/ do |src|
