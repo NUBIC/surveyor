@@ -15,6 +15,7 @@ module Surveyor
 
       def default_args
         self.display_type ||= "inline"
+        self.api_id ||= UUID.generate
       end
 
       def renderer
@@ -37,8 +38,10 @@ module Surveyor
       def api_json(qs)
         { :text => text,
           :type => display_type,
-          :questions => qs.map(&:api_json)}\
-        .merge(display_type == "grid" ? {:answers => qs.first.answers.map(&:api_json)} : {})\
+          :uuid => api_id,
+          :questions => qs.map(&:api_json)}.
+        merge(display_type == "grid" ? {:answers => qs.first.answers.map(&:api_json)} : {}).
+        merge(dependency.blank? ? {} : {:dependency => dependency.api_json})
       end
     end
   end
