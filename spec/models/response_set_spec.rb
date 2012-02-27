@@ -69,6 +69,14 @@ describe ResponseSet do
     @response_set.responses.detect{|r| r.question_id == 7}.text_value.should == "Brian is tired"
   end
 
+  it 'saves its responses' do
+    new_set = ResponseSet.new(:survey => Factory(:survey))
+    new_set.responses.build(:question_id => 1, :answer_id => 1, :string_value => 'XXL')
+    new_set.save!
+
+    ResponseSet.find(new_set.id).responses.should have(1).items
+  end
+
   it "should ignore data if corresponding radio button is not selected" do
     @response_set.update_attributes(:responses_attributes => ResponseSet.to_savable(@radio_response_attributes))
     @response_set.responses.select{|r| r.question_id == 2}.should have(1).item
