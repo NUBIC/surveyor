@@ -78,17 +78,6 @@ module Surveyor
         r = [g ? g.renderer.to_s : nil, display_type].compact.join("_")
         r.blank? ? :default : r.to_sym
       end
-      
-      def api_json
-        {:text => split_text(:pre), :uuid => api_id}\
-          .merge(split_text(:post).blank? ? {} : {:post_text => split_text(:post)})\
-          .merge(help_text.blank? ? {} : {:help_text => help_text})\
-          .merge((answers.empty? or (part_of_group? and question_group.display_type == "grid")) ? {} : {:answers => answers.map(&:api_json)})\
-          .merge(display_type == "default" ? {} : {:type => display_type})\
-          .merge(reference_identifier.blank? ? {} : {:reference => reference_identifier})\
-          .merge(pick == "none" ? {} : {:pick => pick})\
-          .merge(dependency.blank? ? {} : {:dependency => dependency.api_json})
-      end
     end
   end
 end

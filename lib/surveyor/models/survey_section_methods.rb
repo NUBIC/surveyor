@@ -32,21 +32,17 @@ module Surveyor
         self.data_export_identifier ||= Surveyor::Common.normalize(title)
       end
       
-      def api_json
+      def questions_and_groups
         qs = []
-        {:title => title, :questions_and_groups => questions.each_with_index.map do |q,i|
+        questions.each_with_index.map do |q,i|
           if q.part_of_group?
-            qs << q
             if (i+1 >= questions.size) or (q.question_group_id != questions[i+1].question_group_id)
-              result = q.question_group.api_json(qs)
-              qs = []
-              result
+              q.question_group
             end
           else
-            q.api_json
+            q
           end
         end.compact
-        }
       end
     end
   end

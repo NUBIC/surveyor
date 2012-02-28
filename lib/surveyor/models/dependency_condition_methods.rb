@@ -61,11 +61,6 @@ module Surveyor
           false
         end
       end
-      def api_json
-        klass = answer ? answer.response_class : "answer"
-        klass = "answer" if self.as(klass).nil?
-        {:rule_key => rule_key, :question => question.api_id, :operator => operator, :answer => answer ? answer.api_id : nil, :value => klass == "answer" ? nil : self.as(klass)}
-      end
     protected
 
       def validates_operator

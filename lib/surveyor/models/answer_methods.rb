@@ -46,15 +46,6 @@ module Surveyor
         return "" if display_type == "hidden_label"
         part == :pre ? text.split("|",2)[0] : (part == :post ? text.split("|",2)[1] : text)
       end
-      
-      def api_json
-        {:text => split_or_hidden_text(:pre), :uuid => api_id}\
-          .merge(split_or_hidden_text(:post).blank? ? {} : {:post_text => split_or_hidden_text(:post)})\
-          .merge(help_text.blank? ? {} : {:help_text => help_text})\
-          .merge(response_class == "answer" ? {} : {:type => response_class})\
-          .merge(is_exclusive == false ? {} : {:exclusive => is_exclusive})
-      end
-      
     end
   end
 end
