@@ -1,16 +1,22 @@
 %w(survey survey_section question_group question dependency dependency_condition answer validation validation_condition).each {|model| require model }
 module Surveyor
   class Parser
+    class << self; attr_accessor :options end
+    
     # Attributes
     attr_accessor :context
 
     # Class methods
-    def self.parse(str)
-      puts
+    def self.parse(str, options={})
+      self.options = options
+      Surveyor::Parser.rake_trace "\n"
       Surveyor::Parser.new.parse(str)
-      puts
+      Surveyor::Parser.rake_trace "\n"
     end
-
+    def self.rake_trace(str)
+      print str if self.options[:trace] == true
+    end
+    
     # Instance methods
     def initialize
       self.context = {}
@@ -24,7 +30,7 @@ module Surveyor
       method_name, reference_identifier = missing_method.to_s.split("_", 2)
       type = full(method_name)
       
-      print reference_identifier.blank? ? "#{type} " : "#{type}_#{reference_identifier} "
+      Surveyor::Parser.rake_trace reference_identifier.blank? ? "#{type} " : "#{type}_#{reference_identifier} "
       
       # check for blocks
       raise "Error: A #{type.humanize} cannot be empty" if block_models.include?(type) && !block_given?
@@ -37,8 +43,8 @@ module Surveyor
       if block_models.include?(type)
         self.instance_eval(&block) 
         if type == 'survey'
-          puts
-          print context[type.to_sym].save ? "saved. " : " not saved! #{context[type.to_sym].errors.each_full{|x| x }.join(", ")} "
+          Surveyor::Parser.rake_trace "\n"
+          Surveyor::Parser.rake_trace context[type.to_sym].save ? "saved. " : " not saved! #{context[type.to_sym].errors.each_full{|x| x }.join(", ")} "
         end
         context[type.to_sym].clear(context) unless type == 'survey'
       end
@@ -158,7 +164,7 @@ class Question < ActiveRecord::Base
     unless correct.blank? or reference_identifier.blank? or context_reference.blank?
       # Looking up references for quiz answers
       context_reference[:answer_references][reference_identifier] ||= {}
-      print (self.correct_answer = context_reference[:answer_references][reference_identifier][correct]) ? "found correct answer:#{correct} " : "lost! correct answer:#{correct} "
+      Surveyor::Parser.rake_trace( (self.correct_answer = context_reference[:answer_references][reference_identifier][correct]) ? "found correct answer:#{correct} " : "lost! correct answer:#{correct} ")
     end
   end
 end
@@ -206,9 +212,9 @@ class DependencyCondition < ActiveRecord::Base
   def resolve_references
     if context_reference
       # Looking up references to questions and answers for linking the dependency objects
-      print (self.question = context_reference[:question_references][question_reference]) ? "found question:#{question_reference} " : "lost! question:#{question_reference} "
+      Surveyor::Parser.rake_trace( (self.question = context_reference[:question_references][question_reference]) ? "found question:#{question_reference} " : "lost! question:#{question_reference} ")
       context_reference[:answer_references][question_reference] ||= {}
-      print (self.answer = context_reference[:answer_references][question_reference][answer_reference]) ? "found answer:#{answer_reference} " : "lost! answer:#{answer_reference} "
+      Surveyor::Parser.rake_trace( (self.answer = context_reference[:answer_references][question_reference][answer_reference]) ? "found answer:#{answer_reference} " : "lost! answer:#{answer_reference} ")
     end
   end
 end
