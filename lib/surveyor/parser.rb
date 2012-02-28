@@ -14,6 +14,7 @@ module Surveyor
       Surveyor::Parser.rake_trace "\n"
     end
     def self.rake_trace(str)
+      self.options ||= {}
       print str if self.options[:trace] == true
     end
     
