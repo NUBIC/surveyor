@@ -234,11 +234,15 @@ describe SurveyorController do
 
     it "should return an id for new responses" do
       do_ajax_put({
-         "2"=>{"question_id"=>"4", "answer_id"=>"14"}, #check
-         "4"=>{"question_id"=>"4", "answer_id"=>"15"} #check
+         "2"=>{"question_id"=>"4", "answer_id"=>"14"}
       })
       JSON.parse(response.body).
-        should == {"ids" => {"2" => 1, "4" => 2}, "remove" => {}, "show" => [], "hide" => []}
+        should == {"ids" => {"2" => 1}, "remove" => {}, "show" => [], "hide" => []}
+      do_ajax_put({
+         "4"=>{"question_id"=>"4", "answer_id"=>"15"}
+      })
+      JSON.parse(response.body).
+        should == {"ids" => {"4" => 2}, "remove" => {}, "show" => [], "hide" => []}
     end
 
     it "should return a delete for when responses are removed" do
