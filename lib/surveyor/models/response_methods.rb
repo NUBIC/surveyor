@@ -9,7 +9,7 @@ module Surveyor
         @@validations_already_included ||= nil
         unless @@validations_already_included
           # Validations
-          base.send :validates_presence_of, :response_set_id, :question_id, :answer_id
+          base.send :validates_presence_of, :question_id, :answer_id
           
           @@validations_already_included = true
         end
