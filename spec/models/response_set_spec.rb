@@ -262,7 +262,7 @@ describe ResponseSet, "as a quiz" do
       q = Factory(:question, :survey_section => @section)
       a = Factory(:answer, :question => q, :response_class => "answer")
       x = Factory(:answer, :question => q, :response_class => "answer")
-      q.correct_answer_id = (quiz == "quiz" ? a.id : nil)
+      q.correct_answer = (quiz == "quiz" ? a : nil)
       @response_set.responses << Factory(:response, :question => q, :answer => (correct == "correct" ? a : x))
     end
   end

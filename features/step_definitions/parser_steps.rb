@@ -3,13 +3,20 @@ Given /^I parse$|^the survey$/ do |string|
 end
 
 Given /^I parse redcap file "([^"]*)"$/ do |name|
-  Surveyor::RedcapParser.parse File.read(File.join(RAILS_ROOT, '..', 'features', 'support', name)), name
+  Surveyor::RedcapParser.parse File.read(File.join(Rails.root, '..', 'features', 'support', name)), name
 end
 
 Then /^there should be (\d+) survey(?:s?) with:$/ do |x, table|
   Survey.count.should == x.to_i
   table.hashes.each do |hash|
     Survey.find(:first, :conditions => hash).should_not be_nil
+  end
+end
+
+Then /^there should be (\d+) section(?:s?) with:$/ do |x, table|
+  SurveySection.count.should == x.to_i
+  table.hashes.each do |hash|
+    SurveySection.find(:first, :conditions => hash).should_not be_nil
   end
 end
 

@@ -93,13 +93,16 @@ Feature: Survey creation
           a :string
           q "Anything else to say?", :pick => :any
           a "yes", :string, :custom_class => "other_custom_class"
+          q "Random question", :pick => :one
+          a "yes", :string, :custom_class => "other_other_custom_class"
         end
       end
     """
     When I start the "Movies" survey
-    Then the element "input[type='text']:first.my_custom_class" should exist
+    Then the element "input[type='text'].my_custom_class" should exist
     And the element "input[type='checkbox'].other_custom_class" should exist
-    And the element "input[type='text'].other_custom_class" should exist
+    And the element "input[type='radio'].other_other_custom_class" should exist
+    And the element "input[type='text'].other_other_custom_class" should exist
 
   Scenario: A pick one question with an option for other
     Given the survey
@@ -234,8 +237,6 @@ Feature: Survey creation
     And I press "Two"
     Then there should be 1 response with answer "Dogg"
 
-  # Issue 188
-  @wip
   Scenario: "Saving grids"
     Given the survey
     """
@@ -264,8 +265,6 @@ Feature: Survey creation
     And I press "One"
     Then there should be 1 response with answer "1"
 
-  # Issue 238
-  @wip
   Scenario: "Dates"
     Given the survey
     """
@@ -303,7 +302,7 @@ Feature: Survey creation
     Then there should be 3 datetime responses with
       | datetime_value      |
       | 2011-02-14 00:00:00 |
-      | 2001-01-01 01:30:00 |
+      | 01:30:00 |
       | 2011-02-15 17:30:00 |
 
     # 2/13/11
@@ -319,7 +318,7 @@ Feature: Survey creation
     Then there should be 3 datetime responses with
       | datetime_value      |
       | 2011-02-13 00:00:00 |
-      | 2001-01-01 13:30:00 |
+      | 13:30:00 |
       | 2011-02-15 17:00:00 |
 
   Scenario: "Images"

@@ -104,12 +104,29 @@ Surveyor depends on:
 * formtastic
 * UUID
 
+Specific versions of the gem dependencies are listed in the gemspec.
+
 # Contributing, testing
 
-To work on the code fork this github project. Run:
+To work on the code, fork this github project. Install [bundler][] if
+you don't have it, then run
 
-    $ rake testbed
+    $ bundle update
 
-which will generate a test app in `testbed`. Run rake spec and rake cucumber from the root and start writing tests!
+to install all the necessary gems. Then
+
+    $ bundle exec rake testbed
+
+to generate a test app in `testbed`. Now you can run
+
+    $ bundle exec rake spec
+
+to run the specs and
+
+    $ bundle exec rake cucumber
+
+to run the features and start writing tests!
+
+[bundler]: http://gembundler.com/
 
 Copyright (c) 2008-2011 Brian Chamberlain and Mark Yoon, released under the MIT license
