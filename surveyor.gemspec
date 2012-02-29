@@ -23,7 +23,7 @@ Gem::Specification.new do |s|
   s.add_dependency('fastercsv', '~> 1.5.4')
   s.add_dependency('formtastic', '~> 1.2.4')
   s.add_dependency('uuid')
-  s.add_dependency('rabl', '~> 0.6')
+  s.add_dependency('rabl', '~>0.6.0')
 
   s.add_development_dependency('yard')
   s.add_development_dependency('rake', '0.8.7')

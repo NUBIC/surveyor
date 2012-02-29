@@ -2,6 +2,8 @@ Rabl.configure {|config| config.include_child_root = false }
 
 object @survey
 attributes :title, :api_id => :uuid
+node(:description,            :if => lambda {|s| !s.description.blank? })
+node(:reference_identifier,   :if => lambda {|s| !s.reference_identifier.blank? })
 
 child :sections => :sections do
   attributes :title, :display_order
