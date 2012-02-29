@@ -111,7 +111,7 @@ describe SurveyorHelper do
     before do
       module SurveyorHelper
         include Surveyor::Helpers::SurveyorHelperMethods
-
+        alias :old_rc_to_as :rc_to_as
         def rc_to_as(type_sym)
           case type_sym.to_s
           when /(integer|float)/ then :string
@@ -130,6 +130,24 @@ describe SurveyorHelper do
       helper.rc_to_as(:datetime).should == :string  # not datetime
       helper.rc_to_as(:date).should == :date        # not string
       helper.rc_to_as(:time).should == :time
+    end
+
+    after do
+      module SurveyorHelper
+        include Surveyor::Helpers::SurveyorHelperMethods
+        def rc_to_as(type_sym)
+          old_rc_to_as(type_sym)
+        end
+      end
+    end
+  end
+
+  # Make sure that this context runs after the previous context 'overriding methods'
+  context "post override test" do
+    # Sanity check
+    it "should translate response class into as after override" do
+      helper.rc_to_as(:datetime).should == :datetime  # back to datetime
+      helper.rc_to_as(:date).should == :string        # back to string
     end
   end
 
