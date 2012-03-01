@@ -22,4 +22,19 @@ describe Surveyor::Parser do
 
     Survey.all.map(&:destroy)
   end
+  it "should return properly parse a UTF8 survey" do
+    ENV["FILE"]="../spec/lib/chinese_survey.rb"
+    @rake["surveyor"].invoke
+    
+    Survey.count.should == 1
+    SurveySection.count.should == 1
+    Question.count.should == 3
+    Answer.count.should == 15
+    Dependency.count.should == 0
+    DependencyCondition.count.should == 0
+    QuestionGroup.count.should == 1
+
+    Survey.all.map(&:destroy)
+  end
+
 end
