@@ -466,7 +466,7 @@ Feature: Survey creation
       end
     """
     When I start the "When" survey
-    And I click on "Give me a date" field
+    And I click "Give me a date"
     And I follow "calcurrent"
     And I press "Click here to finish"
     Then there should be a datetime response with today's date
