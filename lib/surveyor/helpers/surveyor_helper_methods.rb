@@ -77,10 +77,11 @@ module Surveyor
         end
       end
 
-      def generate_pick_none_input_html(value, default_value, css_class, response_class)
+      def generate_pick_none_input_html(value, default_value, css_class, response_class, disabled)
         html = {}
         html[:class] = [response_class,css_class].reject{ |c| c.blank? }
         html[:value] = default_value if value.blank?
+        html[:disabled] = disabled unless disabled.blank?
         html
       end
 

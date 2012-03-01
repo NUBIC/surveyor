@@ -12,7 +12,8 @@ module NavigationHelpers
       '/'
     when /the surveys page/
       '/surveys'
-
+    when /the last response set show page/
+      view_my_survey_path(:survey_code => ResponseSet.last.survey.access_code, :response_set_code => ResponseSet.last.access_code)
     # Add more mappings here.
     # Here is an example that pulls values out of the Regexp:
     #

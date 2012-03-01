@@ -1,15 +1,77 @@
 #surveyor
-  - @survey.sections.each do |section|
-    - div_for section do
-      .title= section.title
-      .questions
-        - group_questions ||= []
-        - section.questions.each_with_index do |question, index|
-          - if question.part_of_group?
-            - group_questions << question
-            - if (index + 1 >= section.questions.size) or (question.question_group_id != section.questions[index + 1].question_group_id)
-              - # skip to the last question of the section, or the last question of the group
-              = render(:partial => "/partials/question_group", :locals => {:question_group => question.question_group, :response_set => @response_set, :group_questions => group_questions})
+  - unless (types = flash.keys.select{|k| [:notice, :error, :warning].include?(k)}).blank?
+    .surveyor_flash
+      = flash_messages(types)
+      .close
+  = semantic_form_for(@response_set, :as => :r, :url => update_my_survey_path, :html => {:id => "survey_form", :class => @survey.custom_class}) do |f|
+    .survey_title= @survey.title
+    - @survey.sections.each do |section|
+      = div_for section do
+        %span.title= strip_tags(section.title)
+        - group_questions = []
+        - answered_questions = []
+        - label = nil
+        - answered_count = 0
+        - (questions = section.questions).each_with_index do |q, i|
+          - if q.part_of_group?
+            - group_questions << q # gather up the group questions
+            - unless @response_set.responses.where( :question_id => q.id).empty?
+              - answered_questions << q
+              - answered_count = answered_count + 1
+            - if (i+1 >= questions.size) or (q.question_group_id != questions[i+1].question_group_id) # this is the last question of the section, or the group
+              - if answered_questions.length > 0 # there are answered questions in this section or group
+                - g = q.question_group
+                - renderer = g.renderer
+                
+                - unless label.blank?
+                  = render q.custom_renderer || "/partials/question", :q => label, :f => f, :disableFlag => true
+                  - label = nil
+                = f.inputs q_text(g), :id => "g_#{g.id}", :class => "g_#{renderer} #{g.css_class(@response_set)}" do
+                  %li.help= g.help_text
+                  - case renderer
+                    - when :grid
+                      %li
+                        %table
+                          %col.pre
+                          - group_questions.first.answers.each do |a| 
+                            %col{:class => cycle("odd", "even")}
+                          %col.post
+                          %tbody
+                            - group_questions.each_slice(10) do |ten_questions| # header row every 10
+                              %tr
+                                %th &nbsp;
+                                - ten_questions.first.answers.each do |a|
+                                  %th= a_text(a)
+                                %th &nbsp;
+                              - ten_questions.each_with_index do |q, j|
+                                %tr{:id => "q_#{q.id}", :class => "q_#{renderer} #{q.css_class(@response_set)}"}
+                                  - if q.pick == "one"
+                                    - r = response_for(@response_set, q, nil, g)
+                                    - j = response_idx  # increment the response index since the answer partial skips for q.pick == one
+                                  %th= q.split_text(:pre)
+                                  - q.answers.each do |a|
+                                    %td= render a.custom_renderer || '/partials/answer', :g => g, :q => q, :a => a, :f => f, :disableFlag => true
+                                  %th= q.split_text(:post)
+                    - when :repeater
+                      - (@response_set.count_group_responses(group_questions) + 1).times do |rg|
+                        %li
+                          - group_questions.each do |q|
+                            = render q.custom_renderer || "/partials/question", :g => g, :rg => rg, :q => q, :f => f, :disableFlag => true
+                    - else # :inline
+                      - answered_questions.each do |q|
+                        = render q.custom_renderer || "/partials/question", :g => g, :q => q, :f => f, :disableFlag => true         
+              
               - group_questions = []
-          - else
-            = render(:partial => "/partials/question", :locals => {:question => question, :response_set => @response_set})
+              - answered_questions = []
+          - else 
+            - if q.display_type == 'label'
+              - label = q
+            - unless @response_set.responses.where( :question_id => q.id).empty?
+              - unless label.blank?
+                = render q.custom_renderer || "/partials/question", :q => label, :f => f, :disableFlag => true
+                - label = nil
+              = render q.custom_renderer || "/partials/question", :q => q, :f => f, :disableFlag => true
+              - answered_count = answered_count + 1
+          - if (i+1 >= questions.size) and (answered_count == 0)
+            #{"--- No data ---"}
+          
