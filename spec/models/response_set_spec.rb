@@ -53,7 +53,12 @@ describe ResponseSet do
 
   it "does not allow completion through mass assignment" do
     @response_set.completed_at.should be_nil
-    @response_set.update_attributes(:completed_at => Time.now)
+    begin
+      @response_set.update_attributes(:completed_at => Time.now)
+    rescue
+      # Rails 3.2 throws an error on this line - should change to the following - but using begin..rescue..end for backwards compatibility
+      # lambda { @response_set.update_attributes(:completed_at => Time.now) }.should raise_error(ActiveModel::MassAssignmentSecurity::Error)
+    end
     @response_set.completed_at.should be_nil
   end
 
