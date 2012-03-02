@@ -99,6 +99,13 @@ and read surveys/EXTENDING\_SURVEYOR
 	gem 'wkhtmltopdf'
 </pre>
 
+or on OSX:
+
+<pre>
+	gem 'pdfkit'
+	gem 'wkhtmltopdf-binary'
+</pre>
+
 * Add the following to your application.rb:
 
 <pre>
