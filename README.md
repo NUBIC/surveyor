@@ -90,12 +90,33 @@ Surveyor's controller, models, and views may be customized via classes in your a
 
 and read surveys/EXTENDING\_SURVEYOR
 
+# PDF support
+
+* Add the following lines to your Gemfile:
+
+<pre>
+	gem 'pdfkit'
+	gem 'wkhtmltopdf'
+</pre>
+
+* Add the following to your application.rb:
+
+<pre>
+	config.middleware.use PDFKit::Middleware
+</pre>
+
+* Create links with :format => 'pdf' in them, for example:
+
+<pre>
+	%li= link_to "PDF", view_my_survey_path(:survey_code => response_set.survey.access_code, :response_set_code => response_set.access_code, :format => 'pdf')
+</pre>
+
 # Requirements
 
 Surveyor depends on:
 
 * Ruby (1.8.7 - 1.9.2)
-* Rails 3.x
+* Rails 3.0-3.1
 * HAML
 * SASS
 * fastercsv (or CSV for ruby 1.9) for csv exports
