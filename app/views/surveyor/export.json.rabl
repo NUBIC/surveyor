@@ -2,13 +2,13 @@ Rabl.configure {|config| config.include_child_root = false }
 
 object @survey
 attributes :title, :api_id => :uuid
-node(:description,            :if => lambda {|s| !s.description.blank? })
-node(:reference_identifier,   :if => lambda {|s| !s.reference_identifier.blank? })
+node(:description,            :if => lambda {|s| !s.description.blank? }){|s| s.description }
+node(:reference_identifier,   :if => lambda {|s| !s.reference_identifier.blank? }){|s| s.reference_identifier }
 
 child :sections => :sections do
   attributes :title, :display_order
-  node(:description,            :if => lambda {|s| !s.description.blank? })
-  node(:reference_identifier,   :if => lambda {|s| !s.reference_identifier.blank? })
+  node(:description,            :if => lambda {|s| !s.description.blank? }){|s| s.description }
+  node(:reference_identifier,   :if => lambda {|s| !s.reference_identifier.blank? }){|s| s.reference_identifier }
   
   child :questions_and_groups => :questions_and_groups do
     # both questions and question_groups have uuid, text, help_text, reference_identifier, and type
