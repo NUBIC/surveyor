@@ -54,7 +54,7 @@
     
     $('input[type="submit"]').click(function() {
     	$(this).hide();
-    	$(this).parent().append('<img src="http://static.infotech.com/images/icons/medium_loader_2576b7.gif" />').append("Please Wait");
+    	$(this).parent().append("Please Wait").spin("small");
     });
   });
 
