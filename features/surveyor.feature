@@ -257,7 +257,7 @@ Feature: Survey creation
 
   # Issue 234 - text field with checkbox
   @javascript
-  Scenario: A question with an option checkbox for other and text input 
+  Scenario: A question with an option checkbox for other and text input
     Given the survey
     """
       survey "Favorite Cuisine" do
@@ -277,7 +277,7 @@ Feature: Survey creation
 
   # Issue 234 - empty text field with checkbox
   @javascript
-  Scenario: A question with an option checkbox for other and an empty text input 
+  Scenario: A question with an option checkbox for other and an empty text input
     Given the survey
     """
       survey "Favorite Cuisine" do
@@ -297,7 +297,7 @@ Feature: Survey creation
 
   # Issue 234 - text field with radio buttons
   @javascript
-   Scenario: A question with an option radio button for other and text input 
+   Scenario: A question with an option radio button for other and text input
     Given the survey
     """
       survey "Favorite Cuisine" do
@@ -314,10 +314,10 @@ Feature: Survey creation
     And I wait 2 seconds
     And I change "r_1_string_value" to "thai"
     Then the "other" radiobutton should be checked
- 
+
   # Issue 234 - empty text field with radio buttons
   @javascript
-  Scenario: A question with an option radio button for other and text input 
+  Scenario: A question with an option radio button for other and text input
     Given the survey
     """
       survey "Favorite Cuisine" do
@@ -334,7 +334,7 @@ Feature: Survey creation
     And I wait 2 seconds
     And I change "r_1_string_value" to ""
     Then the "other" radiobutton should not be checked
-    
+
 
   # Issue 259 - substitution of the text with Mustache
   @wip
@@ -367,7 +367,7 @@ Feature: Survey creation
     And I should see "If you don't know where Santa Claus lives, skip the question"
     And I should see "Santa Claus lives on North Pole"
     And I should see "Santa Claus lives on South Pole"
-    And I should see "Santa Claus doesn't exist"    
+    And I should see "Santa Claus doesn't exist"
 
 
   Scenario: "Saving grids"
@@ -407,12 +407,12 @@ Feature: Survey creation
           a "Give me a date", :date
         end
         section "Two" do
-          q "Tell us when you'd like to eat"
-          a :time
+          q "Tell us when you would like to eat"
+          a "When eat", :time
         end
         section "Three" do
-          q "Tell us when you'd like a phone call"
-          a :datetime
+          q "Tell us when you would like a phone call"
+          a "When phone", :datetime
         end
       end
     """
@@ -421,38 +421,36 @@ Feature: Survey creation
     And I fill in "Give me a date" with "2011-02-14"
     # 1:30am
     And I press "Two"
-    And I select "01" from "Hour"
-    And I select "30" from "Minute"
+    And I fill in "When eat" with "01:30"
     # 2/15/11 5:30pm
     And I press "Three"
-    And I select "2011" from "Year"
-    And I select "February" from "Month"
-    And I select "15" from "Day"
-    And I select "17" from "Hour"
-    And I select "30" from "Minute"
-    And I press "One"
+    And I fill in "When phone" with "2011-02-15 17:30:00"
 
-    Then there should be 3 datetime responses with
-      | datetime_value      |
-      | 2011-02-14 00:00:00 |
-      | 01:30:00 |
-      | 2011-02-15 17:30:00 |
+    # Verification
+    When I press "One"
+    Then the "Give me a date" field should contain "2011-02-14"
+    When I press "Two"
+    Then the "When eat" field should contain "01:30"
+    When I press "Three"
+    Then the "When phone" field should contain "2011-02-15 17:30:00"
 
     # 2/13/11
+    When I press "One"
     And I fill in "Give me a date" with "2011-02-13"
     # 1:30pm
     And I press "Two"
-    And I select "13" from "Hour"
+    And I fill in "When eat" with "13:30"
     # 2/15/11 5:00pm
     And I press "Three"
-    And I select "00" from "Minute"
-    And I press "Click here to finish"
+    And I fill in "When phone" with "2011-02-15 17:00:00"
 
-    Then there should be 3 datetime responses with
-      | datetime_value      |
-      | 2011-02-13 00:00:00 |
-      | 13:30:00 |
-      | 2011-02-15 17:00:00 |
+    # Verification
+    When I press "One"
+    Then the "Give me a date" field should contain "2011-02-13"
+    When I press "Two"
+    Then the "When eat" field should contain "13:30"
+    When I press "Three"
+    Then the "When phone" field should contain "2011-02-15 17:00:00"
 
   @javascript
   Scenario: "Date"
@@ -467,7 +465,7 @@ Feature: Survey creation
     """
     When I start the "When" survey
     And I click "Give me a date"
-    And I follow "calcurrent"
+    And I follow today's date
     And I press "Click here to finish"
     Then there should be a datetime response with today's date
 
