@@ -6,10 +6,10 @@ module Surveyor
         surveyor_stylsheets + surveyor_javascripts
       end
       def surveyor_stylsheets
-        stylesheet_link_tag 'surveyor/reset', 'surveyor/dateinput', 'surveyor', 'custom'
+        stylesheet_link_tag 'surveyor/reset', 'surveyor/dateinput', 'surveyor/jquery-ui.custom', 'surveyor/jquery-ui-timepicker-addon', 'surveyor', 'custom'
       end
       def surveyor_javascripts
-        javascript_include_tag 'surveyor/jquery.tools.min', 'surveyor/jquery.surveyor', 'surveyor/jquery.blockUI'
+        javascript_include_tag 'surveyor/jquery.tools.min', 'surveyor/jquery-ui', 'surveyor/jquery-ui-timepicker-addon', 'surveyor/jquery.surveyor', 'surveyor/jquery.blockUI'
       end
       # Helper for displaying warning/notice/error flash messages
       def flash_messages(types)
@@ -64,15 +64,14 @@ module Surveyor
 
       def rc_to_attr(type_sym)
         case type_sym.to_s
-        when /^date|time$/ then :datetime_value
-        when /(string|text|integer|float|datetime)/ then "#{type_sym.to_s}_value".to_sym
-        else :answer_id
+        when /^answer$/ then :answer_id
+        else "#{type_sym.to_s}_value".to_sym
         end
       end
+
       def rc_to_as(type_sym)
         case type_sym.to_s
-        when /(integer|float)/ then :string
-        when /^date$/ then :string
+        when /(integer|float|date|time|datetime)/ then :string
         else type_sym
         end
       end

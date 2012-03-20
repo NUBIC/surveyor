@@ -74,18 +74,10 @@ Then /^there should be (\d+) response with answer "([^"]*)"$/ do |count, answer_
   Response.find_by_answer_id(Answer.find_by_text(answer_text)).should_not be_blank
 end
 
-Then /^there should be (\d+) datetime responses with$/ do |count, table|
-  Response.count.should == count.to_i
-  table.hashes.each do |hash|
-    if hash.keys == ["datetime_value"]
-      dtv = DateTime.parse( hash["datetime_value"].size == 8 ? "0001-01-01 #{hash['datetime_value']}" : hash["datetime_value"])
-      Response.all.one?{|x| x.datetime_value == dtv}.should be_true
-    end
-  end
-end
-
 Then /^there should be a datetime response with today's date$/ do
-  Response.all.one?{|x| x.datetime_value == Date.today}.should be_true
+  # Response.datetime_value returns ActiveSupport::TimeWithZone
+  # so we call .to_date on it for the comparison with Date.today
+  Response.all.one?{|x| x.datetime_value.to_date == Date.today}.should be_true
 end
 
 Then /^I should see the image "([^"]*)"$/ do |src|
@@ -122,9 +114,15 @@ Given /^I have survey context of "([^"]*)"$/ do |context|
       def site
         "Northwestern"
       end
-    end    
+    end
     def render_context
       FakeMustacheContext
     end
   end
+end
+
+When /^I follow today's date$/ do
+  steps %Q{
+    When I follow "#{Date.today.strftime('%d')}"
+  }
 end

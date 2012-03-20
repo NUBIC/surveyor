@@ -4,11 +4,11 @@ module Surveyor
     source_root File.expand_path("../templates", __FILE__)
     desc "Generate surveyor README, migrations, assets and sample survey"
     class_option :skip_migrations, :type => :boolean, :desc => "skip migrations, but generate everything else"
-    
+
     def readme
       copy_file "../../../../README.md", "surveys/README.md"
     end
-    def migrations     
+    def migrations
       unless options[:skip_migrations]
         # because all migration timestamps end up the same, causing a collision when running rake db:migrate
         # copied functionality from RAILS_GEM_PATH/lib/rails_generator/commands.rb
@@ -29,18 +29,19 @@ module Surveyor
         asset_path = File.expand_path("../#{path}", __FILE__)
         Dir.foreach(asset_path) do |f|
           next if File.directory?(f)
-          
+
           from_path = "#{path.gsub('templates/public', 'public')}/#{f}"
           to_path = "#{path.gsub('templates/public', asset_directory)}/#{f}"
           to_path = to_path.gsub("/sass", "") if asset_directory == "vendor/assets"
           copy_file(from_path, to_path)
         end
       end
-      
+
     end
     def surveys
       copy_file "surveys/kitchen_sink_survey.rb"
       copy_file "surveys/quiz.rb"
+      copy_file "surveys/date_survey.rb"
     end
     def locales
       directory "config/locales"
