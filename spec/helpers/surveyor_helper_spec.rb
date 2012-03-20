@@ -93,8 +93,8 @@ describe SurveyorHelper do
     helper.rc_to_attr(:integer).should == :integer_value
     helper.rc_to_attr(:float).should == :float_value
     helper.rc_to_attr(:datetime).should == :datetime_value
-    helper.rc_to_attr(:date).should == :datetime_value
-    helper.rc_to_attr(:time).should == :datetime_value
+    helper.rc_to_attr(:date).should == :date_value
+    helper.rc_to_attr(:time).should == :time_value
   end
 
   it "should translate response class into as" do
@@ -102,9 +102,9 @@ describe SurveyorHelper do
     helper.rc_to_as(:text).should == :text
     helper.rc_to_as(:integer).should == :string
     helper.rc_to_as(:float).should == :string
-    helper.rc_to_as(:datetime).should == :datetime
+    helper.rc_to_as(:datetime).should == :string
     helper.rc_to_as(:date).should == :string
-    helper.rc_to_as(:time).should == :time
+    helper.rc_to_as(:time).should == :string
   end
 
   context "overriding methods" do
@@ -115,7 +115,7 @@ describe SurveyorHelper do
         def rc_to_as(type_sym)
           case type_sym.to_s
           when /(integer|float)/ then :string
-          when /(datetime)/ then :string
+          when /(datetime)/ then :datetime
           else type_sym
           end
         end
@@ -127,8 +127,8 @@ describe SurveyorHelper do
       helper.rc_to_as(:text).should == :text
       helper.rc_to_as(:integer).should == :string
       helper.rc_to_as(:float).should == :string
-      helper.rc_to_as(:datetime).should == :string  # not datetime
-      helper.rc_to_as(:date).should == :date        # not string
+      helper.rc_to_as(:datetime).should == :datetime  # not string
+      helper.rc_to_as(:date).should == :date          # not string
       helper.rc_to_as(:time).should == :time
     end
 
@@ -146,8 +146,8 @@ describe SurveyorHelper do
   context "post override test" do
     # Sanity check
     it "should translate response class into as after override" do
-      helper.rc_to_as(:datetime).should == :datetime  # back to datetime
-      helper.rc_to_as(:date).should == :string        # back to string
+      helper.rc_to_as(:datetime).should == :string  # back to string
+      helper.rc_to_as(:date).should == :string      # back to string
     end
   end
 
