@@ -1,4 +1,4 @@
-Rabl.configure {|config| config.include_child_root = false }
+Rabl.configure {|config| config.include_json_root = false }
 
 object @survey
 attributes :title, :api_id => :uuid
