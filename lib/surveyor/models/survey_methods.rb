@@ -76,6 +76,12 @@ module Surveyor
         self.active_at = nil if !datetime.nil? and !self.active_at.nil? and self.active_at > datetime
         super(datetime)
       end
+      def to_json
+        template_path = ActionController::Base.view_paths.find("export", ["surveyor"], false, {:handlers=>[:rabl], :locale=>[:en], :formats=>[:json]}, [], []).inspect
+        engine = Rabl::Engine.new(File.read(template_path))
+        engine.render(nil, {:object => self})
+      end
+      
     end
   end
 end

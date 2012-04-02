@@ -61,7 +61,6 @@ module Surveyor
           false
         end
       end
-
     protected
 
       def validates_operator

@@ -88,6 +88,11 @@ Then /^(\d+) responses should exist$/ do |response_count|
   Response.count.should == response_count.to_i
 end
 
+Then /^the json for "([^"]*)" should be$/ do |title, string|
+  visit "/surveys/#{Survey.find_by_title(title).access_code}.json"
+  Surveyor::Common.equal_json_excluding_uuids(response.body, string).should == true
+end
+
 Then /the element "([^\"]*)" should be hidden$/ do |selector|
   wait_until do
     its_hidden = page.evaluate_script("$('#{selector}').is(':hidden');")
@@ -103,7 +108,6 @@ Then /the element "([^\"]*)" should not be hidden$/ do |selector|
     (its_not_hidden && its_in_dom).should be_true
   end
 end
-
 Given /^I have survey context of "([^"]*)"$/ do |context|
   class SurveyorController < ApplicationController
     require 'mustache'

@@ -47,7 +47,6 @@ module Surveyor
         return "" if display_type == "hidden_label"
         part == :pre ? self.render_answer_text(text.split("|",2)[0], context) : (part == :post ? self.render_answer_text(text.split("|",2)[1], context) : self.render_answer_text(text, context))
       end
-      
     end
   end
 end

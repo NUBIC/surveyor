@@ -93,7 +93,10 @@ module Surveyor
         end
       end
     end
-
+    
+    def export
+      @survey = Survey.find_by_access_code(params[:survey_code])
+    end
     private
 
     # This is a hoock method for surveyor-using applications to override and provide the context object

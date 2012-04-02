@@ -18,5 +18,33 @@ describe Surveyor::Common, "" do
       "In general, you would say your health is:" => "you_would_say_your_health"
     }.each{|k, v| Surveyor::Common.to_normalized_string(k).should == v}
   end
+  it "should deep compare json objects" do
+    a = {"a" => "b"}.to_json
+    b = '{"a": "b"}'
+    Surveyor::Common.equal_json_excluding_uuids(a,b).should be_true
+    
+    a = {"y" => "x"}.to_json
+    b = {:y => "x"}
+    Surveyor::Common.equal_json_excluding_uuids(a,b).should be_true
+
+    a = [{"y" => "x"}, {"j" => "b"}].to_json
+    b = '[{"y": "x"}]'
+    Surveyor::Common.equal_json_excluding_uuids(a,b).should be_false
+    
+    a = [{"y" => "x"}, {"uuid" => "*"}].to_json
+    b = '[{"y": "x"}, {"uuid": "12312312312123"}]'
+    Surveyor::Common.equal_json_excluding_uuids(a,b).should be_true
+
+    a = %({"survey": {
+      "title":"Simple survey",
+      "uuid":"72888670-9151-012e-9ec1-00254bc472f4",
+      "sections":[{
+        "title":"Basic questions"
+        }]
+      }
+    })
+    b = %({"survey": {"title": "Simple survey","uuid": "*","sections": [{"title": "Basic questions"}]}})
+    Surveyor::Common.equal_json_excluding_uuids(a,b).should be_true
+  end
   
 end

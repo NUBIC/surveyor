@@ -51,7 +51,7 @@ module Surveyor
         hash = {}
         self.dependency_conditions.each{|dc| hash.merge!(dc.to_hash(response_set))}
         return hash
-      end    
+      end
     end
   end
 end

@@ -17,13 +17,14 @@ Gem::Specification.new do |s|
   s.executables   = `git ls-files -- bin/*`.split("\n").map{ |f| File.basename(f) }
   s.require_paths = ["lib"]
 
-  s.add_dependency('rails', '~> 3.0')
+  s.add_dependency('rails', '~> 3.1')
   s.add_dependency('haml', '~> 3.1.3')
   s.add_dependency('sass')
   s.add_dependency('fastercsv', '~> 1.5.4')
   s.add_dependency('formtastic', '~> 1.2.4')
   s.add_dependency('uuid')
   s.add_dependency('mustache', '0.99.4')
+  s.add_dependency('rabl', '~>0.6.0')
 
   s.add_development_dependency('yard')
   s.add_development_dependency('rake', '0.8.7')

@@ -17,6 +17,7 @@ module Surveyor
 
       def default_args
         self.display_type ||= "inline"
+        self.api_id ||= UUID.generate
       end
 
       def renderer

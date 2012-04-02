@@ -30,7 +30,19 @@ module Surveyor
       def default_args
         self.data_export_identifier ||= Surveyor::Common.normalize(title)
       end
-
+      
+      def questions_and_groups
+        qs = []
+        questions.each_with_index.map do |q,i|
+          if q.part_of_group?
+            if (i+1 >= questions.size) or (q.question_group_id != questions[i+1].question_group_id)
+              q.question_group
+            end
+          else
+            q
+          end
+        end.compact
+      end
     end
   end
 end
