@@ -1,4 +1,4 @@
-require 'surveyor/models'
+require 'surveyor/common'
 
 module Surveyor
   module Models
@@ -41,7 +41,7 @@ module Surveyor
         self.pick ||= "none"
         self.data_export_identifier ||= Surveyor::Common.normalize(text)
         self.short_text ||= text
-        self.api_id ||= Surveyor::Models.generate_api_id
+        self.api_id ||= Surveyor::Common.generate_api_id
       end
       
       def pick=(val)

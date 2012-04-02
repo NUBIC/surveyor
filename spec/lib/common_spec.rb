@@ -18,5 +18,18 @@ describe Surveyor::Common, "" do
       "In general, you would say your health is:" => "you_would_say_your_health"
     }.each{|k, v| Surveyor::Common.to_normalized_string(k).should == v}
   end
-  
+
+  describe '#generate_api_id' do
+    def generate
+      Surveyor::Common.generate_api_id
+    end
+
+    it 'generates a String' do
+      generate.should be_a String
+    end
+
+    it 'generates a new value every time' do
+      (1..100).collect { generate }.uniq.size.should == 100
+    end
+  end
 end

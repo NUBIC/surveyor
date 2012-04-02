@@ -1,4 +1,4 @@
-require 'surveyor/models'
+require 'surveyor/common'
 
 module Surveyor
   module Models
@@ -38,7 +38,7 @@ module Surveyor
 
       def default_args
         self.inactive_at ||= DateTime.now
-        self.api_id ||= Surveyor::Models.generate_api_id
+        self.api_id ||= Surveyor::Common.generate_api_id
         self.display_order ||= Survey.count
       end
 

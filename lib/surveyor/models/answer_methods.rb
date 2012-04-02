@@ -1,4 +1,4 @@
-require 'surveyor/models'
+require 'surveyor/common'
 
 module Surveyor
   module Models
@@ -36,7 +36,7 @@ module Surveyor
         self.response_class ||= "answer"
         self.short_text ||= text
         self.data_export_identifier ||= Surveyor::Common.normalize(text)
-        self.api_id ||= Surveyor::Models.generate_api_id
+        self.api_id ||= Surveyor::Common.generate_api_id
       end
       
       def css_class
