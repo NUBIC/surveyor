@@ -123,6 +123,6 @@ end
 
 When /^I follow today's date$/ do
   steps %Q{
-    When I follow "#{Date.today.strftime('%d')}"
+    When I follow "#{Date.today.strftime('%d').to_i}"
   }
 end
