@@ -1,12 +1,13 @@
 Feature: Survey export
   As a user
   I want to represent a survey in JSON
-  So that I can give use it offline
+  So that I can use it offline
 
-  Scenario: Basic questions
+  @wip
+  Scenario: Exporting basic questions
     Given I parse
     """
-      survey "Simple survey" do
+      survey "Simple json" do
         section "Basic questions" do
           label "These questions are examples of the basic supported input types"
 
@@ -24,10 +25,10 @@ Feature: Survey export
         end
       end
     """
-    Then the json for "Simple survey" should be
+    Then the json for "Simple json" should be
     """
     {"survey": {
-      "title": "Simple survey",
+      "title": "Simple json",
       "uuid": "*",
       "sections": [{
         "title": "Basic questions",

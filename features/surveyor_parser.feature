@@ -1,9 +1,9 @@
-Feature: Survey creation
+Feature: Survey parser
   As a 
   I want to write out the survey in the DSL
   So that I can give it to survey participants
   
-  Scenario: Basic questions
+  Scenario: Parsing basic questions
     Given I parse
     """
       survey "Simple survey" do
@@ -52,7 +52,7 @@ Feature: Survey creation
       | 3                    | brown  | answer         | 0             |
       | nil                  | Omit   | answer         | 3             |
 
-  Scenario: More complex questions
+  Scenario: Parsing more complex questions
     Given I parse
     """
       survey "Complex survey" do
@@ -106,7 +106,7 @@ Feature: Survey creation
       | -2    | answer         |
       | Other | string         |
 
-  Scenario: Dependencies and validations
+  Scenario: Parsing dependencies and validations
     Given I parse
     """
       survey "Dependency and validation survey" do
@@ -165,7 +165,7 @@ Feature: Survey creation
       | rule_key | integer_value |
       | A        | 0             |
 
-  Scenario: Dependencies and validations
+  Scenario: Parsing other dependencies and validations
     Given I parse
     """
       survey "dependency test" do
@@ -209,7 +209,7 @@ Feature: Survey creation
     And question "copd_sh_1a" should have a dependency with rule "A"
     And question "copd_sh_1ba" should have a dependency with rule "E"
 
-  Scenario: Dependencies on questions inside of a group
+  Scenario: Parsing dependencies on questions inside of a group
     Given the survey
     """
       survey "Phone Screen Questions" do
@@ -248,8 +248,8 @@ Feature: Survey creation
     Then there should be 4 dependencies
     And 2 dependencies should depend on questions
     And 2 dependencies should depend on question groups
-
-  Scenario: Dependencies with "a"
+  
+  Scenario: Parsing dependencies with "a"
     Given the survey
     """
       survey "Dependencies with 'a'" do
@@ -273,7 +273,7 @@ Feature: Survey creation
       | rule_key |
       | A        |
   
-  Scenario: Dependencies with "q"
+  Scenario: Parsing dependencies with "q"
     Given the survey
     """
       survey "Dependencies with 'q'" do

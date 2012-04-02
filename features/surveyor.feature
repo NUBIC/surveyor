@@ -3,7 +3,7 @@ Feature: Survey creation
   I want to take a survey
   So that I can get paid
 
-  Scenario: Basic questions
+  Scenario: Creating basic questions
     Given the survey
     """
       survey "Favorites" do
@@ -37,7 +37,7 @@ Feature: Survey creation
       | orange |
       | brown  |
 
-  Scenario: Default answers
+  Scenario: Creating default answers
     Given the survey
     """
       survey "Favorites" do
@@ -68,7 +68,7 @@ Feature: Survey creation
       | string_value    |
       | chicken |
 
-  Scenario: Quiz time
+  Scenario: Creating, it's quiz time
     Given the survey
     """
       survey "Favorites" do
@@ -82,7 +82,7 @@ Feature: Survey creation
     """
     Then question "1" should have correct answer "oink"
 
-  Scenario: Custom css class
+  Scenario: Creating custom css class
     Given the survey
     """
       survey "Movies" do
@@ -104,7 +104,7 @@ Feature: Survey creation
     And the element "input[type='radio'].other_other_custom_class" should exist
     And the element "input[type='text'].other_other_custom_class" should exist
 
-  Scenario: A pick one question with an option for other
+  Scenario: Creating a pick one question with an option for other
     Given the survey
     """
       survey "Favorites" do
@@ -123,7 +123,7 @@ Feature: Survey creation
     Then there should be 1 response set with 1 response with:
     | bacon |
 
-  Scenario: Repeater with a dropdown
+  Scenario: Creating a repeater with a dropdown
     Given the survey
     """
       survey "Movies" do
@@ -141,7 +141,7 @@ Feature: Survey creation
     Then a dropdown should exist with the options "Action, Comedy, Mystery"
 
   # Issue 251 - text field with checkbox
-  Scenario: Group with a dropdown
+  Scenario: Creating a group with a dropdown
     Given the survey
     """
       survey "All Holidays" do
@@ -158,7 +158,7 @@ Feature: Survey creation
     When I start the "All Holidays" survey
     Then a dropdown should exist with the options "Christmas, New Year, March 8th"
 
-  Scenario: A pick one question with an option for other
+  Scenario: Creating another pick one question with an option for other
     Given the survey
     """
       survey "Favorites" do
@@ -178,7 +178,7 @@ Feature: Survey creation
     Then there should be 1 response set with 1 response with:
     | shrimp |
 
-  Scenario: Checkboxes with text area
+  Scenario: Creating checkboxes with text area
     Given the survey
     """
       survey "Websites" do
@@ -194,7 +194,7 @@ Feature: Survey creation
     Then there should be 3 checkboxes
     And there should be 3 text areas
 
-  Scenario: "Double letter rule keys"
+  Scenario: Creating double letter rule keys
     Given the survey
     """
       survey "Doubles" do
@@ -228,7 +228,7 @@ Feature: Survey creation
     And I press "Two"
     Then the question "Do you want to be part of an SNL skit?" should be triggered
 
-  Scenario: "Changing dropdowns"
+  Scenario: Creating and changing dropdowns
     Given the survey
     """
       survey "Drop" do
@@ -257,7 +257,7 @@ Feature: Survey creation
 
   # Issue 234 - text field with checkbox
   @javascript
-  Scenario: A question with an option checkbox for other and text input
+  Scenario: Creating a question with an option checkbox for other and text input
     Given the survey
     """
       survey "Favorite Cuisine" do
@@ -277,7 +277,7 @@ Feature: Survey creation
 
   # Issue 234 - empty text field with checkbox
   @javascript
-  Scenario: A question with an option checkbox for other and an empty text input
+  Scenario: Creating a question with an option checkbox for other and an empty text input
     Given the survey
     """
       survey "Favorite Cuisine" do
@@ -297,7 +297,7 @@ Feature: Survey creation
 
   # Issue 234 - text field with radio buttons
   @javascript
-   Scenario: A question with an option radio button for other and text input
+   Scenario: Creating a question with an option radio button for other and text input
     Given the survey
     """
       survey "Favorite Cuisine" do
@@ -317,7 +317,7 @@ Feature: Survey creation
 
   # Issue 234 - empty text field with radio buttons
   @javascript
-  Scenario: A question with an option radio button for other and text input
+  Scenario: Creating another question with an option radio button for other and text input
     Given the survey
     """
       survey "Favorite Cuisine" do
@@ -339,7 +339,7 @@ Feature: Survey creation
   # Issue 259 - substitution of the text with Mustache
   @wip
   @javascript
-  Scenario: A question with an mustache syntax
+  Scenario: Creating a question with an mustache syntax
     Given I have survey context of "FakeMustacheContext"
     Given the survey
     """
@@ -370,7 +370,7 @@ Feature: Survey creation
     And I should see "Santa Claus doesn't exist"
 
 
-  Scenario: "Saving grids"
+  Scenario: Creating and saving grids
     Given the survey
     """
       survey "Grid" do
@@ -398,7 +398,7 @@ Feature: Survey creation
     And I press "One"
     Then there should be 1 response with answer "1"
 
-  Scenario: "Dates"
+  Scenario: Creating dates
     Given the survey
     """
       survey "When" do
@@ -453,7 +453,7 @@ Feature: Survey creation
     Then the "When phone" field should contain "2011-02-15 17:00:00"
 
   @javascript
-  Scenario: "Date"
+  Scenario: Creating a date
     Given the survey
     """
       survey "When" do
@@ -469,7 +469,7 @@ Feature: Survey creation
     And I press "Click here to finish"
     Then there should be a datetime response with today's date
 
-  Scenario: "Images"
+  Scenario: Creating images
     Given the survey
     """
       survey "Images" do
@@ -485,7 +485,7 @@ Feature: Survey creation
     And I should see the image "/images/surveyor/prev.gif"
 
   @javascript
-  Scenario: "Unchecking Checkboxes"
+  Scenario: Creating and unchecking checkboxes
     Given the survey
     """
       survey "Travels" do
