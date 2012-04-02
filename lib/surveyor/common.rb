@@ -1,3 +1,5 @@
+require 'uuidtools'
+
 module Surveyor
   class Common
     RAND_CHARS = [('a'..'z'), ('A'..'Z'), (0..9)].map{|r| r.to_a}.flatten.join
@@ -25,6 +27,9 @@ module Surveyor
       
       alias :normalize :to_normalized_string
       
+      def generate_api_id
+        UUIDTools::UUID.random_create.to_s
+      end
     end
   end
 end
