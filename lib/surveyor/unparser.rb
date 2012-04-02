@@ -48,7 +48,7 @@ class QuestionGroup < ActiveRecord::Base
   # block
 
   def unparse(dsl)
-    attrs = (self.attributes.diff QuestionGroup.new(:text => text).attributes).delete_if{|k,v| %w(created_at updated_at id).include?(k) or (k == "display_type" && %w(grid repeater default).include?(v))}.symbolize_keys!
+    attrs = (self.attributes.diff QuestionGroup.new(:text => text).attributes).delete_if{|k,v| %w(created_at updated_at id api_id).include?(k) or (k == "display_type" && %w(grid repeater default).include?(v))}.symbolize_keys!
     method = (%w(grid repeater).include?(display_type) ? display_type : "group")
     dsl << "\n"
     dsl << "    #{method} \"#{text}\""
