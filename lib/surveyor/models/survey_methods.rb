@@ -1,4 +1,4 @@
-require 'uuid'
+require 'surveyor/models'
 
 module Surveyor
   module Models
@@ -38,7 +38,7 @@ module Surveyor
 
       def default_args
         self.inactive_at ||= DateTime.now
-        self.api_id ||= UUID.generate
+        self.api_id ||= Surveyor::Models.generate_api_id
         self.display_order ||= Survey.count
       end
 
