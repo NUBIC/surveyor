@@ -48,7 +48,6 @@ namespace :testbed do
         f.puts %q{eval(File.read File.join(plugin_root, 'Gemfile.rails_version'))}
         f.puts %q{gem 'sqlite3'}
         f.puts %q{gem 'surveyor', :path => plugin_root}
-        f.puts %q{gem 'rabl', '=0.6.6'}
       end
 
       Bundler.with_clean_env do
