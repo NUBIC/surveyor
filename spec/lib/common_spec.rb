@@ -46,5 +46,17 @@ describe Surveyor::Common, "" do
     b = %({"survey": {"title": "Simple survey","uuid": "*","sections": [{"title": "Basic questions"}]}})
     Surveyor::Common.equal_json_excluding_uuids(a,b).should be_true
   end
-  
+  describe '#generate_api_id' do
+    def generate
+      Surveyor::Common.generate_api_id
+    end
+
+    it 'generates a String' do
+      generate.should be_a String
+    end
+
+    it 'generates a new value every time' do
+      (1..100).collect { generate }.uniq.size.should == 100
+    end
+  end
 end
