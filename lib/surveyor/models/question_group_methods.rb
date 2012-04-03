@@ -1,3 +1,5 @@
+require 'surveyor/common'
+
 module Surveyor
   module Models
     module QuestionGroupMethods
@@ -17,7 +19,7 @@ module Surveyor
 
       def default_args
         self.display_type ||= "inline"
-        self.api_id ||= UUID.generate
+        self.api_id ||= Surveyor::Common.generate_api_id
       end
 
       def renderer
