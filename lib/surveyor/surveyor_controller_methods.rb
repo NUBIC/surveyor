@@ -1,3 +1,5 @@
+require 'rabl'
+Rabl.register!
 module Surveyor
   module SurveyorControllerMethods
     def self.included(base)

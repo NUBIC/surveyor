@@ -1,7 +1,8 @@
 Rabl.configure {|config| config.include_json_root = false }
 
 object @survey
-attributes :title, :api_id => :uuid
+attribute :title
+attribute :api_id => :uuid
 node(:description,            :if => lambda {|s| !s.description.blank? }){|s| s.description }
 node(:reference_identifier,   :if => lambda {|s| !s.reference_identifier.blank? }){|s| s.reference_identifier }
 
@@ -12,7 +13,7 @@ child :sections => :sections do
   
   child :questions_and_groups => :questions_and_groups do
     # both questions and question_groups have uuid, text, help_text, reference_identifier, and type
-    attributes :api_id => :uuid
+    attribute :api_id => :uuid
     node(:text,                 :if => lambda { |q| q.is_a?(Question)}){ |q| q.split_text(:pre) }
     node(:text,                 :if => lambda { |q| q.is_a?(QuestionGroup)}){ |q| q.text }
     node(:help_text,            :if => lambda { |q| !q.help_text.blank? }){ |q| q.help_text }
@@ -24,9 +25,9 @@ child :sections => :sections do
     node(:post_text,            :if => lambda { |q| q.is_a?(Question) && !q.split_text(:post).blank? }){ |q| q.split_text(:post) }
   
     child :answers, :if => lambda { |q| q.is_a?(Question) && !q.answers.blank? } do
-      attributes :api_id => :uuid
+      attribute :api_id => :uuid
       node(:help_text, :if => lambda { |a| !a.help_text.blank? }){ |a| a.help_text }
-      node(:is_exclusive, :if => lambda { |a| a.is_exclusive }){ |a| a.is_exclusive }
+      node(:exclusive, :if => lambda { |a| a.is_exclusive }){ |a| a.is_exclusive }
       node(:text){ |a| a.split_or_hidden_text(:pre) }
       node(:post_text, :if => lambda { |a| !a.split_or_hidden_text(:post).blank? }){ |a| a.split_or_hidden_text(:post) }
       node(:type, :if => lambda { |a| a.response_class != "answer" }){ |a| a.response_class }

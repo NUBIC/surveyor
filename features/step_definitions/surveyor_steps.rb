@@ -90,7 +90,8 @@ end
 
 Then /^the json for "([^"]*)" should be$/ do |title, string|
   visit "/surveys/#{Survey.find_by_title(title).access_code}.json"
-  Surveyor::Common.equal_json_excluding_uuids(response.body, string).should == true
+  # page.find('body').text.should == "" # for debugging
+  Surveyor::Common.equal_json_excluding_uuids(page.find('body').text, string).should == true
 end
 
 Then /the element "([^\"]*)" should be hidden$/ do |selector|
