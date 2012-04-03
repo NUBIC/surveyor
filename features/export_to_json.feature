@@ -34,8 +34,8 @@ Feature: Survey export
         "display_order":0,
         "questions_and_groups": [
           { "uuid": "*", "type": "label", "text": "These questions are examples of the basic supported input types" },
-          { "uuid": "*", "reference": "1", "pick": "one", "text": "What is your favorite color?", "answers": [{"text": "red"}, {"text": "blue"}, {"text": "green"}, {"text": "Other"}]},
-          { "uuid": "*", "reference": "2b", "pick": "any", "text": "Choose the colors you don't like", "answers": [{"text": "orange"},{"text": "purple"},{"text": "brown"},{"text": "Omit", "exclusive": "true"}]}]
+          { "uuid": "*", "reference_identifier": "1", "pick": "one", "text": "What is your favorite color?", "answers": [{"text": "red", "uuid": "*"}, {"text": "blue", "uuid": "*"}, {"text": "green", "uuid": "*"}, {"text": "Other", "uuid": "*"}]},
+          { "uuid": "*", "reference_identifier": "2b", "pick": "any", "text": "Choose the colors you don't like", "answers": [{"text": "orange", "uuid": "*"},{"text": "purple", "uuid": "*"},{"text": "brown", "uuid": "*"},{"text": "Omit", "exclusive": "true", "uuid": "*"}]}]
         }]
       }
     """
