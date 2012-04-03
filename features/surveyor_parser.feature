@@ -1,5 +1,5 @@
 Feature: Survey parser
-  As a 
+  As a developer
   I want to write out the survey in the DSL
   So that I can give it to survey participants
   
