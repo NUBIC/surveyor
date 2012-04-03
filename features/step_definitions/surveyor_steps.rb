@@ -90,7 +90,7 @@ end
 
 Then /^the json for "([^"]*)" should be$/ do |title, string|
   visit "/surveys/#{Survey.find_by_title(title).access_code}.json"
-  # page.find('body').text.should == "" # for debugging
+  puts page.find('body').text
   Surveyor::Common.equal_json_excluding_uuids(page.find('body').text, string).should == true
 end
 

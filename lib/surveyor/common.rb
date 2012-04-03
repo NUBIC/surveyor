@@ -36,8 +36,11 @@ module Surveyor
         if a.is_a?(Hash)
           return false if a.size != b.size
           a.each do |k,v|
-            return true if k == "uuid" && b.has_key?("uuid")
-            return false if deep_compare(v,b[k]) == false
+            if k == "uuid"
+              return false unless b.has_key?("uuid")
+            else
+              return false if deep_compare(v,b[k]) == false
+            end
           end
         elsif a.is_a?(Array)
           return false if a.size != b.size
