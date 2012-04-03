@@ -1,5 +1,6 @@
 require 'rabl'
 Rabl.register!
+Rabl.configure {|config| config.include_json_root = false }
 module Surveyor
   module SurveyorControllerMethods
     def self.included(base)
