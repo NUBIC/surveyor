@@ -76,8 +76,8 @@ describe SurveyorHelper do
     helper.response_for(nil, q1).should == nil
     helper.response_for(rs, q1).should == r1
     helper.response_for(rs, q1, a).should == r1
-    helper.response_for(rs, q2).attributes.should == Response.new(:question => q2, :response_set => rs).attributes
-    helper.response_for(rs, q2, b).attributes.should == Response.new(:question => q2, :response_set => rs).attributes
+    helper.response_for(rs, q2).attributes.reject{|k,v| k == "api_id"}.should == Response.new(:question => q2, :response_set => rs).attributes.reject{|k,v| k == "api_id"}
+    helper.response_for(rs, q2, b).attributes.reject{|k,v| k == "api_id"}.should == Response.new(:question => q2, :response_set => rs).attributes.reject{|k,v| k == "api_id"}
     helper.response_for(rs, q3, c, "1").should == r3
 
   end

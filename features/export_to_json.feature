@@ -40,50 +40,57 @@ Feature: Survey export
       }
     """
   
-#   Scenario: Exporting response sets
-#   Given I parse
-#   """
-#     survey "Simple json response sets" do
-#       section "Colors" do
-# 
-#         question_1 "What is your favorite color?", :pick => :one
-#         answer "red"
-#         answer "blue"
-#         answer "green"
-#         answer :other
-# 
-#         q_2b "What color don't you like?"
-#         a_1 "color", :string
-#       end
-#     end
-#   """
-# When I start the "Simple json" survey
-# And I choose "red"
-# And I fill in "color" with "orange"
-# And I press "Click here to finish"
-# Then there should be 1 response set with 2 responses with:
-#   | answer |
-#   | red    |
-#   | orange |
-# And the json for the last response set should be
-# """
-# { 
-#   "uuid":"*",
-#   "survey_id":"*",
-#   "created_at":"*",
-#   "completed_at":"*",
-#   "responses":[{
-#     "uuid":"*",
-#     "answer_id":"*",
-#     "question_id":"*"
-#     "created_at":"*",
-#     "modified_at":"*"
-#   },{
-#     "uuid":"*",
-#     "answer_id":"*",
-#     "question_id":"*"
-#     "created_at":"*",
-#     "modified_at":"*"
-#   }]
-# }
-# """
+  Scenario: Exporting response sets
+  Given I parse
+  """
+    survey "Simple json response sets" do
+      section "Colors" do
+
+        question_1 "What is your favorite color?", :pick => :one
+        answer "red"
+        answer "blue"
+        answer "green"
+        answer :other
+
+        q_2b "What color don't you like?"
+        a_1 "color", :string
+      end
+      section "Other" do
+        label "no"
+      end
+    end
+  """
+  When I start the "Simple json response sets" survey
+  And I choose "red"
+  And I press "Other"
+  And I wait 1 seconds
+  And I press "Colors"
+  And I fill in "color" with "orange"
+  And I press "Other"
+  And I press "Click here to finish"
+  Then there should be 1 response set with 2 responses with:
+    | answer |
+    | red    |
+  And the json for the last response set for "Simple json response sets" should be
+  """
+  { 
+    "uuid":"*",
+    "survey_id":"*",
+    "created_at":"*",
+    "completed_at":"*",
+    "responses":[{
+      "uuid":"*",
+      "answer_id":"*",
+      "question_id":"*",
+      "created_at":"*",
+      "modified_at":"*"
+    },{
+      "uuid":"*",
+      "answer_id":"*",
+      "question_id":"*",
+      "created_at":"*",
+      "modified_at":"*",
+      "value":"orange"
+    }]
+  }
+  """

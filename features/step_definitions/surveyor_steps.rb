@@ -91,7 +91,15 @@ end
 Then /^the json for "([^"]*)" should be$/ do |title, string|
   visit "/surveys/#{Survey.find_by_title(title).access_code}.json"
   puts page.find('body').text
-  Surveyor::Common.equal_json_excluding_uuids(page.find('body').text, string).should == true
+  Surveyor::Common.equal_json_excluding_wildcards(page.find('body').text, string).should == true
+end
+
+Then /^the json for the last response set for "([^"]*)" should be$/ do |title, string|
+  (survey = Survey.find_by_title(title)).should_not be_nil
+  (response_set = ResponseSet.last(:conditions => {:survey_id => survey.id})).should_not be_nil
+  visit "/surveys/#{survey.access_code}/#{response_set.access_code}.json"
+  puts page.find('body').text
+  Surveyor::Common.equal_json_excluding_wildcards(page.find('body').text, string).should == true
 end
 
 Then /the element "([^\"]*)" should be hidden$/ do |selector|

@@ -39,6 +39,7 @@ module Surveyor
           format.csv {
             send_data(@response_set.to_csv, :type => 'text/csv; charset=utf-8; header=present',:filename => "#{@response_set.updated_at.strftime('%Y-%m-%d')}_#{@response_set.access_code}.csv")
           }
+          format.json
         end
       else
         flash[:notice] = t('surveyor.unable_to_find_your_responses')

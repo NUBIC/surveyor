@@ -77,8 +77,9 @@ module Surveyor
       def default_args
         self.started_at ||= Time.now
         self.access_code ||= random_unique_access_code
+        self.api_id ||= Surveyor::Common.generate_api_id
       end
-
+      
       def random_unique_access_code
         val = Surveyor::Common.make_tiny_code
         while ResponseSet.find_by_access_code(val)
@@ -101,6 +102,13 @@ module Surveyor
         end
         result
       end
+      
+      def to_json
+        template_path = ActionController::Base.view_paths.find("show", ["surveyor"], false, {:handlers=>[:rabl], :locale=>[:en], :formats=>[:json]}, [], []).inspect
+        engine = Rabl::Engine.new(File.read(template_path))
+        engine.render(nil, {:object => self})
+      end
+      
       def complete!
         self.completed_at = Time.now
       end
