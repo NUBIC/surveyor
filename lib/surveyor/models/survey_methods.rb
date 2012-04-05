@@ -79,7 +79,7 @@ module Surveyor
       def as_json(options = nil)
         template_path = ActionController::Base.view_paths.find("export", ["surveyor"], false, {:handlers=>[:rabl], :locale=>[:en], :formats=>[:json]}, [], []).inspect
         engine = Rabl::Engine.new(File.read(template_path))
-        engine.to_hash(options || {})
+        engine.to_hash((options || {}).merge(:object => self))
       end
       
     end
