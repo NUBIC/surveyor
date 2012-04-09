@@ -1,5 +1,7 @@
 require 'fastercsv'
 require 'csv'
+require 'rabl'
+
 module Surveyor
   module Models
     module ResponseSetMethods

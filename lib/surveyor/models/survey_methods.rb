@@ -1,4 +1,5 @@
 require 'surveyor/common'
+require 'rabl'
 
 module Surveyor
   module Models
