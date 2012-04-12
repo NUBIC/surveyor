@@ -1,0 +1,205 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <title>Surveyor by NUBIC</title>
+    
+    <link rel="stylesheet" href="stylesheets/styles.css">
+    <link rel="stylesheet" href="stylesheets/pygment_trac.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+  </head>
+  <body>
+    <div class="wrapper">
+      <header>
+        <h1>Surveyor</h1>
+        <p>Surveyor is a Rails gem that lets you easily design surveys, questionnares, quizes, etc... and add them to your app.  (See Readme for more information)</p>
+        <p class="view"><a href="https://github.com/NUBIC/surveyor">View the Project on GitHub <small>NUBIC/surveyor</small></a></p>
+        <ul>
+          <li><a href="https://github.com/NUBIC/surveyor/zipball/master">Download <strong>ZIP File</strong></a></li>
+          <li><a href="https://github.com/NUBIC/surveyor/tarball/master">Download <strong>TAR Ball</strong></a></li>
+          <li><a href="https://github.com/NUBIC/surveyor">Fork On <strong>GitHub</strong></a></li>
+        </ul>
+      </header>
+      <section>
+        <h1>Surveys On Rails</h1>
+
+<p>Surveyor is a ruby gem and developer tool that brings surveys into Rails applications. Surveys are written in the Surveyor DSL (Domain Specific Language). Before Rails 2.3, it was implemented as a Rails Engine. It also existed previously as a plugin. Today it is a gem only.</p>
+
+<h2>Why you might want to use Surveyor</h2>
+
+<p>If your Rails app needs to asks users questions as part of a survey, quiz, or questionnaire then you should consider using Surveyor. This gem was designed to deliver clinical research surveys to large populations, but it can be used for any type of survey.</p>
+
+<p>The Surveyor DSL defines questions, answers, question groups, survey sections, dependencies (e.g. if response to question 4 is A, then show question 5), and validations. Answers are the options available for each question - user input is called "responses" and are grouped into "response sets". A DSL makes it significantly easier to import long surveys (no more click/copy/paste). It also enables non-programmers to write out, edit, re-edit... any number of surveys.</p>
+
+<h2>DSL example</h2>
+
+<p>The Surveyor DSL supports a wide range of question types (too many to list here) and complex dependency logic. Here are the first few questions of the "kitchen sink" survey which should give you and idea of how it works. The full example with all the types of questions available if you follow the installation instructions below.</p>
+
+<pre><code>survey "Kitchen Sink survey" do
+
+  section "Basic questions" do
+    # A label is a question that accepts no answers
+    label "These questions are examples of the basic supported input types"
+
+    # A basic question with radio buttons
+    question_1 "What is your favorite color?", :pick =&gt; :one
+    answer "red"
+    answer "blue"
+    answer "green"
+    answer "yellow"
+    answer :other
+
+    # A basic question with checkboxes
+    # "question" and "answer" may be abbreviated as "q" and "a"
+    q_2 "Choose the colors you don't like", :pick =&gt; :any
+    a_1 "red"
+    a_2 "blue"
+    a_3 "green"
+    a_4 "yellow"
+    a :omit
+
+    # A dependent question, with conditions and rule to logically join them
+    # the question's reference identifier is "2a", and the answer's reference_identifier is "1"
+    # question reference identifiers used in conditions need to be unique on a survey for the lookups to work
+    q_2a "Please explain why you don't like this color?"
+    a_1 "explanation", :text
+    dependency :rule =&gt; "A or B or C or D"
+    condition_A :q_2, "==", :a_1
+    condition_B :q_2, "==", :a_2
+    condition_C :q_2, "==", :a_3
+    condition_D :q_2, "==", :a_4
+
+    # ... other question, sections and such. See surveys/kitchen_sink_survey.rb for more.
+ end
+
+end
+</code></pre>
+
+<p>The first question is "pick one" (radio buttons) with "other". The second question is "pick any" (checkboxes) with the option to "omit". It also features a dependency with a follow up question. Notice the dependency rule is defined as a string. We support complex dependency such as "A and (B or C) and D" or "A or ((B and C) or D)". The conditions are evaluated separately using the operators "==","!=","&lt;&gt;", "&gt;=","&lt;" the substituted by letter into to the dependency rule and evaluated.</p>
+
+<h1>Installation</h1>
+
+<ol>
+<li>
+<p>Add surveyor to your Gemfile:</p>
+
+<p>gem "surveyor"</p>
+</li>
+</ol><p>Then run:</p>
+
+<pre><code>bundle install
+</code></pre>
+
+<ol>
+<li>
+<p>Generate assets, run migrations:</p>
+
+<p>script/rails generate surveyor:install
+rake db:migrate</p>
+</li>
+<li>
+<p>Try out the "kitchen sink" survey. The rake task above generates surveys from our custom survey DSL (a good format for end users and stakeholders).</p>
+
+<p>rake surveyor FILE=surveys/kitchen_sink_survey.rb</p>
+</li>
+<li><p>Start up your app and visit http://localhost:3000/surveys</p></li>
+</ol><p>Try taking the survey and compare it to the contents of the DSL file kitchen_sink_survey.rb. See how the DSL maps to what you see.</p>
+
+<p>There are two other useful rake tasks:</p>
+
+<ul>
+<li>
+<code>surveyor:remove</code> removes all unused surveys.</li>
+<li>
+<code>rake surveyor:unparse</code> exports a survey from the application into a
+file in the surveyor DSL.</li>
+</ul><h1>Customizing surveyor</h1>
+
+<p>Surveyor's controller, models, and views may be customized via classes in your app/models, app/helpers and app/controllers directories. To generate a sample custom controller and layout, run:</p>
+
+<p><code>script/rails generate surveyor:custom</code></p>
+
+<p>and read surveys/EXTENDING_SURVEYOR</p>
+
+<h1>PDF support</h1>
+
+<ul>
+<li>Add the following lines to your Gemfile:</li>
+</ul><pre>
+    gem 'pdfkit'
+    gem 'wkhtmltopdf'
+</pre>
+
+<p>or on OSX:</p>
+
+<pre>
+    gem 'pdfkit'
+    gem 'wkhtmltopdf-binary'
+</pre>
+
+<ul>
+<li>Add the following to your application.rb:</li>
+</ul><pre>
+    config.middleware.use PDFKit::Middleware
+</pre>
+
+<ul>
+<li>Create links with :format =&gt; 'pdf' in them, for example:</li>
+</ul><pre>
+    %li= link_to "PDF", view_my_survey_path(:survey_code =&gt; response_set.survey.access_code, :response_set_code =&gt; response_set.access_code, :format =&gt; 'pdf')
+</pre>
+
+<h1>Requirements</h1>
+
+<p>Surveyor depends on:</p>
+
+<ul>
+<li>Ruby (1.8.7 - 1.9.2)</li>
+<li>Rails 3.0-3.1</li>
+<li>HAML</li>
+<li>SASS</li>
+<li>fastercsv (or CSV for ruby 1.9) for csv exports</li>
+<li>formtastic</li>
+<li>UUID</li>
+</ul><p>Specific versions of the gem dependencies are listed in the gemspec.</p>
+
+<h1>Contributing, testing</h1>
+
+<p>To work on the code, fork this github project. Install <a href="http://gembundler.com/">bundler</a> if
+you don't have it, then run</p>
+
+<pre><code>$ bundle update
+</code></pre>
+
+<p>to install all the necessary gems. Then</p>
+
+<pre><code>$ bundle exec rake testbed
+</code></pre>
+
+<p>to generate a test app in <code>testbed</code>. Now you can run</p>
+
+<pre><code>$ bundle exec rake spec
+</code></pre>
+
+<p>to run the specs and</p>
+
+<pre><code>$ bundle exec rake cucumber
+</code></pre>
+
+<p>to run the features and start writing tests!</p>
+
+<p>Copyright (c) 2008-2011 Brian Chamberlain and Mark Yoon, released under the MIT license</p>
+      </section>
+      <footer>
+        <p>This project is maintained by <a href="https://github.com/NUBIC">NUBIC</a></p>
+        <p><small>Hosted on GitHub Pages &mdash; Theme by <a href="https://github.com/orderedlist">orderedlist</a></small></p>
+      </footer>
+    </div>
+    <script src="javascripts/scale.fix.js"></script>
+    
+  </body>
+</html>
