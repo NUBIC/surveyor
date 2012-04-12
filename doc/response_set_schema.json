@@ -1,0 +1,52 @@
+{
+    "$schema": "http://json-schema.org/draft-03/schema#",
+    "description": "Response set",
+    "properties": {
+        "api_id": {
+            "$ref": "http://download.nubic.northwestern.edu/surveyor/api_id_schema.json"
+        },
+        "completed_at": {
+            "format": "date-time",
+            "type": "string"
+        },
+        "created_at": {
+            "format": "date-time",
+            "type": "string"
+        },
+        "responses": {
+            "description": "Responses in the response set",
+            "items": {
+                "properties": {
+                    "answer_id": {
+                        "$ref": "http://download.nubic.northwestern.edu/surveyor/api_id_schema.json"
+                    },
+                    "api_id": {
+                        "$ref": "http://download.nubic.northwestern.edu/surveyor/api_id_schema.json"
+                    },
+                    "created_at": {
+                        "format": "date-time",
+                        "type": "string"
+                    },
+                    "question_id": {
+                        "$ref": "http://download.nubic.northwestern.edu/surveyor/api_id_schema.json"
+                    },
+                    "updated_at": {
+                        "format": "date-time",
+                        "type": "string"
+                    },
+                    "value": {
+                        "type": [
+                            "string",
+                            "number",
+                            "null"
+                        ]
+                    }
+                }
+            },
+            "type": "array"
+        },
+        "survey_id": {
+            "$ref": "http://download.nubic.northwestern.edu/surveyor/api_id_schema.json"
+        }
+    }
+}
