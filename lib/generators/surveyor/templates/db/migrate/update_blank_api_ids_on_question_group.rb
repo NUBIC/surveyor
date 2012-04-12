@@ -1,5 +1,3 @@
-require 'uuidtools'
-
 class QG < ActiveRecord::Base
   set_table_name 'question_groups' 
 end
@@ -7,7 +5,7 @@ end
 class UpdateBlankApiIdsOnQuestionGroup < ActiveRecord::Migration
   def self.up
     QG.where('api_id IS ?', nil).each do |qg|
-      qg.api_id = UUIDTools::UUID.random_create.to_s
+      qg.api_id = Surveyor::Common.generate_api_id
       qg.save!
     end
   end
