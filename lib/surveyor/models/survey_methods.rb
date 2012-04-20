@@ -38,7 +38,6 @@ module Surveyor
       end
 
       def default_args
-        self.inactive_at ||= DateTime.now
         self.api_id ||= Surveyor::Common.generate_api_id
         self.display_order ||= Survey.count
       end
@@ -60,22 +59,16 @@ module Surveyor
       def active?
         self.active_as_of?(DateTime.now)
       end
-      def active_as_of?(datetime)
-        (self.active_at.nil? or self.active_at < datetime) and (self.inactive_at.nil? or self.inactive_at > datetime)
-      end  
+      def active_as_of?(date)
+        (active_at && active_at < date && (!inactive_at || inactive_at > date)) ? true : false
+      end
       def activate!
         self.active_at = DateTime.now
+        self.inactive_at = nil
       end
       def deactivate!
         self.inactive_at = DateTime.now
-      end
-      def active_at=(datetime)
-        self.inactive_at = nil if !datetime.nil? and !self.inactive_at.nil? and self.inactive_at < datetime
-        super(datetime)
-      end
-      def inactive_at=(datetime)
-        self.active_at = nil if !datetime.nil? and !self.active_at.nil? and self.active_at > datetime
-        super(datetime)
+        self.active_at = nil
       end
       def as_json(options = nil)
         template_path = ActionController::Base.view_paths.find("export", ["surveyor"], false, {:handlers=>[:rabl], :locale=>[:en], :formats=>[:json]}, [], []).inspect

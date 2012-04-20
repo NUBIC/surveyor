@@ -72,19 +72,21 @@ describe Survey do
   it "should be inactive by default" do
     @survey.active?.should == false
   end
-
+  it "should have both inactive_at and active_at be null by default" do
+    @survey.active_at.should be_nil
+    @survey.inactive_at.should be_nil
+  end
+  
   it "should be active or active as of a certain date/time" do
-    @survey.inactive_at = 3.days.ago
+    @survey.inactive_at = 2.days.from_now
     @survey.active_at = 2.days.ago
     @survey.active?.should be_true
-    @survey.inactive_at.should be_nil
   end
 
   it "should be able to deactivate as of a certain date/time" do
-    @survey.active_at = 2.days.ago
-    @survey.inactive_at = 3.days.ago
+    @survey.active_at = 3.days.ago
+    @survey.inactive_at = 1.days.ago
     @survey.active?.should be_false
-    @survey.active_at.should be_nil
   end
 
   it "should activate and deactivate" do
@@ -92,6 +94,22 @@ describe Survey do
     @survey.active?.should be_true
     @survey.deactivate!
     @survey.active?.should be_false
+  end
+
+  it "should should nil out values of inactive_at that are in the past on activate" do
+    @survey.inactive_at = 5.days.ago
+    @survey.active?.should be_false
+    @survey.activate!
+    @survey.active?.should be_true
+    @survey.inactive_at.should be_nil
+  end
+
+  it "should should nil out values of active_at that are in the past on deactivate" do
+    @survey.active_at = 5.days.ago
+    @survey.active?.should be_true
+    @survey.deactivate!
+    @survey.active?.should be_false
+    @survey.active_at.should be_nil
   end
 
 end
