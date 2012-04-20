@@ -44,8 +44,13 @@ describe Answer, "when creating a new answer" do
   
   it "should protect api_id, timestamps" do
     saved_attrs = @answer.attributes
-    lambda {@answer.update_attributes(:created_at => 3.days.ago, :modified_at => 3.hours.ago)}.should raise_error(ActiveModel::MassAssignmentSecurity::Error)
-    lambda {@answer.update_attributes(:api_id => "NEW")}.should raise_error(ActiveModel::MassAssignmentSecurity::Error)
+    if defined? ActiveModel::MassAssignmentSecurity::Error
+      lambda {@answer.update_attributes(:created_at => 3.days.ago, :updated_at => 3.hours.ago)}.should raise_error(ActiveModel::MassAssignmentSecurity::Error)
+      lambda {@answer.update_attributes(:api_id => "NEW")}.should raise_error(ActiveModel::MassAssignmentSecurity::Error)
+    else
+      @answer.attributes = {:created_at => 3.days.ago, :updated_at => 3.hours.ago} # automatically protected by Rails
+      @answer.attributes = {:api_id => "NEW"} # Rails doesn't return false, but this will be checked in the comparison to saved_attrs
+    end
     @answer.attributes.should == saved_attrs
   end
   

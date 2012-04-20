@@ -81,7 +81,11 @@ describe DependencyCondition do
     
     it "should protect timestamps" do
       saved_attrs = @dependency_condition.attributes
-      lambda {@dependency_condition.update_attributes(:created_at => 3.days.ago, :modified_at => 3.hours.ago)}.should raise_error(ActiveModel::MassAssignmentSecurity::Error)
+      if defined? ActiveModel::MassAssignmentSecurity::Error
+        lambda {@dependency_condition.update_attributes(:created_at => 3.days.ago, :updated_at => 3.hours.ago)}.should raise_error(ActiveModel::MassAssignmentSecurity::Error)
+      else
+        @dependency_condition.attributes = {:created_at => 3.days.ago, :updated_at => 3.hours.ago} # automatically protected by Rails
+      end
       @dependency_condition.attributes.should == saved_attrs
     end
     

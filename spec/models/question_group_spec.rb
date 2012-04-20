@@ -34,8 +34,13 @@ describe QuestionGroup do
   end
   it "should protect api_id, timestamps" do
     saved_attrs = @question_group.attributes
-    lambda {@question_group.update_attributes(:created_at => 3.days.ago, :modified_at => 3.hours.ago)}.should raise_error(ActiveModel::MassAssignmentSecurity::Error)
-    lambda {@question_group.update_attributes(:api_id => "NEW")}.should raise_error(ActiveModel::MassAssignmentSecurity::Error)
+    if defined? ActiveModel::MassAssignmentSecurity::Error
+      lambda {@question_group.update_attributes(:created_at => 3.days.ago, :updated_at => 3.hours.ago)}.should raise_error(ActiveModel::MassAssignmentSecurity::Error)
+      lambda {@question_group.update_attributes(:api_id => "NEW")}.should raise_error(ActiveModel::MassAssignmentSecurity::Error)
+    else
+      @question_group.attributes = {:created_at => 3.days.ago, :updated_at => 3.hours.ago} # automatically protected by Rails
+      @question_group.attributes = {:api_id => "NEW"} # Rails doesn't return false, but this will be checked in the comparison to saved_attrs
+    end
     @question_group.attributes.should == saved_attrs
   end
   

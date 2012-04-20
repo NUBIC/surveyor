@@ -13,13 +13,21 @@ describe ResponseSet do
     @response_set.access_code.length.should == 10
   end
   
-  it "should protect api_id, timestamps" do
+  it "should protect api_id, timestamps, access_code, started_at, completed_at" do
     saved_attrs = @response_set.attributes
-    lambda {@response_set.update_attributes(:created_at => 3.days.ago, :modified_at => 3.hours.ago)}.should raise_error(ActiveModel::MassAssignmentSecurity::Error)
-    lambda {@response_set.update_attributes(:api_id => "NEW")}.should raise_error(ActiveModel::MassAssignmentSecurity::Error)
-    lambda {@response_set.update_attributes(:access_code => "AND")}.should raise_error(ActiveModel::MassAssignmentSecurity::Error)
-    lambda {@response_set.update_attributes(:started_at => 10.days.ago)}.should raise_error(ActiveModel::MassAssignmentSecurity::Error)
-    lambda {@response_set.update_attributes(:completed_at => 2.hours.ago)}.should raise_error(ActiveModel::MassAssignmentSecurity::Error)
+    if defined? ActiveModel::MassAssignmentSecurity::Error
+      lambda {@response_set.update_attributes(:created_at => 3.days.ago, :updated_at => 3.hours.ago)}.should raise_error(ActiveModel::MassAssignmentSecurity::Error)
+      lambda {@response_set.update_attributes(:api_id => "NEW")}.should raise_error(ActiveModel::MassAssignmentSecurity::Error)
+      lambda {@response_set.update_attributes(:access_code => "AND")}.should raise_error(ActiveModel::MassAssignmentSecurity::Error)
+      lambda {@response_set.update_attributes(:started_at => 10.days.ago)}.should raise_error(ActiveModel::MassAssignmentSecurity::Error)
+      lambda {@response_set.update_attributes(:completed_at => 2.hours.ago)}.should raise_error(ActiveModel::MassAssignmentSecurity::Error)
+    else
+      @response_set.attributes = {:created_at => 3.days.ago, :updated_at => 3.hours.ago} # automatically protected by Rails
+      @response_set.attributes = {:api_id => "NEW"} # Rails doesn't return false, but this will be checked in the comparison to saved_attrs
+      @response_set.attributes = {:access_code => "AND"}
+      @response_set.attributes = {:started_at => 10.days.ago}
+      @response_set.attributes = {:completed_at => 2.hours.ago}
+    end
     @response_set.attributes.should == saved_attrs
   end
 

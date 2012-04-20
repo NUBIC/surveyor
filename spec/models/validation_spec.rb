@@ -32,7 +32,12 @@ describe Validation do
   end
   it "should protect timestamps" do
     saved_attrs = @validation.attributes
-    lambda {@validation.update_attributes(:created_at => 3.days.ago, :modified_at => 3.hours.ago)}.should raise_error(ActiveModel::MassAssignmentSecurity::Error)
+    if defined? ActiveModel::MassAssignmentSecurity::Error
+      lambda {@validation.update_attributes(:created_at => 3.days.ago, :updated_at => 3.hours.ago)}.should raise_error(ActiveModel::MassAssignmentSecurity::Error)
+    else
+      @validation.attributes = {:created_at => 3.days.ago, :updated_at => 3.hours.ago} # automatically protected by Rails
+      @validation.attributes = {:created_at => 3.days.ago, :updated_at => 3.hours.ago} # automatically protected by Rails
+    end
     @validation.attributes.should == saved_attrs
   end
 end
