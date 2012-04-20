@@ -39,6 +39,14 @@ describe Response, "when saving a response" do
     response2 = Factory(:response, :question => Factory(:question), :answer => Factory(:answer), :response_set => @response.response_set, :created_at => (@response.created_at + 1))
     Response.all.should == [@response, response2]
   end
+  
+  it "should protect api_id, timestamps" do
+    saved_attrs = @response.attributes
+    lambda {@response.update_attributes(:created_at => 3.days.ago, :modified_at => 3.hours.ago)}.should raise_error(ActiveModel::MassAssignmentSecurity::Error)
+    lambda {@response.update_attributes(:api_id => "NEW")}.should raise_error(ActiveModel::MassAssignmentSecurity::Error)
+    @response.attributes.should == saved_attrs
+  end
+  
 
   describe "returns the response as the type requested" do
     it "returns 'string'" do

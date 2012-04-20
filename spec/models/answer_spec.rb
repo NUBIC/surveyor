@@ -42,6 +42,13 @@ describe Answer, "when creating a new answer" do
     @answer.api_id.length.should == 36
   end
   
+  it "should protect api_id, timestamps" do
+    saved_attrs = @answer.attributes
+    lambda {@answer.update_attributes(:created_at => 3.days.ago, :modified_at => 3.hours.ago)}.should raise_error(ActiveModel::MassAssignmentSecurity::Error)
+    lambda {@answer.update_attributes(:api_id => "NEW")}.should raise_error(ActiveModel::MassAssignmentSecurity::Error)
+    @answer.attributes.should == saved_attrs
+  end
+  
   require 'mustache'
   class FakeMustacheContext < ::Mustache
     def site

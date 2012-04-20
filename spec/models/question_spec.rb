@@ -42,6 +42,13 @@ describe Question, "when creating a new question" do
   it "should have an api_id" do
     @question.api_id.length.should == 36
   end
+  
+  it "should protect api_id, timestamps" do
+    saved_attrs = @question.attributes
+    lambda {@question.update_attributes(:created_at => 3.days.ago, :modified_at => 3.hours.ago)}.should raise_error(ActiveModel::MassAssignmentSecurity::Error)
+    lambda {@question.update_attributes(:api_id => "NEW")}.should raise_error(ActiveModel::MassAssignmentSecurity::Error)
+    @question.attributes.should == saved_attrs
+  end
 end
 
 describe Question, "that has answers" do

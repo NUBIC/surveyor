@@ -111,5 +111,14 @@ describe Survey do
     @survey.active?.should be_false
     @survey.active_at.should be_nil
   end
-
+  
+  it "should protect access_code, api_id, active_at, inactive_at, timestamps" do
+    saved_attrs = @survey.attributes
+    lambda {@survey.update_attributes(:access_code => "NEW")}.should raise_error(ActiveModel::MassAssignmentSecurity::Error)
+    lambda {@survey.update_attributes(:api_id => "AND")}.should raise_error(ActiveModel::MassAssignmentSecurity::Error)
+    lambda {@survey.update_attributes(:active_at => 2.days.ago)}.should raise_error(ActiveModel::MassAssignmentSecurity::Error)
+    lambda {@survey.update_attributes(:inactive_at => 3.days.from_now)}.should raise_error(ActiveModel::MassAssignmentSecurity::Error)
+    lambda {@survey.update_attributes(:created_at => 3.days.ago, :modified_at => 3.hours.ago)}.should raise_error(ActiveModel::MassAssignmentSecurity::Error)
+    @survey.attributes.should == saved_attrs
+  end
 end

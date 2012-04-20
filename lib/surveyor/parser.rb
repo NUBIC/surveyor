@@ -133,6 +133,8 @@ class Question < ActiveRecord::Base
   # attributes
   attr_accessor :correct, :context_reference
   before_save :resolve_correct_answers
+
+  attr_accessible :correct, :context_reference
   
   def self.parse_and_build(context, args, original_method, reference_identifier)
     # clear context
@@ -154,7 +156,7 @@ class Question < ActiveRecord::Base
     # add grid answers
     if context[:question_group] && context[:question_group].display_type == "grid"
       (context[:grid_answers] || []).each do |grid_answer|
-        a = context[:question].answers.build(grid_answer.attributes)
+        a = context[:question].answers.build(grid_answer.attributes.reject{|k,v| %w(id api_id created_at updated_at).include?(k)})
         context[:answer_references][reference_identifier] ||= {} unless reference_identifier.blank?
         context[:answer_references][reference_identifier][grid_answer.reference_identifier] = a unless reference_identifier.blank? or grid_answer.reference_identifier.blank?
       end
@@ -189,6 +191,8 @@ class DependencyCondition < ActiveRecord::Base
   
   attr_accessor :question_reference, :answer_reference, :context_reference
   before_save :resolve_references
+  
+  attr_accessible :question_reference, :answer_reference, :context_reference
   
   def self.parse_and_build(context, args, original_method, reference_identifier)
     # clear context

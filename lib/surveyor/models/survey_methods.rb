@@ -20,7 +20,10 @@ module Surveyor
           base.send :validates_uniqueness_of, :access_code
           
           @@validations_already_included = true
-        end        
+        end
+        
+        # Whitelisting attributes
+        base.send :attr_accessible, :title, :description, :reference_identifier, :data_export_identifier, :common_namespace, :common_identifier, :css_url, :custom_class, :display_order
 
         # Class methods
         base.instance_eval do

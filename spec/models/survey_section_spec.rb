@@ -16,6 +16,11 @@ describe SurveySection, "when saving a survey_section" do
     # @survey_section.survey_id = nil
     # @survey_section.should have(1).error_on(:survey)
   end
+  it "should protect timestamps" do
+    saved_attrs = @survey_section.attributes
+    lambda {@survey_section.update_attributes(:created_at => 3.days.ago, :modified_at => 3.hours.ago)}.should raise_error(ActiveModel::MassAssignmentSecurity::Error)
+    @survey_section.attributes.should == saved_attrs
+  end
 end
 
 describe SurveySection, "with questions" do

@@ -24,6 +24,9 @@ module Surveyor
 
         # Attributes
         base.send :attr_protected, :completed_at
+        
+        # Whitelisting attributes
+        base.send :attr_accessible, :survey, :responses_attributes, :user_id, :survey_id
 
         # Class methods
         base.instance_eval do

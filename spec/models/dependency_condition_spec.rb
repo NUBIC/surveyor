@@ -78,6 +78,13 @@ describe DependencyCondition do
       @dependency_condition.stub!(:is_met?).and_return(true)
       @dependency_condition.to_hash(@rs)
     end
+    
+    it "should protect timestamps" do
+      saved_attrs = @dependency_condition.attributes
+      lambda {@dependency_condition.update_attributes(:created_at => 3.days.ago, :modified_at => 3.hours.ago)}.should raise_error(ActiveModel::MassAssignmentSecurity::Error)
+      @dependency_condition.attributes.should == saved_attrs
+    end
+    
   end
 
   describe "to_hash" do

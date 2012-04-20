@@ -49,7 +49,11 @@ describe ValidationCondition do
     @validation_condition.operator = "#"
     @validation_condition.should have(1).error_on(:operator)
   end
-  
+  it "should protect timestamps" do
+    saved_attrs = @validation_condition.attributes
+    lambda {@validation_condition.update_attributes(:created_at => 3.days.ago, :modified_at => 3.hours.ago)}.should raise_error(ActiveModel::MassAssignmentSecurity::Error)
+    @validation_condition.attributes.should == saved_attrs
+  end
 end
 
 describe ValidationCondition, "validating responses" do

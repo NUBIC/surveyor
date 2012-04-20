@@ -30,6 +30,11 @@ describe Validation do
     @validation.rule = "a and b"
     @validation.should have(1).error_on(:rule)
   end
+  it "should protect timestamps" do
+    saved_attrs = @validation.attributes
+    lambda {@validation.update_attributes(:created_at => 3.days.ago, :modified_at => 3.hours.ago)}.should raise_error(ActiveModel::MassAssignmentSecurity::Error)
+    @validation.attributes.should == saved_attrs
+  end
 end
 describe Validation, "reporting its status" do
   def test_var(vhash, vchashes, ahash, rhash)

@@ -32,4 +32,11 @@ describe QuestionGroup do
     @dependency.should_receive(:is_met?).and_return(false)
     @question_group.css_class(Factory(:response_set)).should == "g_dependent g_hidden foo bar"
   end
+  it "should protect api_id, timestamps" do
+    saved_attrs = @question_group.attributes
+    lambda {@question_group.update_attributes(:created_at => 3.days.ago, :modified_at => 3.hours.ago)}.should raise_error(ActiveModel::MassAssignmentSecurity::Error)
+    lambda {@question_group.update_attributes(:api_id => "NEW")}.should raise_error(ActiveModel::MassAssignmentSecurity::Error)
+    @question_group.attributes.should == saved_attrs
+  end
+  
 end

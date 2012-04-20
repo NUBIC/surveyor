@@ -43,6 +43,11 @@ describe Dependency do
     @dependency.rule = "a and b"
     @dependency.should have(1).error_on(:rule)
   end
+  it "should protect timestamps" do
+    saved_attrs = @dependency.attributes
+    lambda {@dependency.update_attributes(:created_at => 3.days.ago, :modified_at => 3.hours.ago)}.should raise_error(ActiveModel::MassAssignmentSecurity::Error)
+    @dependency.attributes.should == saved_attrs
+  end
   
 end
 

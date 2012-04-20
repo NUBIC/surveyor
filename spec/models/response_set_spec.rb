@@ -12,6 +12,16 @@ describe ResponseSet do
     @response_set.access_code.should_not be_nil
     @response_set.access_code.length.should == 10
   end
+  
+  it "should protect api_id, timestamps" do
+    saved_attrs = @response_set.attributes
+    lambda {@response_set.update_attributes(:created_at => 3.days.ago, :modified_at => 3.hours.ago)}.should raise_error(ActiveModel::MassAssignmentSecurity::Error)
+    lambda {@response_set.update_attributes(:api_id => "NEW")}.should raise_error(ActiveModel::MassAssignmentSecurity::Error)
+    lambda {@response_set.update_attributes(:access_code => "AND")}.should raise_error(ActiveModel::MassAssignmentSecurity::Error)
+    lambda {@response_set.update_attributes(:started_at => 10.days.ago)}.should raise_error(ActiveModel::MassAssignmentSecurity::Error)
+    lambda {@response_set.update_attributes(:completed_at => 2.hours.ago)}.should raise_error(ActiveModel::MassAssignmentSecurity::Error)
+    @response_set.attributes.should == saved_attrs
+  end
 
   describe '#access_code' do
     let!(:rs1) { Factory(:response_set).tap { |rs| rs.update_attribute(:access_code, 'one') } }
@@ -19,7 +29,9 @@ describe ResponseSet do
 
     # Regression test for #263
     it 'accepts an access code in the constructor' do
-      ResponseSet.new(:access_code => 'eleven').access_code.should == 'eleven'
+      rs = ResponseSet.new
+      rs.access_code = 'eleven'
+      rs.access_code.should == 'eleven'
     end
 
     # Regression test for #263
