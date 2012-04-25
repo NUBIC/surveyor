@@ -83,7 +83,8 @@ Feature: Survey export
       "answer_id":"*",
       "question_id":"*",
       "created_at":"*",
-      "modified_at":"*"
+      "modified_at":"*",
+      "value":null
     },{
       "uuid":"*",
       "answer_id":"*",
