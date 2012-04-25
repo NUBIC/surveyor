@@ -2,7 +2,7 @@
     "$schema": "http://json-schema.org/draft-03/schema#",
     "description": "Response set",
     "properties": {
-        "api_id": {
+        "uuid": {
             "$ref": "http://download.nubic.northwestern.edu/surveyor/api_id_schema.json"
         },
         "completed_at": {
@@ -20,7 +20,7 @@
                     "answer_id": {
                         "$ref": "http://download.nubic.northwestern.edu/surveyor/api_id_schema.json"
                     },
-                    "api_id": {
+                    "uuid": {
                         "$ref": "http://download.nubic.northwestern.edu/surveyor/api_id_schema.json"
                     },
                     "created_at": {
