@@ -90,6 +90,10 @@ Surveyor's controller, models, and views may be customized via classes in your a
 
 and read surveys/EXTENDING\_SURVEYOR
 
+# The asset pipeline
+
+Surveyor is now aware of the Rails asset pipeline (http://http://guides.rubyonrails.org/asset_pipeline.html). If Rails.application.config.assets.enabled == true, then the surveyor:install generator will generate app/assets/stylesheets/surveyor_all.css and app/assets/javascripts/surveyor_all.js and will link those two files in the default surveyor layout. If not, the install generator will put the assets into the various directories in your app's public directory and include them in the layout individually.
+
 # PDF support
 
 * Add the following lines to your Gemfile:

@@ -21,22 +21,16 @@ module Surveyor
       end
     end
     def assets
-      asset_directory = "public"
       if Rails.application.config.respond_to?(:assets) && Rails.application.config.assets.enabled == true
-        asset_directory = "vendor/assets"
+        directory "app/assets"
+        copy_file "vendor/assets/stylesheets/custom.sass"
+      else
+        directory "../../../assets/javascripts", "public/javascripts"
+        directory "../../../assets/images", "public/images"
+        directory "../../../assets/stylesheets/surveyor", "public/stylesheets/surveyor"
+        copy_file "../../../assets/stylesheets/surveyor.sass", "public/stylesheets/sass/surveyor.sass"
+        copy_file "vendor/assets/stylesheets/custom.sass", "public/stylesheets/sass/custom.sass"
       end
-      %w( templates/public/images/surveyor templates/public/javascripts/surveyor templates/public/stylesheets/surveyor templates/public/stylesheets/sass ).each do |path|
-        asset_path = File.expand_path("../#{path}", __FILE__)
-        Dir.foreach(asset_path) do |f|
-          next if File.directory?(f)
-
-          from_path = "#{path.gsub('templates/public', 'public')}/#{f}"
-          to_path = "#{path.gsub('templates/public', asset_directory)}/#{f}"
-          to_path = to_path.gsub("/sass", "") if asset_directory == "vendor/assets"
-          copy_file(from_path, to_path)
-        end
-      end
-
     end
     def surveys
       copy_file "surveys/kitchen_sink_survey.rb"

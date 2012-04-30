@@ -3,13 +3,11 @@ module Surveyor
     module SurveyorHelperMethods
       # Layout: stylsheets and javascripts
       def surveyor_includes
-        surveyor_stylsheets + surveyor_javascripts
-      end
-      def surveyor_stylsheets
-        stylesheet_link_tag 'surveyor/reset', 'surveyor/dateinput', 'surveyor/jquery-ui.custom', 'surveyor/jquery-ui-timepicker-addon', 'surveyor', 'custom'
-      end
-      def surveyor_javascripts
-        javascript_include_tag 'surveyor/jquery.tools.min', 'surveyor/jquery-ui', 'surveyor/jquery-ui-timepicker-addon', 'surveyor/jquery.surveyor', 'surveyor/jquery.blockUI'
+        if Rails.application.config.respond_to?(:assets) && Rails.application.config.assets.enabled == true
+          stylesheet_link_tag('surveyor_all') + javascript_include_tag('surveyor_all')
+        else
+          stylesheet_link_tag('surveyor/reset', 'surveyor/dateinput', 'surveyor/jquery-ui.custom', 'surveyor/jquery-ui-timepicker-addon', 'surveyor', 'custom') + javascript_include_tag('surveyor/jquery.tools.min', 'surveyor/jquery-ui', 'surveyor/jquery-ui-timepicker-addon', 'surveyor/jquery.surveyor', 'surveyor/jquery.blockUI')
+        end
       end
       # Helper for displaying warning/notice/error flash messages
       def flash_messages(types)
