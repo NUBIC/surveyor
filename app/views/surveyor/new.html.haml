@@ -7,13 +7,16 @@
   %br
   #survey_list
     %ul
-      - unless @surveys.empty?
-        - @surveys.each do |survey|
+      - unless @codes.empty?
+        - @codes.each do |access_code, values|
           %li
-            = form_tag(take_survey_path(:survey_code => survey.access_code)) do 
+            = form_tag take_survey_path(:survey_code => access_code) do 
               = hidden_field_tag :surveyor_javascript_enabled, false              
-
-              = survey.title
+        
+              = values[:title]
+              &nbsp;
+              = label_tag :survey_version, 'version:'
+              = select_tag(:survey_version, options_for_select([["-- Current version --", ""]] + values[:versions]))
               &nbsp;
               = submit_tag( t('surveyor.take_it') )
       - else

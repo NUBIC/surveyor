@@ -11,6 +11,7 @@ Factory.define :survey do |s|
   s.active_at     {Time.now}
   s.inactive_at   {}
   s.css_url       {}
+  s.version       {0}
 end
 
 Factory.sequence(:survey_section_display_order){|n| n }

@@ -13,12 +13,24 @@ module Surveyor
     # Actions
     def new
       @surveys = Survey.find(:all)
+      @codes = @surveys.inject({}) do |codes,s|
+        codes[s.access_code] ||= {}
+        codes[s.access_code][:title] = s.title
+        codes[s.access_code][:versions] ||= []
+        codes[s.access_code][:versions] << s.version
+        codes
+      end
       @title = "You can take these surveys"
       redirect_to surveyor_index unless surveyor_index == available_surveys_path
     end
 
     def create
-      @survey = Survey.find_by_access_code(params[:survey_code])
+      surveys = Survey.where(:access_code => params[:survey_code]).order("version DESC")
+      if params[:survey_version].blank?
+        @survey = surveys.first
+      else
+        @survey = surveys.where(:version => params[:survey_version]).first
+      end
       @response_set = ResponseSet.create(:survey => @survey, :user_id => (@current_user.nil? ? @current_user : @current_user.id))
       if (@survey && @response_set)
         flash[:notice] = t('surveyor.survey_started_success')
