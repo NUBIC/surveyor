@@ -2,7 +2,7 @@ object @response_set
 attribute :api_id => :uuid
 attribute :created_at
 node(:created_at){|rs| rs.created_at.utc }
-node(:completed_at){|rs| rs.completed_at.utc }
+node(:completed_at){|rs| rs.completed_at.try(:utc) }
 node(:survey_id){|rs| rs.survey.api_id }
 
 child :responses do
