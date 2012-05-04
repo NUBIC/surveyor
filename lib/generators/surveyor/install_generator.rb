@@ -5,6 +5,45 @@ module Surveyor
     desc "Generate surveyor README, migrations, assets and sample survey"
     class_option :skip_migrations, :type => :boolean, :desc => "skip migrations, but generate everything else"
 
+    def assets      
+      # for Rails 3.0 or when asset pipeline is disabled
+      if ::Rails.version < "3.1" || !::Rails.application.config.assets.enabled 
+        
+        say("Asset pipeline disabled. this generator will copy all assets to public directory")
+        javascript_file_list = %w(jquery.tools.min.js jquery-ui.js jquery-ui-timepicker-addon.js jquery.surveyor.js jquery.blockUI.js)
+        javascript_file_list.each do |f|
+          copy_file "../../../../vendor/assets/javascripts/surveyor/#{f}", "public/javascripts/#{f}"
+          say_status("copying","#{f}", :green)
+        end
+        #Todo: surveyor.sass & custom.sass do not work.
+        stylesheet_file_list = %w(reset.css dateinput.css jquery-ui.custom.scss jquery-ui-timepicker-addon.css)
+        stylesheet_file_list.each do |f|
+          copy_file "../../../../vendor/assets/stylesheets/surveyor/#{f}", "public/stylesheets/#{f}"
+          say_status("copying","#{f}", :green)
+        end
+        say("including stylesheets & javascripts into layout")
+        insert_into_file "./../app/views/layouts/surveyor_default.html.erb","<%= stylesheet_link_tag #{stylesheet_file_list.map{|f| "'#{f}'"}.join(", ")}%>\n", :before => "</head>"
+        insert_into_file "./../app/views/layouts/surveyor_default.html.erb","<%= javascript_include_tag #{javascript_file_list.map{|f| "'#{f}'"}.join(", ")}%>\n", :before => "</head>"
+      
+      # for Rails 3.1 & great with asset pile enabled
+      else 
+        #require javascripts into app
+        if File.exist?('app/assets/javascripts/application.js')
+            insert_into_file "app/assets/javascripts/application.js", "//= require surveyor\n", :after => "jquery\n"
+        end
+
+        #require css into app
+        if File.exist?('app/assets/stylesheets/application.css')          
+            insert_into_file "app/assets/stylesheets/application.css", " *= require surveyor.scss\n", :after => "require_self\n"
+        end
+
+        #now, lets add javascript_include_tag & stylesheet_link_tag
+        say("including stylesheets & javascripts into layout")
+          insert_into_file "./../app/views/layouts/surveyor_default.html.erb","<%= stylesheet_link_tag ('application') :media => 'all' %>\n", :before => "</head>"
+          insert_into_file "./../app/views/layouts/surveyor_default.html.erb","<%= javascript_include_tag ('application')%>\n", :before => "</head>"  
+      end
+    end
+
     def readme
       copy_file "../../../../README.md", "surveys/README.md"
     end
@@ -19,24 +58,6 @@ module Surveyor
           copy_file("db/migrate/#{model}.rb", "db/migrate/#{(prev_migration_timestamp || Time.now.utc.strftime("%Y%m%d%H%M%S").to_i + i).to_s}_#{model}.rb")
         end
       end
-    end
-    def assets
-      asset_directory = "public"
-      if Rails.application.config.respond_to?(:assets) && Rails.application.config.assets.enabled == true
-        asset_directory = "vendor/assets"
-      end
-      %w( templates/public/images/surveyor templates/public/javascripts/surveyor templates/public/stylesheets/surveyor templates/public/stylesheets/sass ).each do |path|
-        asset_path = File.expand_path("../#{path}", __FILE__)
-        Dir.foreach(asset_path) do |f|
-          next if File.directory?(f)
-
-          from_path = "#{path.gsub('templates/public', 'public')}/#{f}"
-          to_path = "#{path.gsub('templates/public', asset_directory)}/#{f}"
-          to_path = to_path.gsub("/sass", "") if asset_directory == "vendor/assets"
-          copy_file(from_path, to_path)
-        end
-      end
-
     end
     def surveys
       copy_file "surveys/kitchen_sink_survey.rb"
