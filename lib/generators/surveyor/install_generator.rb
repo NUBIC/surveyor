@@ -30,10 +30,6 @@ module Surveyor
 
       assets = %w(templates/public/images/surveyor)
 
-      if asset_pipeline_enabled?
-        insert_surveyor_load_lines
-      end
-
       if !asset_pipeline_enabled?
         assets += %w( templates/public/javascripts/surveyor templates/public/stylesheets/surveyor templates/public/stylesheets/sass )
       end
@@ -62,6 +58,8 @@ module Surveyor
     end
 
     def insert_surveyor_load_lines
+      return unless asset_pipeline_enabled?
+
       app_js_file = 'app/assets/javascripts/application.js'
       app_css_file = 'app/assets/stylesheets/application.css'
 
