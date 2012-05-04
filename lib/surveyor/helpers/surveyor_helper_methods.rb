@@ -1,8 +1,14 @@
+require 'surveyor/helpers/asset_pipeline'
+
 module Surveyor
   module Helpers
     module SurveyorHelperMethods
+      include AssetPipeline
+
       # Layout: stylsheets and javascripts
       def surveyor_includes
+        return if asset_pipeline_enabled?
+
         surveyor_stylsheets + surveyor_javascripts
       end
       def surveyor_stylsheets

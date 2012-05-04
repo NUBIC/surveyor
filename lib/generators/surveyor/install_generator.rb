@@ -1,6 +1,10 @@
 require 'rails/generators'
+require 'surveyor/helpers/asset_pipeline'
+
 module Surveyor
   class InstallGenerator < Rails::Generators::Base
+    include Surveyor::Helpers::AssetPipeline
+
     source_root File.expand_path("../templates", __FILE__)
     desc "Generate surveyor README, migrations, assets and sample survey"
     class_option :skip_migrations, :type => :boolean, :desc => "skip migrations, but generate everything else"
@@ -20,8 +24,12 @@ module Surveyor
         end
       end
     end
+
     def assets
+      return insert_surveyor_load_lines if asset_pipeline_enabled?
+
       asset_directory = "public"
+
       if Rails.application.config.respond_to?(:assets) && Rails.application.config.assets.enabled == true
         asset_directory = "vendor/assets"
       end
@@ -36,7 +44,6 @@ module Surveyor
           copy_file(from_path, to_path)
         end
       end
-
     end
     def surveys
       copy_file "surveys/kitchen_sink_survey.rb"
@@ -47,5 +54,17 @@ module Surveyor
       directory "config/locales"
     end
 
+    def insert_surveyor_load_lines
+      app_js_file = 'app/assets/javascripts/application.js'
+      app_css_file = 'app/assets/stylesheets/application.css'
+
+      if File.exist?(app_js_file)
+        insert_into_file app_js_file, "//= require surveyor\n", :before => /^.+require_tree/
+      end
+
+      if File.exist?(app_css_file)
+        insert_into_file app_css_file, " *= require surveyor\n", :before => /^.+require_tree/
+      end
+    end
   end
 end

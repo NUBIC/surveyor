@@ -42,13 +42,24 @@ namespace :testbed do
   task :generate do
     sh 'bundle exec rails new testbed'
     chdir('testbed') do
-      File.open('Gemfile', 'w') do |f|
-        f.puts %q{source :rubygems}
-        f.puts %q{plugin_root = File.expand_path('../..', __FILE__)}
-        f.puts %q{eval(File.read File.join(plugin_root, 'Gemfile.rails_version'))}
-        f.puts %q{gem 'sqlite3'}
-        f.puts %q{gem 'surveyor', :path => plugin_root}
+      gems = File.read('Gemfile')
+      gems.sub!(/gem.*rails.*$/, '')
+
+      unless gems =~ /gem.*sqlite3/
+        gems += %Q{gem 'sqlite'\n}
       end
+
+      unless gems =~ /gem.*jquery-rails/
+        gems += %Q{gem 'jquery-rails'\n}
+      end
+
+      gems += %q{
+plugin_root = File.expand_path('../..', __FILE__)
+eval(File.read(File.join(plugin_root, 'Gemfile.rails_version')))
+gem 'surveyor', :path => plugin_root
+      }
+
+      File.open('Gemfile', 'w') { |f| f.write(gems) }
 
       Bundler.with_clean_env do
         sh 'bundle update'
