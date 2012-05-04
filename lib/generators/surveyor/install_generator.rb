@@ -1,6 +1,10 @@
 require 'rails/generators'
+require 'surveyor/helpers/asset_pipeline'
+
 module Surveyor
   class InstallGenerator < Rails::Generators::Base
+    include Surveyor::Helpers::AssetPipeline
+
     source_root File.expand_path("../templates", __FILE__)
     desc "Generate surveyor README, migrations, assets and sample survey"
     class_option :skip_migrations, :type => :boolean, :desc => "skip migrations, but generate everything else"
@@ -20,12 +24,17 @@ module Surveyor
         end
       end
     end
+
     def assets
       asset_directory = "public"
-      if Rails.application.config.respond_to?(:assets) && Rails.application.config.assets.enabled == true
-        asset_directory = "vendor/assets"
+
+      assets = %w(templates/public/images/surveyor)
+
+      if !asset_pipeline_enabled?
+        assets += %w( templates/public/javascripts/surveyor templates/public/stylesheets/surveyor templates/public/stylesheets/sass )
       end
-      %w( templates/public/images/surveyor templates/public/javascripts/surveyor templates/public/stylesheets/surveyor templates/public/stylesheets/sass ).each do |path|
+
+      assets.each do |path|
         asset_path = File.expand_path("../#{path}", __FILE__)
         Dir.foreach(asset_path) do |f|
           next if File.directory?(f)
@@ -36,16 +45,31 @@ module Surveyor
           copy_file(from_path, to_path)
         end
       end
-
     end
+
     def surveys
       copy_file "surveys/kitchen_sink_survey.rb"
       copy_file "surveys/quiz.rb"
       copy_file "surveys/date_survey.rb"
     end
+
     def locales
       directory "config/locales"
     end
 
+    def insert_surveyor_load_lines
+      return unless asset_pipeline_enabled?
+
+      app_js_file = 'app/assets/javascripts/application.js'
+      app_css_file = 'app/assets/stylesheets/application.css'
+
+      if File.exist?(app_js_file)
+        insert_into_file app_js_file, "//= require surveyor\n", :before => /^.+require_tree/
+      end
+
+      if File.exist?(app_css_file)
+        insert_into_file app_css_file, " *= require surveyor\n", :before => /^.+require_tree/
+      end
+    end
   end
 end
