@@ -5,15 +5,42 @@ module Surveyor
     desc "Generate surveyor README, migrations, assets and sample survey"
     class_option :skip_migrations, :type => :boolean, :desc => "skip migrations, but generate everything else"
 
-    def assets
-      #require javascripts into app
-      if File.exist?('app/assets/javascripts/application.js')
-          insert_into_file "app/assets/javascripts/application.js", "//= require surveyor\n", :after => "jquery\n"
-      end
+    def assets      
+      # for Rails 3.0 or when asset pipeline is disabled
+      if ::Rails.version < "3.1" || !::Rails.application.config.assets.enabled 
+        
+        say("Asset pipeline disabled. this generator will copy all assets to public directory")
+        javascript_file_list = %w(jquery.tools.min.js jquery-ui.js jquery-ui-timepicker-addon.js jquery.surveyor.js jquery.blockUI.js)
+        javascript_file_list.each do |f|
+          copy_file "../../../../vendor/assets/javascripts/surveyor/#{f}", "public/javascripts/#{f}"
+          say_status("copying","#{f}", :green)
+        end
+        #Todo: surveyor.sass & custom.sass do not work.
+        stylesheet_file_list = %w(reset.css dateinput.css jquery-ui.custom.scss jquery-ui-timepicker-addon.css)
+        stylesheet_file_list.each do |f|
+          copy_file "../../../../vendor/assets/stylesheets/surveyor/#{f}", "public/stylesheets/#{f}"
+          say_status("copying","#{f}", :green)
+        end
+        say("including stylesheets & javascripts into layout")
+        insert_into_file "./../app/views/layouts/surveyor_default.html.erb","<%= stylesheet_link_tag #{stylesheet_file_list.map{|f| "'#{f}'"}.join(", ")}%>\n", :before => "</head>"
+        insert_into_file "./../app/views/layouts/surveyor_default.html.erb","<%= javascript_include_tag #{javascript_file_list.map{|f| "'#{f}'"}.join(", ")}%>\n", :before => "</head>"
+      
+      # for Rails 3.1 & great with asset pile enabled
+      else 
+        #require javascripts into app
+        if File.exist?('app/assets/javascripts/application.js')
+            insert_into_file "app/assets/javascripts/application.js", "//= require surveyor\n", :after => "jquery\n"
+        end
 
-      #require css into app
-      if File.exist?('app/assets/stylesheets/application.css')          
-          insert_into_file "app/assets/stylesheets/application.css", " *= require surveyor.scss\n", :after => "require_self\n"
+        #require css into app
+        if File.exist?('app/assets/stylesheets/application.css')          
+            insert_into_file "app/assets/stylesheets/application.css", " *= require surveyor.scss\n", :after => "require_self\n"
+        end
+
+        #now, lets add javascript_include_tag & stylesheet_link_tag
+        say("including stylesheets & javascripts into layout")
+          insert_into_file "./../app/views/layouts/surveyor_default.html.erb","<%= stylesheet_link_tag ('application') :media => 'all' %>\n", :before => "</head>"
+          insert_into_file "./../app/views/layouts/surveyor_default.html.erb","<%= javascript_include_tag ('application')%>\n", :before => "</head>"  
       end
     end
 
