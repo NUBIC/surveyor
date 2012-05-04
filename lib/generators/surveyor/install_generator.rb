@@ -26,14 +26,19 @@ module Surveyor
     end
 
     def assets
-      return insert_surveyor_load_lines if asset_pipeline_enabled?
-
       asset_directory = "public"
 
-      if Rails.application.config.respond_to?(:assets) && Rails.application.config.assets.enabled == true
-        asset_directory = "vendor/assets"
+      assets = %w(templates/public/images/surveyor)
+
+      if asset_pipeline_enabled?
+        insert_surveyor_load_lines
       end
-      %w( templates/public/images/surveyor templates/public/javascripts/surveyor templates/public/stylesheets/surveyor templates/public/stylesheets/sass ).each do |path|
+
+      if !asset_pipeline_enabled?
+        assets += %w( templates/public/javascripts/surveyor templates/public/stylesheets/surveyor templates/public/stylesheets/sass )
+      end
+
+      assets.each do |path|
         asset_path = File.expand_path("../#{path}", __FILE__)
         Dir.foreach(asset_path) do |f|
           next if File.directory?(f)
@@ -45,11 +50,13 @@ module Surveyor
         end
       end
     end
+
     def surveys
       copy_file "surveys/kitchen_sink_survey.rb"
       copy_file "surveys/quiz.rb"
       copy_file "surveys/date_survey.rb"
     end
+
     def locales
       directory "config/locales"
     end
