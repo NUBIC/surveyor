@@ -5,6 +5,18 @@ module Surveyor
     desc "Generate surveyor README, migrations, assets and sample survey"
     class_option :skip_migrations, :type => :boolean, :desc => "skip migrations, but generate everything else"
 
+    def assets
+      #require javascripts into app
+      if File.exist?('app/assets/javascripts/application.js')
+          insert_into_file "app/assets/javascripts/application.js", "//= require surveyor\n", :after => "jquery\n"
+      end
+
+      #require css into app
+      if File.exist?('app/assets/stylesheets/application.css')          
+          insert_into_file "app/assets/stylesheets/application.css", " *= require surveyor.scss\n", :after => "require_self\n"
+      end
+    end
+
     def readme
       copy_file "../../../../README.md", "surveys/README.md"
     end
@@ -19,24 +31,6 @@ module Surveyor
           copy_file("db/migrate/#{model}.rb", "db/migrate/#{(prev_migration_timestamp || Time.now.utc.strftime("%Y%m%d%H%M%S").to_i + i).to_s}_#{model}.rb")
         end
       end
-    end
-    def assets
-      asset_directory = "public"
-      if Rails.application.config.respond_to?(:assets) && Rails.application.config.assets.enabled == true
-        asset_directory = "vendor/assets"
-      end
-      %w( templates/public/images/surveyor templates/public/javascripts/surveyor templates/public/stylesheets/surveyor templates/public/stylesheets/sass ).each do |path|
-        asset_path = File.expand_path("../#{path}", __FILE__)
-        Dir.foreach(asset_path) do |f|
-          next if File.directory?(f)
-
-          from_path = "#{path.gsub('templates/public', 'public')}/#{f}"
-          to_path = "#{path.gsub('templates/public', asset_directory)}/#{f}"
-          to_path = to_path.gsub("/sass", "") if asset_directory == "vendor/assets"
-          copy_file(from_path, to_path)
-        end
-      end
-
     end
     def surveys
       copy_file "surveys/kitchen_sink_survey.rb"
