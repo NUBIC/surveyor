@@ -40,14 +40,14 @@ task :testbed => 'testbed:rebuild'
 namespace :testbed do
   desc 'Generate a minimal surveyor-using rails app'
   task :generate do
-    sh 'bundle exec rails new testbed'
+    sh 'bundle exec rails new testbed --skip-bundle' # don't run bundle install until the Gemfile modifications
     chdir('testbed') do
       gem_file_contents = File.read('Gemfile')
       gem_file_contents.sub!(/^(gem 'rails'.*)$/, %Q{# \\1\nplugin_root = File.expand_path('../..', __FILE__)\neval(File.read File.join(plugin_root, 'Gemfile.rails_version'))\ngem 'surveyor', :path => plugin_root})
       File.open('Gemfile', 'w'){|f| f.write(gem_file_contents) }
 
       Bundler.with_clean_env do
-        sh 'bundle update'
+        sh 'bundle install' # run bundle install after Gemfile modifications
       end
     end
   end
