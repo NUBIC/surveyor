@@ -8,7 +8,7 @@ module Surveyor
       # Layout: stylsheets and javascripts
       def surveyor_includes
         if asset_pipeline_enabled?
-          stylesheet_link_tag('surveyor') + javascript_include_tag('surveyor')
+          stylesheet_link_tag('surveyor_all') + javascript_include_tag('surveyor_all')
         else
           stylesheet_link_tag('surveyor/reset', 'surveyor/dateinput', 'surveyor/jquery-ui.custom', 'surveyor/jquery-ui-timepicker-addon', 'surveyor', 'custom') + javascript_include_tag('surveyor/jquery.tools.min', 'surveyor/jquery-ui', 'surveyor/jquery-ui-timepicker-addon', 'surveyor/jquery.surveyor', 'surveyor/jquery.blockUI')
         end

@@ -47,20 +47,5 @@ module Surveyor
     def locales
       directory "config/locales"
     end
-
-    def insert_surveyor_load_lines
-      return unless asset_pipeline_enabled?
-
-      app_js_file = 'app/assets/javascripts/application.js'
-      app_css_file = 'app/assets/stylesheets/application.css'
-
-      if File.exist?(app_js_file)
-        insert_into_file app_js_file, "//= require surveyor\n", :before => /^.+require_tree/
-      end
-
-      if File.exist?(app_css_file)
-        insert_into_file app_css_file, " *= require surveyor\n", :before => /^.+require_tree/
-      end
-    end
   end
 end
