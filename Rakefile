@@ -42,9 +42,9 @@ namespace :testbed do
   task :generate do
     sh 'bundle exec rails new testbed'
     chdir('testbed') do
-      lines = File.open('Gemfile').readlines
-      lines.each{|l| l.gsub!(/^(gem 'rails'.*)$/, %Q{# \\1\nplugin_root = File.expand_path('../..', __FILE__)\neval(File.read File.join(plugin_root, 'Gemfile.rails_version'))\ngem 'surveyor', :path => plugin_root})}
-      File.open('Gemfile', 'w'){|f| f.puts lines.join}
+      gem_file_contents = File.read('Gemfile')
+      gem_file_contents.sub!(/^(gem 'rails'.*)$/, %Q{# \\1\nplugin_root = File.expand_path('../..', __FILE__)\neval(File.read File.join(plugin_root, 'Gemfile.rails_version'))\ngem 'surveyor', :path => plugin_root})
+      File.open('Gemfile', 'w'){|f| f.write(gem_file_contents) }
 
       Bundler.with_clean_env do
         sh 'bundle update'
