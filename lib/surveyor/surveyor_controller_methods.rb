@@ -111,8 +111,14 @@ module Surveyor
     end
     
     def export
-      @survey = Survey.find_by_access_code(params[:survey_code])
+      surveys = Survey.where(:access_code => params[:survey_code]).order("version DESC")
+      if params[:survey_version].blank?
+        @survey = surveys.first
+      else
+        @survey = surveys.where(:version => params[:survey_version]).first
+      end
     end
+    
     private
 
     # This is a hoock method for surveyor-using applications to override and provide the context object
