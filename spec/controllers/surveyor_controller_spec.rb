@@ -11,11 +11,6 @@ describe SurveyorController do
   # end
 
   describe "available surveys: GET /surveys" do
-    before(:each) do
-      @survey = Factory(:survey)
-      Survey.stub!(:find).and_return([@survey])
-    end
-
     def do_get
       get :new
     end
@@ -26,33 +21,37 @@ describe SurveyorController do
       response.should render_template('new')
     end
 
-    it "should find all surveys" do
-      Survey.should_receive(:find).with(:all).and_return([@survey])
+    it "should list codes and versions for all surveys" do
+      original = Factory(:survey, :title => "Foo", :access_code => 'foo')
+      supplant = Factory(:survey, :title => "Foo", :access_code => 'foo', :version => 1)
+      hash = {"foo"=>{"title"=>"Foo", "versions"=>[0, 1]}}
       do_get
-    end
-
-    it "should assign the found surveys for the view" do
-      do_get
-      assigns[:surveys].should == [@survey]
+      assigns(:codes).should eq hash
     end
   end
 
   describe "take survey: POST /surveys/xyz" do
     before(:each) do
       @survey = Factory(:survey, :title => "xyz", :access_code => "xyz")
+      @newsurvey = Factory(:survey, :title => "xyz", :access_code => "xyz", :version => 1)
       @response_set = Factory(:response_set, :access_code => "pdq")
       ResponseSet.stub!(:create).and_return(@response_set)
-      Survey.stub!(:find_by_access_code).and_return(@survey)
     end
 
     describe "with success" do
       def do_post
         post :create, :survey_code => "xyz"
       end
-      it "should look for the survey" do
-        Survey.should_receive(:find_by_access_code).with("xyz").and_return(@survey)
+      it "should look for the latest version of the survey if version is not explicitely provided" do
         do_post
+        assigns(:survey).should eq(@newsurvey)
       end
+      
+      it "should look for the partculer version of the survey if it is provided" do
+        post :create, :survey_code => "xyz", :survey_version => 0
+        assigns(:survey).should eq(@survey)
+      end
+      
       it "should create a new response_set" do
         ResponseSet.should_receive(:create).and_return(@response_set)
         do_post
@@ -71,8 +70,7 @@ describe SurveyorController do
         response.should redirect_to(available_surveys_url)
       end
       it "should re-redirect to 'new' if Survey failed find" do
-        Survey.should_receive(:find_by_access_code).and_return(nil)
-        post :create, :survey_code => "XYZ"
+        post :create, :survey_code => "ABC"
         response.should redirect_to(available_surveys_url)
       end
     end
@@ -125,6 +123,25 @@ describe SurveyorController do
       get :show, :survey_code => "xyz", :response_set_code => "DIFFERENT"
       response.should redirect_to(available_surveys_url)
     end
+    
+    it "should render correct survey version" do
+      supplant = Factory(:survey, :title => "xyz", :access_code => 'xyz', :version => 1)
+      supplant_section = Factory(:survey_section, :survey => supplant)
+      supplant_response_set = Factory(:response_set, :access_code => "rst", :survey => supplant)
+      
+      get :show, :survey_code => "xyz", :response_set_code => "pdq"
+      response.should be_success
+      response.should render_template('show')
+      assigns[:response_set].should == @response_set
+      assigns[:survey].should == @survey
+      
+      get :show, :survey_code => "xyz", :response_set_code => "rst"
+      response.should be_success
+      response.should render_template('show')
+      assigns[:response_set].should == supplant_response_set
+      assigns[:survey].should == supplant
+    end
+    
   end
 
   describe "edit my survey: GET /surveys/XYZ/PDQ/take" do
@@ -168,6 +185,24 @@ describe SurveyorController do
       get :edit, :survey_code => "XYZ", :response_set_code => "PDQ"
       assigns[:dependents].should be_empty
       session[:surveyor_javascript].should == "enabled"
+    end
+    
+    it "should render correct survey version" do
+      supplant = Factory(:survey, :title => "XYZ", :access_code => 'XYZ', :version => 1)
+      supplant_section = Factory(:survey_section, :survey => supplant)
+      supplant_response_set = Factory(:response_set, :access_code => "RST", :survey => supplant)
+      
+      get :edit, :survey_code => "XYZ", :response_set_code => "PDQ"
+      response.should be_success
+      response.should render_template('edit')
+      assigns[:response_set].should == @response_set
+      assigns[:survey].should == @survey
+      
+      get :edit, :survey_code => "XYZ", :response_set_code => "RST"
+      response.should be_success
+      response.should render_template('edit')
+      assigns[:response_set].should == supplant_response_set
+      assigns[:survey].should == supplant
     end
   end
 

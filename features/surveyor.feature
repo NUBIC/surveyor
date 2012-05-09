@@ -530,3 +530,38 @@ Feature: Survey creation
     When I uncheck "Singapore"
     And I wait 1 seconds
     Then 0 responses should exist
+    
+  Scenario: Accessing outdated survey
+    Given the survey
+    """
+      survey "Travels" do
+        section "Everything" do
+          q "Which of these countries have you visited?", :pick => :any
+          a "Italy"
+          a "Morocco"
+          a "Mexico"
+        end
+      end
+    """
+    And the survey
+    """
+      survey "Travels" do
+        section "Countries" do
+          q "Which of these countries have you visited?", :pick => :any
+          a "Ireland"
+          a "Kenya"
+          a "Singapore"
+        end
+      end
+    """
+    When I go to the surveys page
+    And I wait 1 seconds
+    And I press "Take it"
+    Then I should see "Ireland"
+    And I should not see "Italy"
+    
+    When I go to the surveys page
+    And I select "0" from "survey_version"
+    And I press "Take it"
+    Then I should see "Mexico"
+    And I should not see "Keniya"
