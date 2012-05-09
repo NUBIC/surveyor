@@ -1,6 +1,6 @@
 #!/bin/bash -xe
 
-BUNDLER_VERSION=1.1.rc
+BUNDLER_VERSION=1.1.3
 GEMSET=surveyor
 
 export TMPDIR="`pwd`/tmp"
