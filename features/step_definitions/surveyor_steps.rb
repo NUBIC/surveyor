@@ -100,7 +100,7 @@ Then /^the json for "([^"]*)" version "([^"]*)" should be$/ do |title, version, 
   Surveyor::Common.equal_json_excluding_wildcards(page.find('body').text, string).should == true
 end
 
-Then /^the json for the "([^"]*)" response set for "([^"]*)" should be$/ do |order, title, string|
+Then /^the json for the ([^"]*) response set for "([^"]*)" should be$/ do |order, title, string|
   response_sets = ResponseSet.joins(:survey).where(:conditions => { :surveys => { :title => title }}).order(:updated_at)
   response_sets.should_not be_empty
   

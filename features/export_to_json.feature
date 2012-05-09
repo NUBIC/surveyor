@@ -165,7 +165,7 @@ Feature: Survey export
     }]
   }
   """
-  @wip
+  
   Scenario: Exporting response sets for versioned surveys
   Given I parse
   """
@@ -191,7 +191,7 @@ Feature: Survey export
   And I start the "Simple json response sets" survey
   And I fill in "color" with "blueish"
   And I press "Click here to finish"
-  Then the json for the "first" response set for "Simple json response sets" should be
+  Then the json for the first response set for "Simple json response sets" should be
   """
   { 
     "uuid":"*",
@@ -208,7 +208,7 @@ Feature: Survey export
     }]
   }
   """
-  And the json for the "last" response set for "Simple json response sets" should be
+  And the json for the last response set for "Simple json response sets" should be
   """
   { 
     "uuid":"*",
