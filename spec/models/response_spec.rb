@@ -89,6 +89,52 @@ describe Response, "when saving a response" do
       resp.as(:stuff).should == nil
     end
   end
+
+  describe '#value' do
+    let(:answer) { @response.answer }
+
+    shared_examples_for 'a value coercer' do |field, value, as|
+      it "coerces its value to #{as}" do
+        @response.send("#{field}=", value)
+
+        @response.value.should == @response.as(as)
+      end
+    end
+
+    describe 'with response class of string' do
+      before { answer.response_class = 'string' }
+
+      it_should_behave_like 'a value coercer', 'string_value', 'blah', :string
+    end
+
+    describe 'with integers' do
+      before { answer.response_class = 'integer' }
+
+      it_should_behave_like 'a value coercer', 'integer_value', 1001, :integer
+    end
+
+    describe 'with floats' do
+      before { answer.response_class = 'float' }
+
+      it_should_behave_like 'a value coercer', 'float_value', 3.14, :float
+    end
+
+    describe 'with answers' do
+      before { answer.response_class = 'answer' }
+
+      it 'returns nil' do
+        @response.value.should be_nil
+      end
+    end
+
+    describe 'with an unspecified response class' do
+      before { answer.response_class = nil }
+
+      it 'returns the answer ID' do
+        @response.value.should == @response.answer_id
+      end
+    end
+  end
 end
 
 describe Response, "applicable_attributes" do
