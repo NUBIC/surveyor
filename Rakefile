@@ -44,6 +44,9 @@ namespace :testbed do
     chdir('testbed') do
       gem_file_contents = File.read('Gemfile')
       gem_file_contents.sub!(/^(gem 'rails'.*)$/, %Q{# \\1\nplugin_root = File.expand_path('../..', __FILE__)\neval(File.read File.join(plugin_root, 'Gemfile.rails_version'))\ngem 'surveyor', :path => plugin_root})
+      if ENV['CI_RUBY'] && ENV['RAILS_VERSION'] =~ /3.1$/
+        gem_file_contents << %Q(\ngem 'therubyracer')
+      end
       File.open('Gemfile', 'w'){|f| f.write(gem_file_contents) }
 
       Bundler.with_clean_env do
