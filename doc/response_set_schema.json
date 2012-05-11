@@ -7,7 +7,10 @@
         },
         "completed_at": {
             "format": "date-time",
-            "type": "string"
+            "type": [
+                "string",
+                "null"
+            ]
         },
         "created_at": {
             "format": "date-time",
