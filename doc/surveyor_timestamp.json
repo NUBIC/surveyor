@@ -1,0 +1,6 @@
+{
+    "$schema": "http://json-schema.org/draft-03/schema#",
+    "description": "Timestamp on a Surveyor entity",
+    "format": "\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(?:Z|[+-]\\d{2}:\\d{2})",
+    "type": "string"
+}

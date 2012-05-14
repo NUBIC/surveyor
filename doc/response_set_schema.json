@@ -2,40 +2,36 @@
     "$schema": "http://json-schema.org/draft-03/schema#",
     "description": "Response set",
     "properties": {
-        "uuid": {
-            "$ref": "http://download.nubic.northwestern.edu/surveyor/api_id_schema.json"
-        },
         "completed_at": {
-            "format": "date-time",
+            "extends": {
+                "$ref": "http://download.nubic.northwestern.edu/surveyor/surveyor_timestamp.json#"
+            },
             "type": [
                 "string",
                 "null"
             ]
         },
         "created_at": {
-            "format": "date-time",
-            "type": "string"
+            "$ref": "http://download.nubic.northwestern.edu/surveyor/surveyor_timestamp.json#"
         },
         "responses": {
             "description": "Responses in the response set",
             "items": {
                 "properties": {
                     "answer_id": {
-                        "$ref": "http://download.nubic.northwestern.edu/surveyor/api_id_schema.json"
-                    },
-                    "uuid": {
-                        "$ref": "http://download.nubic.northwestern.edu/surveyor/api_id_schema.json"
+                        "$ref": "http://download.nubic.northwestern.edu/surveyor/api_id_schema.json#"
                     },
                     "created_at": {
-                        "format": "date-time",
-                        "type": "string"
+                        "$ref": "http://download.nubic.northwestern.edu/surveyor/surveyor_timestamp.json#"
                     },
                     "question_id": {
-                        "$ref": "http://download.nubic.northwestern.edu/surveyor/api_id_schema.json"
+                        "$ref": "http://download.nubic.northwestern.edu/surveyor/api_id_schema.json#"
                     },
                     "updated_at": {
-                        "format": "date-time",
-                        "type": "string"
+                        "$ref": "http://download.nubic.northwestern.edu/surveyor/surveyor_timestamp.json#"
+                    },
+                    "uuid": {
+                        "$ref": "http://download.nubic.northwestern.edu/surveyor/api_id_schema.json#"
                     },
                     "value": {
                         "type": [
@@ -49,7 +45,10 @@
             "type": "array"
         },
         "survey_id": {
-            "$ref": "http://download.nubic.northwestern.edu/surveyor/api_id_schema.json"
+            "$ref": "http://download.nubic.northwestern.edu/surveyor/api_id_schema.json#"
+        },
+        "uuid": {
+            "$ref": "http://download.nubic.northwestern.edu/surveyor/api_id_schema.json#"
         }
     }
 }
