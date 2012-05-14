@@ -4,7 +4,7 @@
     "properties": {
         "completed_at": {
             "extends": {
-                "$ref": "http://download.nubic.northwestern.edu/surveyor/surveyor_timestamp.json#"
+                "$ref": "http://download.nubic.northwestern.edu/surveyor/surveyor_timestamp_schema.json#"
             },
             "type": [
                 "string",
@@ -12,7 +12,7 @@
             ]
         },
         "created_at": {
-            "$ref": "http://download.nubic.northwestern.edu/surveyor/surveyor_timestamp.json#"
+            "$ref": "http://download.nubic.northwestern.edu/surveyor/surveyor_timestamp_schema.json#"
         },
         "responses": {
             "description": "Responses in the response set",
@@ -22,13 +22,13 @@
                         "$ref": "http://download.nubic.northwestern.edu/surveyor/api_id_schema.json#"
                     },
                     "created_at": {
-                        "$ref": "http://download.nubic.northwestern.edu/surveyor/surveyor_timestamp.json#"
+                        "$ref": "http://download.nubic.northwestern.edu/surveyor/surveyor_timestamp_schema.json#"
                     },
                     "question_id": {
                         "$ref": "http://download.nubic.northwestern.edu/surveyor/api_id_schema.json#"
                     },
                     "updated_at": {
-                        "$ref": "http://download.nubic.northwestern.edu/surveyor/surveyor_timestamp.json#"
+                        "$ref": "http://download.nubic.northwestern.edu/surveyor/surveyor_timestamp_schema.json#"
                     },
                     "uuid": {
                         "$ref": "http://download.nubic.northwestern.edu/surveyor/api_id_schema.json#"
