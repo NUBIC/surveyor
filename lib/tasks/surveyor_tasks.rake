@@ -63,24 +63,24 @@ namespace :surveyor do
   desc "dump all responses to a given survey"
   task :dump => :environment do
     require 'fileutils.rb'
-    version = ENV["VERSION"] 
+    survey_version = ENV["SURVEY_VERSION"] 
     access_code = ENV["SURVEY_ACCESS_CODE"]
     
-    raise "USAGE: rake surveyor:dump SURVEY_ACCESS_CODE=<access_code> [OUTPUT_DIR=<dir>] [VERSION=<version>]" unless access_code
+    raise "USAGE: rake surveyor:dump SURVEY_ACCESS_CODE=<access_code> [OUTPUT_DIR=<dir>] [SURVEY_VERSION=<survey_version>]" unless access_code
     params_string = "code #{access_code}"
 
-    surveys = Survey.where(:access_code => access_code).order("version ASC")
-    if version.blank?
+    surveys = Survey.where(:access_code => access_code).order("survey_version ASC")
+    if survey_version.blank?
       survey = surveys.last
     else
-      params_string += " and version #{version}"
-      survey = surveys.where(:version => version).first
+      params_string += " and survey_version #{survey_version}"
+      survey = surveys.where(:survey_version => survey_version).first
     end
     
     raise "No Survey found with #{params_string}" unless survey
     dir = ENV["OUTPUT_DIR"] || Rails.root
     mkpath(dir) # Create all non-existent directories
-    full_path = File.join(dir,"#{survey.access_code}_v#{survey.version}_#{Time.now.to_i}.csv")
+    full_path = File.join(dir,"#{survey.access_code}_v#{survey.survey_version}_#{Time.now.to_i}.csv")
     File.open(full_path, 'w') do |f|
       survey.response_sets.each_with_index{|r,i| f.write(r.to_csv(true, i == 0)) } # print access code every time, print_header first time
     end

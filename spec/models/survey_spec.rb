@@ -11,28 +11,28 @@ describe Survey, "when saving a new one" do
     @survey.should have(1).error_on(:title)
   end
 
-  it "should adjust the version to save unique version for each title" do
+  it "should adjust the survey_version to save unique survey_version for each title" do
     original = Survey.new(:title => "Foo")
     original.save.should be_true
-    original.version.should == 0
+    original.survey_version.should == 0
     imposter = Survey.new(:title => "Foo")
     imposter.save.should be_true
     imposter.title.should == "Foo"
-    imposter.version.should == 1
+    imposter.survey_version.should == 1
     bandwagoneer = Survey.new(:title => "Foo")
     bandwagoneer.save.should be_true
     bandwagoneer.title.should == "Foo"
-    bandwagoneer.version.should == 2
+    bandwagoneer.survey_version.should == 2
   end
   
-  it "should not allow to have duplicate versions of the survey" do
+  it "should not allow to have duplicate survey_versions of the survey" do
     survey = Survey.new(:title => "Foo")
     survey.save.should be_true
     imposter = Survey.new(:title => "Foo")
     imposter.save.should be_true
-    imposter.version = 0
+    imposter.survey_version = 0
     imposter.save.should be_false
-    imposter.should have(1).error_on(:version)
+    imposter.should have(1).error_on(:survey_version)
   end
 
   it "should not adjust the title when updating itself" do

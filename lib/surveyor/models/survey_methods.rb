@@ -17,7 +17,7 @@ module Surveyor
         unless @@validations_already_included
           # Validations
           base.send :validates_presence_of, :title
-          base.send :validates_uniqueness_of, :version, :scope => :access_code, :message => "survey with matching access code and version already exists"
+          base.send :validates_uniqueness_of, :survey_version, :scope => :access_code, :message => "survey with matching access code and version already exists"
           
           @@validations_already_included = true
         end
@@ -47,8 +47,8 @@ module Surveyor
 
       def title=(value)
         return if value == self.title
-        surveys = Survey.where(:access_code => Survey.to_normalized_string(value)).order("version DESC")
-        self.version     = surveys.first.version + 1 if surveys.any?
+        surveys = Survey.where(:access_code => Survey.to_normalized_string(value)).order("survey_version DESC")
+        self.survey_version     = surveys.first.survey_version.to_i + 1 if surveys.any?
         self.access_code = Survey.to_normalized_string(value)
         super(value)
         # self.access_code = Survey.to_normalized_string(value)

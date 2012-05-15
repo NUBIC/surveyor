@@ -16,8 +16,8 @@ module Surveyor
       @codes = @surveys.inject({}) do |codes,s|
         codes[s.access_code] ||= {}
         codes[s.access_code][:title] = s.title
-        codes[s.access_code][:versions] ||= []
-        codes[s.access_code][:versions] << s.version
+        codes[s.access_code][:survey_versions] ||= []
+        codes[s.access_code][:survey_versions] << s.survey_version
         codes
       end
       @title = "You can take these surveys"
@@ -25,11 +25,11 @@ module Surveyor
     end
 
     def create
-      surveys = Survey.where(:access_code => params[:survey_code]).order("version DESC")
+      surveys = Survey.where(:access_code => params[:survey_code]).order("survey_version DESC")
       if params[:survey_version].blank?
         @survey = surveys.first
       else
-        @survey = surveys.where(:version => params[:survey_version]).first
+        @survey = surveys.where(:survey_version => params[:survey_version]).first
       end
       @response_set = ResponseSet.create(:survey => @survey, :user_id => (@current_user.nil? ? @current_user : @current_user.id))
       if (@survey && @response_set)
@@ -111,11 +111,11 @@ module Surveyor
     end
     
     def export
-      surveys = Survey.where(:access_code => params[:survey_code]).order("version DESC")
+      surveys = Survey.where(:access_code => params[:survey_code]).order("survey_version DESC")
       if params[:survey_version].blank?
         @survey = surveys.first
       else
-        @survey = surveys.where(:version => params[:survey_version]).first
+        @survey = surveys.where(:survey_version => params[:survey_version]).first
       end
     end
     

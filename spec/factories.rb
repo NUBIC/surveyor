@@ -5,13 +5,13 @@ require 'factory_girl'
 Factory.sequence(:unique_survey_access_code){|n| "simple_survey" << n.to_s }
 
 Factory.define :survey do |s|
-  s.title         {"Simple survey"}
-  s.description   {"A simple survey for testing"}
-  s.access_code   {Factory.next :unique_survey_access_code}
-  s.active_at     {Time.now}
-  s.inactive_at   {}
-  s.css_url       {}
-  s.version       {0}
+  s.title           {"Simple survey"}
+  s.description     {"A simple survey for testing"}
+  s.access_code     {Factory.next :unique_survey_access_code}
+  s.active_at       {Time.now}
+  s.inactive_at     {}
+  s.css_url         {}
+  s.survey_version  {0}
 end
 
 Factory.sequence(:survey_section_display_order){|n| n }
