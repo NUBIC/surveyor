@@ -152,9 +152,9 @@ describe Survey do
     q3 = Factory(:question, :survey_section => s2, :text => "what is mill?")
     
     actual = survey.as_json
-    actual['title'].should == 'Foo'
-    actual['sections'].size.should == 2
-    actual['sections'][0]['questions_and_groups'].size.should == 1
-    actual['sections'][1]['questions_and_groups'].size.should == 2
+    actual[:title].should == 'Foo'
+    actual[:sections].size.should == 2
+    actual[:sections][0][:questions_and_groups].size.should == 1
+    actual[:sections][1][:questions_and_groups].size.should == 2
   end
 end
