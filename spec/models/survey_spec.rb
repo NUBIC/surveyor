@@ -142,4 +142,19 @@ describe Survey do
     end
     @survey.attributes.should == saved_attrs
   end
+  
+  it "should include title, sections, and questions when serialized" do
+    survey = Factory(:survey, :title => "Foo")
+    s1 = Factory(:survey_section, :survey => survey, :title => "wise")
+    s2 = Factory(:survey_section, :survey => survey, :title => "er")
+    q1 = Factory(:question, :survey_section => s1, :text => "what is wise?")
+    q2 = Factory(:question, :survey_section => s2, :text => "what is er?")
+    q3 = Factory(:question, :survey_section => s2, :text => "what is mill?")
+    
+    actual = survey.as_json
+    actual['title'].should == 'Foo'
+    actual['sections'].size.should == 2
+    actual['sections'][0]['questions_and_groups'].size.should == 1
+    actual['sections'][1]['questions_and_groups'].size.should == 2
+  end
 end

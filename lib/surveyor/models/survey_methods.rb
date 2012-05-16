@@ -70,11 +70,9 @@ module Surveyor
         self.active_at = nil
       end
       def as_json(options = nil)
-        template_path = ActionController::Base.view_paths.find("export", ["surveyor"], false, {:handlers=>[:rabl], :locale=>[:en], :formats=>[:json]}, [], []).inspect
-        engine = Rabl::Engine.new(File.read(template_path))
-        engine.to_hash((options || {}).merge(:object => self))
-      end
-      
+        template_paths = ActionController::Base.view_paths.collect(&:to_path)
+        JSON.parse(Rabl::Renderer.json(self, 'surveyor/export.json', :view_path => template_paths))
+      end      
     end
   end
 end

@@ -24,7 +24,7 @@ Gem::Specification.new do |s|
   s.add_dependency('formtastic', '~> 1.2.4')
   s.add_dependency('uuidtools', '~> 2.1')
   s.add_dependency('mustache', '0.99.4')
-  s.add_dependency('rabl', '~>0.6.6')
+  s.add_dependency('rabl', '~>0.6.11')
 
   s.add_development_dependency('yard')
   s.add_development_dependency('rake', '>= 0.9.2')
