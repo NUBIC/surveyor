@@ -6,7 +6,7 @@ module Surveyor
     def self.included(base)
       base.send :before_filter, :get_current_user, :only => [:new, :create]
       base.send :before_filter, :determine_if_javascript_is_enabled, :only => [:create, :update]
-      base.send :before_filter, :set_render_context, :only => [:edit]
+      base.send :before_filter, :set_response_set_and_render_context, :only => [:edit, :show]
       base.send :layout, 'surveyor_default'
     end
 
@@ -41,9 +41,8 @@ module Surveyor
       end
     end
 
-
     def show
-      @response_set = ResponseSet.find_by_access_code(params[:response_set_code], :include => {:responses => [:question, :answer]})
+      # @response_set is set in before_filter - set_response_set_and_render_context
       if @response_set
         @survey = @response_set.survey
         respond_to do |format|
@@ -60,7 +59,7 @@ module Surveyor
     end
 
     def edit
-      @response_set = ResponseSet.find_by_access_code(params[:response_set_code], :include => {:responses => [:question, :answer]})
+      # @response_set is set in before_filter - set_response_set_and_render_context
       if @response_set
         @survey = Survey.with_sections.find_by_id(@response_set.survey_id)
         @sections = @survey.sections
@@ -109,7 +108,7 @@ module Surveyor
         end
       end
     end
-    
+
     def export
       surveys = Survey.where(:access_code => params[:survey_code]).order("version DESC")
       if params[:survey_version].blank?
@@ -118,10 +117,10 @@ module Surveyor
         @survey = surveys.where(:version => params[:survey_version]).first
       end
     end
-    
+
     private
 
-    # This is a hoock method for surveyor-using applications to override and provide the context object
+    # This is a hook method for surveyor-using applications to override and provide the context object
     def render_context
       nil
     end
@@ -131,7 +130,8 @@ module Surveyor
       @current_user = self.respond_to?(:current_user) ? self.current_user : nil
     end
 
-    def set_render_context
+    def set_response_set_and_render_context
+      @response_set = ResponseSet.find_by_access_code(params[:response_set_code], :include => {:responses => [:question, :answer]})
       @render_context = render_context
     end
 
@@ -163,10 +163,10 @@ module Surveyor
         end
       end
     end
-    
+
     ##
     # @dependents are necessary in case the client does not have javascript enabled
-    # Whether or not javascript is enabled is determined by a hidden field set in the surveyor/edit.html form 
+    # Whether or not javascript is enabled is determined by a hidden field set in the surveyor/edit.html form
     def set_dependents
       if session[:surveyor_javascript] && session[:surveyor_javascript] == "enabled"
         @dependents = []
@@ -174,11 +174,11 @@ module Surveyor
         @dependents = get_unanswered_dependencies_minus_section_questions
       end
     end
-    
+
     def get_unanswered_dependencies_minus_section_questions
       @response_set.unanswered_dependencies - @section.questions || []
     end
-    
+
     ##
     # If the hidden field surveyor_javascript_enabled is set to true
     # cf. surveyor/edit.html.haml
@@ -190,6 +190,6 @@ module Surveyor
         session[:surveyor_javascript] = "not_enabled"
       end
     end
-    
+
   end
 end
