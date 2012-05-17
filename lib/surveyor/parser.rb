@@ -167,6 +167,7 @@ class Question < ActiveRecord::Base
     unless correct.blank? or reference_identifier.blank? or context_reference.blank?
       # Looking up references for quiz answers
       context_reference[:answer_references][reference_identifier] ||= {}
+      context_reference[:answer_references][reference_identifier][correct].save
       Surveyor::Parser.rake_trace( (self.correct_answer = context_reference[:answer_references][reference_identifier][correct]) ? "found correct answer:#{correct} " : "lost! correct answer:#{correct} ")
     end
   end
