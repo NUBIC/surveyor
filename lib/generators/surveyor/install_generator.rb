@@ -22,7 +22,8 @@ module Surveyor
         add_index_to_response_sets add_index_to_surveys add_unique_indicies add_section_id_to_responses 
         add_default_value_to_answers add_api_ids add_display_type_to_answers add_api_id_to_question_groups 
         add_api_ids_to_response_sets_and_responses update_blank_api_ids_on_question_group 
-        drop_unique_index_on_access_code_in_surveys add_version_to_surveys add_unique_index_on_access_code_and_version_in_surveys update_blank_versions_on_surveys).each_with_index do |model, i|
+        drop_unique_index_on_access_code_in_surveys add_version_to_surveys add_unique_index_on_access_code_and_version_in_surveys 
+        update_blank_versions_on_surveys).each_with_index do |model, i|
           unless (prev_migrations = Dir.glob("db/migrate/[0-9]*_*.rb").grep(/[0-9]+_#{model}.rb$/)).empty?
             prev_migration_timestamp = prev_migrations[0].match(/([0-9]+)_#{model}.rb$/)[1]
           end
