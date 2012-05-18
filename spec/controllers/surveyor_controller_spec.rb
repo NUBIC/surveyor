@@ -21,10 +21,10 @@ describe SurveyorController do
       response.should render_template('new')
     end
 
-    it "should list codes and versions for all surveys" do
+    it "should list codes and survey_versions for all surveys" do
       original = Factory(:survey, :title => "Foo", :access_code => 'foo')
-      supplant = Factory(:survey, :title => "Foo", :access_code => 'foo', :version => 1)
-      hash = {"foo"=>{"title"=>"Foo", "versions"=>[0, 1]}}
+      supplant = Factory(:survey, :title => "Foo", :access_code => 'foo', :survey_version => 1)
+      hash = {"foo"=>{"title"=>"Foo", "survey_versions"=>[0, 1]}}
       do_get
       assigns(:codes).should eq hash
     end
@@ -33,7 +33,7 @@ describe SurveyorController do
   describe "take survey: POST /surveys/xyz" do
     before(:each) do
       @survey = Factory(:survey, :title => "xyz", :access_code => "xyz")
-      @newsurvey = Factory(:survey, :title => "xyz", :access_code => "xyz", :version => 1)
+      @newsurvey = Factory(:survey, :title => "xyz", :access_code => "xyz", :survey_version => 1)
       @response_set = Factory(:response_set, :access_code => "pdq")
       ResponseSet.stub!(:create).and_return(@response_set)
     end
@@ -42,12 +42,12 @@ describe SurveyorController do
       def do_post
         post :create, :survey_code => "xyz"
       end
-      it "should look for the latest version of the survey if version is not explicitely provided" do
+      it "should look for the latest survey_version of the survey if survey_version is not explicitely provided" do
         do_post
         assigns(:survey).should eq(@newsurvey)
       end
       
-      it "should look for the partculer version of the survey if it is provided" do
+      it "should look for the partculer survey_version of the survey if it is provided" do
         post :create, :survey_code => "xyz", :survey_version => 0
         assigns(:survey).should eq(@survey)
       end
@@ -124,8 +124,8 @@ describe SurveyorController do
       response.should redirect_to(available_surveys_url)
     end
     
-    it "should render correct survey version" do
-      supplant = Factory(:survey, :title => "xyz", :access_code => 'xyz', :version => 1)
+    it "should render correct survey survey_version" do
+      supplant = Factory(:survey, :title => "xyz", :access_code => 'xyz', :survey_version => 1)
       supplant_section = Factory(:survey_section, :survey => supplant)
       supplant_response_set = Factory(:response_set, :access_code => "rst", :survey => supplant)
       
@@ -187,8 +187,8 @@ describe SurveyorController do
       session[:surveyor_javascript].should == "enabled"
     end
     
-    it "should render correct survey version" do
-      supplant = Factory(:survey, :title => "XYZ", :access_code => 'XYZ', :version => 1)
+    it "should render correct survey survey_version" do
+      supplant = Factory(:survey, :title => "XYZ", :access_code => 'XYZ', :survey_version => 1)
       supplant_section = Factory(:survey_section, :survey => supplant)
       supplant_response_set = Factory(:response_set, :access_code => "RST", :survey => supplant)
       

@@ -16,7 +16,7 @@
               = values[:title]
               &nbsp;
               = label_tag :survey_version, 'version:'
-              = select_tag(:survey_version, options_for_select([["-- Current version --", ""]] + values[:versions]))
+              = select_tag(:survey_version, options_for_select([["-- Current version --", ""]] + values[:survey_versions]))
               &nbsp;
               = submit_tag( t('surveyor.take_it') )
       - else
