@@ -66,7 +66,8 @@ Then /^there should be (\d+) text areas$/ do |count|
 end
 
 Then /^the question "([^"]*)" should be triggered$/ do |text|
-  page.should have_selector %(fieldset[name="#{text}"][class!="q_hidden"])
+  q = Question.find_by_text(text)
+  page.should have_selector %(fieldset#q_#{q.id}[class!="q_hidden"])
 end
 
 Then /^there should be (\d+) response with answer "([^"]*)"$/ do |count, answer_text|

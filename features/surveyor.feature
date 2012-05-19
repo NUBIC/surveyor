@@ -451,7 +451,7 @@ Feature: Survey creation
     Then the "When eat" field should contain "13:30"
     When I press "Three"
     Then the "When phone" field should contain "2011-02-15 17:00:00"
-
+  
   @javascript
   Scenario: Creating a date
     Given the survey
@@ -465,6 +465,7 @@ Feature: Survey creation
     """
     When I start the "When" survey
     And I click "Give me a date"
+    And I wait 1 seconds
     And I follow today's date
     And I press "Click here to finish"
     Then there should be a datetime response with today's date
