@@ -153,3 +153,8 @@ When /^I follow today's date$/ do
     When I follow "#{Date.today.strftime('%d').to_i}"
   }
 end
+
+Then /^I should see (\d+) textareas on the page$/ do |i|
+  page.has_css?('textarea', :count => i)
+end
+

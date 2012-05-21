@@ -566,3 +566,25 @@ Feature: Survey creation
     And I press "Take it"
     Then I should see "Mexico"
     And I should not see "Keniya"
+  
+  # Issue 236 - ":text"- field doesn't show up in the multi-select questions
+  Scenario: Pick one and pick many with text areas
+    Given the survey
+    """
+      survey "Pick plus text" do
+        section "Examples" do      
+          q "What is your best beauty secret?", :pick => :one
+          a "My secret is", :text
+          a "None of your business"
+          a "I don't know"
+    
+          q "Who knows about this secret?", :pick => :any
+          a "Only you and me, because", :text
+          a "These other people:", :text
+        end
+      end
+    """
+    When I go to the surveys page
+    And I wait 1 seconds
+    And I press "Take it"
+    Then I should see 3 textareas on the page
