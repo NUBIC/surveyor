@@ -568,7 +568,7 @@ Feature: Survey creation
     And I should not see "Keniya"
   
   # Issue 236 - ":text"- field doesn't show up in the multi-select questions
-  Scenario: Pick one and pick many with text areas
+  Scenario: Pick one and pick any with text areas
     Given the survey
     """
       survey "Pick plus text" do
@@ -588,3 +588,29 @@ Feature: Survey creation
     And I wait 1 seconds
     And I press "Take it"
     Then I should see 3 textareas on the page
+
+  # Issue 207 - Create separate fields for date and time
+  Scenario: Pick one and pick any with dates
+  Given the survey
+  """
+    survey "Complex date survey" do
+      section "Date questions with pick one and pick any" do
+        q "What is your birth date?", :pick => :one
+        a "I was born on", :date
+        a "Refused"
+
+        q "At what time were you born?", :pick => :any
+        a "I was born at", :time
+        a "This time is approximate"
+
+        q "When would you like to schedule your next appointment?"
+        a :datetime
+      end
+    end
+  """
+  When I go to the surveys page
+  And I wait 1 seconds
+  And I press "Take it"
+  Then I should see 1 "date" input on the page
+  And I should see 1 "time" input on the page
+  And I should see 1 "datetime" input on the page

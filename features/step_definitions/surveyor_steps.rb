@@ -158,3 +158,6 @@ Then /^I should see (\d+) textareas on the page$/ do |i|
   page.has_css?('textarea', :count => i)
 end
 
+Then /^I should see (\d+) "(.*?)" input on the page$/ do |i, css_class|
+  page.has_css?("input.#{css_class}", :count => i)
+end
