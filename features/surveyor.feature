@@ -615,7 +615,6 @@ Feature: Survey creation
   And I should see 1 "datetime" input on the page
 
   # Issue #251 - Dropdowns inside of group display as radio buttons
-  @focus
   Scenario: Dropdown within a group
   Given the survey
   """

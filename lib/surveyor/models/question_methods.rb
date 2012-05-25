@@ -13,7 +13,7 @@ module Surveyor
 
         # Scopes
         base.send :default_scope, :order => "display_order ASC"
-        
+
         @@validations_already_included ||= nil
         unless @@validations_already_included
           # Validations
@@ -21,11 +21,11 @@ module Surveyor
           # this causes issues with building and saving
           #, :survey_section_id
           base.send :validates_inclusion_of, :is_mandatory, :in => [true, false]
-          
+
           @@validations_already_included = true
-          
+
         end
-        
+
         # Whitelisting attributes
         base.send :attr_accessible, :survey_section, :question_group, :survey_section_id, :question_group_id, :text, :short_text, :help_text, :pick, :reference_identifier, :data_export_identifier, :common_namespace, :common_identifier, :display_order, :display_type, :is_mandatory, :display_width, :custom_class, :custom_renderer, :correct_answer_id
       end
@@ -46,7 +46,7 @@ module Surveyor
         self.short_text ||= text
         self.api_id ||= Surveyor::Common.generate_api_id
       end
-      
+
       def pick=(val)
         write_attribute(:pick, val.nil? ? nil : val.to_s)
       end
@@ -74,11 +74,11 @@ module Surveyor
       def solo?
         self.question_group.nil?
       end
-      
+
       def split_text(part = nil)
         (part == :pre ? text.split("|",2)[0] : (part == :post ? text.split("|",2)[1] : text)).to_s
       end
-      
+
       def renderer(g = question_group)
         r = [g ? g.renderer.to_s : nil, display_type].compact.join("_")
         r.blank? ? :default : r.to_sym

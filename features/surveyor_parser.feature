@@ -2,7 +2,7 @@ Feature: Survey parser
   As a developer
   I want to write out the survey in the DSL
   So that I can give it to survey participants
-  
+
   Scenario: Parsing basic questions
     Given I parse
     """
@@ -89,7 +89,7 @@ Feature: Survey parser
             a :string
           end
         end
-      end  
+      end
     """
     Then there should be 1 survey with:
       | title          |
@@ -113,17 +113,17 @@ Feature: Survey parser
         section "Conditionals" do
           q_montypython3 "What... is your name? (e.g. It is 'Arthur', King of the Britons)"
           a_1 :string
-    
+
           q_montypython4 "What... is your quest? (e.g. To seek the Holy Grail)"
           a_1 :string
           dependency :rule => "A"
           condition_A :q_montypython3, "==", {:string_value => "It is 'Arthur', King of the Britons", :answer_reference => "1"}
-    
+
           q "How many pets do you own?"
           a :integer
           validation :rule => "A"
           condition_A ">=", :integer_value => 0
-    
+
           q "What is your address?", :custom_class => 'address'
           a :text, :custom_class => 'mapper'
           validation :rule => "AC"
@@ -170,38 +170,38 @@ Feature: Survey parser
     """
       survey "dependency test" do
         section "section 1" do
-  
+
           q_copd_sh_1 "Have you ever smoked cigarettes?",:pick=>:one,:help_text=>"NO means less than 20 packs of cigarettes or 12 oz. of tobacco in a lifetime or less than 1 cigarette a day for 1 year."
           a_1 "Yes"
           a_2 "No"
-  
+
           q_copd_sh_1a "How old were you when you first started smoking cigarettes?", :help_text=>"age in years"
           a :integer
           dependency :rule => "A"
           condition_A :q_copd_sh_1, "==", :a_1
-  
+
           q_copd_sh_1b "Do you currently smoke cigarettes?",:pick=>:one, :help_text=>"as of 1 month ago"
           a_1 "Yes"
           a_2 "No"
           dependency :rule => "B"
           condition_B :q_copd_sh_1, "==", :a_1
-  
+
           q_copd_sh_1c "On the average of the entire time you smoked, how many cigarettes did you smoke per day?"
           a :integer
           dependency :rule => "C"
           condition_C :q_copd_sh_1, "==", :a_1
-  
+
           q_copd_sh_1bb "How many cigarettes do you smoke per day now?"
           a_2 "integer"
           dependency :rule => "D"
           condition_D :q_copd_sh_1b, "==", :a_1
-  
-  
+
+
           q_copd_sh_1ba "How old were you when you stopped?"
           a "Years", :integer
           dependency :rule => "E"
           condition_E :q_copd_sh_1b, "==", :a_2
-  
+
         end
       end
     """
@@ -222,7 +222,7 @@ Feature: Survey parser
           a_yes "Yes"
           a_no "No"
 
-          group do 
+          group do
             dependency :rule => "A"
             condition_A :q_diabetes, "==", :a_yes
             label "It looks like you are not eligible for this specific study at the time"
@@ -248,7 +248,7 @@ Feature: Survey parser
     Then there should be 4 dependencies
     And 2 dependencies should depend on questions
     And 2 dependencies should depend on question groups
-  
+
   Scenario: Parsing dependencies with "a"
     Given the survey
     """
@@ -272,7 +272,7 @@ Feature: Survey parser
     And there should be 1 resolved dependency_condition with:
       | rule_key |
       | A        |
-  
+
   Scenario: Parsing dependencies with "q"
     Given the survey
     """
@@ -296,3 +296,17 @@ Feature: Survey parser
     And there should be 1 resolved dependency_condition with:
       | rule_key |
       | A        |
+
+  Scenario: Parsing a quiz
+    Given the survey
+    """
+      survey "Quiz time" do
+        section "First" do
+          q_the_answer "What is the 'Answer to the Ultimate Question of Life, The Universe, and Everything'", :correct => "adams"
+          a_pi "3.14"
+          a_zero "0"
+          a_adams "42"
+        end
+      end
+    """
+    Then there should be 1 question with a correct answer

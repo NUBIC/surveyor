@@ -36,6 +36,11 @@ Then /^there should be (\d+) question(?:s?) with:$/ do |x, table|
   end
 end
 
+Then /^there should be (\d+) question(?:s?) with a correct answer$/ do |x|
+  Question.count(:conditions => "correct_answer_id NOT NULL").should == x.to_i
+  Question.all(:conditions => "correct_answer_id NOT NULL").compact.map(&:correct_answer).compact.size.should == x.to_i
+end
+
 Then /^there should be (\d+) answer(?:s?) with:$/ do |x, table|
   Answer.count.should == x.to_i
   table.hashes.each do |hash|
@@ -57,7 +62,7 @@ Then /^there should be (\d+) resolved dependency_condition(?:s?) with:$/ do |x, 
     d = DependencyCondition.find(:first, :conditions => hash)
     d.should_not be_nil
     d.question.should_not be_nil
-    d.answer.should_not be_nil unless d.operator.match(/^count[<>=!]{1,2}\d+/) 
+    d.answer.should_not be_nil unless d.operator.match(/^count[<>=!]{1,2}\d+/)
   end
 end
 
