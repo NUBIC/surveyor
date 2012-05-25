@@ -3,17 +3,23 @@
 BUNDLER_VERSION=1.1.3
 GEMSET=surveyor
 
-export TMPDIR="`pwd`/tmp"
-mkdir -p tmp
-
-if [ -n "${RAILS_VERSION}" ]; then
-    GEMSET="${GEMSET}-${RAILS_VERSION}"
-fi
-
 if [ -z $CI_RUBY ]; then
     echo "CI_RUBY must be set"
     exit 1
 fi
+
+# TMPDIR under the workspace causes gconfd-2 to stop responding and eat all
+# memory when Firefox is running for the Selenium tests. TMPDIR in user home
+# seems to work fine.
+export TMPDIR="${HOME}/tmp/surveyor-ci-${CI_RUBY}"
+
+if [ -n "${RAILS_VERSION}" ]; then
+    GEMSET="${GEMSET}-${RAILS_VERSION}"
+    TMPDIR="${TMPDIR}-${RAILS_VERSION}"
+fi
+
+rm -rf "${TMPDIR}"
+mkdir -p "${TMPDIR}"
 
 set +xe
 echo "Initializing RVM"
