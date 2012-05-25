@@ -110,7 +110,7 @@ Feature: Survey export
       }]
     }
   """
-    
+
   Scenario: Exporting response sets
   Given I parse
   """
@@ -144,7 +144,7 @@ Feature: Survey export
     | red    |
   And the json for the last response set for "Simple json response sets" should be
   """
-  { 
+  {
     "uuid":"*",
     "survey_id":"*",
     "created_at":"*",
@@ -165,7 +165,31 @@ Feature: Survey export
     }]
   }
   """
-  
+
+  # Issue #294 - ResponseSet#to_json generates unexpected results with zero Responses
+  Scenario: Exporting response sets without responses
+  Given I parse
+  """
+    survey "Simple json response sets" do
+      section "Colors" do
+
+        question_1 "What is your favorite color?", :pick => :one
+        answer "red"
+        answer "blue"
+        answer "green"
+        answer :other
+
+        q_2b "What color don't you like?"
+        a_1 "color", :string
+      end
+      section "Other" do
+        label "no"
+      end
+    end
+  """
+  When I start the "Simple json response sets" survey
+  Then the json for the last response set for "Simple json response sets" should include '"responses":[]'
+
   Scenario: Exporting response sets for versioned surveys
   Given I parse
   """
@@ -193,7 +217,7 @@ Feature: Survey export
   And I press "Click here to finish"
   Then the json for the first response set for "Simple json response sets" should be
   """
-  { 
+  {
     "uuid":"*",
     "survey_id":"*",
     "created_at":"*",
@@ -210,7 +234,7 @@ Feature: Survey export
   """
   And the json for the last response set for "Simple json response sets" should be
   """
-  { 
+  {
     "uuid":"*",
     "survey_id":"*",
     "created_at":"*",
@@ -225,4 +249,3 @@ Feature: Survey export
     }]
   }
   """
-  

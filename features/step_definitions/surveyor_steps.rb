@@ -116,6 +116,23 @@ Then /^the json for the ([^"]*) response set for "([^"]*)" should be$/ do |order
   Surveyor::Common.equal_json_excluding_wildcards(page.find('body').text, string).should == true
 end
 
+Then /^the json for the ([^"]*) response set for "(.*?)" should include '(.*?)'$/ do |order, title, string|
+  response_sets = ResponseSet.joins(:survey).where(:conditions => { :surveys => { :title => title }}).order(:updated_at)
+  response_sets.should_not be_empty
+
+  case order
+  when "last"
+    response_set = response_sets.last
+  when "first"
+    response_set = response_sets.first
+  end
+  response_set.should_not be_nil
+  visit "/surveys/#{response_set.survey.access_code}/#{response_set.access_code}.json"
+
+  page.find('body').text.include?(string).should == true
+end
+
+
 Then /the element "([^\"]*)" should be hidden$/ do |selector|
   wait_until do
     its_hidden = page.evaluate_script("$('#{selector}').is(':hidden');")
