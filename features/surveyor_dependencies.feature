@@ -45,6 +45,7 @@ Feature: Survey dependencies
     And the element "#q_2" should be hidden
     When I press "Second"
     And I press "First"
+    And I wait 1 seconds
     Then the element "#q_3" should not be hidden
     And the element "#q_2" should be hidden
   
