@@ -451,7 +451,7 @@ Feature: Survey creation
     Then the "When eat" field should contain "13:30"
     When I press "Three"
     Then the "When phone" field should contain "2011-02-15 17:00:00"
-  
+
   @javascript
   Scenario: Creating a date
     Given the survey
@@ -531,7 +531,7 @@ Feature: Survey creation
     When I uncheck "Singapore"
     And I wait 1 seconds
     Then 0 responses should exist
-    
+
   Scenario: Accessing outdated survey
     Given the survey
     """
@@ -560,24 +560,24 @@ Feature: Survey creation
     And I press "Take it"
     Then I should see "Ireland"
     And I should not see "Italy"
-    
+
     When I go to the surveys page
     And I select "0" from "survey_version"
     And I press "Take it"
     Then I should see "Mexico"
     And I should not see "Keniya"
-  
+
   # Issue 236 - ":text"- field doesn't show up in the multi-select questions
   Scenario: Pick one and pick any with text areas
     Given the survey
     """
       survey "Pick plus text" do
-        section "Examples" do      
+        section "Examples" do
           q "What is your best beauty secret?", :pick => :one
           a "My secret is", :text
           a "None of your business"
           a "I don't know"
-    
+
           q "Who knows about this secret?", :pick => :any
           a "Only you and me, because", :text
           a "These other people:", :text
@@ -614,3 +614,33 @@ Feature: Survey creation
   Then I should see 1 "date" input on the page
   And I should see 1 "time" input on the page
   And I should see 1 "datetime" input on the page
+
+  # Issue #251 - Dropdowns inside of group display as radio buttons
+  @focus
+  Scenario: Dropdown within a group
+  Given the survey
+  """
+    survey "Dropdowns" do
+      section "Location" do
+        q "What is the address of your new home?", :pick => :one
+        a_1 "Address known"
+        a_2 "Out of the country"
+        a_3 "PO Box address only"
+        a_neg_1 "Refused"
+        a_neg_2 "Don't know"
+
+        group "Address information" do
+          q_NEW_STATE "State", :display_type => :dropdown, :pick=>:one
+          a_1 "AL"
+          a_2 "AK"
+          a_3 "AZ"
+          a_4 "AR"
+          a_5 "CA"
+          a_6 "CO"
+        end
+      end
+    end
+  """
+  When I go to the surveys page
+  And I press "Take it"
+  Then I should see 1 select on the page

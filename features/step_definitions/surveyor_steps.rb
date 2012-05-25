@@ -104,14 +104,14 @@ end
 Then /^the json for the ([^"]*) response set for "([^"]*)" should be$/ do |order, title, string|
   response_sets = ResponseSet.joins(:survey).where(:conditions => { :surveys => { :title => title }}).order(:updated_at)
   response_sets.should_not be_empty
-  
+
   case order
   when "last"
     response_set = response_sets.last
   when "first"
     response_set = response_sets.first
   end
-  response_set.should_not be_nil    
+  response_set.should_not be_nil
   visit "/surveys/#{response_set.survey.access_code}/#{response_set.access_code}.json"
   Surveyor::Common.equal_json_excluding_wildcards(page.find('body').text, string).should == true
 end
@@ -160,4 +160,8 @@ end
 
 Then /^I should see (\d+) "(.*?)" input on the page$/ do |i, css_class|
   page.has_css?("input.#{css_class}", :count => i)
+end
+
+Then /^I should see (\d+) select on the page$/ do |i|
+  page.has_css?("select", :count => i)
 end
