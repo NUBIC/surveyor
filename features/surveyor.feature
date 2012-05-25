@@ -337,7 +337,6 @@ Feature: Survey creation
 
 
   # Issue 259 - substitution of the text with Mustache
-  @wip
   @javascript
   Scenario: Creating a question with an mustache syntax
     Given I have survey context of "FakeMustacheContext"
