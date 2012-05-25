@@ -4,10 +4,10 @@ class CreateValidationConditions < ActiveRecord::Migration
       # Context
       t.integer :validation_id
       t.string :rule_key
-      
-      # Conditional    
+
+      # Conditional
       t.string :operator
-      
+
       # Optional external reference
       t.integer :question_id
       t.integer :answer_id
@@ -21,7 +21,7 @@ class CreateValidationConditions < ActiveRecord::Migration
       t.string :string_value
       t.string :response_other
       t.string :regexp
-      
+
       t.timestamps
     end
   end

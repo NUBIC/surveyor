@@ -7,7 +7,7 @@
   font-size:18px;
   padding:4px;
   text-align:center;
-  width:194px;    
+  width:194px;
   -moz-box-shadow:0 0 10px #eee inset;
 }
 */
@@ -15,7 +15,7 @@
 #calroot {
 	/* place on top of other elements. set a higher value if nessessary */
 	z-index:9999;
-	
+
 	margin-top:-1px;
 	width:198px;
 	padding:2px;
@@ -25,19 +25,19 @@
 	-moz-border-radius:5px;
 	-webkit-border-radius:5px;
 	-moz-box-shadow: 0 0 15px #666;
-	-webkit-box-shadow: 0 0 15px #666;	
+	-webkit-box-shadow: 0 0 15px #666;
 	position: absolute;
 }
 
 /* head. contains title, prev/next month controls and possible month/year selectors */
-#calhead {	
+#calhead {
 	padding:2px 0;
 	height:22px;
-} 
+}
 
 #caltitle {
 	font-size:14px;
-	color:#0150D1;	
+	color:#0150D1;
 	float:left;
 	text-align:center;
 	width:155px;
@@ -60,12 +60,12 @@
 }
 
 #calprev.caldisabled, #calnext.caldisabled {
-	visibility:hidden;	
+	visibility:hidden;
 }
 
 /* year/month selector */
 #caltitle select {
-	font-size:10px;	
+	font-size:10px;
 }
 
 /* names of the days */
@@ -106,8 +106,8 @@
 	line-height:20px;
 	color:#666;
 	-moz-border-radius:3px;
-	-webkit-border-radius:3px; 		
-} 
+	-webkit-border-radius:3px;
+}
 
 /* different states */
 .calweek a:hover, .calfocus {
@@ -116,16 +116,16 @@
 
 /* sunday */
 a.calsun {
-	color:red;		
+	color:red;
 }
 
 /* offmonth day */
 a.caloff {
-	color:#ccc;		
+	color:#ccc;
 }
 
 a.caloff:hover {
-	background-color:rgb(245, 245, 250);		
+	background-color:rgb(245, 245, 250);
 }
 
 

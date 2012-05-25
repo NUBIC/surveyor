@@ -4,7 +4,7 @@ class CreateDependencyConditions < ActiveRecord::Migration
       # Context
       t.integer :dependency_id
       t.string :rule_key
-      
+
       # Conditional
       t.integer :question_id # the conditional question
       t.string :operator

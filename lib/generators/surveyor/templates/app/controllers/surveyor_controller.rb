@@ -22,7 +22,7 @@ module SurveyorControllerCustomMethods
   def update
     super
   end
-  
+
   # Paths
   def surveyor_index
     # most of the above actions redirect to this method
