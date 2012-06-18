@@ -102,7 +102,7 @@ Then /^the json for "([^"]*)" version "([^"]*)" should be$/ do |title, version, 
 end
 
 Then /^the json for the ([^"]*) response set for "([^"]*)" should be$/ do |order, title, string|
-  response_sets = ResponseSet.joins(:survey).where(:conditions => { :surveys => { :title => title }}).order(:updated_at)
+  response_sets = ResponseSet.joins(:survey).where(:surveys => { :title => title }).order(:updated_at)
   response_sets.should_not be_empty
 
   case order
@@ -117,7 +117,7 @@ Then /^the json for the ([^"]*) response set for "([^"]*)" should be$/ do |order
 end
 
 Then /^the json for the ([^"]*) response set for "(.*?)" should include '(.*?)'$/ do |order, title, string|
-  response_sets = ResponseSet.joins(:survey).where(:conditions => { :surveys => { :title => title }}).order(:updated_at)
+  response_sets = ResponseSet.joins(:survey).where(:surveys => { :title => title }).order(:updated_at)
   response_sets.should_not be_empty
 
   case order
