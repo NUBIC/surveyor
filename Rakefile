@@ -68,6 +68,16 @@ namespace :testbed do
   end
 
   task :rebuild => [:remove, :generate, :migrate]
+
+  desc 'Load all the sample surveys into the testbed instance'
+  task :surveys do
+    cd('testbed') do
+      Dir[File.join('surveys', '*.rb')].each do |fn|
+        puts "Installing #{fn} into the testbed"
+        system("rake surveyor FILE='#{fn}'")
+      end
+    end
+  end
 end
 
 ###### CI
