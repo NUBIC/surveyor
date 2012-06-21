@@ -124,17 +124,18 @@ or on OSX:
 
 # Requirements
 
-Surveyor depends on:
+Surveyor works with:
 
-* Ruby (1.8.7 - 1.9.2)
-* Rails 3.0-3.1
+* Ruby 1.8.7, 1.9.2, and 1.9.3
+* Rails 3.0-3.2
+
+Some key library dependencies are:
+
 * HAML
-* SASS
-* fastercsv (or CSV for ruby 1.9) for csv exports
-* formtastic
-* UUID
+* Sass
+* Formtastic
 
-Specific versions of the gem dependencies are listed in the gemspec.
+A more exhaustive list can be found in the gemspec.
 
 # Contributing, testing
 
