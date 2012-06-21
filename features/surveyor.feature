@@ -397,6 +397,29 @@ Feature: Survey creation
     And I press "One"
     Then there should be 1 response with answer "1"
 
+  @javascript
+  # Issue #339
+  Scenario: Immediately saving grid responses
+    Given the survey
+    """
+      survey "Grid" do
+        section "One" do
+          grid "Tell us how often do you cover these each day" do
+            a "1"
+            a "2"
+            a "3"
+            q "Head", :pick => :one
+            q "Knees", :pick => :one
+            q "Toes", :pick => :one
+          end
+        end
+      end
+    """
+    When I start the "Grid" survey
+    And I choose "3"
+    And I wait 1 second
+    Then there should be 1 response with answer "3"
+
   Scenario: Creating dates
     Given the survey
     """
