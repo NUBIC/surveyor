@@ -1,6 +1,10 @@
 # Surveys On Rails
 
-Surveyor is a ruby gem and developer tool that brings surveys into Rails applications. Surveys are written in the Surveyor DSL (Domain Specific Language). Before Rails 2.3, it was implemented as a Rails Engine. It also existed previously as a plugin. Today it is a gem only.
+Surveyor is a developer tool that brings surveys into Rails
+applications. Surveys are written in the Surveyor DSL (Domain Specific
+Language). Internally, Surveyor is a Rails engine distributed as a
+ruby gem, meaning it is straightforward to override or extend its
+behaviors in your Rails app without maintaining a fork.
 
 ## Why you might want to use Surveyor
 
