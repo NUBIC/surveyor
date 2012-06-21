@@ -18,13 +18,14 @@
                 %th &nbsp;
               - ten_questions.each_with_index do |q, i|
                 %tr{:id => "q_#{q.id}", :class => "q_#{renderer} #{q.css_class(@response_set)}"}
-                  - if q.pick == "one"
-                    - r = response_for(@response_set, q, nil, g)
-                    - i = response_idx  # increment the response index since the answer partial skips for q.pick == one
-                    = f.semantic_fields_for i, r do |ff|
-                      = ff.input :question_id, :as => :quiet
-                      = ff.input :id, :as => :quiet unless r.new_record?
-                  %th= q.split_text(:pre)
+                  %th
+                    = q.split_text(:pre)
+                    - if q.pick == "one"
+                      - r = response_for(@response_set, q, nil, g)
+                      - i = response_idx  # increment the response index since the answer partial skips for q.pick == one
+                      = f.semantic_fields_for i, r do |ff|
+                        = ff.input :question_id, :as => :quiet
+                        = ff.input :id, :as => :quiet unless r.new_record?
                   - q.answers.each do |a|
                     %td= render a.custom_renderer || '/partials/answer', :g => g, :q => q, :a => a, :f => f
                   %th= q.split_text(:post)
