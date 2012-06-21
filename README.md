@@ -55,7 +55,7 @@ The first question is "pick one" (radio buttons) with "other". The second questi
 
 # Installation
 
-1. Add surveyor to your Gemfile:
+Add surveyor to your Gemfile:
 
     gem "surveyor"
 
@@ -63,16 +63,16 @@ Then run:
 
     bundle install
 
-2. Generate assets, run migrations:
+Generate assets, run migrations:
 
     script/rails generate surveyor:install
     rake db:migrate
 
-3. Try out the "kitchen sink" survey. The rake task above generates surveys from our custom survey DSL (a good format for end users and stakeholders).
+Try out the "kitchen sink" survey. The rake task above generates surveys from our custom survey DSL (a good format for end users and stakeholders).
 
     rake surveyor FILE=surveys/kitchen_sink_survey.rb
 
-4. Start up your app and visit http://localhost:3000/surveys
+Start up your app and visit http://localhost:3000/surveys
 
 Try taking the survey and compare it to the contents of the DSL file kitchen\_sink\_survey.rb. See how the DSL maps to what you see.
 
@@ -86,7 +86,7 @@ There are two other useful rake tasks:
 
 Surveyor's controller, models, and views may be customized via classes in your app/models, app/helpers and app/controllers directories. To generate a sample custom controller and layout, run:
 
-`script/rails generate surveyor:custom`
+    script/rails generate surveyor:custom
 
 and read surveys/EXTENDING\_SURVEYOR
 
