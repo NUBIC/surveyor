@@ -397,8 +397,8 @@ Feature: Survey creation
     And I press "One"
     Then there should be 1 response with answer "1"
 
-  @javascript
   # Issue #339
+  @javascript
   Scenario: Immediately saving grid responses
     Given the survey
     """
