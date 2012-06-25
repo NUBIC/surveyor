@@ -6,6 +6,27 @@ When /^I start the "([^"]*)" survey$/ do |name|
   }
 end
 
+When /^I start the survey$/ do
+  steps %Q{
+    When I go to the surveys page
+     And I press "Take it"
+  }
+end
+
+# When I fill in the (nth) (string) for "(ref_id)" with "(value to fill)"
+When /^I fill in the (\d+[a-z]{0,2} )?(\w+) for "([^"]+)" with "([^"]+)"$/ do |index, type, answer_reference_id, value|
+  answer = Answer.where(:reference_identifier => answer_reference_id).first
+  fail "No answer with ref ID #{answer_reference_id.inspect}" unless answer
+
+  i = index ? index.to_i - 1 : 0
+
+  answer_input_id = page.all("input[@value='#{answer.id}']").
+    select { |x| x['id'] =~ /answer_id/ }[i]['id']
+  ordinal = answer_input_id.scan(/r_(\d+)/).first.first
+  value_input_id = "r_#{ordinal}_#{type}_value"
+  page.fill_in(value_input_id, :with => value)
+end
+
 Then /^there should be (\d+) response set with (\d+) responses? with:$/ do |rs_num, r_num, table|
   ResponseSet.count.should == rs_num.to_i
   Response.count.should == r_num.to_i
@@ -75,6 +96,49 @@ Then /^there should be (\d+) response with answer "([^"]*)"$/ do |count, answer_
   Response.find_by_answer_id(Answer.find_by_text(answer_text)).should_not be_blank
 end
 
+Then /^there should be a (\w+ )?response(?: for answer "([^"]+)")?(?: with value "([^"]+)")?$/ do |type, answer_reference_id, value|
+  conditions = []
+  values = []
+  if type
+    attribute = case type.strip
+                when 'date'
+                  'datetime_value'
+                when 'time'
+                  'datetime_value'
+                else
+                  "#{type.strip}_value"
+                end
+    if value
+      case type.strip
+      when 'date'
+        # Work around deficient SQLite date handling
+        conditions << "date(#{attribute}) = date(?)"
+        values << value
+      else
+        conditions << "#{attribute} = ?"
+        values << value
+      end
+    else
+      conditions << "#{attribute} IS NOT NULL"
+    end
+  end
+
+  if answer_reference_id
+    answer = Answer.where(:reference_identifier => answer_reference_id).first
+    fail "No answer with ref ID #{answer_reference_id}" unless answer
+    conditions << 'answer_id = ?'
+    values << answer
+  end
+
+  Response.where(conditions.join(' AND '), *values).count.should == 1
+end
+
+Then /^there should not be a response for answer "([^"]+)"/ do |ref_id|
+  answer = Answer.where(:reference_identifier => ref_id).first
+  answer or fail "No answer with ref ID #{ref_id}"
+  Response.where(:answer_id => answer).count.should == 0
+end
+
 Then /^there should be a datetime response with today's date$/ do
   # Response.datetime_value returns ActiveSupport::TimeWithZone
   # so we call .to_date on it for the comparison with Date.today
@@ -83,6 +147,10 @@ end
 
 Then /^I should see the image "([^"]*)"$/ do |src|
   page.should have_selector %(img[src^="#{src}"])
+end
+
+Then /^I click elsewhere$/ do
+  page.find('.survey_title').click
 end
 
 Then /^(\d+) responses should exist$/ do |response_count|
