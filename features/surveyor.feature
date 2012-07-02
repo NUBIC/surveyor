@@ -642,3 +642,32 @@ Feature: Survey creation
   When I go to the surveys page
   And I press "Take it"
   Then I should see 1 select on the page
+
+  # Issue #336 :is_exclusive doesn't disable other answers that are tagged as :is_exclusive
+  @javascript
+  Scenario: multiple exclusive checkboxes
+    Given the survey
+    """
+      survey "Heat" do
+        section "Types" do
+          q_heat2 "Are there any other types of heat you use regularly during the heating season
+           to heat your home? ", :pick => :any
+           a_1 "Electric"
+           a_2 "Gas - propane or LP"
+           a_3 "Oil"
+           a_4 "Wood"
+           a_5 "Kerosene or diesel"
+           a_6 "Coal or coke"
+           a_7 "Solar energy"
+           a_8 "Heat pump"
+           a_9 "No other heating source", :is_exclusive => true
+           a_neg_5 "Other"
+           a_neg_1 "Refused", :is_exclusive => true
+           a_neg_2 "Don't know", :is_exclusive => true
+        end
+      end
+    """
+    When I start the "Heat" survey
+    And I click "No other heating source"
+    Then the checkbox for "Refused" should be disabled
+    Then the checkbox for "Don't know" should be disabled

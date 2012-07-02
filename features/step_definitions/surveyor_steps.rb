@@ -250,3 +250,9 @@ end
 Then /^I should see (\d+) select on the page$/ do |i|
   page.has_css?("select", :count => i)
 end
+
+Then /^the checkbox for "(.*?)" should be disabled$/ do |text|
+  a = Answer.find_by_text(text)
+  a.should_not be_nil
+  find("input[value='#{a.id}']")['disabled'].should == "true"
+end
