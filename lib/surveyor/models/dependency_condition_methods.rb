@@ -40,19 +40,24 @@ module Surveyor
         if self.operator.match /^count(>|>=|<|<=|=|!=)\d+$/
           op, i = self.operator.scan(/^count(>|>=|<|<=|=|!=)(\d+)$/).flatten
           responses.count.send(op, i.to_i)
+          # logger.warn({rule_key.to_sym => responses.count.send(op, i.to_i)})
           return {rule_key.to_sym => responses.count.send(op, i.to_i)}
-        elsif responses.blank? && operator == "!="
+        elsif operator == "!=" and (responses.blank? or responses.none?{|r| r.answer.id == self.answer.id})
+          # logger.warn( {rule_key.to_sym => true})
           return {rule_key.to_sym => true}
         elsif response = responses.detect{|r| r.answer.id == self.answer.id}
           klass = response.answer.response_class
           klass = "answer" if self.as(klass).nil?
           case self.operator
           when "==", "<", ">", "<=", ">="
+            # logger.warn( {rule_key.to_sym => response.as(klass).send(self.operator, self.as(klass))})
             return {rule_key.to_sym => response.as(klass).send(self.operator, self.as(klass))}
           when "!="
+            # logger.warn( {rule_key.to_sym => !response.as(klass).send("==", self.as(klass))})
             return {rule_key.to_sym => !response.as(klass).send("==", self.as(klass))}
           end
         end
+        # logger.warn({rule_key.to_sym => false})
         {rule_key.to_sym => false}
       end
 
