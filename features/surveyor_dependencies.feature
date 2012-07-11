@@ -302,7 +302,7 @@ Feature: Survey dependencies
           a_3 "Central AC"
           a_4 "Passive"
 
-          q_cooling_2 "How much does it cost to run your non-passive cooling solutions?"
+          q_cooling_2 "How much does it cost to run your cooling solutions?"
           dependency :rule => "A"
           condition_A :q_cooling_1, "!=", :a_4
           a_1 "$", :float
@@ -315,29 +315,3 @@ Feature: Survey dependencies
     And I choose "Passive"
     Then the question "How much does it cost to run your cooling solutions?" should be hidden
 
-  #issue #337 answer != condition returns false if question was never activated
-  @javascript
-  Scenario: Depending with != on questions without responses
-    Given the survey
-    """
-      survey "Heating" do
-        section "Basics" do
-          q_heating_1 "How do you heat your home?", :pick => :one
-          a_1 "Force air"
-          a_2 "Radiators"
-          a_3 "Oven"
-          a_4 "Passive"
-
-          q_heating_2 "How much does it cost to run your non-passive heating solutions?"
-          dependency :rule => "A and B"
-          condition_A :q_heating_1, "!=", :a_4
-          condition_B :q_heating_1, "count>0"
-          a_1 "$", :float
-        end
-      end
-    """
-    When I go to the surveys page
-    And I start the "Heating" survey
-    Then the question "How much does it cost to run your heating solutions?" should be hidden
-    And I choose "Oven"
-    Then the question "How much does it cost to run your heating solutions?" should be triggered

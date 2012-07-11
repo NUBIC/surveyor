@@ -61,24 +61,6 @@ survey "Kitchen Sink survey" do
     dependency :rule => "A"
     condition_A :q_montypython5, "==", {:string_value => "What do you mean? An African or European swallow?", :answer_reference => "1"}
 
-    q_cooling_1 "How do you cool your home?", :pick => :one
-    a_1 "Fans"
-    a_2 "Window AC"
-    a_3 "Central AC"
-    a_4 "Passive"
-
-    # When using !=, also use count>0 if you want to make sure the user responds
-    q_cooling_2 "How much does it cost to run your non-passive cooling solutions? (This question hidden until you respond 'How do you cool your home?')"
-    dependency :rule => "A and B"
-    condition_A :q_cooling_1, "!=", :a_4
-    condition_B :q_cooling_1, "count>0"
-    a_1 "$", :float
-
-    # Using != alone means the dependent question is shown by default
-    label "Please consider passive cooling solutions (This question always shown, unless you respond 'Passive')"
-    dependency :rule => "A"
-    condition_A :q_cooling_1, "!=", :a_4
-
     # Surveys, sections, questions, groups, and answers all take the following reference arguments
     # :reference_identifier   # usually from paper
     # :data_export_identifier # data export
