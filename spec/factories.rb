@@ -29,20 +29,20 @@ Factory.sequence(:question_display_order){|n| n }
 
 Factory.define :question do |q|
   q.association             :survey_section  # s.survey_section_id       {}
-  q.question_group_id       {}
-  q.text                    {"What is your favorite color?"}
-  q.short_text              {"favorite_color"}
-  q.help_text               {"just write it in the box"}
-  q.pick                    {:none}
+  # q.question_group_id       {}
+  q.text                    "What is your favorite color?"
+  q.short_text              "favorite_color"
+  q.help_text               "just write it in the box"
+  q.pick                    :none
   q.reference_identifier    {|me| "q_#{me.object_id}"}
-  q.data_export_identifier  {}
-  q.common_namespace        {}
-  q.common_identifier       {}
-  q.display_order           {Factory.next :question_display_order}
-  q.display_type            {} # nil is default
-  q.is_mandatory            {false}
-  q.display_width           {}
-  q.correct_answer_id       {nil}
+  # q.data_export_identifier  {}
+  # q.common_namespace        {}
+  # q.common_identifier       {}
+  q.display_order           Factory.next :question_display_order
+  # q.display_type            {} # nil is default
+  q.is_mandatory            false
+  # q.display_width           {}
+  q.correct_answer_id       nil
 end
 
 Factory.define :question_group do |g|
@@ -61,21 +61,21 @@ Factory.sequence(:answer_display_order){|n| n }
 
 Factory.define :answer do |a|
   a.association               :question  # a.question_id               {}
-  a.text                      {"My favorite color is clear"}
-  a.short_text                {"clear"}
-  a.help_text                 {"Clear is the absense of color"}
-  a.weight                    {}
-  a.response_class            {"String"}
-  a.reference_identifier      {}
-  a.data_export_identifier    {}
-  a.common_namespace          {}
-  a.common_identifier         {}
+  a.text                      "My favorite color is clear"
+  a.short_text                "clear"
+  a.help_text                 "Clear is the absense of color"
+  # a.weight
+  a.response_class            "string"
+  # a.reference_identifier      {}
+  # a.data_export_identifier    {}
+  # a.common_namespace          {}
+  # a.common_identifier         {}
   a.display_order             {Factory.next :answer_display_order}
-  a.is_exclusive              {}
+  # a.is_exclusive              {}
   a.display_type              "default"
-  a.display_length            {}
-  a.custom_class              {}
-  a.custom_renderer           {}
+  # a.display_length            {}
+  # a.custom_class              {}
+  # a.custom_renderer           {}
 end
 
 Factory.define :dependency do |d|

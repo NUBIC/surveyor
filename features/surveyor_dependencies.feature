@@ -311,9 +311,9 @@ Feature: Survey dependencies
     """
     When I go to the surveys page
     And I start the "Cooling" survey
-    Then the question "How much does it cost to run your cooling solutions?" should be triggered
+    Then the question "How much does it cost to run your non-passive cooling solutions?" should be triggered
     And I choose "Passive"
-    Then the question "How much does it cost to run your cooling solutions?" should be hidden
+    Then the question "How much does it cost to run your non-passive cooling solutions?" should be hidden
 
   #issue #337 answer != condition returns false if question was never activated
   @javascript
@@ -338,6 +338,6 @@ Feature: Survey dependencies
     """
     When I go to the surveys page
     And I start the "Heating" survey
-    Then the question "How much does it cost to run your heating solutions?" should be hidden
+    Then the question "How much does it cost to run your non-passive heating solutions?" should be hidden
     And I choose "Oven"
-    Then the question "How much does it cost to run your heating solutions?" should be triggered
+    Then the question "How much does it cost to run your non-passive heating solutions?" should be triggered

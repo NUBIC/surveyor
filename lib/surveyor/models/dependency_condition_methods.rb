@@ -39,9 +39,8 @@ module Surveyor
         responses = question.blank? ? [] : response_set.responses.where("responses.answer_id in (?)", question.answer_ids).all
         if self.operator.match /^count(>|>=|<|<=|=|!=)\d+$/
           op, i = self.operator.scan(/^count(>|>=|<|<=|=|!=)(\d+)$/).flatten
-          responses.count.send(op, i.to_i)
           # logger.warn({rule_key.to_sym => responses.count.send(op, i.to_i)})
-          return {rule_key.to_sym => responses.count.send(op, i.to_i)}
+          return {rule_key.to_sym => (op == "!=" ? !responses.count.send("==", i.to_i) : responses.count.send(op, i.to_i))}
         elsif operator == "!=" and (responses.blank? or responses.none?{|r| r.answer.id == self.answer.id})
           # logger.warn( {rule_key.to_sym => true})
           return {rule_key.to_sym => true}
