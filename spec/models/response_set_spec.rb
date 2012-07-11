@@ -461,5 +461,6 @@ describe ResponseSet, "#as_json" do
     js[:responses][0][:uuid].should == r0.api_id
     js[:responses][0][:answer_id].should == r0.answer.api_id
     js[:responses][0][:question_id].should == r0.question.api_id
+    js[:responses][0][:value].should == r0.string_value
   end
 end
