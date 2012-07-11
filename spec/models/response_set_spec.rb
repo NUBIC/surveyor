@@ -443,3 +443,24 @@ describe ResponseSet, "exporting csv" do
     csv.should match /pecan pie/
   end
 end
+
+describe ResponseSet, "#as_json" do
+  let(:rs) {
+    Factory(:response_set, :responses => [
+          Factory(:response, :question => Factory(:question), :answer => Factory(:answer), :string_value => '2')])
+  }
+  
+  let(:js) {rs.as_json}
+  
+  it "should include uuid, survey_id" do
+    js[:uuid].should == rs.api_id
+  end
+  
+  it "should include responses with uuid, question_id, answer_id, value" do
+    r0 = rs.responses[0]
+    js[:responses][0][:uuid].should == r0.api_id
+    js[:responses][0][:answer_id].should == r0.answer.api_id
+    js[:responses][0][:question_id].should == r0.question.api_id
+    js[:responses][0][:value].should == r0.string_value
+  end
+end

@@ -65,7 +65,7 @@ Factory.define :answer do |a|
   a.short_text                {"clear"}
   a.help_text                 {"Clear is the absense of color"}
   a.weight                    {}
-  a.response_class            {"String"}
+  a.response_class            {"string"}
   a.reference_identifier      {}
   a.data_export_identifier    {}
   a.common_namespace          {}
