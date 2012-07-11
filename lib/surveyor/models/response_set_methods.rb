@@ -109,10 +109,9 @@ module Surveyor
       end
       
       def as_json(options = nil)
-        template_path = ActionController::Base.view_paths.find("show", ["surveyor"], false, {:handlers=>[:rabl], :locale=>[:en], :formats=>[:json]}, [], []).inspect
-        engine = Rabl::Engine.new(File.read(template_path))
-        engine.to_hash((options || {}).merge(:object => self))
-      end
+        template_paths = ActionController::Base.view_paths.collect(&:to_path)
+        Rabl.render(self, 'surveyor/show.json', :view_path => template_paths, :format => "hash")
+      end      
       
       def complete!
         self.completed_at = Time.now
