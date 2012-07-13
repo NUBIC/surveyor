@@ -229,6 +229,17 @@ survey "Kitchen Sink survey" do
     a "knife", :string
     a :other, :string
 
+    q "What is your birth date?", :pick => :one
+    a "I was born on", :date
+    a "Refused"
+
+    q "At what time were you born?", :pick => :any
+    a "I was born at", :time
+    a "This time is approximate"
+
+    q "When would you like to schedule your next appointment?"
+    a :datetime
+
     q_car "Do you own a car?", :pick => :one
     a_y "Yes"
     a_n "No"
