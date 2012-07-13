@@ -12,7 +12,7 @@ describe DependencyCondition do
     before(:each) do
       @dependency_condition = DependencyCondition.new(
         :dependency_id => 1, :question_id => 45, :operator => "==",
-        :answer_id => 23, :rule_key => "1")
+        :answer_id => 23, :rule_key => "A")
     end
 
     it "should be valid" do
@@ -43,8 +43,8 @@ describe DependencyCondition do
       @dependency_condition.should be_valid
       DependencyCondition.create(
         :dependency_id => 2, :question_id => 46, :operator => "==",
-        :answer_id => 14, :rule_key => "2")
-      @dependency_condition.rule_key = "2" # rule key uniquness is scoped by dependency_id
+        :answer_id => 14, :rule_key => "B")
+      @dependency_condition.rule_key = "B" # rule key uniquness is scoped by dependency_id
       @dependency_condition.dependency_id = 2
       @dependency_condition.should_not be_valid
       @dependency_condition.should have(1).errors_on(:rule_key)
@@ -59,26 +59,6 @@ describe DependencyCondition do
       @dependency_condition.should have(1).error_on(:operator)
     end
 
-    it "should evaluate within the context of a response set object" do
-      @response = Response.new(:question_id => 45, :response_set_id => 40, :answer_id => 23)
-      @response.answer = Answer.new(:question_id => 45, :response_class => "answer").
-        tap { |a| a.id = 23 }
-      @dependency_condition.is_met?([@response]).should be_true
-      # inversion
-      @alt_response = Response.new(:question_id => 45, :response_set_id => 40)
-      @alt_response.answer = Answer.new(:question_id => 45, :response_class => "answer").
-        tap { |a| a.id = 55 }
-
-      @dependency_condition.is_met?([@alt_response]).should be_false
-    end
-
-    it "converts to a hash for evaluation by the dependency object" do
-      @response = Response.new(:question_id => 45, :response_set_id => 40, :answer_id => 23)
-      @rs = mock(ResponseSet, :responses => [@response])
-      @dependency_condition.stub!(:is_met?).and_return(true)
-      @dependency_condition.to_hash(@rs)
-    end
-    
     it "should protect timestamps" do
       saved_attrs = @dependency_condition.attributes
       if defined? ActiveModel::MassAssignmentSecurity::Error
@@ -88,360 +68,325 @@ describe DependencyCondition do
       end
       @dependency_condition.attributes.should == saved_attrs
     end
-    
+
   end
 
-  describe "to_hash" do
-    before do
-      @question = Factory(:question)
-      @answer = Factory(:answer, :question => @question)
-      @dependency_condition =
-        Factory(:dependency_condition, :rule_key => "A", :question => @question)
-      @rs = Factory(:response_set)
-      @response =
-        Factory(:response, :question => @question, :answer => @answer, :response_set => @rs)
-      @rs.responses << @response
-      @rs.save!
-    end
-
-    it "converts unmet condition to {:A => false}" do
-      @dependency_condition.stub!(:is_met?).and_return(false)
-      @dependency_condition.to_hash(@rs).should == {:A => false}
-    end
-
-    it "converts met condition to {:A => true}" do
-      @dependency_condition.stub!(:is_met?).and_return(true)
-      @dependency_condition.to_hash(@rs).should == {:A => true}
-    end
-
-    it "converts unanswered condition to {:A => false}" do
-      question = Factory(:question)
-      dependency_condition =
-        Factory(:dependency_condition, :rule_key => "A", :question => @question)
-      rs = Factory(:response_set)
-      dependency_condition.to_hash(rs).should == {:A => false}
-    end
+  it "returns true for != with no responses" do
+    question = Factory(:question)
+    dependency_condition = Factory(:dependency_condition, :rule_key => "C", :question => question)
+    rs = Factory(:response_set)
+    dependency_condition.to_hash(rs).should == {:C => false}
   end
 
-  describe "when if given a response object whether the dependency is satisfied using '=='" do
+  describe "evaluate '==' operator" do
     before(:each) do
-      @select_answer = Answer.new(:question_id => 1, :response_class => "answer").
-        tap { |a| a.id = 2 }
-      @dep_c = DependencyCondition.new(:operator => "==", :answer_id => @select_answer.id)
-      @response = Response.new(:question_id => 314, :response_set_id => 159, :answer_id => @select_answer.id)
-      @response.answer = @select_answer
-      @dep_c.answer = @select_answer
-      @dep_c.as(:answer).should == 2
-      @response.as(:answer).should == 2
-      @dep_c.as(:answer).should == @response.as(:answer)
+      @a = Factory(:answer)
+      @b = Factory(:answer, :question => @a.question)
+      @r = Factory(:response, :question => @a.question, :answer => @a)
+      @rs = @r.response_set
+      @dc = Factory(:dependency_condition, :question => @a.question, :answer => @a, :operator => "==", :rule_key => "D")
+      @dc.as(:answer).should == @r.as(:answer)
     end
 
-    it "knows checkbox/radio type response" do
-      @dep_c.is_met?([@response]).should be_true
-      @dep_c.answer_id = 12
-      @dep_c.is_met?([@response]).should be_false
+    it "with checkbox/radio type response" do
+      @dc.to_hash(@rs).should == {:D => true}
+      @dc.answer = @b
+      @dc.to_hash(@rs).should == {:D => false}
     end
 
-    it "knows string value response" do
-      @select_answer.response_class = "string"
-      @response.string_value = "hello123"
-      @dep_c.string_value = "hello123"
-      @dep_c.is_met?([@response]).should be_true
-      @response.string_value = "foo_abc"
-      @dep_c.is_met?([@response]).should be_false
+    it "with string value response" do
+      @a.update_attributes(:response_class => "string")
+      @r.update_attributes(:string_value => "hello123")
+      @dc.string_value = "hello123"
+      @dc.to_hash(@rs).should == {:D => true}
+      @r.update_attributes(:string_value => "foo_abc")
+      @dc.to_hash(@rs).should == {:D => false}
     end
 
-    it "knows a text value response" do
-      @select_answer.response_class = "text"
-      @response.text_value = "hello this is some text for comparison"
-      @dep_c.text_value = "hello this is some text for comparison"
-      @dep_c.is_met?([@response]).should be_true
-      @response.text_value = "Not the same text"
-      @dep_c.is_met?([@response]).should be_false
+    it "with a text value response" do
+      @a.update_attributes(:response_class => "text")
+      @r.update_attributes(:text_value => "hello this is some text for comparison")
+      @dc.text_value = "hello this is some text for comparison"
+      @dc.to_hash(@rs).should == {:D => true}
+      @r.update_attributes(:text_value => "Not the same text")
+      @dc.to_hash(@rs).should == {:D => false}
     end
 
-    it "knows an integer value response" do
-      @select_answer.response_class = "integer"
-      @response.integer_value = 10045
-      @dep_c.integer_value = 10045
-      @dep_c.is_met?([@response]).should be_true
-      @response.integer_value = 421
-      @dep_c.is_met?([@response]).should be_false
+    it "with an integer value response" do
+      @a.update_attributes(:response_class => "integer")
+      @r.update_attributes(:integer_value => 10045)
+      @dc.integer_value = 10045
+      @dc.to_hash(@rs).should == {:D => true}
+      @r.update_attributes(:integer_value => 421)
+      @dc.to_hash(@rs).should == {:D => false}
     end
 
-    it "knows a float value response" do
-      @select_answer.response_class = "float"
-      @response.float_value = 121.1
-      @dep_c.float_value = 121.1
-      @dep_c.is_met?([@response]).should be_true
-      @response.float_value = 130.123
-      @dep_c.is_met?([@response]).should be_false
+    it "with a float value response" do
+      @a.update_attributes(:response_class => "float")
+      @r.update_attributes(:float_value => 121.1)
+      @dc.float_value = 121.1
+      @dc.to_hash(@rs).should == {:D => true}
+      @r.update_attributes(:float_value => 130.123)
+      @dc.to_hash(@rs).should == {:D => false}
     end
   end
 
-  describe "when if given a response object whether the dependency is satisfied using '!='" do
+  describe "evaluate '!=' operator" do
     before(:each) do
-      @select_answer = Answer.new(:question_id => 1, :response_class => "answer").
-        tap { |a| a.id = 2 }
-      @response = Response.new(:question_id => 314, :response_set_id => 159, :answer_id => @select_answer.id)
-      @dep_c = DependencyCondition.new(:operator => "!=", :answer_id => @select_answer.id)
-      @response.answer = @select_answer
-      @dep_c.answer = @select_answer
-      @dep_c.as(:answer).should == 2
-      @response.as(:answer).should == 2
-      @dep_c.as(:answer).should == @response.as(:answer)
+      @a = Factory(:answer)
+      @b = Factory(:answer, :question => @a.question)
+      @r = Factory(:response, :question => @a.question, :answer => @a)
+      @rs = @r.response_set
+      @dc = Factory(:dependency_condition, :question => @a.question, :answer => @a, :operator => "!=", :rule_key => "E")
+      @dc.as(:answer).should == @r.as(:answer)
     end
 
-    it "knows checkbox/radio type response" do
-      @dep_c.is_met?([@response]).should be_false
-      @dep_c.answer_id = 12
-      @dep_c.is_met?([@response]).should be_true
+    it "with checkbox/radio type response" do
+      @dc.to_hash(@rs).should == {:E => false}
+      @dc.answer_id = @a.id.to_i+1
+      @dc.to_hash(@rs).should == {:E => true}
     end
 
-    it "knows string value response" do
-      @select_answer.response_class = "string"
-      @response.string_value = "hello123"
-      @dep_c.string_value = "hello123"
-      @dep_c.is_met?([@response]).should be_false
-      @response.string_value = "foo_abc"
-      @dep_c.is_met?([@response]).should be_true
+    it "with string value response" do
+      @a.update_attributes(:response_class => "string")
+      @r.update_attributes(:string_value => "hello123")
+      @dc.string_value = "hello123"
+      @dc.to_hash(@rs).should == {:E => false}
+      @r.update_attributes(:string_value => "foo_abc")
+      @dc.to_hash(@rs).should == {:E => true}
     end
 
-    it "knows a text value response" do
-      @select_answer.response_class = "text"
-      @response.text_value = "hello this is some text for comparison"
-      @dep_c.text_value = "hello this is some text for comparison"
-      @dep_c.is_met?([@response]).should be_false
-      @response.text_value = "Not the same text"
-      @dep_c.is_met?([@response]).should be_true
+    it "with a text value response" do
+      @a.update_attributes(:response_class => "text")
+      @r.update_attributes(:text_value => "hello this is some text for comparison")
+      @dc.text_value = "hello this is some text for comparison"
+      @dc.to_hash(@rs).should == {:E => false}
+      @r.update_attributes(:text_value => "Not the same text")
+      @dc.to_hash(@rs).should == {:E => true}
     end
 
-    it "knows an integer value response" do
-      @select_answer.response_class = "integer"
-      @response.integer_value = 10045
-      @dep_c.integer_value = 10045
-      @dep_c.is_met?([@response]).should be_false
-      @response.integer_value = 421
-      @dep_c.is_met?([@response]).should be_true
+    it "with an integer value response" do
+      @a.update_attributes(:response_class => "integer")
+      @r.update_attributes(:integer_value => 10045)
+      @dc.integer_value = 10045
+      @dc.to_hash(@rs).should == {:E => false}
+      @r.update_attributes(:integer_value => 421)
+      @dc.to_hash(@rs).should == {:E => true}
     end
 
-    it "knows a float value response" do
-      @select_answer.response_class = "float"
-      @response.float_value = 121.1
-      @dep_c.float_value = 121.1
-      @dep_c.is_met?([@response]).should be_false
-      @response.float_value = 130.123
-      @dep_c.is_met?([@response]).should be_true
+    it "with a float value response" do
+      @a.update_attributes(:response_class => "float")
+      @r.update_attributes(:float_value => 121.1)
+      @dc.float_value = 121.1
+      @dc.to_hash(@rs).should == {:E => false}
+      @r.update_attributes(:float_value => 130.123)
+      @dc.to_hash(@rs).should == {:E => true}
     end
   end
 
-  describe "when if given a response object whether the dependency is satisfied using '<'" do
+  describe "evaluate the '<' operator" do
     before(:each) do
-      @dep_c = DependencyCondition.new(:answer_id => 2, :operator => "<")
-      @select_answer = Answer.new(:question_id => 1, :response_class => "answer")
-      @response = Response.new(:question_id => 314, :response_set_id => 159, :answer_id => 2)
-      @response.answer = @select_answer
-      @dep_c.answer = @select_answer
+      @a = Factory(:answer)
+      @b = Factory(:answer, :question => @a.question)
+      @r = Factory(:response, :question => @a.question, :answer => @a)
+      @rs = @r.response_set
+      @dc = Factory(:dependency_condition, :question => @a.question, :answer => @a, :operator => "<", :rule_key => "F")
+      @dc.as(:answer).should == @r.as(:answer)
     end
 
-    it "knows operator on integer value response" do
-      @select_answer.response_class = "integer"
-      @response.integer_value = 50
-      @dep_c.integer_value = 100
-      @dep_c.is_met?([@response]).should be_true
-      @response.integer_value = 421
-      @dep_c.is_met?([@response]).should be_false
+    it "with an integer value response" do
+      @a.update_attributes(:response_class => "integer")
+      @r.update_attributes(:integer_value => 50)
+      @dc.integer_value = 100
+      @dc.to_hash(@rs).should == {:F => true}
+      @r.update_attributes(:integer_value => 421)
+      @dc.to_hash(@rs).should == {:F => false}
     end
 
-    it "knows operator on float value response" do
-      @select_answer.response_class = "float"
-      @response.float_value = 5.1
-      @dep_c.float_value = 121.1
-      @dep_c.is_met?([@response]).should be_true
-      @response.float_value = 130.123
-      @dep_c.is_met?([@response]).should be_false
+    it "with a float value response" do
+      @a.update_attributes(:response_class => "float")
+      @r.update_attributes(:float_value => 5.1)
+      @dc.float_value = 121.1
+      @dc.to_hash(@rs).should == {:F => true}
+      @r.update_attributes(:float_value => 130.123)
+      @dc.to_hash(@rs).should == {:F => false}
     end
   end
 
-  describe "when if given a response object whether the dependency is satisfied using '<='" do
+  describe "evaluate the '<=' operator" do
     before(:each) do
-      @dep_c = DependencyCondition.new(:answer_id => 2, :operator => "<=")
-      @select_answer = Answer.new(:question_id => 1, :response_class => "answer")
-      @response = Response.new(:question_id => 314, :response_set_id => 159, :answer_id => 2)
-      @response.answer = @select_answer
-      @dep_c.answer = @select_answer
+      @a = Factory(:answer)
+      @b = Factory(:answer, :question => @a.question)
+      @r = Factory(:response, :question => @a.question, :answer => @a)
+      @rs = @r.response_set
+      @dc = Factory(:dependency_condition, :question => @a.question, :answer => @a, :operator => "<=", :rule_key => "G")
+      @dc.as(:answer).should == @r.as(:answer)
     end
 
-    it "knows operator on integer value response" do
-      @select_answer.response_class = "integer"
-      @response.integer_value = 50
-      @dep_c.integer_value = 100
-      @dep_c.is_met?([@response]).should be_true
-      @response.integer_value = 100
-      @dep_c.is_met?([@response]).should be_true
-      @response.integer_value = 421
-      @dep_c.is_met?([@response]).should be_false
+    it "with an integer value response" do
+      @a.update_attributes(:response_class => "integer")
+      @r.update_attributes(:integer_value => 50)
+      @dc.integer_value = 100
+      @dc.to_hash(@rs).should == {:G => true}
+      @r.update_attributes(:integer_value => 100)
+      @dc.to_hash(@rs).should == {:G => true}
+      @r.update_attributes(:integer_value => 421)
+      @dc.to_hash(@rs).should == {:G => false}
     end
 
-    it "knows operator on float value response" do
-      @select_answer.response_class = "float"
-      @response.float_value = 5.1
-      @dep_c.float_value = 121.1
-      @dep_c.is_met?([@response]).should be_true
-      @response.float_value = 121.1
-      @dep_c.is_met?([@response]).should be_true
-      @response.float_value = 130.123
-      @dep_c.is_met?([@response]).should be_false
+    it "with a float value response" do
+      @a.update_attributes(:response_class => "float")
+      @r.update_attributes(:float_value => 5.1)
+      @dc.float_value = 121.1
+      @dc.to_hash(@rs).should == {:G => true}
+      @r.update_attributes(:float_value => 121.1)
+      @dc.to_hash(@rs).should == {:G => true}
+      @r.update_attributes(:float_value => 130.123)
+      @dc.to_hash(@rs).should == {:G => false}
     end
 
   end
 
-  describe "when if given a response object whether the dependency is satisfied using '>'" do
+  describe "evaluate the '>' operator" do
     before(:each) do
-      @dep_c = DependencyCondition.new(:answer_id => 2, :operator => ">")
-      @select_answer = Answer.new(:question_id => 1, :response_class => "answer")
-      @response = Response.new(:question_id => 314, :response_set_id => 159, :answer_id => 2)
-      @response.answer = @select_answer
-      @dep_c.answer = @select_answer
+      @a = Factory(:answer)
+      @b = Factory(:answer, :question => @a.question)
+      @r = Factory(:response, :question => @a.question, :answer => @a)
+      @rs = @r.response_set
+      @dc = Factory(:dependency_condition, :question => @a.question, :answer => @a, :operator => ">", :rule_key => "H")
+      @dc.as(:answer).should == @r.as(:answer)
     end
 
-    it "knows operator on integer value response" do
-      @select_answer.response_class = "integer"
-      @response.integer_value = 50
-      @dep_c.integer_value = 100
-      @dep_c.is_met?([@response]).should be_false
-      @response.integer_value = 421
-      @dep_c.is_met?([@response]).should be_true
+    it "with an integer value response" do
+      @a.update_attributes(:response_class => "integer")
+      @r.update_attributes(:integer_value => 50)
+      @dc.integer_value = 100
+      @dc.to_hash(@rs).should == {:H => false}
+      @r.update_attributes(:integer_value => 421)
+      @dc.to_hash(@rs).should == {:H => true}
     end
 
-    it "knows operator on float value response" do
-      @select_answer.response_class = "float"
-      @response.float_value = 5.1
-      @dep_c.float_value = 121.1
-      @dep_c.is_met?([@response]).should be_false
-      @response.float_value = 130.123
-      @dep_c.is_met?([@response]).should be_true
+    it "with a float value response" do
+      @a.update_attributes(:response_class => "float")
+      @r.update_attributes(:float_value => 5.1)
+      @dc.float_value = 121.1
+      @dc.to_hash(@rs).should == {:H => false}
+      @r.update_attributes(:float_value => 130.123)
+      @dc.to_hash(@rs).should == {:H => true}
     end
   end
 
-  describe "when if given a response object whether the dependency is satisfied using '>='" do
+  describe "evaluate the '>=' operator" do
     before(:each) do
-      @dep_c = DependencyCondition.new(:answer_id => 2, :operator => ">=")
-      @select_answer = Answer.new(:question_id => 1, :response_class => "answer")
-      @response = Response.new(:question_id => 314, :response_set_id => 159, :answer_id => 2)
-      @response.answer = @select_answer
-      @dep_c.answer = @select_answer
+      @a = Factory(:answer)
+      @b = Factory(:answer, :question => @a.question)
+      @r = Factory(:response, :question => @a.question, :answer => @a)
+      @rs = @r.response_set
+      @dc = Factory(:dependency_condition, :question => @a.question, :answer => @a, :operator => ">=", :rule_key => "I")
+      @dc.as(:answer).should == @r.as(:answer)
     end
 
-    it "knows operator on integer value response" do
-      @select_answer.response_class = "integer"
-      @response.integer_value = 50
-      @dep_c.integer_value = 100
-      @dep_c.is_met?([@response]).should be_false
-      @response.integer_value = 100
-      @dep_c.is_met?([@response]).should be_true
-      @response.integer_value = 421
-      @dep_c.is_met?([@response]).should be_true
+    it "with an integer value response" do
+      @a.update_attributes(:response_class => "integer")
+      @r.update_attributes(:integer_value => 50)
+      @dc.integer_value = 100
+      @dc.to_hash(@rs).should == {:I => false}
+      @r.update_attributes(:integer_value => 100)
+      @dc.to_hash(@rs).should == {:I => true}
+      @r.update_attributes(:integer_value => 421)
+      @dc.to_hash(@rs).should == {:I => true}
     end
 
-    it "knows operator on float value response" do
-      @select_answer.response_class = "float"
-      @response.float_value = 5.1
-      @dep_c.float_value = 121.1
-      @dep_c.is_met?([@response]).should be_false
-      @response.float_value = 121.1
-      @dep_c.is_met?([@response]).should be_true
-      @response.float_value = 130.123
-      @dep_c.is_met?([@response]).should be_true
+    it "with a float value response" do
+      @a.update_attributes(:response_class => "float")
+      @r.update_attributes(:float_value => 5.1)
+      @dc.float_value = 121.1
+      @dc.to_hash(@rs).should == {:I => false}
+      @r.update_attributes(:float_value => 121.1)
+      @dc.to_hash(@rs).should == {:I => true}
+      @r.update_attributes(:float_value => 130.123)
+      @dc.to_hash(@rs).should == {:I => true}
     end
   end
 
-  describe "when evaluating a pick one/many with response_class e.g. string" do
+  describe "evaluating with response_class string" do
     it "should compare answer ids when the string_value is nil" do
-      a = Factory(:answer, :response_class => "string")
-      dc = Factory(:dependency_condition,
-        :question_id => a.question.id, :answer_id => a.id, :operator => "==")
-      r = Factory(:response, :question_id => a.question.id, :answer_id => a.id, :string_value => "")
-      r.should_receive(:as).with("answer").and_return(a.id)
-      dc.is_met?([r]).should be_true
+      @a = Factory(:answer, :response_class => "string")
+      @b = Factory(:answer, :question => @a.question)
+      @r = Factory(:response, :question => @a.question, :answer => @a, :string_value => "")
+      @rs = @r.response_set
+      @dc = Factory(:dependency_condition, :question => @a.question, :answer => @a, :operator => "==", :rule_key => "J")
+      @dc.to_hash(@rs).should == {:J => true}
     end
 
     it "should compare strings when the string_value is not nil, even if it is blank" do
-      a = Factory(:answer, :response_class => "string")
-      dc = Factory(:dependency_condition,
-        :question_id => a.question.id, :answer_id => a.id,
-        :operator => "==", :string_value => "foo")
-      r = Factory(:response,
-        :question_id => a.question.id, :answer_id => a.id, :string_value => "foo")
-      r.should_receive(:as).with("string").and_return("foo")
-      dc.is_met?([r]).should be_true
+      @a = Factory(:answer, :response_class => "string")
+      @b = Factory(:answer, :question => @a.question)
+      @r = Factory(:response, :question => @a.question, :answer => @a, :string_value => "foo")
+      @rs = @r.response_set
+      @dc = Factory(:dependency_condition, :question => @a.question, :answer => @a, :operator => "==", :rule_key => "K", :string_value => "foo")
+      @dc.to_hash(@rs).should == {:K => true}
 
-      dc2 = Factory(:dependency_condition,
-        :question_id => a.question.id, :answer_id => a.id, :operator => "==", :string_value => "")
-      r2 = Factory(:response,
-        :question_id => a.question.id, :answer_id => a.id, :string_value => "")
-      r2.should_receive(:as).with("string").and_return("")
-      dc2.is_met?([r2]).should be_true
+      @r.update_attributes(:string_value => "")
+      @dc.string_value = ""
+      @dc.to_hash(@rs).should == {:K => true}
     end
   end
 
-  describe "when given responses whether the dependency is satisfied using 'count'" do
+  describe "evaluate 'count' operator" do
     before(:each) do
-      @dep_c = DependencyCondition.new(:answer_id => nil,
-        :operator => "count>2")
-      @question = Question.new
-      @select_answers = []
+      @q = Factory(:question)
+      @dc = DependencyCondition.new(:operator => "count>2", :rule_key => "M", :question => @q)
+      @as = []
       3.times do
-        @select_answers << Answer.new(:question => @question,
-          :response_class => "answer")
+        @as << Factory(:answer, :question => @q, :response_class => "answer")
       end
-      @responses = []
-      @select_answers.slice(0,2).each do |a|
-        @responses << Response.new(:question => @question, :answer => a,
-          :response_set_id => 159)
+      @rs = Factory(:response_set)
+      @as.slice(0,2).each do |a|
+        Factory(:response, :question => @q, :answer => a, :response_set => @rs)
       end
+      @rs.save
     end
 
-    it "knows operator with >" do
-      @dep_c.is_met?(@responses).should be_false
-      @responses << Response.new(:question => @question,
-        :answer => @select_answers.last,
-        :response_set_id => 159)
-      @dep_c.is_met?(@responses).should be_true
+    it "with operator with >" do
+      @dc.to_hash(@rs).should == {:M => false}
+      Factory(:response, :question => @q, :answer => @as.last, :response_set => @rs)
+      @rs.reload.responses.count.should == 3
+      @dc.to_hash(@rs.reload).should == {:M => true}
     end
 
-    it "knows operator with <" do
-      @dep_c.operator = "count<2"
-      @dep_c.is_met?(@responses).should be_false
-      @dep_c.operator = "count<3"
-      @dep_c.is_met?(@responses).should be_true
+    it "with operator with <" do
+      @dc.operator = "count<2"
+      @dc.to_hash(@rs).should == {:M => false}
+      @dc.operator = "count<3"
+      @dc.to_hash(@rs).should == {:M => true}
     end
 
-    it "knows operator with <=" do
-      @dep_c.operator = "count<=1"
-      @dep_c.is_met?(@responses).should be_false
-      @dep_c.operator = "count<=2"
-      @dep_c.is_met?(@responses).should be_true
-      @dep_c.operator = "count<=3"
-      @dep_c.is_met?(@responses).should be_true
+    it "with operator with <=" do
+      @dc.operator = "count<=1"
+      @dc.to_hash(@rs).should == {:M => false}
+      @dc.operator = "count<=2"
+      @dc.to_hash(@rs).should == {:M => true}
+      @dc.operator = "count<=3"
+      @dc.to_hash(@rs).should == {:M => true}
     end
 
-    it "knows operator with >=" do
-      @dep_c.operator = "count>=1"
-      @dep_c.is_met?(@responses).should be_true
-      @dep_c.operator = "count>=2"
-      @dep_c.is_met?(@responses).should be_true
-      @dep_c.operator = "count>=3"
-      @dep_c.is_met?(@responses).should be_false
+    it "with operator with >=" do
+      @dc.operator = "count>=1"
+      @dc.to_hash(@rs).should == {:M => true}
+      @dc.operator = "count>=2"
+      @dc.to_hash(@rs).should == {:M => true}
+      @dc.operator = "count>=3"
+      @dc.to_hash(@rs).should == {:M => false}
     end
 
-    it "knows operator with !=" do
-      @dep_c.operator = "count!=1"
-      @dep_c.is_met?(@responses).should be_true
-      @dep_c.operator = "count!=2"
-      @dep_c.is_met?(@responses).should be_false
-      @dep_c.operator = "count!=3"
-      @dep_c.is_met?(@responses).should be_true
+    it "with operator with !=" do
+      @dc.operator = "count!=1"
+      @dc.to_hash(@rs).should == {:M => true}
+      @dc.operator = "count!=2"
+      @dc.to_hash(@rs).should == {:M => false}
+      @dc.operator = "count!=3"
+      @dc.to_hash(@rs).should == {:M => true}
     end
   end
 end

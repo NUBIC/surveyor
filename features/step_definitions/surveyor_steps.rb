@@ -88,7 +88,12 @@ end
 
 Then /^the question "([^"]*)" should be triggered$/ do |text|
   q = Question.find_by_text(text)
-  page.should have_selector %(fieldset#q_#{q.id}[class!="q_hidden"])
+  page.should_not have_css %(fieldset#q_#{q.id}.q_hidden)
+end
+
+Then /^the question "(.*?)" should be hidden$/ do |text|
+  q = Question.find_by_text(text)
+  page.should have_css %(fieldset#q_#{q.id}.q_hidden)
 end
 
 Then /^there should be (\d+) response with answer "([^"]*)"$/ do |count, answer_text|

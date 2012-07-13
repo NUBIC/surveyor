@@ -7,7 +7,7 @@ module Surveyor
         base.send :belongs_to, :dependency
         base.send :belongs_to, :dependent_question, :foreign_key => :question_id, :class_name => :question
         base.send :belongs_to, :question
-        
+
         @@validations_already_included ||= nil
         unless @@validations_already_included
           # Validations
@@ -16,15 +16,15 @@ module Surveyor
           base.send :validates_uniqueness_of, :rule_key, :scope => :dependency_id
           # this causes issues with building and saving
           # base.send :validates_numericality_of, :question_id, :dependency_id
-          
+
           @@validations_already_included = true
         end
-                
+
         base.send :include, Surveyor::ActsAsResponse # includes "as" instance method
-        
+
         # Whitelisting attributes
         base.send :attr_accessible, :dependency, :question, :answer, :dependency_id, :rule_key, :question_id, :operator, :answer_id, :datetime_value, :integer_value, :float_value, :unit, :text_value, :string_value, :response_other
-        
+
         # Class methods
         base.instance_eval do
           def operators
@@ -37,33 +37,29 @@ module Surveyor
       def to_hash(response_set)
         # all responses to associated question
         responses = question.blank? ? [] : response_set.responses.where("responses.answer_id in (?)", question.answer_ids).all
-        {rule_key.to_sym => (!responses.empty? and self.is_met?(responses))}
+        if self.operator.match /^count(>|>=|<|<=|=|!=)\d+$/
+          op, i = self.operator.scan(/^count(>|>=|<|<=|=|!=)(\d+)$/).flatten
+          # logger.warn({rule_key.to_sym => responses.count.send(op, i.to_i)})
+          return {rule_key.to_sym => (op == "!=" ? !responses.count.send("==", i.to_i) : responses.count.send(op, i.to_i))}
+        elsif operator == "!=" and (responses.blank? or responses.none?{|r| r.answer.id == self.answer.id})
+          # logger.warn( {rule_key.to_sym => true})
+          return {rule_key.to_sym => true}
+        elsif response = responses.detect{|r| r.answer.id == self.answer.id}
+          klass = response.answer.response_class
+          klass = "answer" if self.as(klass).nil?
+          case self.operator
+          when "==", "<", ">", "<=", ">="
+            # logger.warn( {rule_key.to_sym => response.as(klass).send(self.operator, self.as(klass))})
+            return {rule_key.to_sym => response.as(klass).send(self.operator, self.as(klass))}
+          when "!="
+            # logger.warn( {rule_key.to_sym => !response.as(klass).send("==", self.as(klass))})
+            return {rule_key.to_sym => !response.as(klass).send("==", self.as(klass))}
+          end
+        end
+        # logger.warn({rule_key.to_sym => false})
+        {rule_key.to_sym => false}
       end
 
-      # Checks to see if the responses passed in meet the dependency condition
-      def is_met?(responses)
-        # response to associated answer if available, or first response
-        response = if self.answer_id
-                     responses.detect do |r| 
-                       r.answer == self.answer
-                     end 
-                   end || responses.first
-        klass = response.answer.response_class
-        klass = "answer" if self.as(klass).nil?
-        return case self.operator
-        when "==", "<", ">", "<=", ">="
-          response.as(klass).send(self.operator, self.as(klass))
-        when "!="
-          !(response.as(klass) == self.as(klass))
-        when /^count[<>=]{1,2}\d+$/
-          op, i = self.operator.scan(/^count([<>!=]{1,2})(\d+)$/).flatten
-          responses.count.send(op, i.to_i)
-        when /^count!=\d+$/
-          !(responses.count == self.operator.scan(/\d+/).first.to_i)
-        else
-          false
-        end
-      end
     protected
 
       def validates_operator
