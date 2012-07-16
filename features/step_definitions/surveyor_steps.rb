@@ -144,12 +144,6 @@ Then /^there should not be a response for answer "([^"]+)"/ do |ref_id|
   Response.where(:answer_id => answer).count.should == 0
 end
 
-Then /^there should be a datetime response with today's date$/ do
-  # Response.datetime_value returns ActiveSupport::TimeWithZone
-  # so we call .to_date on it for the comparison with Date.today
-  Response.all.one?{|x| x.datetime_value.to_date == Date.today}.should be_true
-end
-
 Then /^I should see the image "([^"]*)"$/ do |src|
   page.should have_selector %(img[src^="#{src}"])
 end
@@ -236,12 +230,6 @@ Given /^I have survey context of "([^"]*)"$/ do |context|
       FakeMustacheContext
     end
   end
-end
-
-When /^I follow today's date$/ do
-  steps %Q{
-    When I follow "#{Date.today.strftime('%d').to_i}"
-  }
 end
 
 Then /^I should see (\d+) textareas on the page$/ do |i|

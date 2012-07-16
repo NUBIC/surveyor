@@ -447,7 +447,7 @@ Feature: Survey creation
     Then the "When phone" field should contain "2011-02-15 17:00:00"
 
   @javascript
-  Scenario: Creating a date
+  Scenario: Creating a date using the JS datepicker
     Given the survey
     """
       survey "When" do
@@ -458,10 +458,12 @@ Feature: Survey creation
       end
     """
     When I start the "When" survey
-    And I click "Give me a date"
-    And I follow today's date
-    And I press "Click here to finish"
-    Then there should be a datetime response with today's date
+     And I click "Give me a date"
+     And I select "May" as the datepicker's month
+     And I select "2013" as the datepicker's year
+     And I follow "18"
+     And I press "Click here to finish"
+    Then there should be a date response with value "2013-05-18"
 
   Scenario: Creating images
     Given the survey
