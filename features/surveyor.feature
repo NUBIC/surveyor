@@ -271,7 +271,6 @@ Feature: Survey creation
       end
     """
     When I start the "Favorite Cuisine" survey
-    And I wait 2 seconds
     And I change "r_4_string_value" to "thai"
     Then the "other" checkbox should be checked
 
@@ -291,7 +290,6 @@ Feature: Survey creation
       end
     """
     When I start the "Favorite Cuisine" survey
-    And I wait 2 seconds
     And I change "r_4_string_value" to ""
     Then the "other" checkbox should not be checked
 
@@ -311,7 +309,6 @@ Feature: Survey creation
       end
     """
     When I start the "Favorite Cuisine" survey
-    And I wait 2 seconds
     And I change "r_1_string_value" to "thai"
     Then the "other" radiobutton should be checked
 
@@ -331,7 +328,6 @@ Feature: Survey creation
       end
     """
     When I start the "Favorite Cuisine" survey
-    And I wait 2 seconds
     And I change "r_1_string_value" to ""
     Then the "other" radiobutton should not be checked
 
@@ -357,7 +353,6 @@ Feature: Survey creation
       end
     """
     When I start the "Overall info" survey
-    And I wait 5 seconds
     Then I should see "Information on Santa Claus"
     And I should see "Answer all you know on Santa Claus"
     And I should see "Santa Claus does not work for Northwestern!"
@@ -464,7 +459,6 @@ Feature: Survey creation
     """
     When I start the "When" survey
     And I click "Give me a date"
-    And I wait 1 seconds
     And I follow today's date
     And I press "Click here to finish"
     Then there should be a datetime response with today's date
@@ -504,31 +498,19 @@ Feature: Survey creation
       end
     """
     When I go to the surveys page
-    And I wait 1 seconds
     And I start the "Travels" survey
-    And I wait 1 seconds
     Then there should be 3 checkboxes
-    And I wait 1 seconds
     When I check "Singapore"
-    And I wait 1 seconds
     And I press "Activities"
-    And I wait 1 seconds
     And I press "Countries"
-    And I wait 1 seconds
     Then the "Singapore" checkbox should be checked
-    And I wait 1 seconds
     When I uncheck "Singapore"
-    And I wait 1 seconds
     And I press "Activities"
-    And I wait 1 seconds
     And I press "Countries"
-    And I wait 1 seconds
     Then the "Singapore" checkbox should not be checked
     When I check "Singapore"
-    And I wait 1 seconds
     Then 1 responses should exist
     When I uncheck "Singapore"
-    And I wait 1 seconds
     Then 0 responses should exist
 
   Scenario: Accessing outdated survey
@@ -555,7 +537,6 @@ Feature: Survey creation
       end
     """
     When I go to the surveys page
-    And I wait 1 seconds
     And I press "Take it"
     Then I should see "Ireland"
     And I should not see "Italy"
@@ -584,7 +565,6 @@ Feature: Survey creation
       end
     """
     When I go to the surveys page
-    And I wait 1 seconds
     And I press "Take it"
     Then I should see 3 textareas on the page
 
@@ -608,7 +588,6 @@ Feature: Survey creation
     end
   """
   When I go to the surveys page
-  And I wait 1 seconds
   And I press "Take it"
   Then I should see 1 "date" input on the page
   And I should see 1 "time" input on the page

@@ -134,7 +134,6 @@ Feature: Survey export
   When I start the "Simple json response sets" survey
   And I choose "red"
   And I press "Other"
-  And I wait 1 seconds
   And I press "Colors"
   And I fill in "color" with "orange"
   And I press "Other"

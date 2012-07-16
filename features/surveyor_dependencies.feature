@@ -36,16 +36,13 @@ Feature: Survey dependencies
     And the element "#q_2" should be hidden
     And the element "#q_3" should be hidden
     When I choose "Yes"
-    And I wait 1 seconds
     Then the element "#q_2" should not be hidden
     And the element "#q_3" should be hidden
     When I choose "No"
-    And I wait 1 seconds
     Then the element "#q_3" should not be hidden
     And the element "#q_2" should be hidden
     When I press "Second"
     And I press "First"
-    And I wait 1 seconds
     Then the element "#q_3" should not be hidden
     And the element "#q_2" should be hidden
 
@@ -84,11 +81,9 @@ Feature: Survey dependencies
     And the element "#q_2" should be hidden
     And the element "#q_3" should be hidden
     When I choose "Yes"
-    And I wait 1 seconds
     Then the element "#q_2" should not be hidden
     And the element "#q_3" should be hidden
     When I choose "No"
-    And I wait 1 seconds
     Then the element "#q_3" should not be hidden
     And the element "#q_2" should be hidden
     When I press "Second"
@@ -133,12 +128,10 @@ Feature: Survey dependencies
     And the element "#q_3" should be hidden
 
     When I choose "Yes"
-    And I wait 1 seconds
     Then the element "#q_2" should not be hidden
     And the element "#q_3" should be hidden
 
     When I choose "No"
-    And I wait 1 seconds
     Then the element "#q_3" should not be hidden
     And the element "#q_2" should be hidden
 
@@ -192,13 +185,11 @@ Feature: Survey dependencies
     And the element "#q_4" should be hidden
 
     When I choose "Yes"
-    And I wait 1 seconds
     Then the element "#q_2" should not be hidden
     And the element "#q_3" should not be hidden
     And the element "#q_4" should be hidden
 
     When I choose "No"
-    And I wait 1 seconds
     Then the element "#q_2" should be hidden
     And the element "#q_3" should be hidden
     And the element "#q_4" should not be hidden
@@ -264,26 +255,22 @@ Feature: Survey dependencies
     And the element "#q_5" should be hidden
 
     When I choose "Yes"
-    And I wait 1 seconds
     Then the element "#q_2" should not be hidden
     And the element "#q_3" should be hidden
     And the element "#q_4" should be hidden
     And the element "#q_5" should be hidden
 
     When I choose "Human"
-    And I wait 1 seconds
     Then the element "#q_3" should not be hidden
     And the element "#q_4" should be hidden
     And the element "#q_5" should be hidden
 
     When I choose "Owner Of The World"
-    And I wait 1 seconds
     Then the element "#q_3" should be hidden
     And the element "#q_4" should not be hidden
     And the element "#q_5" should be hidden
 
     When I choose "No"
-    And I wait 1 seconds
     Then the element "#q_2" should be hidden
     And the element "#q_3" should be hidden
     And the element "#q_4" should be hidden

@@ -28,3 +28,10 @@ Capybara.default_selector = :css
 # recommended as it will mask a lot of errors for you!
 #
 ActionController::Base.allow_rescue = false
+
+# Wait for AJAX requests to complete in selenium
+# n.b.: Capybara 2.0 will change the way this works.
+# http://groups.google.com/group/ruby-capybara/browse_thread/thread/6d955173ce413b0a/d0682d47a915dfbd
+Capybara.register_driver :selenium do |app|
+  Capybara::Selenium::Driver.new(app, :resynchronize => true)
+end
