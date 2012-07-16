@@ -2,6 +2,16 @@ Given /^I parse$|^the survey$/ do |string|
   Surveyor::Parser.parse(string)
 end
 
+Given /^the questions?$/ do |q_string|
+  Surveyor::Parser.parse(<<-SURVEY)
+    survey "Some questions for you" do
+      section "All the questions" do
+        #{q_string}
+      end
+    end
+  SURVEY
+end
+
 Given /^I parse redcap file "([^"]*)"$/ do |name|
   Surveyor::RedcapParser.parse File.read(File.join(Rails.root, '..', 'features', 'support', name)), name
 end

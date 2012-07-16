@@ -4,31 +4,23 @@ Feature: AJAX submissions
   I want participants' responses to be saved as soon as possible
 
 Scenario: With a simple pick-one question
-  Given the survey
+  Given the question
     """
-    survey "S" do
-      section "Sole" do
-        q_1 "Was this saved?", :pick => :one
-        a_y "Yes"
-        a_n "No"
-      end
-    end
+    q_1 "Was this saved?", :pick => :one
+    a_y "Yes"
+    a_n "No"
     """
   When I start the survey
    And I choose "Yes"
   Then there should be a response for answer "y"
 
 Scenario: With a simple pick-any question
-  Given the survey
+  Given the question
     """
-    survey "S" do
-      section "Sole" do
-        q_1 "What is the state of the cat?", :pick => :any
-        a_d "Dead"
-        a_a "Alive"
-        a_s "Sleeping"
-      end
-    end
+    q_1 "What is the state of the cat?", :pick => :any
+    a_d "Dead"
+    a_a "Alive"
+    a_s "Sleeping"
     """
   When I start the survey
    And I check "Alive"
@@ -38,14 +30,10 @@ Scenario: With a simple pick-any question
    And there should not be a response for answer "d"
 
 Scenario: With a free text question
-  Given the survey
+  Given the question
     """
-    survey "S" do
-      section "Sole" do
-        q_1 "What is your favorite movie?"
-        answer "Title", :string
-      end
-    end
+    q_1 "What is your favorite movie?"
+    answer "Title", :string
     """
   When I start the survey
    And I fill in "Title" with "The Shawshank Redemption"
@@ -53,14 +41,10 @@ Scenario: With a free text question
   Then there should be a string response with value "The Shawshank Redemption"
 
 Scenario: With a date question
-  Given the survey
+  Given the question
     """
-    survey "S" do
-      section "Sole" do
-        q_1 "When do you want to depart?"
-        answer "Departure date", :date
-      end
-    end
+    q_1 "When do you want to depart?"
+    answer "Departure date", :date
     """
     When I start the survey
      And I click "Departure date"
@@ -70,14 +54,10 @@ Scenario: With a date question
     Then there should be a date response with value "2013-03-09"
 
 Scenario: With a datetime question
-  Given the survey
+  Given the question
     """
-    survey "S" do
-      section "Sole" do
-        q_1 "When do you want to depart?"
-        answer "Departure date and time", :datetime
-      end
-    end
+    q_1 "When do you want to depart?"
+    answer "Departure date and time", :datetime
     """
     When I start the survey
      And I click "Departure date and time"
@@ -89,14 +69,10 @@ Scenario: With a datetime question
 # How to move the sliders progammatically?
 @wip
 Scenario: With a time question
-  Given the survey
+  Given the question
     """
-    survey "S" do
-      section "Sole" do
-        q_1 "When do you want lunch?"
-        answer "Meal time", :time
-      end
-    end
+    q_1 "When do you want lunch?"
+    answer "Meal time", :time
     """
     When I start the survey
      And I click "Meal time"
@@ -104,16 +80,12 @@ Scenario: With a time question
     Then there should be a time response with value "11:45:00"
 
 Scenario: With a pick-one plus free text question
-  Given the survey
+  Given the question
     """
-    survey "S" do
-      section "Sole" do
-        q_1 "Where is Panama City?", :pick => :one
-        a_florida "Florida"
-        a_panama "Panama"
-        a_other :other, :string
-      end
-    end
+    q_1 "Where is Panama City?", :pick => :one
+    a_florida "Florida"
+    a_panama "Panama"
+    a_other :other, :string
     """
   When I start the survey
    And I fill in the string for "other" with "Chicago"
@@ -123,16 +95,12 @@ Scenario: With a pick-one plus free text question
 # How to move the slider programmatically?
 @wip
 Scenario: With a slider
-  Given the survey
+  Given the question
     """
-    survey "S" do
-      section "Sole" do
-        q_1 "How many?", :pick => :one, :display_type => :slider
-        a_0   "None"
-        a_10  "Some"
-        a_100 "Lots"
-      end
-    end
+    q_1 "How many?", :pick => :one, :display_type => :slider
+    a_0   "None"
+    a_10  "Some"
+    a_100 "Lots"
     """
   When I start the survey
    And ?
@@ -140,19 +108,15 @@ Scenario: With a slider
 
 # Issue #339
 Scenario: With a grid question
-  Given the survey
+  Given the question
     """
-    survey "Grid" do
-      section "One" do
-        grid "Tell us how often do you cover these each day" do
-          a_1 "1"
-          a_2 "2"
-          a_3 "3"
-          q_h "Head", :pick => :one
-          q_k "Knees", :pick => :one
-          q_t "Toes", :pick => :one
-        end
-      end
+    grid "Tell us how often do you cover these each day" do
+      a_1 "1"
+      a_2 "2"
+      a_3 "3"
+      q_h "Head", :pick => :one
+      q_k "Knees", :pick => :one
+      q_t "Toes", :pick => :one
     end
     """
   When I start the survey
@@ -162,15 +126,11 @@ Scenario: With a grid question
 # Produces duplicates; #328
 @wip
 Scenario: With a repeater
-  Given the survey
+  Given the question
     """
-    survey "S" do
-      section "Sole" do
-        repeater "List your former addresses" do
-          q "Address"
-          a_address_line "Line", :string
-        end
-      end
+    repeater "List your former addresses" do
+      q "Address"
+      a_address_line "Line", :string
     end
     """
   When I start the survey
