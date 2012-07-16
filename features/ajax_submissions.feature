@@ -69,6 +69,23 @@ Scenario: With a date question
      And I follow "9"
     Then there should be a date response with value "2013-03-09"
 
+Scenario: With a datetime question
+  Given the survey
+    """
+    survey "S" do
+      section "Sole" do
+        q_1 "When do you want to depart?"
+        answer "Departure date and time", :datetime
+      end
+    end
+    """
+    When I start the survey
+     And I click "Departure date and time"
+     And I select "Apr" as the datepicker's month
+     And I select "2013" as the datepicker's year
+     And I follow "8"
+    Then there should be a date response with value "2013-04-08 00:00:00"
+
 # How to move the sliders progammatically?
 @wip
 Scenario: With a time question
