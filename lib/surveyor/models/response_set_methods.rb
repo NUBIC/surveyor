@@ -24,7 +24,7 @@ module Surveyor
 
         # Attributes
         base.send :attr_protected, :completed_at
-        
+
         # Whitelisting attributes
         base.send :attr_accessible, :survey, :responses_attributes, :user_id, :survey_id
 
@@ -52,7 +52,12 @@ module Surveyor
           def trim_for_lookups(hash_of_hashes)
             result = {}
             (reject_or_destroy_blanks(hash_of_hashes) || {}).each_pair do |k, hash|
-              result.merge!({k => {"question_id" => hash["question_id"], "answer_id" => hash["answer_id"]}.merge(hash.has_key?("response_group") ? {"response_group" => hash["response_group"]} : {} ).merge(hash.has_key?("id") ? {"id" => hash["id"]} : {} ).merge(hash.has_key?("_destroy") ? {"_destroy" => hash["_destroy"]} : {} )})
+              result.merge!(
+                  k => {"question_id" => hash["question_id"], "answer_id" => hash["answer_id"]}.
+                    merge(hash.has_key?("response_group") ? {"response_group" => hash["response_group"]} : {}).
+                    merge(hash.has_key?("id") ? {"id" => hash["id"]} : {}).
+                    merge(hash.has_key?("_destroy") ? {"_destroy" => hash["_destroy"]} : {})
+              )
             end
             result
           end
@@ -84,7 +89,7 @@ module Surveyor
         self.access_code ||= random_unique_access_code
         self.api_id ||= Surveyor::Common.generate_api_id
       end
-      
+
       def random_unique_access_code
         val = Surveyor::Common.make_tiny_code
         while ResponseSet.find_by_access_code(val)
@@ -100,19 +105,27 @@ module Surveyor
         rcols = Response.content_columns.map(&:name)
         csvlib = CSV.const_defined?(:Reader) ? FasterCSV : CSV
         result = csvlib.generate do |csv|
-          csv << (access_code ? ["response set access code"] : []) + qcols.map{|qcol| "question.#{qcol}"} + acols.map{|acol| "answer.#{acol}"} + rcols.map{|rcol| "response.#{rcol}"} if print_header
+          if print_header
+            csv << (access_code ? ["response set access code"] : []) +
+              qcols.map{|qcol| "question.#{qcol}"} +
+              acols.map{|acol| "answer.#{acol}"} +
+              rcols.map{|rcol| "response.#{rcol}"}
+          end
           responses.each do |response|
-            csv << (access_code ? [self.access_code] : []) + qcols.map{|qcol| response.question.send(qcol)} + acols.map{|acol| response.answer.send(acol)} + rcols.map{|rcol| response.send(rcol)}
+            csv << (access_code ? [self.access_code] : []) +
+              qcols.map{|qcol| response.question.send(qcol)} +
+              acols.map{|acol| response.answer.send(acol)} +
+              rcols.map{|rcol| response.send(rcol)}
           end
         end
         result
       end
-      
+
       def as_json(options = nil)
         template_paths = ActionController::Base.view_paths.collect(&:to_path)
         Rabl.render(self, 'surveyor/show.json', :view_path => template_paths, :format => "hash")
-      end      
-      
+      end
+
       def complete!
         self.completed_at = Time.now
       end
@@ -155,7 +168,11 @@ module Surveyor
 
       # Returns the number of response groups (count of group responses enterted) for this question group
       def count_group_responses(questions)
-        questions.map{|q| responses.select{|r| (r.question_id.to_i == q.id.to_i) && !r.response_group.nil?}.group_by(&:response_group).size }.max
+        questions.map { |q|
+          responses.select { |r|
+            (r.question_id.to_i == q.id.to_i) && !r.response_group.nil?
+          }.group_by(&:response_group).size
+        }.max
       end
 
       def unanswered_dependencies
@@ -167,12 +184,17 @@ module Surveyor
       end
 
       def unanswered_question_group_dependencies
-        dependencies.select{ |d| d.question_group && self.is_group_unanswered?(d.question_group) && d.is_met?(self) }.map(&:question_group)
+        dependencies.
+          select{ |d| d.question_group && self.is_group_unanswered?(d.question_group) && d.is_met?(self) }.
+          map(&:question_group)
       end
 
       def all_dependencies(question_ids = nil)
         arr = dependencies(question_ids).partition{|d| d.is_met?(self) }
-        {:show => arr[0].map{|d| d.question_group_id.nil? ? "q_#{d.question_id}" : "g_#{d.question_group_id}"}, :hide => arr[1].map{|d| d.question_group_id.nil? ? "q_#{d.question_id}" : "g_#{d.question_group_id}"}}
+        {
+          :show => arr[0].map{|d| d.question_group_id.nil? ? "q_#{d.question_id}" : "g_#{d.question_group_id}"},
+          :hide => arr[1].map{|d| d.question_group_id.nil? ? "q_#{d.question_id}" : "g_#{d.question_group_id}"}
+        }
       end
 
       # Check existence of responses to questions from a given survey_section
@@ -183,8 +205,10 @@ module Surveyor
       protected
 
       def dependencies(question_ids = nil)
-        deps = Dependency.all(:include => :dependency_conditions, :conditions => {:dependency_conditions => {:question_id => question_ids || responses.map(&:question_id)}})
-        # this is a work around for a bug in active_record in rails 2.3 which incorrectly eager-loads associatins when a condition clause includes an association limiter
+        deps = Dependency.all(:include => :dependency_conditions,
+          :conditions => {:dependency_conditions => {:question_id => question_ids || responses.map(&:question_id)}})
+        # this is a work around for a bug in active_record in rails 2.3 which incorrectly eager-loads associatins when a
+        # condition clause includes an association limiter
         deps.each{|d| d.dependency_conditions.reload}
         deps
       end

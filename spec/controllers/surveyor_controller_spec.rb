@@ -46,12 +46,12 @@ describe SurveyorController do
         do_post
         assigns(:survey).should eq(@newsurvey)
       end
-      
+
       it "should look for the partculer survey_version of the survey if it is provided" do
         post :create, :survey_code => "xyz", :survey_version => 0
         assigns(:survey).should eq(@survey)
       end
-      
+
       it "should create a new response_set" do
         ResponseSet.should_receive(:create).and_return(@response_set)
         do_post
@@ -123,25 +123,25 @@ describe SurveyorController do
       get :show, :survey_code => "xyz", :response_set_code => "DIFFERENT"
       response.should redirect_to(available_surveys_url)
     end
-    
+
     it "should render correct survey survey_version" do
       supplant = Factory(:survey, :title => "xyz", :access_code => 'xyz', :survey_version => 1)
       supplant_section = Factory(:survey_section, :survey => supplant)
       supplant_response_set = Factory(:response_set, :access_code => "rst", :survey => supplant)
-      
+
       get :show, :survey_code => "xyz", :response_set_code => "pdq"
       response.should be_success
       response.should render_template('show')
       assigns[:response_set].should == @response_set
       assigns[:survey].should == @survey
-      
+
       get :show, :survey_code => "xyz", :response_set_code => "rst"
       response.should be_success
       response.should render_template('show')
       assigns[:response_set].should == supplant_response_set
       assigns[:survey].should == supplant
     end
-    
+
   end
 
   describe "edit my survey: GET /surveys/XYZ/PDQ/take" do
@@ -186,18 +186,18 @@ describe SurveyorController do
       assigns[:dependents].should be_empty
       session[:surveyor_javascript].should == "enabled"
     end
-    
+
     it "should render correct survey survey_version" do
       supplant = Factory(:survey, :title => "XYZ", :access_code => 'XYZ', :survey_version => 1)
       supplant_section = Factory(:survey_section, :survey => supplant)
       supplant_response_set = Factory(:response_set, :access_code => "RST", :survey => supplant)
-      
+
       get :edit, :survey_code => "XYZ", :response_set_code => "PDQ"
       response.should be_success
       response.should render_template('edit')
       assigns[:response_set].should == @response_set
       assigns[:survey].should == @survey
-      
+
       get :edit, :survey_code => "XYZ", :response_set_code => "RST"
       response.should be_success
       response.should render_template('edit')

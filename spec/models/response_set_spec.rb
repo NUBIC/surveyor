@@ -12,7 +12,7 @@ describe ResponseSet do
     @response_set.access_code.should_not be_nil
     @response_set.access_code.length.should == 10
   end
-  
+
   it "should protect api_id, timestamps, access_code, started_at, completed_at" do
     saved_attrs = @response_set.attributes
     if defined? ActiveModel::MassAssignmentSecurity::Error
@@ -449,13 +449,13 @@ describe ResponseSet, "#as_json" do
     Factory(:response_set, :responses => [
           Factory(:response, :question => Factory(:question), :answer => Factory(:answer), :string_value => '2')])
   }
-  
+
   let(:js) {rs.as_json}
-  
+
   it "should include uuid, survey_id" do
     js[:uuid].should == rs.api_id
   end
-  
+
   it "should include responses with uuid, question_id, answer_id, value" do
     r0 = rs.responses[0]
     js[:responses][0][:uuid].should == r0.api_id

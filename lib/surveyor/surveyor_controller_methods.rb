@@ -32,10 +32,12 @@ module Surveyor
       else
         @survey = surveys.where(:survey_version => params[:survey_version]).first
       end
-      @response_set = ResponseSet.create(:survey => @survey, :user_id => (@current_user.nil? ? @current_user : @current_user.id))
+      @response_set = ResponseSet.
+        create(:survey => @survey, :user_id => (@current_user.nil? ? @current_user : @current_user.id))
       if (@survey && @response_set)
         flash[:notice] = t('surveyor.survey_started_success')
-        redirect_to(edit_my_survey_path(:survey_code => @survey.access_code, :response_set_code  => @response_set.access_code))
+        redirect_to(edit_my_survey_path(
+          :survey_code => @survey.access_code, :response_set_code  => @response_set.access_code))
       else
         flash[:notice] = t('surveyor.Unable_to_find_that_survey')
         redirect_to surveyor_index
@@ -49,7 +51,8 @@ module Surveyor
         respond_to do |format|
           format.html #{render :action => :show}
           format.csv {
-            send_data(@response_set.to_csv, :type => 'text/csv; charset=utf-8; header=present',:filename => "#{@response_set.updated_at.strftime('%Y-%m-%d')}_#{@response_set.access_code}.csv")
+            send_data(@response_set.to_csv, :type => 'text/csv; charset=utf-8; header=present',
+              :filename => "#{@response_set.updated_at.strftime('%Y-%m-%d')}_#{@response_set.access_code}.csv")
           }
           format.json
         end
@@ -79,7 +82,8 @@ module Surveyor
     def update
       saved = false
       ActiveRecord::Base.transaction do
-        @response_set = ResponseSet.find_by_access_code(params[:response_set_code], :include => {:responses => :answer}, :lock => true)
+        @response_set = ResponseSet.
+          find_by_access_code(params[:response_set_code], :include => {:responses => :answer}, :lock => true)
         unless @response_set.blank?
           saved = @response_set.update_attributes(:responses_attributes => ResponseSet.to_savable(params[:r]))
           @response_set.complete! if saved && params[:finish]
@@ -94,14 +98,17 @@ module Surveyor
             return redirect_with_message(available_surveys_path, :notice, t('surveyor.unable_to_find_your_responses'))
           else
             flash[:notice] = t('surveyor.unable_to_update_survey') unless saved
-            redirect_to edit_my_survey_path(:anchor => anchor_from(params[:section]), :section => section_id_from(params[:section]))
+            redirect_to edit_my_survey_path(
+              :anchor => anchor_from(params[:section]), :section => section_id_from(params[:section]))
           end
         end
         format.js do
           ids, remove, question_ids = {}, {}, []
           ResponseSet.trim_for_lookups(params[:r]).each do |k,v|
             v[:answer_id].reject!(&:blank?) if v[:answer_id].is_a?(Array)
-            ids[k] = @response_set.responses.find(:first, :conditions => v, :order => "created_at DESC").id if !v.has_key?("id")
+            if !v.has_key?("id")
+              ids[k] = @response_set.responses.find(:first, :conditions => v, :order => "created_at DESC").id
+            end
             remove[k] = v["id"] if v.has_key?("id") && v.has_key?("_destroy")
             question_ids << v["question_id"]
           end
@@ -132,11 +139,13 @@ module Surveyor
     end
 
     def set_response_set_and_render_context
-      @response_set = ResponseSet.find_by_access_code(params[:response_set_code], :include => {:responses => [:question, :answer]})
+      @response_set = ResponseSet.
+        find_by_access_code(params[:response_set_code], :include => {:responses => [:question, :answer]})
       @render_context = render_context
     end
 
-    # Params: the name of some submit buttons store the section we'd like to go to. for repeater questions, an anchor to the repeater group is also stored
+    # Params: the name of some submit buttons store the section we'd like to go
+    # to. for repeater questions, an anchor to the repeater group is also stored
     # e.g. params[:section] = {"1"=>{"question_group_1"=>"<= add row"}}
     def section_id_from(p)
       p.respond_to?(:keys) ? p.keys.first : p
