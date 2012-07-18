@@ -128,90 +128,196 @@ describe ResponseSet do
     @response_set.reload.responses.should have(1).items
     (initial_response_ids - @response_set.responses.map(&:id)).size.should == 1
   end
-  it "should clean up a blank or empty hash" do
-    ResponseSet.to_savable(nil).should == []
-    ResponseSet.to_savable({}).should == []
+
+  describe '.to_savable' do
+    let(:input)  { {} }
+    let(:actual) { ResponseSet.to_savable(input) }
+
+    it "should treat nil as empty" do
+      ResponseSet.to_savable(nil).should == []
+    end
+
+    it 'should treat empty as empty' do
+      actual.should == []
+    end
+
+    describe 'for a checkbox' do
+      it 'ignores a new blank' do
+        input["11"] = {"question_id" => "1", "answer_id" => [""]}
+        actual.should == []
+      end
+
+      it 'saves a new answer' do
+        input["12"] = {"question_id" => "2", "answer_id" => ["", "124"]}
+        actual.should == [ {"question_id"=>"2", "answer_id"=>["", "124"]} ]
+      end
+
+      it 'deletes when updated to blank' do
+        input["13"] = {"id" => "101", "question_id" => "3", "answer_id" => [""]}
+        actual.should == [ {"question_id"=>"3", "id"=>"101", "_destroy"=>"1"} ]
+      end
+
+      it 'updates when updated' do
+        input["14"] = {"id" => "102", "question_id" => "4", "answer_id" => ["", "147"]}
+        actual.should == [ {"question_id"=>"4", "id"=>"102", "answer_id"=>["", "147"]} ]
+      end
+    end
+
+    describe 'for a radio button' do
+      it 'ignores a new blank' do
+        input["15"] = {"question_id" => "5", "answer_id" => ""}
+        actual.should == []
+      end
+
+      it 'saves a new answer' do
+        input["16"] = {"question_id" => "6", "answer_id" => "161"}
+        actual.should == [ {"question_id"=>"6", "answer_id"=>"161"} ]
+      end
+
+      it 'updates when updated' do
+        input["17"] = {"id" => "103", "question_id" => "7", "answer_id" => "171"}
+        actual.should == [ {"question_id"=>"7", "id"=>"103", "answer_id"=>"171"} ]
+      end
+    end
+
+    describe 'for a string value' do
+      it 'ignores a new blank' do
+        input["19"] = {"question_id" => "9", "answer_id" => "191", "string_value" => ""}
+        actual.should == []
+      end
+
+      it 'saves a new value' do
+        input["20"] = {"question_id" => "10", "answer_id" => "201", "string_value" => "hi"}
+        actual.should == [ {"question_id"=>"10", "string_value"=>"hi", "answer_id"=>"201"} ]
+      end
+
+      it 'updates when updated' do
+        input["22"] = {"id" => "106", "question_id" => "12", "answer_id" => "221", "string_value" => "ho"}
+        actual.should == [ {"question_id"=>"12", "id"=>"106", "string_value"=>"ho", "answer_id"=>"221"} ]
+      end
+
+      it 'destroys when cleared' do
+        input['21'] = {"id" => "105", "question_id" => "11", "answer_id" => "211", "string_value" => ""}
+        actual.should == [ {"question_id"=>"11", "string_value"=>"", "id"=>"105", "_destroy"=>"1"} ]
+      end
+    end
+
+    describe 'for a checkbox plus string' do
+      it 'ignores a new value that is not checked' do
+        input["24"] = {"question_id" => "14", "answer_id" => [""], "string_value" => "foo"}
+        actual.should == []
+      end
+
+      it 'saves a new value that is checked' do
+        input["25"] = {"question_id" => "15", "answer_id" => ["", "241"], "string_value" => "bar"}
+        actual.should == [ {"question_id"=>"15", "string_value"=>"bar", "answer_id"=>["", "241"]} ]
+      end
+
+      it 'ignores a new blank value that is checked' do
+        input['25'] = {"question_id" => "15", "answer_id" => ["", "241"], "string_value" => ""}
+        actual.should == []
+      end
+
+      it 'updates the value when updated and still checked' do
+        input["27"] = {"id" => "109", "question_id" => "15", "answer_id" => ["", "251"], "string_value" => "mar"}
+        actual.should == [ {"question_id"=>"15", "id"=>"109", "string_value"=>"mar", "answer_id"=>["", "251"]} ]
+      end
+
+      it 'deletes a blank value when still checked' do
+        input["27"] = {"id" => "109", "question_id" => "15", "answer_id" => ["", "251"], "string_value" => ""}
+        actual.should == [ {"question_id"=>"15", "id"=>"109", "_destroy" => '1', "string_value" => ""} ]
+      end
+
+      it 'destroys when unchecked' do
+        input["26"] = {"id" => "108", "question_id" => "14", "answer_id" => [""], "string_value" => "moo"}
+        actual.should == [ {"question_id"=>"14", "string_value"=>"moo", "id"=>"108", "_destroy"=>"1"} ]
+      end
+    end
+
+    describe 'for a radio plus string' do
+      it 'ignores a new value that is not checked' do
+        input["28"] = {"question_id" => "16", "answer_id" => "", "string_value" => "foo"}
+        actual.should == []
+      end
+
+      it 'saves a new value that is checked' do
+        input["29"] = {"question_id" => "17", "answer_id" => "261", "string_value" => "bar"}
+        actual.should == [ {"question_id"=>"17", "string_value"=>"bar", "answer_id"=>"261"} ]
+      end
+
+      it 'ignores a new blank value that is checked' do
+        input["29"] = {"question_id" => "17", "answer_id" => "261", "string_value" => ""}
+        actual.should == []
+      end
+
+      it 'updates the value when updated and still checked' do
+        input["30"] = {"id" => "110", "question_id" => "18", "answer_id" => "271", "string_value" => "moo"}
+        actual.should == [ {"question_id"=>"18", "id"=>"110", "string_value"=>"moo", "answer_id"=>"271"} ]
+      end
+
+      it 'deletes a blank value when still checked' do
+        input["30"] = {"id" => "110", "question_id" => "18", "answer_id" => "271", "string_value" => ""}
+        actual.should == [ {"question_id"=>"18", "id"=>"110", "_destroy"=>"1", "string_value" => ""} ]
+      end
+    end
+
+    it "should clean up radio and string responses_attributes before passing to nested_attributes" do
+      @qone = Factory(:question, :pick => "one")
+      hash_of_hashes = {
+        "32" => {"question_id" => @qone.id, "answer_id" => "291", "string_value" => ""} # new radio with blank string value, selected
+      }
+      ResponseSet.to_savable(hash_of_hashes).should == [
+        {"question_id" => @qone.id, "answer_id" => "291", "string_value" => ""} # new radio with blank string value, selected
+      ]
+    end
   end
 
-  it "should clean up responses_attributes before passing to nested_attributes" do
-    hash_of_hashes = {
-      "11" => {"question_id" => "1", "answer_id" => [""]}, # new checkbox, blank
-      "12" => {"question_id" => "2", "answer_id" => ["", "124"]}, # new checkbox, checked
-      "13" => {"id" => "101", "question_id" => "3", "answer_id" => [""]}, # existing checkbox, unchecked
-      "14" => {"id" => "102", "question_id" => "4", "answer_id" => ["", "147"]}, # existing checkbox, left alone
-      "15" => {"question_id" => "5", "answer_id" => ""}, # new radio, blank
-      "16" => {"question_id" => "6", "answer_id" => "161"}, # new radio, selected
-      "17" => {"id" => "103", "question_id" => "7", "answer_id" => "171"}, # existing radio, changed
-      "18" => {"id" => "104", "question_id" => "8", "answer_id" => "181"}, # existing radio, unchanged
-      "19" => {"question_id" => "9", "answer_id" => "191", "string_value" => ""}, # new string, blank
-      "20" => {"question_id" => "10", "answer_id" => "201", "string_value" => "hi"}, # new string, filled
-      "21" => {"id" => "105", "question_id" => "11", "answer_id" => "211", "string_value" => ""}, # existing string, cleared
-      "22" => {"id" => "106", "question_id" => "12", "answer_id" => "221", "string_value" => "ho"}, # existing string, changed
-      "23" => {"id" => "107", "question_id" => "13", "answer_id" => "231", "string_value" => "hi"}, # existing string, unchanged
-      "24" => {"question_id" => "14", "answer_id" => [""], "string_value" => "foo"}, # new checkbox with string value, blank
-      "25" => {"question_id" => "15", "answer_id" => ["", "241"], "string_value" => "bar"}, # new checkbox with string value, checked
-      "26" => {"id" => "108", "question_id" => "14", "answer_id" => [""], "string_value" => "moo"}, # existing checkbox with string value, unchecked
-      "27" => {"id" => "109", "question_id" => "15", "answer_id" => ["", "251"], "string_value" => "mar"}, # existing checkbox with string value, left alone
-      "28" => {"question_id" => "16", "answer_id" => "", "string_value" => "foo"}, # new radio with string value, blank
-      "29" => {"question_id" => "17", "answer_id" => "261", "string_value" => "bar"}, # new radio with string value, selected
-      "30" => {"id" => "110", "question_id" => "18", "answer_id" => "271", "string_value" => "moo"}, # existing radio with string value, changed
-      "31" => {"id" => "111", "question_id" => "19", "answer_id" => "281", "string_value" => "mar"} # existing radio with string value, unchanged
-    }
+  describe '.trim_for_lookups' do
+    let(:input)  { {} }
+    let(:actual) { ResponseSet.trim_for_lookups(input) }
 
-    Set.new(ResponseSet.to_savable(hash_of_hashes)).should == Set.new([
-      # "11" => {"question_id" => "1", "answer_id" => [""]}, # new checkbox, blank
-      {"question_id"=>"2", "answer_id"=>["", "124"]}, # new checkbox, checked
-      {"question_id"=>"3", "id"=>"101", "_destroy"=>"1"}, # existing checkbox, unchecked
-      {"question_id"=>"4", "id"=>"102", "answer_id"=>["", "147"]}, # existing checkbox, left alone
-      # "15" => {"question_id" => "5", "answer_id" => ""}, # new radio, blank
-      {"question_id"=>"6", "answer_id"=>"161"}, # new radio, selected
-      {"question_id"=>"7", "id"=>"103", "answer_id"=>"171"}, # existing radio, changed
-      {"question_id"=>"8", "id"=>"104", "answer_id"=>"181"}, # existing radio, unchanged
-      # "19" => {"question_id" => "9", "answer_id" => "191", "string_value" => ""}, # new string, blank
-      {"question_id"=>"10", "string_value"=>"hi", "answer_id"=>"201"}, # new string, filled
-      {"question_id"=>"11", "string_value"=>"", "id"=>"105", "_destroy"=>"1"}, # existing string, cleared
-      {"question_id"=>"12", "id"=>"106", "string_value"=>"ho", "answer_id"=>"221"}, # existing string, changed
-      {"question_id"=>"13", "id"=>"107", "string_value"=>"hi", "answer_id"=>"231"}, # existing string, unchanged
-      # "24" => {"question_id" => "14", "answer_id" => [""], "string_value" => "foo"}, # new checkbox with string value, blank
-      {"question_id"=>"15", "string_value"=>"bar", "answer_id"=>["", "241"]}, # new checkbox with string value, checked
-      {"question_id"=>"14", "string_value"=>"moo", "id"=>"108", "_destroy"=>"1"}, # existing checkbox with string value, unchecked
-      {"question_id"=>"15", "id"=>"109", "string_value"=>"mar", "answer_id"=>["", "251"]},# existing checkbox with string value, left alone
-      # "28" => {"question_id" => "16", "answer_id" => "", "string_value" => "foo"}, # new radio with string value, blank
-      {"question_id"=>"17", "string_value"=>"bar", "answer_id"=>"261"}, # new radio with string value, selected
-      {"question_id"=>"18", "id"=>"110", "string_value"=>"moo", "answer_id"=>"271"}, # existing radio with string value, changed
-      {"question_id"=>"19", "id"=>"111", "string_value"=>"mar", "answer_id"=>"281"} # existing radio with string value, unchanged
-    ])
-  end
+    it 'leaves a simple pick=>one question and answer alone' do
+      input['1'] = { "question_id" => "2", "answer_id" => "1" }
+      actual['1'].should == { "question_id" => "2", "answer_id" => "1" }
+    end
 
-  it "should clean up radio and string responses_attributes before passing to nested_attributes" do
-    @qone = Factory(:question, :pick => "one")
-    hash_of_hashes = {
-      "32" => {"question_id" => @qone.id, "answer_id" => "291", "string_value" => ""} # new radio with blank string value, selected
-    }
-    ResponseSet.to_savable(hash_of_hashes).should == [
-      {"question_id" => @qone.id, "answer_id" => "291", "string_value" => ""} # new radio with blank string value, selected
-    ]
-  end
+    it 'leaves a simple pick=>any question and answers alone' do
+      input['2'] = { "question_id" => "3", "answer_id" => ["", "6"] }
+      actual['2'].should == { "question_id" => "3", "answer_id" => ["", "6"] }
+    end
 
-  it "should clean up responses for lookups to get ids after saving via ajax" do
-    hash_of_hashes = {"1"=>{"question_id"=>"2", "answer_id"=>"1"},
-      "2"=>{"question_id"=>"3", "answer_id"=>["", "6"]},
-      "9"=>{"question_id"=>"6", "string_value"=>"jack", "answer_id"=>"13"},
-      "17"=>{"question_id"=>"13", "datetime_value(1i)"=>"2006", "datetime_value(2i)"=>"2", "datetime_value(3i)"=>"4", "datetime_value(4i)"=>"02", "datetime_value(5i)"=>"05", "answer_id"=>"21"},
-      "18"=>{"question_id"=>"14", "datetime_value(1i)"=>"1", "datetime_value(2i)"=>"1", "datetime_value(3i)"=>"1", "datetime_value(4i)"=>"01", "datetime_value(5i)"=>"02", "answer_id"=>"22"},
-      "19"=>{"question_id"=>"15", "datetime_value"=>"", "answer_id"=>"23", "id" => "1"},
-      "47"=>{"question_id"=>"38", "answer_id"=>"220", "integer_value"=>"2", "id" => "2"},
-      "61"=>{"question_id"=>"44", "response_group"=>"0", "answer_id"=>"241", "integer_value"=>"12"}}
-    ResponseSet.trim_for_lookups(hash_of_hashes).should ==
-    { "1"=>{"question_id"=>"2", "answer_id"=>"1"},
-      "2"=>{"question_id"=>"3", "answer_id"=>["", "6"]},
-      "9"=>{"question_id"=>"6", "answer_id"=>"13"},
-      "17"=>{"question_id"=>"13", "answer_id"=>"21"},
-      "18"=>{"question_id"=>"14", "answer_id"=>"22"},
-      "19"=>{"question_id"=>"15", "answer_id"=>"23", "id" => "1", "_destroy" => "true"},
-      "47"=>{"question_id"=>"38", "answer_id"=>"220", "id" => "2"},
-      "61"=>{"question_id"=>"44", "response_group"=>"0", "answer_id"=>"241"}
-    }
+    it 'ignores single values that are set' do
+      input['9'] = { "question_id" => "6", "string_value" => "jack", "answer_id" => "13" }
+      actual['9'].should == { "question_id" => "6", "answer_id" => "13" }
+    end
+
+    it 'ignores datetime component values that are set' do
+      input['17'] = {
+        "question_id"=>"13",
+        "datetime_value(1i)"=>"2006",
+        "datetime_value(2i)"=>"2",
+        "datetime_value(3i)"=>"4",
+        "datetime_value(4i)"=>"02",
+        "datetime_value(5i)"=>"05",
+        "answer_id"=>"21"
+      }
+      actual['17'].should == { 'question_id' => '13', 'answer_id' => '21' }
+    end
+
+    it 'converts blank values to destroy hints' do
+      input['19'] = { "question_id" => "15", "datetime_value" => "", "answer_id" => "23", "id" => "1" }
+      actual['19'].should == { 'question_id' => '15', 'answer_id' => '23', 'id' => '1', '_destroy' => 'true' }
+    end
+
+    it 'preserves incoming ids' do
+      input['47'] = { "question_id" => "38", "answer_id" => "220", "integer_value" => "2", "id" => "2" }
+      actual['47'].should == { "question_id" => "38", "answer_id" => "220", "id" => "2"}
+    end
+
+    it 'preserves incoming response_groups' do
+      input['61'] = { "question_id" => "44", "response_group" => "0", "answer_id" => "241", "integer_value" => "12" }
+      actual['61'].should == { "question_id" => "44", "response_group" => "0", "answer_id" => "241" }
+    end
   end
 
   it "should remove responses" do
