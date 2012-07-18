@@ -649,6 +649,13 @@ Feature: Survey creation
       end
     """
     When I start the "Heat" survey
-    And I click "No other heating source"
+     And I click "No other heating source"
     Then the checkbox for "Refused" should be disabled
-    Then the checkbox for "Don't know" should be disabled
+     And the checkbox for "Don't know" should be disabled
+    When I uncheck "No other heating source"
+    Then the checkbox for "Refused" should be enabled
+    When I check "Electric"
+    Then the checkbox for "Refused" should be enabled
+    When I check "Refused"
+    Then the checkbox for "Electric" should be disabled
+     And the checkbox for "Don't know" should be disabled
