@@ -114,7 +114,7 @@ survey "Kitchen Sink survey" do
     a :date
 
     # Sliders deprecate to select boxes when javascript is off
-    # Valid Ruby code may be used to shorted repetitive tasks
+    # Valid Ruby code may be used to shorten repetitive tasks
     q "Adjust the slider to reflect your level of awesomeness", :pick => :one, :display_type => :slider
     (1..10).to_a.each{|num| a num.to_s}
 
