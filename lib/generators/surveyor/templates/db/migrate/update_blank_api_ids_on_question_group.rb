@@ -1,3 +1,4 @@
+# encoding: UTF-8
 class Survey < ActiveRecord::Base; end
 class Question < ActiveRecord::Base; end
 class QuestionGroup < ActiveRecord::Base; end

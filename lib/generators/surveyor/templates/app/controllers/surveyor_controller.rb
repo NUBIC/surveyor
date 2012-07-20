@@ -1,3 +1,4 @@
+# encoding: UTF-8
 module SurveyorControllerCustomMethods
   def self.included(base)
     # base.send :before_filter, :require_user   # AuthLogic

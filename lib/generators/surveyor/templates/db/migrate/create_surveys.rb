@@ -1,3 +1,4 @@
+# encoding: UTF-8
 class CreateSurveys < ActiveRecord::Migration
   def self.up
     create_table :surveys do |t|

@@ -1,3 +1,4 @@
+# encoding: UTF-8
 class CreateSurveySections < ActiveRecord::Migration
   def self.up
     create_table :survey_sections do |t|
