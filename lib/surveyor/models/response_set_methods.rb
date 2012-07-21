@@ -202,6 +202,34 @@ module Surveyor
         !responses.any?{|r| r.survey_section_id == section.id}
       end
 
+      def update_from_ui_hash(ui_hash)
+        transaction do
+          ui_hash.each do |ord, response_hash|
+            api_id = response_hash['api_id']
+            fail "api_id missing from response #{ord}" unless api_id
+
+            existing = Response.where(:api_id => api_id).first
+            updateable_attributes = response_hash.reject { |k, v| k == 'api_id' }
+
+            if self.class.has_blank_value?(response_hash)
+              existing.destroy if existing
+            elsif existing
+              if existing.question_id.to_s != updateable_attributes['question_id']
+                fail "Illegal attempt to change question for response #{api_id}."
+              end
+
+              existing.update_attributes(updateable_attributes)
+            else
+              responses.build(updateable_attributes).tap do |r|
+                r.api_id = api_id
+                r.save!
+              end
+            end
+
+          end
+        end
+      end
+
       protected
 
       def dependencies(question_ids = nil)

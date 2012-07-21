@@ -1,6 +1,8 @@
 require File.expand_path(File.dirname(__FILE__) + '/../spec_helper')
 
 describe ResponseSet do
+  let(:response_set) { Factory(:response_set) }
+
   before(:each) do
     @response_set = Factory(:response_set)
     @radio_response_attributes = HashWithIndifferentAccess.new({"1"=>{"question_id"=>"1", "answer_id"=>"1", "string_value"=>"XXL"}, "2"=>{"question_id"=>"2", "answer_id"=>"6"}, "3"=>{"question_id"=>"3"}})
@@ -327,6 +329,132 @@ describe ResponseSet do
     ResponseSet.to_savable({"2"=>{"question_id"=>"1", "id"=> r.id, "answer_id"=>[""]}}).should == [{"question_id"=>"1", "id"=> r.id, "_destroy"=> "1" }]
     @response_set.update_attributes(:responses_attributes => [{"question_id"=>"1", "id"=> r.id, "_destroy"=> "1"}]).should be_true
     @response_set.reload.should have(0).responses
+  end
+
+  describe '#update_from_ui_hash' do
+    let(:ui_hash) { {} }
+    let(:api_id)  { 'ABCDEF-1234-567890' }
+
+    let(:question_id) { 42 }
+    let(:answer_id) { 137 }
+
+    def ui_response(attrs={})
+      { 'question_id' => question_id.to_s, 'api_id' => api_id }.merge(attrs)
+    end
+
+    def do_ui_update
+      response_set.update_from_ui_hash(ui_hash)
+    end
+
+    def resulting_response
+      # response_set_id criterion is to make sure a created response is
+      # appropriately associated.
+      Response.where(:api_id => api_id, :response_set_id => response_set).first
+    end
+
+    shared_examples 'pick one or any' do
+      it 'saves an answer alone' do
+        ui_hash['3'] = ui_response('answer_id' => set_answer_id)
+        do_ui_update
+        resulting_response.answer_id.should == answer_id
+      end
+
+      it 'preserves the question' do
+        ui_hash['4'] = ui_response('answer_id' => set_answer_id)
+        do_ui_update
+        resulting_response.question_id.should == question_id
+      end
+
+      it 'interprets a blank answer as no response' do
+        ui_hash['7'] = ui_response('answer_id' => blank_answer_id)
+        do_ui_update
+        resulting_response.should be_nil
+      end
+
+      [
+        ['string_value',   'foo',           '', 'foo'],
+        ['datetime_value', '2010-10-01',    '', Date.new(2010, 10, 1)],
+        ['integer_value',  '9',             '', 9],
+        ['float_value',    '4.0',           '', 4.0],
+        ['text_value',     'more than foo', '', 'more than foo']
+      ].each do |value_type, set_value, blank_value, expected_value|
+        describe "plus #{value_type}" do
+          it 'saves the value' do
+            ui_hash['11'] = ui_response('answer_id' => set_answer_id, value_type => set_value)
+            do_ui_update
+            resulting_response.send(value_type).should == expected_value
+          end
+
+          it 'interprets a blank answer as no response' do
+            ui_hash['18'] = ui_response('answer_id' => blank_answer_id, value_type => set_value)
+            do_ui_update
+            resulting_response.should be_nil
+          end
+
+          it 'interprets a blank value as no response' do
+            ui_hash['29'] = ui_response('answer_id' => set_answer_id, value_type => blank_value)
+            do_ui_update
+            resulting_response.should be_nil
+          end
+        end
+      end
+    end
+
+    shared_examples 'response interpretation' do
+      it 'fails when api_id is not provided' do
+        ui_hash['0'] = { 'question_id' => question_id }
+        lambda { do_ui_update }.should raise_error(/api_id missing from response 0/)
+      end
+
+      describe 'for a radio button' do
+        let(:set_answer_id)   { answer_id.to_s }
+        let(:blank_answer_id) { '' }
+
+        include_examples 'pick one or any'
+      end
+
+      describe 'for a checkbox' do
+        let(:set_answer_id)   { ['', answer_id.to_s] }
+        let(:blank_answer_id) { [''] }
+
+        include_examples 'pick one or any'
+      end
+    end
+
+    describe 'with a new response' do
+      include_examples 'response interpretation'
+
+      it 'fails predicably when another response with the same api_id is created in a simultaneous open transaction'
+    end
+
+    describe 'with an existing response' do
+      let!(:original_response) {
+        response_set.responses.build(:question_id => question_id, :answer_id => answer_id).tap do |r|
+          r.api_id = api_id # not mass assignable
+          r.save!
+        end
+      }
+
+      include_examples 'response interpretation'
+
+      it 'fails when the existing response is for a different question' do
+        ui_hash['76'] = ui_response('question_id' => '43', 'answer_id' => answer_id.to_s)
+
+        lambda { do_ui_update }.should raise_error(/Illegal attempt to change question for response #{api_id}./)
+      end
+    end
+
+    it 'rolls back all changes on failure' do
+      ui_hash['0'] = ui_response('question_id' => '42', 'answer_id' => answer_id.to_s)
+      ui_hash['1'] = { 'answer_id' => '7' }
+
+      begin
+        do_ui_update
+      rescue
+      end
+
+      response_set.reload.responses.should be_empty
+    end
   end
 end
 
