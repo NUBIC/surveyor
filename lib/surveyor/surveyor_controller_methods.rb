@@ -80,21 +80,13 @@ module Surveyor
     end
 
     def update
-      saved = false
-      ActiveRecord::Base.transaction do
-        @response_set = ResponseSet.
-          find_by_access_code(params[:response_set_code], :include => {:responses => :answer}, :lock => true)
-        unless @response_set.blank?
-          saved = @response_set.update_attributes(:responses_attributes => ResponseSet.to_savable(params[:r]))
-          @response_set.complete! if saved && params[:finish]
-          saved &= @response_set.save
-        end
-      end
+      saved = load_and_update_response_set
+
       return redirect_with_message(surveyor_finish, :notice, t('surveyor.completed_survey')) if saved && params[:finish]
 
       respond_to do |format|
         format.html do
-          if @response_set.blank?
+          if @response_set.nil?
             return redirect_with_message(available_surveys_path, :notice, t('surveyor.unable_to_find_your_responses'))
           else
             flash[:notice] = t('surveyor.unable_to_update_survey') unless saved
@@ -103,19 +95,36 @@ module Surveyor
           end
         end
         format.js do
-          ids, remove, question_ids = {}, {}, []
-          ResponseSet.trim_for_lookups(params[:r]).each do |k,v|
-            v[:answer_id].reject!(&:blank?) if v[:answer_id].is_a?(Array)
-            if !v.has_key?("id")
-              ids[k] = @response_set.responses.find(:first, :conditions => v, :order => "created_at DESC").id
-            end
-            remove[k] = v["id"] if v.has_key?("id") && v.has_key?("_destroy")
-            question_ids << v["question_id"]
+          if @response_set
+            render :json => @response_set.reload.all_dependencies
+          else
+            render :text => "No response set #{params[:response_set_code]}",
+              :status => 404
           end
-          render :json => {"ids" => ids, "remove" => remove}.merge(@response_set.reload.all_dependencies(question_ids))
         end
       end
     end
+
+    def load_and_update_response_set
+      ResponseSet.transaction do
+        @response_set = ResponseSet.
+          find_by_access_code(params[:response_set_code], :include => {:responses => :answer})
+        if @response_set
+          saved = true
+          if params[:r]
+            @response_set.update_from_ui_hash(params[:r])
+          end
+          if params[:finish]
+            @response_set.complete!
+            saved &= @response_set.save
+          end
+          saved
+        else
+          false
+        end
+      end
+    end
+    private :load_and_update_response_set
 
     def export
       surveys = Survey.where(:access_code => params[:survey_code]).order("survey_version DESC")

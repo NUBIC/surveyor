@@ -223,6 +223,10 @@ describe SurveyorController do
       }
     }
 
+    def a_ui_response(hash)
+      { 'api_id' => 'something' }.merge(hash)
+    end
+
     shared_examples 'common update behaviors' do
       it "should find the response set requested" do
         ResponseSet.should_receive(:find_by_access_code).and_return(response_set)
@@ -230,23 +234,21 @@ describe SurveyorController do
       end
 
       it 'applies any provided responses to the response set' do
-        pending
-        responses_ui_hash['11'] = { 'answer_id' => '56', 'question_id' => '9' }
+        ResponseSet.stub!(:find_by_access_code).and_return(response_set)
+
+        responses_ui_hash['11'] = a_ui_response('answer_id' => '56', 'question_id' => '9')
         response_set.should_receive(:update_from_ui_hash).with(responses_ui_hash)
         do_put
+      end
+
+      it 'does not fail when there are no responses' do
+        lambda { do_put }.should_not raise_error
       end
 
       describe 'when updating the response set produces a constraint violation' do
         it 'retries the update'
 
         it 'only retries three times'
-      end
-
-      it "should redirect to available surveys if :response_code not found" do
-        params[:response_set_code] = "DIFFERENT"
-        do_put
-        response.should redirect_to(available_surveys_url)
-        flash[:notice].should == "Unable to find your responses to the survey"
       end
     end
 
@@ -262,10 +264,26 @@ describe SurveyorController do
         response.should redirect_to(:action => :edit)
       end
 
-      it "should complete the found response set on finish" do
-        params[:finish] = 'finish'
+      describe 'on finish' do
+        before do
+          params[:finish] = 'finish'
+          do_put
+        end
+
+        it "completes the found response set" do
+          response_set.reload.should be_complete
+        end
+
+        it 'flashes completion' do
+          flash[:notice].should == "Completed survey"
+        end
+      end
+
+      it "should redirect to available surveys if :response_code not found" do
+        params[:response_set_code] = "DIFFERENT"
         do_put
-        flash[:notice].should == "Completed survey"
+        response.should redirect_to(available_surveys_url)
+        flash[:notice].should == "Unable to find your responses to the survey"
       end
     end
 
@@ -276,34 +294,23 @@ describe SurveyorController do
 
       include_examples 'common update behaviors'
 
-      it "should return an id for new responses" do
-        responses_ui_hash['2'] = {"question_id"=>"4", "answer_id"=>"14"}
-        do_put
-
-        JSON.parse(response.body).
-          should == {"ids" => {"2" => 1}, "remove" => {}, "show" => [], "hide" => []}
-      end
-
-      it "should return a delete for when responses are removed" do
-        r = response_set.responses.create(:question_id => 4, :answer_id => 14)
-        responses_ui_hash["2"] = {"question_id"=>"4", "answer_id"=>"", "id" => r.id} # uncheck
-        do_put
-
-        # r.id is a String with AR 3.0 and an int with AR 3.1
-        JSON.parse(response.body)['remove']['2'].to_s.should == r.id.to_s
-      end
-
       it "should return dependencies" do
         ResponseSet.stub!(:find_by_access_code).and_return(response_set)
 
         response_set.should_receive(:all_dependencies).
           and_return({"show" => ['q_1'], "hide" => ['q_2']})
 
-        responses_ui_hash['4'] = {"question_id"=>"9", "answer_id"=>"12"} # check
+        responses_ui_hash['4'] = a_ui_response("question_id"=>"9", "answer_id"=>"12") # check
         do_put
 
         JSON.parse(response.body).
-          should == {"ids" => {"4" => 1}, "remove" => {}, "show" => ['q_1'], "hide" => ["q_2"]}
+          should == {"show" => ['q_1'], "hide" => ["q_2"]}
+      end
+
+      it '404s if the response set does not exist' do
+        params[:response_set_code] = 'ELSE'
+        do_put
+        response.status.should == 404
       end
     end
   end
