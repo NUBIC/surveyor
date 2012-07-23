@@ -21,6 +21,12 @@
                     "question_id": {
                         "$ref": "http://download.nubic.northwestern.edu/surveyor/api_id_schema.json#"
                     },
+                    "response_group": {
+                        "type": [
+                            "string",
+                            "null"
+                        ]
+                    },
                     "updated_at": {
                         "$ref": "http://download.nubic.northwestern.edu/surveyor/surveyor_timestamp_schema.json#"
                     },
