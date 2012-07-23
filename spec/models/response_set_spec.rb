@@ -371,6 +371,12 @@ describe ResponseSet do
         resulting_response.should be_nil
       end
 
+      it 'interprets no answer_id as no response' do
+        ui_hash['8'] = ui_response
+        do_ui_update
+        resulting_response.should be_nil
+      end
+
       [
         ['string_value',   'foo',           '', 'foo'],
         ['datetime_value', '2010-10-01',    '', Date.new(2010, 10, 1)],
@@ -393,6 +399,12 @@ describe ResponseSet do
 
           it 'interprets a blank value as no response' do
             ui_hash['29'] = ui_response('answer_id' => set_answer_id, value_type => blank_value)
+            do_ui_update
+            resulting_response.should be_nil
+          end
+
+          it 'interprets no answer_id as no response' do
+            ui_hash['8'] = ui_response(value_type => set_value)
             do_ui_update
             resulting_response.should be_nil
           end
