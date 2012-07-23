@@ -35,3 +35,7 @@ ActionController::Base.allow_rescue = false
 Capybara.register_driver :selenium do |app|
   Capybara::Selenium::Driver.new(app, :resynchronize => true)
 end
+
+Before do |scenario|
+  Rails.logger.info "\n\nBeginning scenario #{scenario.file_colon_line} \"#{scenario.title}\""
+end
