@@ -1,13 +1,41 @@
 require 'selenium/webdriver'
 
+Before('~@simultaneous_ajax') do
+  evict_capybara_session :selenium_nowait
+end
+
 Before('@simultaneous_ajax') do
+  evict_capybara_session :selenium
+
   @simultaneous_ajax = true
-  Capybara.current_driver = :selenium_nowait
+  Capybara.javascript_driver = Capybara.current_driver = :selenium_nowait
 end
 
 After('@simultaneous_ajax') do
-  Capybara.use_default_driver
+  Capybara.javascript_driver = nil
   @simultaneous_ajax = false
+end
+
+# Evict the "other" selenium driver's session when switching drivers because it
+# seems that WebDriver can't handle having two different browsers open
+# simultaneously. Specifically, if you:
+#
+#   * Run a test with driver A, then
+#   * Run set of tests with driver B, then
+#   * Attempt to run a test with driver A
+#
+# ... the final driver A test will hang attempting to contact some piece of the
+# webdriver infrastructure. It will hang until it times out, or until you
+# kill the browser associated with driver B. This code does the killing for
+# you.
+def evict_capybara_session(driver_name)
+  Capybara.instance_eval do
+    key = session_pool.keys.grep(/^#{driver_name}\:/).first
+    if key
+      session = session_pool.delete(key)
+      session.driver.quit
+    end
+  end
 end
 
 class AjaxRefCountListener < Selenium::WebDriver::Support::AbstractEventListener
