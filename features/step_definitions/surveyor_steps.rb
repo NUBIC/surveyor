@@ -261,7 +261,7 @@ Then /^the checkbox for "(.*?)" should be (dis|en)abled$/ do |text, dis_or_en|
   if dis_or_en == 'dis'
     element['disabled'].should == 'true'
   else
-    element['disabled'].should be_nil
+    [nil, 'false'].should include(element['disabled'])
   end
 end
 

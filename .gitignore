@@ -19,6 +19,7 @@ rdoc
 pkg
 Gemfile.lock
 reports
+chromedriver.log
 
 ## PROJECT::SPECIFIC
 testbed

@@ -67,5 +67,6 @@ end
 # Provides an alternative selenium driver with resync off and refcounting on.
 # This allows for simulation of competing AJAX requests.
 Capybara.register_driver :selenium_nowait do |app|
-  Capybara::Selenium::Driver.new(app, :resynchronize => false, :listener => AjaxRefCountListener.new)
+  Capybara::Selenium::Driver.new(app, :browser => ENV['SELENIUM_BROWSER'].to_sym,
+    :resynchronize => false, :listener => AjaxRefCountListener.new)
 end
