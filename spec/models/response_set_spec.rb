@@ -424,6 +424,12 @@ describe ResponseSet do
     describe 'with a new response' do
       include_examples 'response interpretation'
 
+      # After much effort I cannot produce this situation in a test, either with
+      # with threads or separate processes. While SQLite 3 will nominally allow
+      # for some coarse-grained concurrency, it does not appear to work with
+      # simultaneous write transactions the way AR uses SQLite. Instead,
+      # simultaneous write transactions always result in a
+      # SQLite3::BusyException, regardless of the connection's timeout setting.
       it 'fails predicably when another response with the same api_id is created in a simultaneous open transaction'
     end
 
