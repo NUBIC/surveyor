@@ -25,7 +25,7 @@
                       - i = response_idx  # increment the response index since the answer partial skips for q.pick == one
                       = f.semantic_fields_for i, r do |ff|
                         = ff.input :question_id, :as => :quiet
-                        = ff.input :id, :as => :quiet unless r.new_record?
+                        = ff.input :api_id, :as => :quiet
                   - q.answers.each do |a|
                     %td= render a.custom_renderer || '/partials/answer', :g => g, :q => q, :a => a, :f => f
                   %th= q.split_text(:post)

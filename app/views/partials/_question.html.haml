@@ -12,7 +12,7 @@
     = f.semantic_fields_for i, r do |ff|
       = ff.input :question_id, :as => :quiet
       = ff.input :response_group, :as => :quiet, :value => rg if g && g.display_type == "repeater"
-      = ff.input :id, :as => :quiet unless r.new_record?
+      = ff.input :api_id, :as => :quiet
       = ff.input :answer_id, :as => :select, :collection => q.answers.map{|a| [a.text, a.id]}, :include_blank => (renderer != :slider), :label => q.text, :input_html => { :disabled => disabled }
   - else # :default, :inline, :inline_default
     - if q.pick == "one"
@@ -21,7 +21,7 @@
       = f.semantic_fields_for i, r do |ff|
         = ff.input :question_id, :as => :quiet
         = ff.input :response_group, :as => :quiet, :value => rg if g && g.display_type == "repeater"
-        = ff.input :id, :as => :quiet unless r.new_record?
+        = ff.input :api_id, :as => :quiet
     - q.answers.each do |a|
       - next if (q.pick == "one" or q.pick == "any") and disabled and @response_set.responses.where( :question_id => q.id, :answer_id => a.id).empty? 
       = render a.custom_renderer || '/partials/answer', :q => q, :a => a, :f => f, :rg => rg, :g => g, :disableFlag => disabled
