@@ -1,4 +1,4 @@
-@wip @javascript @slow_updates @simultaneous_ajax
+@javascript @slow_updates @simultaneous_ajax
 Feature: Duplicate response prevention
   As a survey administrator
   I want to get exactly the number of responses entered

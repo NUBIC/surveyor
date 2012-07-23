@@ -123,8 +123,6 @@ Scenario: With a grid question
    And I choose "3"
   Then there should be a response for answer "3"
 
-# Produces duplicates; #328
-@wip
 Scenario: With a repeater
   Given the question
     """
