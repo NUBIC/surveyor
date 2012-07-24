@@ -80,7 +80,7 @@ module Surveyor
     end
 
     def update
-      saved = load_and_update_response_set
+      saved = load_and_update_response_set_with_retries
 
       return redirect_with_message(surveyor_finish, :notice, t('surveyor.completed_survey')) if saved && params[:finish]
 
@@ -101,6 +101,18 @@ module Surveyor
             render :text => "No response set #{params[:response_set_code]}",
               :status => 404
           end
+        end
+      end
+    end
+
+    def load_and_update_response_set_with_retries(remaining=2)
+      begin
+        load_and_update_response_set
+      rescue ActiveRecord::StatementInvalid => e
+        if remaining > 0
+          load_and_update_response_set_with_retries(remaining - 1)
+        else
+          raise e
         end
       end
     end

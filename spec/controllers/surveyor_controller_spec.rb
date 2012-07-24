@@ -245,10 +245,34 @@ describe SurveyorController do
         lambda { do_put }.should_not raise_error
       end
 
-      describe 'when updating the response set produces a constraint violation' do
-        it 'retries the update'
+      describe 'when updating the response set produces a exception' do
+        before do
+          responses_ui_hash['11'] = a_ui_response('answer_id' => '56', 'question_id' => '9')
 
-        it 'only retries three times'
+          ResponseSet.stub!(:find_by_access_code).and_return(response_set)
+        end
+
+        it 'retries the update on a constraint violation' do
+          response_set.should_receive(:update_from_ui_hash).ordered.
+            with(responses_ui_hash).and_raise(ActiveRecord::StatementInvalid)
+          response_set.should_receive(:update_from_ui_hash).ordered.with(responses_ui_hash)
+
+          lambda { do_put }.should_not raise_error
+        end
+
+        it 'only retries three times' do
+          response_set.should_receive(:update_from_ui_hash).exactly(3).times.
+            with(responses_ui_hash).and_raise(ActiveRecord::StatementInvalid)
+
+          lambda { do_put }.should raise_error(ActiveRecord::StatementInvalid)
+        end
+
+        it 'does not retry for other errors' do
+          response_set.should_receive(:update_from_ui_hash).once.
+            with(responses_ui_hash).and_raise('Bad news')
+
+          lambda { do_put }.should raise_error('Bad news')
+        end
       end
     end
 
