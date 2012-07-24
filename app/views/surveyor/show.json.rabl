@@ -8,6 +8,7 @@ child (@response_set.responses || []) => :responses do
   attribute :api_id => :uuid
   attribute :created_at
   attribute :updated_at => :modified_at
+  attribute :response_group
   node(:answer_id){|r| r.answer.api_id }
   node(:question_id){|r| r.question.api_id }
   node(:value, :if => lambda{|r| r.answer.response_class != "answer"}){|r| r.as(r.answer.response_class) }
