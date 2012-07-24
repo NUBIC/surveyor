@@ -1,3 +1,4 @@
+# encoding: UTF-8
 class Survey < ActiveRecord::Base; end
 class UpdateBlankVersionsOnSurveys < ActiveRecord::Migration
   def self.up

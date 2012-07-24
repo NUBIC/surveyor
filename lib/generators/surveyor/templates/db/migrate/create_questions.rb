@@ -1,3 +1,4 @@
+# encoding: UTF-8
 class CreateQuestions < ActiveRecord::Migration
   def self.up
     create_table :questions do |t|

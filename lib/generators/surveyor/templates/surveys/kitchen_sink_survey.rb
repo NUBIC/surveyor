@@ -1,3 +1,4 @@
+# encoding: UTF-8
 survey "Kitchen Sink survey" do
 
   section "Basic questions" do

@@ -1,3 +1,4 @@
+# encoding: UTF-8
 require 'rails/generators'
 require 'surveyor/helpers/asset_pipeline'
 
