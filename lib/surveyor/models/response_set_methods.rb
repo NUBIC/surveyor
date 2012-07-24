@@ -30,51 +30,11 @@ module Surveyor
 
         # Class methods
         base.instance_eval do
-          def to_savable(hash_of_hashes)
-            result = []
-            (hash_of_hashes || {}).each_pair do |k, hash|
-              hash = Response.applicable_attributes(hash)
-              if has_blank_value?(hash)
-                result << hash.merge!({:_destroy => '1'}).except('answer_id') if hash.has_key?('id')
-              else
-                result << hash
-              end
-            end
-            result
-          end
-
           def has_blank_value?(hash)
             return true if hash["answer_id"].blank?
             return false if (q = Question.find_by_id(hash["question_id"])) and q.pick == "one"
             hash.any?{|k,v| v.is_a?(Array) ? v.all?{|x| x.to_s.blank?} : v.to_s.blank?}
           end
-
-          def trim_for_lookups(hash_of_hashes)
-            result = {}
-            (reject_or_destroy_blanks(hash_of_hashes) || {}).each_pair do |k, hash|
-              result.merge!(
-                  k => {"question_id" => hash["question_id"], "answer_id" => hash["answer_id"]}.
-                    merge(hash.has_key?("response_group") ? {"response_group" => hash["response_group"]} : {}).
-                    merge(hash.has_key?("id") ? {"id" => hash["id"]} : {}).
-                    merge(hash.has_key?("_destroy") ? {"_destroy" => hash["_destroy"]} : {})
-              )
-            end
-            result
-          end
-
-          private
-            def reject_or_destroy_blanks(hash_of_hashes)
-              result = {}
-              (hash_of_hashes || {}).each_pair do |k, hash|
-                hash = Response.applicable_attributes(hash)
-                if has_blank_value?(hash)
-                  result.merge!({k => hash.merge("_destroy" => "true")}) if hash.has_key?("id")
-                else
-                  result.merge!({k => hash})
-                end
-              end
-              result
-            end
         end
       end
 
