@@ -152,12 +152,14 @@ Feature: Survey export
       "uuid":"*",
       "answer_id":"*",
       "question_id":"*",
+      "response_group":null,
       "created_at":"*",
       "modified_at":"*"
     },{
       "uuid":"*",
       "answer_id":"*",
       "question_id":"*",
+      "response_group":null,
       "created_at":"*",
       "modified_at":"*",
       "value":"orange"
@@ -225,6 +227,7 @@ Feature: Survey export
       "uuid":"*",
       "answer_id":"*",
       "question_id":"*",
+      "response_group":null,
       "created_at":"*",
       "modified_at":"*",
       "value":"orange"
@@ -242,6 +245,7 @@ Feature: Survey export
       "uuid":"*",
       "answer_id":"*",
       "question_id":"*",
+      "response_group":null,
       "created_at":"*",
       "modified_at":"*",
       "value":"blueish"
