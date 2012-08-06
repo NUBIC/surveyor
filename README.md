@@ -70,11 +70,11 @@ Then run:
 Generate assets, run migrations:
 
     script/rails generate surveyor:install
-    rake db:migrate
+    bundle exec rake db:migrate
 
 Try out the "kitchen sink" survey. The rake task above generates surveys from our custom survey DSL (a good format for end users and stakeholders).
 
-    rake surveyor FILE=surveys/kitchen_sink_survey.rb
+    bundle exec rake surveyor FILE=surveys/kitchen_sink_survey.rb
 
 Start up your app and visit http://localhost:3000/surveys
 
