@@ -96,7 +96,7 @@ and read surveys/EXTENDING\_SURVEYOR
 
 # The asset pipeline
 
-Surveyor is now aware of the Rails asset pipeline (http://guides.rubyonrails.org/asset_pipeline.html). With the asset pipeline enabled `Rails.application.config.assets.enabled == true`, then the `surveyor:install` generator will generate `app/assets/stylesheets/surveyor\_all.css` and `app/assets/javascripts/surveyor\_all.js` manifest files and link them from the surveyor\_default layout.  Assets remain in the gem and are picked up for inclusion and pre-compilation from there if `config/environments/production.rb` is set to include surveyor assets.
+Surveyor is now aware of the Rails asset pipeline (http://guides.rubyonrails.org/asset_pipeline.html). With the asset pipeline enabled `Rails.application.config.assets.enabled == true`, then the `surveyor:install` generator will generate `app/assets/stylesheets/surveyor_all.css` and `app/assets/javascripts/surveyor_all.js` manifest files and link them from the surveyor\_default layout.  Assets remain in the gem and are picked up for inclusion and pre-compilation from there if `config/environments/production.rb` is set to include surveyor assets.
 
     # Precompile additional assets (application.js, application.css, and all non-JS/CSS are already added)
     config.assets.precompile += %w( search.js surveyor_all.js surveyor_all.css )
