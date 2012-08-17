@@ -11,5 +11,5 @@ child (@response_set.responses || []) => :responses do
   attribute :response_group
   node(:answer_id){|r| r.answer.api_id }
   node(:question_id){|r| r.question.api_id }
-  node(:value, :if => lambda{|r| r.answer.response_class != "answer"}){|r| r.as(r.answer.response_class) }
+  node(:value, :if => lambda{|r| r.answer.response_class != "answer"}){|r| r.json_value }
 end
