@@ -88,6 +88,19 @@ module Surveyor
           return "#{(self.string_value || self.text_value || self.integer_value || self.float_value || nil).to_s}"
         end
       end
+
+      def json_value
+        return nil if answer.response_class == "answer"
+
+        formats = {
+          'datetime' => '%Y-%m-%dT%H:%M%:z',
+          'date' => '%Y-%m-%d',
+          'time' => '%H:%M'
+        }
+
+        found = formats[answer.response_class]
+        found ?  datetime_value.strftime(found) : as(answer.response_class)
+      end
     end
   end
 end
