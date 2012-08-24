@@ -45,6 +45,9 @@ History for Surveyor
 
 - Restore "slider" renderer. (#230)
 
+- Ensure that duplicate responses cannot be created by parallel AJAX requests.
+  (#328)
+
 ### Infrastructure
 
 - Enabled Selenium-backed cucumber features in CI. (#333)

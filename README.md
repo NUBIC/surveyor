@@ -164,4 +164,25 @@ to run the features and start writing tests!
 
 [bundler]: http://gembundler.com/
 
+## Selenium
+
+Some of Surveyor's integration tests use Selenium WebDriver and Capybara. The
+WebDriver-based tests default to running in Chrome due to an unfortunate
+[Firefox bug][FF566671]. For them to run, you'll either need:
+
+* Chrome and [chromedriver][] installed, or
+* to switch to use Firefox instead
+
+To use Firefox instead of Chrome, invoke one or more features with
+`SELENIUM_BROWSER` set in the environment:
+
+    $ SELENIUM_BROWSER=firefox bundle exec rake cucumber
+    $ SELENIUM_BROWSER=firefox bundle exec cucumber features/ajax_submissions.feature
+
+Note that when running features in Firefox, you must allow the WebDriver-driven
+Firefox to retain focus, otherwise some tests will fail.
+
+[FF566671]: https://bugzilla.mozilla.org/show_bug.cgi?id=566671
+[chromedriver]: http://code.google.com/p/selenium/wiki/ChromeDriver
+
 Copyright (c) 2008-2011 Brian Chamberlain and Mark Yoon, released under the MIT license

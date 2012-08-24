@@ -29,9 +29,19 @@ Capybara.default_selector = :css
 #
 ActionController::Base.allow_rescue = false
 
+# Use chrome for Selenium by default. This is because of Firefox's bug 566671
+# (https://bugzilla.mozilla.org/show_bug.cgi?id=566671): any test that relies on
+# blur or change events will not work when Firefox is in the background.
+ENV['SELENIUM_BROWSER'] ||= 'chrome'
+
 # Wait for AJAX requests to complete in selenium
 # n.b.: Capybara 2.0 will change the way this works.
 # http://groups.google.com/group/ruby-capybara/browse_thread/thread/6d955173ce413b0a/d0682d47a915dfbd
 Capybara.register_driver :selenium do |app|
-  Capybara::Selenium::Driver.new(app, :resynchronize => true)
+  Capybara::Selenium::Driver.new(app, :browser => ENV['SELENIUM_BROWSER'].to_sym,
+    :resynchronize => true)
+end
+
+Before do |scenario|
+  Rails.logger.info "\n\nBeginning scenario #{scenario.file_colon_line} \"#{scenario.title}\""
 end

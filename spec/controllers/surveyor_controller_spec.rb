@@ -46,12 +46,12 @@ describe SurveyorController do
         do_post
         assigns(:survey).should eq(@newsurvey)
       end
-      
+
       it "should look for the partculer survey_version of the survey if it is provided" do
         post :create, :survey_code => "xyz", :survey_version => 0
         assigns(:survey).should eq(@survey)
       end
-      
+
       it "should create a new response_set" do
         ResponseSet.should_receive(:create).and_return(@response_set)
         do_post
@@ -123,25 +123,25 @@ describe SurveyorController do
       get :show, :survey_code => "xyz", :response_set_code => "DIFFERENT"
       response.should redirect_to(available_surveys_url)
     end
-    
+
     it "should render correct survey survey_version" do
       supplant = Factory(:survey, :title => "xyz", :access_code => 'xyz', :survey_version => 1)
       supplant_section = Factory(:survey_section, :survey => supplant)
       supplant_response_set = Factory(:response_set, :access_code => "rst", :survey => supplant)
-      
+
       get :show, :survey_code => "xyz", :response_set_code => "pdq"
       response.should be_success
       response.should render_template('show')
       assigns[:response_set].should == @response_set
       assigns[:survey].should == @survey
-      
+
       get :show, :survey_code => "xyz", :response_set_code => "rst"
       response.should be_success
       response.should render_template('show')
       assigns[:response_set].should == supplant_response_set
       assigns[:survey].should == supplant
     end
-    
+
   end
 
   describe "edit my survey: GET /surveys/XYZ/PDQ/take" do
@@ -186,18 +186,18 @@ describe SurveyorController do
       assigns[:dependents].should be_empty
       session[:surveyor_javascript].should == "enabled"
     end
-    
+
     it "should render correct survey survey_version" do
       supplant = Factory(:survey, :title => "XYZ", :access_code => 'XYZ', :survey_version => 1)
       supplant_section = Factory(:survey_section, :survey => supplant)
       supplant_response_set = Factory(:response_set, :access_code => "RST", :survey => supplant)
-      
+
       get :edit, :survey_code => "XYZ", :response_set_code => "PDQ"
       response.should be_success
       response.should render_template('edit')
       assigns[:response_set].should == @response_set
       assigns[:survey].should == @survey
-      
+
       get :edit, :survey_code => "XYZ", :response_set_code => "RST"
       response.should be_success
       response.should render_template('edit')
@@ -207,96 +207,135 @@ describe SurveyorController do
   end
 
   describe "update my survey: PUT /surveys/XYZ/PDQ" do
-    before(:each) do
-      @survey = Factory(:survey, :title => "XYZ", :access_code => "XYZ")
-      @section = Factory(:survey_section, :survey => @survey)
-      @response_set = Factory(:response_set, :access_code => "PDQ", :survey => @survey)
-      # @response_set.stub!(:update_attributes).and_return(true)
-      # @response_set.stub!(:complete!).and_return(Time.now)
-      # @response_set.stub!(:save).and_return(true)
-    end
+    let(:survey_code) { 'XYZ' }
+    let!(:survey) { Factory(:survey, :title => survey_code, :access_code => survey_code) }
 
-    def do_put
-      put :update, :survey_code => "XYZ", :response_set_code => "PDQ"
-    end
+    let(:response_set_code) { 'PDQ' }
+    let!(:response_set) { Factory(:response_set, :access_code => response_set_code, :survey => survey) }
 
-    def do_put_with_finish
-      responses = {
-         "6"=>{"question_id"=>"6", "answer_id" => "6", "string_value"=>"saf"}, #string
-         "7"=>{"question_id"=>"7", "answer_id" => "11", "text_value"=>"foo"}, #text
-         "1"=>{"question_id"=>"1", "answer_id"=>"1", "string_value"=>"bar"}, #radio+txt
-         "2"=>{"question_id"=>"2", "answer_id"=>"6"}, #radio
-         "3"=>{"question_id"=>"3", "answer_id"=>"10"}, #radio
-         "4"=>{"question_id"=>"4", "answer_id"=>"15"}, #check
-         "5"=>{"question_id"=>"5", "answer_id"=>"16", "string_value"=>""} #check+txt
+    let(:responses_ui_hash) { {} }
+
+    let(:params) {
+      {
+        :survey_code => survey_code,
+        :response_set_code => response_set_code,
+        :r => responses_ui_hash.empty? ? nil : responses_ui_hash
       }
-      put :update, :survey_code => "XYZ", :response_set_code => "PDQ", :finish => "finish", :r => responses
+    }
+
+    def a_ui_response(hash)
+      { 'api_id' => 'something' }.merge(hash)
     end
 
-    it "should find the response set requested" do
-      ResponseSet.should_receive(:find_by_access_code).and_return(@response_set)
-      do_put
+    shared_examples 'common update behaviors' do
+      it "should find the response set requested" do
+        ResponseSet.should_receive(:find_by_access_code).and_return(response_set)
+        do_put
+      end
+
+      it 'applies any provided responses to the response set' do
+        ResponseSet.stub!(:find_by_access_code).and_return(response_set)
+
+        responses_ui_hash['11'] = a_ui_response('answer_id' => '56', 'question_id' => '9')
+        response_set.should_receive(:update_from_ui_hash).with(responses_ui_hash)
+        do_put
+      end
+
+      it 'does not fail when there are no responses' do
+        lambda { do_put }.should_not raise_error
+      end
+
+      describe 'when updating the response set produces a exception' do
+        before do
+          responses_ui_hash['11'] = a_ui_response('answer_id' => '56', 'question_id' => '9')
+
+          ResponseSet.stub!(:find_by_access_code).and_return(response_set)
+        end
+
+        it 'retries the update on a constraint violation' do
+          response_set.should_receive(:update_from_ui_hash).ordered.
+            with(responses_ui_hash).and_raise(ActiveRecord::StatementInvalid)
+          response_set.should_receive(:update_from_ui_hash).ordered.with(responses_ui_hash)
+
+          lambda { do_put }.should_not raise_error
+        end
+
+        it 'only retries three times' do
+          response_set.should_receive(:update_from_ui_hash).exactly(3).times.
+            with(responses_ui_hash).and_raise(ActiveRecord::StatementInvalid)
+
+          lambda { do_put }.should raise_error(ActiveRecord::StatementInvalid)
+        end
+
+        it 'does not retry for other errors' do
+          response_set.should_receive(:update_from_ui_hash).once.
+            with(responses_ui_hash).and_raise('Bad news')
+
+          lambda { do_put }.should raise_error('Bad news')
+        end
+      end
     end
 
-    it "should redirect to 'edit' without params" do
-      do_put
-      response.should redirect_to(:action => :edit)
+    describe 'via full cycle form submission' do
+      def do_put
+        put :update, params
+      end
+
+      include_examples 'common update behaviors'
+
+      it "should redirect to 'edit' without params" do
+        do_put
+        response.should redirect_to(:action => :edit)
+      end
+
+      describe 'on finish' do
+        before do
+          params[:finish] = 'finish'
+          do_put
+        end
+
+        it "completes the found response set" do
+          response_set.reload.should be_complete
+        end
+
+        it 'flashes completion' do
+          flash[:notice].should == "Completed survey"
+        end
+      end
+
+      it "should redirect to available surveys if :response_code not found" do
+        params[:response_set_code] = "DIFFERENT"
+        do_put
+        response.should redirect_to(available_surveys_url)
+        flash[:notice].should == "Unable to find your responses to the survey"
+      end
     end
 
-    it "should complete the found response set on finish" do
-      do_put_with_finish
-      flash[:notice].should == "Completed survey"
-    end
+    describe 'via ajax' do
+      def do_put
+        xhr :put, :update, params
+      end
 
-    it "should redirect to available surveys if :response_code not found" do
-      put :update, :survey_code => "XYZ", :response_set_code => "DIFFERENT"
-      response.should redirect_to(available_surveys_url)
-      flash[:notice].should == "Unable to find your responses to the survey"
-    end
-  end
+      include_examples 'common update behaviors'
 
-  describe "update my survey with ajax" do
-    before(:each) do
-      @survey = Factory(:survey, :title => "XYZ", :access_code => "XYZ")
-      @section = Factory(:survey_section, :survey => @survey)
-      @response_set = Factory(:response_set, :access_code => "PDQ", :survey => @survey)
-      ResponseSet.stub!(:find_by_access_code).and_return(@response_set)
-    end
+      it "should return dependencies" do
+        ResponseSet.stub!(:find_by_access_code).and_return(response_set)
 
-    def do_ajax_put(r)
-      xhr :put, :update, :survey_code => "XYZ", :response_set_code => "PDQ", :r => r
-    end
+        response_set.should_receive(:all_dependencies).
+          and_return({"show" => ['q_1'], "hide" => ['q_2']})
 
-    it "should return an id for new responses" do
-      do_ajax_put({
-         "2"=>{"question_id"=>"4", "answer_id"=>"14"}
-      })
-      JSON.parse(response.body).
-        should == {"ids" => {"2" => 1}, "remove" => {}, "show" => [], "hide" => []}
-      do_ajax_put({
-         "4"=>{"question_id"=>"4", "answer_id"=>"15"}
-      })
-      JSON.parse(response.body).
-        should == {"ids" => {"4" => 2}, "remove" => {}, "show" => [], "hide" => []}
-    end
+        responses_ui_hash['4'] = a_ui_response("question_id"=>"9", "answer_id"=>"12") # check
+        do_put
 
-    it "should return a delete for when responses are removed" do
-      r = @response_set.responses.create(:question_id => 4, :answer_id => 14)
-      do_ajax_put({
-         "2"=>{"question_id"=>"4", "answer_id"=>"", "id" => r.id} # uncheck
-      })
-      # r.id is a String with AR 3.0 and an int with AR 3.1
-      JSON.parse(response.body)['remove']['2'].to_s.should == r.id.to_s
-    end
+        JSON.parse(response.body).
+          should == {"show" => ['q_1'], "hide" => ["q_2"]}
+      end
 
-    it "should return dependencies" do
-      @response_set.should_receive(:all_dependencies).
-        and_return({"show" => ['q_1'], "hide" => ['q_2']})
-      do_ajax_put({
-        "4"=>{"question_id"=>"9", "answer_id"=>"12"} #check
-      })
-      JSON.parse(response.body).
-        should == {"ids" => {"4" => 1}, "remove" => {}, "show" => ['q_1'], "hide" => ["q_2"]}
+      it '404s if the response set does not exist' do
+        params[:response_set_code] = 'ELSE'
+        do_put
+        response.status.should == 404
+      end
     end
   end
 end
