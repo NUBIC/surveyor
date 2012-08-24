@@ -224,12 +224,15 @@ describe ResponseSet do
       end
     end
 
-    it 'rolls back all changes on failure' do
+    # clean_with_truncation is necessary because AR 3.0 can't roll back a nested
+    # transaction with SQLite.
+    it 'rolls back all changes on failure', :clean_with_truncation do
       ui_hash['0'] = ui_response('question_id' => '42', 'answer_id' => answer_id.to_s)
-      ui_hash['1'] = { 'answer_id' => '7' }
+      ui_hash['1'] = { 'answer_id' => '7' } # no api_id
 
       begin
         do_ui_update
+        fail "Expected error did not occur"
       rescue
       end
 
