@@ -101,9 +101,14 @@ Then /^there should be (\d+) response with answer "([^"]*)"$/ do |count, answer_
   Response.find_by_answer_id(Answer.find_by_text(answer_text)).should_not be_blank
 end
 
-Then /^there should be a (\w+ )?response(?: for answer "([^"]+)")?(?: with value "([^"]+)")?$/ do |type, answer_reference_id, value|
+When /^I choose row (\d+), column (\d+) of the grid$/ do |row, col|
+  find(".g_grid").find("tr:nth-child(#{row.to_i + 1})").find("td:nth-child(#{col.to_i + 1})").find("input").set(true)
+end
+
+Then /^there should (not )?be a (\w+ )?response(?: for answer "([^"]+)")?(?: with value "([^"]+)")?(?: on question "([^"]+)")?$/ do |neg, type, answer_reference_id, value, question_reference_id|
   conditions = []
   values = []
+  expected_count = neg.blank? ? 1 : 0
   if type
     attribute = case type.strip
                 when 'date'
@@ -128,20 +133,25 @@ Then /^there should be a (\w+ )?response(?: for answer "([^"]+)")?(?: with value
     end
   end
 
+  if question_reference_id
+    question = Question.where(:reference_identifier => question_reference_id).first
+    fail "No question with ref ID #{question_reference_id}" unless question
+    conditions << 'question_id = ?'
+    values << question
+  end
+
   if answer_reference_id
-    answer = Answer.where(:reference_identifier => answer_reference_id).first
+    a_conds = { :reference_identifier => answer_reference_id }
+    if question
+      a_conds[:question_id] = question
+    end
+    answer = Answer.where(a_conds).first
     fail "No answer with ref ID #{answer_reference_id}" unless answer
     conditions << 'answer_id = ?'
     values << answer
   end
 
-  Response.where(conditions.join(' AND '), *values).count.should == 1
-end
-
-Then /^there should not be a response for answer "([^"]+)"/ do |ref_id|
-  answer = Answer.where(:reference_identifier => ref_id).first
-  answer or fail "No answer with ref ID #{ref_id}"
-  Response.where(:answer_id => answer).count.should == 0
+  Response.where(conditions.join(' AND '), *values).count.should == expected_count
 end
 
 Then /^I should see the image "([^"]*)"$/ do |src|
@@ -251,6 +261,15 @@ Then /^the checkbox for "(.*?)" should be (dis|en)abled$/ do |text, dis_or_en|
   if dis_or_en == 'dis'
     element['disabled'].should == 'true'
   else
-    element['disabled'].should be_nil
+    [nil, 'false'].should include(element['disabled'])
+  end
+end
+
+# see support/simultaneous_ajax.rb
+Then /^I wait for things to settle out( longer)?$/ do |longer|
+  if @simultaneous_ajax
+    Capybara.timeout(longer ? 120 : 10, page.driver, "waiting for all AJAX requests timed out") do
+      page.evaluate_script("window.surveyorIntegratedTestsRequestsOutstanding <= 0")
+    end
   end
 end

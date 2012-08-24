@@ -4,7 +4,7 @@ rerun_opts = rerun.to_s.strip.empty? ? "--format #{ENV['CUCUMBER_FORMAT'] || 'pr
 std_opts = "--format #{ENV['CUCUMBER_FORMAT'] || 'pretty'} --strict --tags ~@wip"
 %>
 default: <%= std_opts %> features
-wip: --tags @wip:3 --wip features
+wip: --tags @wip --wip features
 rerun: <%= rerun_opts %> --format rerun --out rerun.txt --strict --tags ~@wip
 ci: --tags ~@wip --format html --out reports/cucumber.html --format junit --out reports/cucumber-xml --format pretty --strict features
 ci_wip: --wip --tags @wip --format html --out reports/cucumber_wip.html --format pretty features

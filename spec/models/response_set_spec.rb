@@ -1,6 +1,8 @@
 require File.expand_path(File.dirname(__FILE__) + '/../spec_helper')
 
 describe ResponseSet do
+  let(:response_set) { Factory(:response_set) }
+
   before(:each) do
     @response_set = Factory(:response_set)
     @radio_response_attributes = HashWithIndifferentAccess.new({"1"=>{"question_id"=>"1", "answer_id"=>"1", "string_value"=>"XXL"}, "2"=>{"question_id"=>"2", "answer_id"=>"6"}, "3"=>{"question_id"=>"3"}})
@@ -12,7 +14,7 @@ describe ResponseSet do
     @response_set.access_code.should_not be_nil
     @response_set.access_code.length.should == 10
   end
-  
+
   it "should protect api_id, timestamps, access_code, started_at, completed_at" do
     saved_attrs = @response_set.attributes
     if defined? ActiveModel::MassAssignmentSecurity::Error
@@ -83,18 +85,6 @@ describe ResponseSet do
     @response_set.completed_at.should be_nil
   end
 
-  it "should save new responses from radio buttons, ignoring blanks" do
-    @response_set.update_attributes(:responses_attributes => ResponseSet.to_savable(@radio_response_attributes))
-    @response_set.responses.should have(2).items
-    @response_set.responses.detect{|r| r.question_id == 2}.answer_id.should == 6
-  end
-
-  it "should save new responses from other types, ignoring blanks" do
-    @response_set.update_attributes(:responses_attributes => ResponseSet.to_savable(@other_response_attributes))
-    @response_set.responses.should have(1).items
-    @response_set.responses.detect{|r| r.question_id == 7}.text_value.should == "Brian is tired"
-  end
-
   it 'saves its responses' do
     new_set = ResponseSet.new(:survey => Factory(:survey))
     new_set.responses.build(:question_id => 1, :answer_id => 1, :string_value => 'XXL')
@@ -103,124 +93,148 @@ describe ResponseSet do
     ResponseSet.find(new_set.id).responses.should have(1).items
   end
 
-  it "should ignore data if corresponding radio button is not selected" do
-    @response_set.update_attributes(:responses_attributes => ResponseSet.to_savable(@radio_response_attributes))
-    @response_set.responses.select{|r| r.question_id == 2}.should have(1).item
-    @response_set.responses.detect{|r| r.question_id == 2}.string_value.should == nil
-  end
+  describe '#update_from_ui_hash' do
+    let(:ui_hash) { {} }
+    let(:api_id)  { 'ABCDEF-1234-567890' }
 
-  it "should preserve response ids in checkboxes when adding another checkbox" do
-    @response_set.update_attributes(:responses_attributes => ResponseSet.to_savable(@checkbox_response_attributes))
-    @response_set.responses.should have(2).items
-    initial_response_ids = @response_set.responses.map(&:id)
-    # adding a checkbox
-    @response_set.update_attributes(:responses_attributes => ResponseSet.to_savable({"1"=>{"question_id"=>"9", "answer_id"=>"13"}}))
-    @response_set.responses.should have(3).items
-    (@response_set.responses.map(&:id) - initial_response_ids).size.should == 1
-  end
+    let(:question_id) { 42 }
+    let(:answer_id) { 137 }
 
-  it "should preserve response ids in checkboxes when removing another checkbox" do
-    @response_set.update_attributes(:responses_attributes => ResponseSet.to_savable(@checkbox_response_attributes))
-    @response_set.responses.should have(2).items
-    initial_response_ids = @response_set.responses.map(&:id)
-    # removing a checkbox, reload the response set
-    @response_set.update_attributes(:responses_attributes => ResponseSet.to_savable({"1"=>{"question_id"=>"9", "answer_id"=>"", "id" => initial_response_ids.first}}))
-    @response_set.reload.responses.should have(1).items
-    (initial_response_ids - @response_set.responses.map(&:id)).size.should == 1
-  end
-  it "should clean up a blank or empty hash" do
-    ResponseSet.to_savable(nil).should == []
-    ResponseSet.to_savable({}).should == []
-  end
+    def ui_response(attrs={})
+      { 'question_id' => question_id.to_s, 'api_id' => api_id }.merge(attrs)
+    end
 
-  it "should clean up responses_attributes before passing to nested_attributes" do
-    hash_of_hashes = {
-      "11" => {"question_id" => "1", "answer_id" => [""]}, # new checkbox, blank
-      "12" => {"question_id" => "2", "answer_id" => ["", "124"]}, # new checkbox, checked
-      "13" => {"id" => "101", "question_id" => "3", "answer_id" => [""]}, # existing checkbox, unchecked
-      "14" => {"id" => "102", "question_id" => "4", "answer_id" => ["", "147"]}, # existing checkbox, left alone
-      "15" => {"question_id" => "5", "answer_id" => ""}, # new radio, blank
-      "16" => {"question_id" => "6", "answer_id" => "161"}, # new radio, selected
-      "17" => {"id" => "103", "question_id" => "7", "answer_id" => "171"}, # existing radio, changed
-      "18" => {"id" => "104", "question_id" => "8", "answer_id" => "181"}, # existing radio, unchanged
-      "19" => {"question_id" => "9", "answer_id" => "191", "string_value" => ""}, # new string, blank
-      "20" => {"question_id" => "10", "answer_id" => "201", "string_value" => "hi"}, # new string, filled
-      "21" => {"id" => "105", "question_id" => "11", "answer_id" => "211", "string_value" => ""}, # existing string, cleared
-      "22" => {"id" => "106", "question_id" => "12", "answer_id" => "221", "string_value" => "ho"}, # existing string, changed
-      "23" => {"id" => "107", "question_id" => "13", "answer_id" => "231", "string_value" => "hi"}, # existing string, unchanged
-      "24" => {"question_id" => "14", "answer_id" => [""], "string_value" => "foo"}, # new checkbox with string value, blank
-      "25" => {"question_id" => "15", "answer_id" => ["", "241"], "string_value" => "bar"}, # new checkbox with string value, checked
-      "26" => {"id" => "108", "question_id" => "14", "answer_id" => [""], "string_value" => "moo"}, # existing checkbox with string value, unchecked
-      "27" => {"id" => "109", "question_id" => "15", "answer_id" => ["", "251"], "string_value" => "mar"}, # existing checkbox with string value, left alone
-      "28" => {"question_id" => "16", "answer_id" => "", "string_value" => "foo"}, # new radio with string value, blank
-      "29" => {"question_id" => "17", "answer_id" => "261", "string_value" => "bar"}, # new radio with string value, selected
-      "30" => {"id" => "110", "question_id" => "18", "answer_id" => "271", "string_value" => "moo"}, # existing radio with string value, changed
-      "31" => {"id" => "111", "question_id" => "19", "answer_id" => "281", "string_value" => "mar"} # existing radio with string value, unchanged
-    }
+    def do_ui_update
+      response_set.update_from_ui_hash(ui_hash)
+    end
 
-    Set.new(ResponseSet.to_savable(hash_of_hashes)).should == Set.new([
-      # "11" => {"question_id" => "1", "answer_id" => [""]}, # new checkbox, blank
-      {"question_id"=>"2", "answer_id"=>["", "124"]}, # new checkbox, checked
-      {"question_id"=>"3", "id"=>"101", "_destroy"=>"1"}, # existing checkbox, unchecked
-      {"question_id"=>"4", "id"=>"102", "answer_id"=>["", "147"]}, # existing checkbox, left alone
-      # "15" => {"question_id" => "5", "answer_id" => ""}, # new radio, blank
-      {"question_id"=>"6", "answer_id"=>"161"}, # new radio, selected
-      {"question_id"=>"7", "id"=>"103", "answer_id"=>"171"}, # existing radio, changed
-      {"question_id"=>"8", "id"=>"104", "answer_id"=>"181"}, # existing radio, unchanged
-      # "19" => {"question_id" => "9", "answer_id" => "191", "string_value" => ""}, # new string, blank
-      {"question_id"=>"10", "string_value"=>"hi", "answer_id"=>"201"}, # new string, filled
-      {"question_id"=>"11", "string_value"=>"", "id"=>"105", "_destroy"=>"1"}, # existing string, cleared
-      {"question_id"=>"12", "id"=>"106", "string_value"=>"ho", "answer_id"=>"221"}, # existing string, changed
-      {"question_id"=>"13", "id"=>"107", "string_value"=>"hi", "answer_id"=>"231"}, # existing string, unchanged
-      # "24" => {"question_id" => "14", "answer_id" => [""], "string_value" => "foo"}, # new checkbox with string value, blank
-      {"question_id"=>"15", "string_value"=>"bar", "answer_id"=>["", "241"]}, # new checkbox with string value, checked
-      {"question_id"=>"14", "string_value"=>"moo", "id"=>"108", "_destroy"=>"1"}, # existing checkbox with string value, unchecked
-      {"question_id"=>"15", "id"=>"109", "string_value"=>"mar", "answer_id"=>["", "251"]},# existing checkbox with string value, left alone
-      # "28" => {"question_id" => "16", "answer_id" => "", "string_value" => "foo"}, # new radio with string value, blank
-      {"question_id"=>"17", "string_value"=>"bar", "answer_id"=>"261"}, # new radio with string value, selected
-      {"question_id"=>"18", "id"=>"110", "string_value"=>"moo", "answer_id"=>"271"}, # existing radio with string value, changed
-      {"question_id"=>"19", "id"=>"111", "string_value"=>"mar", "answer_id"=>"281"} # existing radio with string value, unchanged
-    ])
-  end
+    def resulting_response
+      # response_set_id criterion is to make sure a created response is
+      # appropriately associated.
+      Response.where(:api_id => api_id, :response_set_id => response_set).first
+    end
 
-  it "should clean up radio and string responses_attributes before passing to nested_attributes" do
-    @qone = Factory(:question, :pick => "one")
-    hash_of_hashes = {
-      "32" => {"question_id" => @qone.id, "answer_id" => "291", "string_value" => ""} # new radio with blank string value, selected
-    }
-    ResponseSet.to_savable(hash_of_hashes).should == [
-      {"question_id" => @qone.id, "answer_id" => "291", "string_value" => ""} # new radio with blank string value, selected
-    ]
-  end
+    shared_examples 'pick one or any' do
+      it 'saves an answer alone' do
+        ui_hash['3'] = ui_response('answer_id' => set_answer_id)
+        do_ui_update
+        resulting_response.answer_id.should == answer_id
+      end
 
-  it "should clean up responses for lookups to get ids after saving via ajax" do
-    hash_of_hashes = {"1"=>{"question_id"=>"2", "answer_id"=>"1"},
-      "2"=>{"question_id"=>"3", "answer_id"=>["", "6"]},
-      "9"=>{"question_id"=>"6", "string_value"=>"jack", "answer_id"=>"13"},
-      "17"=>{"question_id"=>"13", "datetime_value(1i)"=>"2006", "datetime_value(2i)"=>"2", "datetime_value(3i)"=>"4", "datetime_value(4i)"=>"02", "datetime_value(5i)"=>"05", "answer_id"=>"21"},
-      "18"=>{"question_id"=>"14", "datetime_value(1i)"=>"1", "datetime_value(2i)"=>"1", "datetime_value(3i)"=>"1", "datetime_value(4i)"=>"01", "datetime_value(5i)"=>"02", "answer_id"=>"22"},
-      "19"=>{"question_id"=>"15", "datetime_value"=>"", "answer_id"=>"23", "id" => "1"},
-      "47"=>{"question_id"=>"38", "answer_id"=>"220", "integer_value"=>"2", "id" => "2"},
-      "61"=>{"question_id"=>"44", "response_group"=>"0", "answer_id"=>"241", "integer_value"=>"12"}}
-    ResponseSet.trim_for_lookups(hash_of_hashes).should ==
-    { "1"=>{"question_id"=>"2", "answer_id"=>"1"},
-      "2"=>{"question_id"=>"3", "answer_id"=>["", "6"]},
-      "9"=>{"question_id"=>"6", "answer_id"=>"13"},
-      "17"=>{"question_id"=>"13", "answer_id"=>"21"},
-      "18"=>{"question_id"=>"14", "answer_id"=>"22"},
-      "19"=>{"question_id"=>"15", "answer_id"=>"23", "id" => "1", "_destroy" => "true"},
-      "47"=>{"question_id"=>"38", "answer_id"=>"220", "id" => "2"},
-      "61"=>{"question_id"=>"44", "response_group"=>"0", "answer_id"=>"241"}
-    }
-  end
+      it 'preserves the question' do
+        ui_hash['4'] = ui_response('answer_id' => set_answer_id)
+        do_ui_update
+        resulting_response.question_id.should == question_id
+      end
 
-  it "should remove responses" do
-    r = @response_set.responses.create(:question_id => 1, :answer_id => 2)
-    r.id.should_not be nil
-    @response_set.should have(1).responses
-    ResponseSet.to_savable({"2"=>{"question_id"=>"1", "id"=> r.id, "answer_id"=>[""]}}).should == [{"question_id"=>"1", "id"=> r.id, "_destroy"=> "1" }]
-    @response_set.update_attributes(:responses_attributes => [{"question_id"=>"1", "id"=> r.id, "_destroy"=> "1"}]).should be_true
-    @response_set.reload.should have(0).responses
+      it 'interprets a blank answer as no response' do
+        ui_hash['7'] = ui_response('answer_id' => blank_answer_id)
+        do_ui_update
+        resulting_response.should be_nil
+      end
+
+      it 'interprets no answer_id as no response' do
+        ui_hash['8'] = ui_response
+        do_ui_update
+        resulting_response.should be_nil
+      end
+
+      [
+        ['string_value',   'foo',           '', 'foo'],
+        ['datetime_value', '2010-10-01',    '', Date.new(2010, 10, 1)],
+        ['integer_value',  '9',             '', 9],
+        ['float_value',    '4.0',           '', 4.0],
+        ['text_value',     'more than foo', '', 'more than foo']
+      ].each do |value_type, set_value, blank_value, expected_value|
+        describe "plus #{value_type}" do
+          it 'saves the value' do
+            ui_hash['11'] = ui_response('answer_id' => set_answer_id, value_type => set_value)
+            do_ui_update
+            resulting_response.send(value_type).should == expected_value
+          end
+
+          it 'interprets a blank answer as no response' do
+            ui_hash['18'] = ui_response('answer_id' => blank_answer_id, value_type => set_value)
+            do_ui_update
+            resulting_response.should be_nil
+          end
+
+          it 'interprets a blank value as no response' do
+            ui_hash['29'] = ui_response('answer_id' => set_answer_id, value_type => blank_value)
+            do_ui_update
+            resulting_response.should be_nil
+          end
+
+          it 'interprets no answer_id as no response' do
+            ui_hash['8'] = ui_response(value_type => set_value)
+            do_ui_update
+            resulting_response.should be_nil
+          end
+        end
+      end
+    end
+
+    shared_examples 'response interpretation' do
+      it 'fails when api_id is not provided' do
+        ui_hash['0'] = { 'question_id' => question_id }
+        lambda { do_ui_update }.should raise_error(/api_id missing from response 0/)
+      end
+
+      describe 'for a radio button' do
+        let(:set_answer_id)   { answer_id.to_s }
+        let(:blank_answer_id) { '' }
+
+        include_examples 'pick one or any'
+      end
+
+      describe 'for a checkbox' do
+        let(:set_answer_id)   { ['', answer_id.to_s] }
+        let(:blank_answer_id) { [''] }
+
+        include_examples 'pick one or any'
+      end
+    end
+
+    describe 'with a new response' do
+      include_examples 'response interpretation'
+
+      # After much effort I cannot produce this situation in a test, either with
+      # with threads or separate processes. While SQLite 3 will nominally allow
+      # for some coarse-grained concurrency, it does not appear to work with
+      # simultaneous write transactions the way AR uses SQLite. Instead,
+      # simultaneous write transactions always result in a
+      # SQLite3::BusyException, regardless of the connection's timeout setting.
+      it 'fails predicably when another response with the same api_id is created in a simultaneous open transaction'
+    end
+
+    describe 'with an existing response' do
+      let!(:original_response) {
+        response_set.responses.build(:question_id => question_id, :answer_id => answer_id).tap do |r|
+          r.api_id = api_id # not mass assignable
+          r.save!
+        end
+      }
+
+      include_examples 'response interpretation'
+
+      it 'fails when the existing response is for a different question' do
+        ui_hash['76'] = ui_response('question_id' => '43', 'answer_id' => answer_id.to_s)
+
+        lambda { do_ui_update }.should raise_error(/Illegal attempt to change question for response #{api_id}./)
+      end
+    end
+
+    it 'rolls back all changes on failure' do
+      ui_hash['0'] = ui_response('question_id' => '42', 'answer_id' => answer_id.to_s)
+      ui_hash['1'] = { 'answer_id' => '7' }
+
+      begin
+        do_ui_update
+      rescue
+      end
+
+      response_set.reload.responses.should be_empty
+    end
   end
 end
 
@@ -449,13 +463,13 @@ describe ResponseSet, "#as_json" do
     Factory(:response_set, :responses => [
           Factory(:response, :question => Factory(:question), :answer => Factory(:answer), :string_value => '2')])
   }
-  
+
   let(:js) {rs.as_json}
-  
+
   it "should include uuid, survey_id" do
     js[:uuid].should == rs.api_id
   end
-  
+
   it "should include responses with uuid, question_id, answer_id, value" do
     r0 = rs.responses[0]
     js[:responses][0][:uuid].should == r0.api_id
