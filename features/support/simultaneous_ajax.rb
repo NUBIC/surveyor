@@ -33,6 +33,7 @@ def evict_capybara_session(driver_name)
     key = session_pool.keys.grep(/^#{driver_name}\:/).first
     if key
       session = session_pool.delete(key)
+      puts "key=#{key} evicting session #{session.object_id} driver #{session.driver.object_id}"
       session.driver.quit
     end
   end
@@ -95,6 +96,6 @@ end
 # Provides an alternative selenium driver with resync off and refcounting on.
 # This allows for simulation of competing AJAX requests.
 Capybara.register_driver :selenium_nowait do |app|
-  Capybara::Selenium::Driver.new(app, :browser => ENV['SELENIUM_BROWSER'].to_sym,
+  SingleQuitSeleniumDriver.new(app, :browser => ENV['SELENIUM_BROWSER'].to_sym,
     :resynchronize => false, :listener => AjaxRefCountListener.new)
 end

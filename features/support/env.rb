@@ -38,7 +38,7 @@ ENV['SELENIUM_BROWSER'] ||= 'chrome'
 # n.b.: Capybara 2.0 will change the way this works.
 # http://groups.google.com/group/ruby-capybara/browse_thread/thread/6d955173ce413b0a/d0682d47a915dfbd
 Capybara.register_driver :selenium do |app|
-  Capybara::Selenium::Driver.new(app, :browser => ENV['SELENIUM_BROWSER'].to_sym,
+  SingleQuitSeleniumDriver.new(app, :browser => ENV['SELENIUM_BROWSER'].to_sym,
     :resynchronize => true)
 end
 
