@@ -4,7 +4,7 @@
     %div.surveyor_help_text{ :id => 'surveyor_help_text_g' + g.id.to_s }
       = g.help_text.html_safe
     %a.surveyor_help{:data => {:id => 'g' + g.id.to_s}, :id => 'surveyor_help_g' + g.id.to_s}
-      %img{:src => 'http://static.infotech.com/images/VendorLandscapeImages/help-icon-hover.png', :width => '20px'}/
+      %i.icon-info-sign
   - case renderer
     - when :grid
       %li

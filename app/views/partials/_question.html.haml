@@ -6,7 +6,7 @@
     %div.surveyor_help_text{ :id => 'surveyor_help_text_q' + q.id.to_s }
       = q.help_text.html_safe
     %a.surveyor_help{:data => {:id => 'q' + q.id.to_s}, :id => 'surveyor_help_q' + q.id.to_s}
-      %img{:src => 'http://static.infotech.com/images/VendorLandscapeImages/help-icon-hover.png', :width => '20px'}/
+      %i.icon-info-sign
   - case renderer
   - when :image, :label
   - when :dropdown, :inline_dropdown, :slider, :repeater_dropdown
@@ -27,5 +27,3 @@
         = ff.quiet_input :id unless r.new_record?
     - q.answers.each do |a|
       = render a.custom_renderer || '/partials/answer', :q => q, :a => a, :f => f, :rg => rg, :g => g
-
-

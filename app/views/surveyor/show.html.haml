@@ -1,7 +1,7 @@
 #surveyor
   - @survey.sections.each do |section|
     - div_for section do
-      .title= section.title
+      %h1= section.title
       .questions
         - group_questions ||= []
         - section.questions.each_with_index do |question, index|

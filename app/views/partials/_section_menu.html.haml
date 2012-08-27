@@ -1,6 +1,5 @@
 .surveyor_menu
   = t('surveyor.sections')
-  %ul
+  %ul.breadcrumb
     - @sections.each do |s|
-      %li{:class => ("active" if s == @section)}= submit_tag(truncate(s.title, :length => 25), :name => "section[#{s.id}]")
-.clear
+      %li{:class => ("active" if s == @section)}= submit_tag(truncate(s.title), :name => "section[#{s.id}]")
