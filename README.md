@@ -146,6 +146,21 @@ Some key library dependencies are:
 
 A more exhaustive list can be found in the gemspec.
 
+# Support
+
+For general discussion (e.g., "how do I do this?"), please send a message to the
+[surveyor-dev][] group. This group is moderated to keep out spam; don't be
+surprised if your message isn't posted immediately.
+
+For reproducible bugs, please file an issue on the [GitHub issue
+tracker][issues]. Please include a minimal test case (a detailed description of
+how to trigger the bug in a clean rails application). If you aren't sure how to
+isolate the bug, send a message to [surveyor-dev][] with what you know and we'll
+try to help.
+
+[surveyor-dev]: https://groups.google.com/group/surveyor-dev
+[issues]: https://github.com/NUBIC/surveyor/issues
+
 # Contributing, testing
 
 To work on the code, fork this github project. Install [bundler][] if
