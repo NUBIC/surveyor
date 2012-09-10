@@ -9,12 +9,11 @@
   = semantic_form_for(@response_set, :as => :r, :url => update_my_survey_path, :html => {:method => :put, :id => "survey_form", :class => @survey.custom_class}) do |f|
   
     = hidden_field_tag :surveyor_javascript_enabled, false
-		
     = hidden_field_tag :current_section, @section.id unless @section.nil?
 
     = render 'partials/section_menu' # unless @sections.size < 3
     %h1= @survey.title
-    .previous_section= previous_section
+    
     = render 'partials/dependents' unless @dependents.empty?
     = render "/partials/section", :f => f
 
@@ -26,8 +25,8 @@
         - @response_set.survey.sections.each do |section|
           %li
             .specific_section= specific_section(section)
-
-    .next_section= next_section 
+    .previous_section.pull-left= previous_section
+    .next_section.pull-right= next_section 
     - if !@response_set.completed_at.nil?
       = submit_tag "Done Editing", :name => "finish", :class => "btn btn-primary"
   %br
