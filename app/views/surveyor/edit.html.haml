@@ -21,14 +21,14 @@
       - flash[:validation_errors].each do |error|
         = "<script>highlightQuestions('#{error[:question]}', \"#{error[:message][0]}\")</script>".html_safe
     - if !@response_set.completed_at.nil?
-      %ol{ :class => "paginator" }
-        - @response_set.survey.sections.each do |section|
-          %li
-            .specific_section= specific_section(section)
+      %div{ :class => "pagination" }
+        %ul
+          - @response_set.survey.sections.each do |section|
+            =specific_section(section)
     .previous_section.pull-left= previous_section
     .next_section.pull-right= next_section 
     - if !@response_set.completed_at.nil?
-      = submit_tag "Done Editing", :name => "finish", :class => "btn btn-primary"
+      .previous_section.pull-left= submit_tag "Done Editing", :name => "finish"
   %br
 
 :javascript

@@ -36,7 +36,7 @@ module SurveyorHelper
   end
   
   def specific_section(section)
-    @section == section ? "<div class=\"current\">#{section.display_number}</div>".html_safe : submit_tag(section.display_number.html_safe, :name => "section[#{section.id}]")
+    @section == section ? "<li class=\"disabled\"><a>#{section.display_number}</a></li>".html_safe : "<li class=\"active\"><a>#{submit_tag(section.display_number.html_safe, :name => "section[#{section.id}]")}</a></li>".html_safe
   end
   
   # Questions
