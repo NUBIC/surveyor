@@ -45,7 +45,7 @@ module Surveyor
         self.instance_eval(&block)
         if type == 'survey'
           Surveyor::Parser.rake_trace "\n"
-          Surveyor::Parser.rake_trace context[type.to_sym].save ? "saved. " : " not saved! #{context[type.to_sym].errors.each_full{|x| x }.join(", ")} "
+          Surveyor::Parser.rake_trace context[type.to_sym].save ? "saved. " : " not saved! #{context[type.to_sym].errors.full_messages.join(", ")} "
         end
         context[type.to_sym].clear(context) unless type == 'survey'
       end
