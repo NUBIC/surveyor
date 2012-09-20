@@ -659,3 +659,42 @@ Feature: Survey creation
     When I check "Refused"
     Then the checkbox for "Electric" should be disabled
      And the checkbox for "Don't know" should be disabled
+     
+     
+  # Issue ##363 - each_full function is not supported for rails3
+  @javascript
+  Scenario: printing_error_fix
+    Given the survey
+    """
+      survey "Bag" do
+        section "Usage" do
+          q_PLACED_BAG_1 "Is the bag placed?",
+          :pick => :one
+          a_1 "Yes"
+          a_2 "No"
+          a_3 "Refused"         
+
+          q_BAG_2_USED "Is the bag used?",
+          :pick => :one
+          a_1 "Yes here"
+          a_2 "No here"
+          a_3 "Refused here"         
+
+          label "That’s fine. Thank you for your time."
+          dependency :rule=>"A or B"
+          condition_A :q_PLACED_BAG_1, "==", :a_3
+          condition_B :q_BAG_2_USED, "==", :a_3
+
+          label "Thank you for your child’s participation in this sample collection"
+          dependency :rule=>"(A or B) and (C or D)"
+          condition_A :q_PLACED_BAG_1, "==", :a_1
+          condition_B :q_PLACED_BAG_1, "==", :a_2
+          condition_C :q_BAG_2_USED, "==", :a_1
+          condition_D :q_BAG_2_USED, "==", :a_2
+        end
+      end
+    """
+    When I start the "Bag" survey
+     And I choose "Yes"
+     And I choose "Yes here"    
+    Then I should see "Thank you for your child’s participation in this sample collection"
