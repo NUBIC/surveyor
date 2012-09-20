@@ -114,6 +114,13 @@ time you start your app:
 
     bundle exec rake db:migrate
 
+Finally, review the [changelog][] entries corresponding to the versions between
+your original version and the version you've updated to. There may be changes
+which will affect your customizations. There should be hints in the changelog
+or the referenced issues for what to update when necessary.
+
+[changelog]: https://github.com/NUBIC/surveyor/blob/master/CHANGELOG.md
+
 ## Following master
 
 If you are following along with pre-release versions of Surveyor using a `:git`
