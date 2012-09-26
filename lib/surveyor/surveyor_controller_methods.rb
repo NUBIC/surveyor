@@ -64,6 +64,16 @@ module Surveyor
       ActiveRecord::Base.transaction do
         @response_set = ResponseSet.find_by_access_code(params[:response_set_code], :include => {:responses => :answer}, :lock => true)
         unless @response_set.blank?
+
+          params[:r].each do |res| 
+            if res[1][:id].nil?
+              answered = Response.find_by_question_id_and_response_set_id(res[1][:question_id], @response_set.id)
+              if answered.present?
+                res[1][:id] = answered[:id]
+              end
+            end
+          end
+
           @errors = Response.validate(params[:r], @response_set)
 
           #Remove know invalid responses from update call, to be handled separately by validation
