@@ -210,7 +210,7 @@ Feature: Survey parser
     And question "copd_sh_1ba" should have a dependency with rule "E"
 
   Scenario: Parsing dependencies on questions inside of a group
-    Given the survey
+    Given I parse
     """
       survey "Phone Screen Questions" do
         section "Phone Screen" do
@@ -250,7 +250,7 @@ Feature: Survey parser
     And 2 dependencies should depend on question groups
 
   Scenario: Parsing dependencies with "a"
-    Given the survey
+    Given I parse
     """
       survey "Dependencies with 'a'" do
         section "First" do
@@ -274,7 +274,7 @@ Feature: Survey parser
       | A        |
 
   Scenario: Parsing dependencies with "q"
-    Given the survey
+    Given I parse
     """
       survey "Dependencies with 'q'" do
         section "First" do
@@ -298,7 +298,7 @@ Feature: Survey parser
       | A        |
 
   Scenario: Parsing a quiz
-    Given the survey
+    Given I parse
     """
       survey "Quiz time" do
         section "First" do
@@ -310,3 +310,14 @@ Feature: Survey parser
       end
     """
     Then there should be 1 question with a correct answer
+
+  Scenario: Parsing errors
+    Given the survey
+    """
+      survey "Basics" do
+        sectionals "Typo" do
+        end
+      end
+
+    """
+    Then the parser should fail with "Dropping the Sectionals block like it's hot!"

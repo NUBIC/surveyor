@@ -1,5 +1,6 @@
 %w(survey survey_section question_group question dependency dependency_condition answer validation validation_condition).each {|model| require model }
 module Surveyor
+  class ParserError < StandardError; end
   class Parser
     class << self; attr_accessor :options end
 
@@ -34,8 +35,8 @@ module Surveyor
       Surveyor::Parser.rake_trace reference_identifier.blank? ? "#{type} " : "#{type}_#{reference_identifier} "
 
       # check for blocks
-      raise "Error: A #{type.humanize} cannot be empty" if block_models.include?(type) && !block_given?
-      raise "Error: Dropping the #{type.humanize} block like it's hot!" if !block_models.include?(type) && block_given?
+      raise Surveyor::ParserError, "Error: A #{type.humanize} cannot be empty" if block_models.include?(type) && !block_given?
+      raise Surveyor::ParserError, "Error: Dropping the #{type.humanize} block like it's hot!" if !block_models.include?(type) && block_given?
 
       # parse and build
       type.classify.constantize.parse_and_build(context, args, method_name, reference_identifier)
