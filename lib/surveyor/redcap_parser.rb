@@ -3,42 +3,51 @@ require 'active_support' # for humanize
 require 'fastercsv'
 require 'csv'
 module Surveyor
+  class RedcapParserError < StandardError; end
   class RedcapParser
+    class << self; attr_accessor :options end
+
     # Attributes
     attr_accessor :context
 
     # Class methods
-    def self.parse(str, filename)
-      puts
+    def self.parse(str, filename, options={})
+      self.options = options
+      Surveyor::RedcapParser.rake_trace "\n"
       Surveyor::RedcapParser.new.parse(str, filename)
-      puts
-      puts
+      Surveyor::RedcapParser.rake_trace "\n"
+    end
+    def self.rake_trace(str)
+      self.options ||= {}
+      print str if self.options[:trace] == true
     end
 
     # Instance methods
     def initialize
       self.context = {}
+      self.context[:dependency_conditions] = []
     end
     def parse(str, filename)
       csvlib = CSV.const_defined?(:Reader) ? FasterCSV : CSV
       begin
         csvlib.parse(str, :headers => :first_row, :return_headers => true, :header_converters => :symbol) do |r|
           if r.header_row? # header row
-            return puts "Missing headers: #{missing_columns(r.headers).inspect}\n\n" unless missing_columns(r.headers).blank?
+            return Surveyor::RedcapParser.rake_trace "Missing headers: #{missing_columns(r.headers).inspect}\n\n" unless missing_columns(r.headers).blank?
             context[:survey] = Survey.new(:title => filename)
-            print "survey_#{context[:survey].access_code} "
+            Surveyor::RedcapParser.rake_trace "survey_#{context[:survey].access_code} "
           else # non-header rows
-            SurveySection.build_or_set(context, r)
-            Question.build_and_set(context, r)
-            Answer.build_and_set(context, r)
-            Validation.build_and_set(context, r)
-            Dependency.build_and_set(context, r)
+            SurveySection.new.extend(SurveyorRedcapParserSurveySectionMethods).build_or_set(context, r)
+            Question.new.extend(SurveyorRedcapParserQuestionMethods).build_and_set(context, r)
+            Answer.new.extend(SurveyorRedcapParserAnswerMethods).build_and_set(context, r)
+            Validation.new.extend(SurveyorRedcapParserValidationMethods).build_and_set(context, r)
+            Dependency.new.extend(SurveyorRedcapParserDependencyMethods).build_and_set(context, r)
           end
         end
-        print context[:survey].save ? "saved. " : " not saved! #{context[:survey].errors.full_messages.join(", ")} "
-        # print context[:survey].sections.map(&:questions).flatten.map(&:answers).flatten.map{|x| x.errors.each_full{|y| y}.join}.join
+        resolve_references
+        Surveyor::RedcapParser.rake_trace context[:survey].save ? "saved. " : " not saved! #{context[:survey].errors.full_messages.join(", ")} "
+        # Surveyor::RedcapParser.rake_trace context[:survey].sections.map(&:questions).flatten.map(&:answers).flatten.map{|x| x.errors.each_full{|y| y}.join}.join
       rescue csvlib::MalformedCSVError
-        puts = "Oops. Not a valid CSV file."
+        raise Surveyor::RedcapParserError, "Oops. Not a valid CSV file."
       # ensure
       end
       return context[:survey]
@@ -53,35 +62,54 @@ module Surveyor
       # no longer requiring field_units
       %w(variable__field_name form_name section_header field_type field_label field_note text_validation_min text_validation_max identifier branching_logic_show_field_only_if required_field)
     end
-  end
-end
-
-# Surveyor models with extra parsing methods
-class Survey < ActiveRecord::Base
-end
-class SurveySection < ActiveRecord::Base
-  def self.build_or_set(context, r)
-    unless context[:survey_section] && context[:survey_section].reference_identifier == r[:form_name]
-      if match = context[:survey].sections.detect{|ss| ss.reference_identifier == r[:form_name]}
-        context[:current_survey_section] = match
-      else
-        context[:survey_section] = context[:survey].sections.build({:title => r[:form_name].to_s.humanize,
-                                                                    :reference_identifier => r[:form_name],
-                                                                    :display_order => context[:survey].sections.size })
-        print "survey_section_#{context[:survey_section].reference_identifier} "
+    def resolve_references
+      context[:dependency_conditions].each do |dc|
+        return unless dc.lookup_reference
+        Surveyor::RedcapParser.rake_trace "resolve(#{dc.question_reference},#{dc.answer_reference})"
+        if dc.answer_reference.blank? and (row = dc.lookup_reference.find{|r| r[0] == dc.question_reference and r[1] == nil}) and row[2].answers.size == 1
+          Surveyor::RedcapParser.rake_trace "...found "
+          dc.question = row[2]
+          dc.answer = dc.question.answers.first
+        elsif row = dc.lookup_reference.find{|r| r[0] == dc.question_reference and r[1] == dc.answer_reference}
+          Surveyor::RedcapParser.rake_trace "...found "
+          dc.answer = row[2]
+          dc.question = dc.answer.question
+        else
+          Surveyor::RedcapParser.rake_trace "\n!!! failed lookup for dependency_condition q: #{question_reference} a: #{question_reference}"
+        end
       end
     end
   end
 end
-class QuestionGroup < ActiveRecord::Base
+
+# Surveyor models with extra parsing methods
+
+# SurveySection model
+module SurveyorRedcapParserSurveySectionMethods
+  def build_or_set(context, r)
+    unless context[:survey_section] && context[:survey_section].reference_identifier == r[:form_name]
+      if match = context[:survey].sections.detect{|ss| ss.reference_identifier == r[:form_name]}
+        context[:current_survey_section] = match
+      else
+        self.attributes = (
+          {:title => r[:form_name].to_s.humanize,
+          :reference_identifier => r[:form_name],
+          :display_order => context[:survey].sections.size })
+        context[:survey].sections << context[:survey_section] = self
+        Surveyor::RedcapParser.rake_trace "survey_section_#{context[:survey_section].reference_identifier} "
+      end
+    end
+  end
 end
-class Question < ActiveRecord::Base
-  def self.build_and_set(context, r)
+
+# Question model
+module SurveyorRedcapParserQuestionMethods
+  def build_and_set(context, r)
     if !r[:section_header].blank?
       context[:survey_section].questions.build({:display_type => "label", :text => r[:section_header], :display_order => context[:survey_section].questions.size})
-      print "label_ "
+      Surveyor::RedcapParser.rake_trace "label_ "
     end
-    context[:question] = context[:survey_section].questions.build({
+    self.attributes = ({
       :reference_identifier => r[:variable__field_name],
       :text => r[:field_label],
       :help_text => r[:field_note],
@@ -90,33 +118,38 @@ class Question < ActiveRecord::Base
       :display_type => display_type_from_field_type(r[:field_type]),
       :display_order => context[:survey_section].questions.size
     })
+    context[:survey_section].questions << context[:question] = self
     unless context[:question].reference_identifier.blank?
       context[:lookup] ||= []
       context[:lookup] << [context[:question].reference_identifier, nil, context[:question]]
     end
-    print "question_#{context[:question].reference_identifier} "
+    Surveyor::RedcapParser.rake_trace "question_#{context[:question].reference_identifier} "
   end
-  def self.pick_from_field_type(ft)
+  def pick_from_field_type(ft)
     {"checkbox" => :any, "radio" => :one}[ft] || :none
   end
-  def self.display_type_from_field_type(ft)
+  def display_type_from_field_type(ft)
     {"text" => :string, "dropdown" => :dropdown, "notes" => :text}[ft]
   end
 end
-class Dependency < ActiveRecord::Base
-  def self.build_and_set(context, r)
+
+# Dependency model
+module SurveyorRedcapParserDependencyMethods
+  def build_and_set(context, r)
     unless (bl = r[:branching_logic_show_field_only_if]).blank?
       # TODO: forgot to tie rule key to component, counting on the sequence of components
       letters = ('A'..'Z').to_a
       hash = decompose_rule(bl)
-      context[:dependency] = context[:question].build_dependency(:rule => hash[:rule])
+      self.attributes = {:rule => hash[:rule]}
+      context[:question].dependency = context[:dependency] = self
       hash[:components].each do |component|
-        context[:dependency].dependency_conditions.build(decompose_component(component).merge(:lookup_reference => context[:lookup], :rule_key => letters.shift))
+        dc = context[:dependency].dependency_conditions.build(decompose_component(component).merge(:lookup_reference => context[:lookup], :rule_key => letters.shift))
+        context[:dependency_conditions] << dc
       end
-      print "dependency(#{hash[:rule]}) "
+      Surveyor::RedcapParser.rake_trace "dependency(#{hash[:rule]}) "
     end
   end
-  def self.decompose_component(str)
+  def decompose_component(str)
     # [initial_52] = "1" or [f1_q15] = '' or [f1_q15] = '-2' or [hi_event1_type] <> ''
     if match = str.match(/^\[(\w+)\] ?([!=><]+) ?['"](-?\w*)['"]$/)
       {:question_reference => match[1], :operator => match[2].gsub(/^=$/, "==").gsub(/^<>$/, "!="), :answer_reference => match[3]}
@@ -127,10 +160,10 @@ class Dependency < ActiveRecord::Base
     elsif match = str.match(/^\[(\w+)\] ?([!=><]+) ?(-?\d+)$/)
       {:question_reference => match[1], :operator => match[2].gsub(/^=$/, "==").gsub(/^<>$/, "!="), :integer_value => match[3]}
     else
-      puts "\n!!! skipping dependency_condition #{str}"
+      Surveyor::RedcapParser.rake_trace "\n!!! skipping dependency_condition #{str}"
     end
   end
-  def self.decompose_rule(str)
+  def decompose_rule(str)
     # see spec/lib/redcap_parser_spec.rb for examples
     letters = ('A'..'Z').to_a
     rule = str
@@ -158,62 +191,66 @@ class Dependency < ActiveRecord::Base
     {:rule => rule, :components => components.flatten}
   end
 end
-class DependencyCondition < ActiveRecord::Base
-  attr_accessor :question_reference, :answer_reference, :lookup_reference
-  before_save :resolve_references
-  attr_accessible :question_reference, :answer_reference, :lookup_reference
 
-  def resolve_references
-    return unless lookup_reference
-    print "resolve(#{question_reference},#{answer_reference})"
-    if answer_reference.blank? and (row = lookup_reference.find{|r| r[0] == question_reference and r[1] == nil}) and row[2].answers.size == 1
-      print "...found "
-      self.question = row[2]
-      self.answer = self.question.answers.first
-    elsif row = lookup_reference.find{|r| r[0] == question_reference and r[1] == answer_reference}
-      print "...found "
-      self.answer = row[2]
-      self.question = self.answer.question
-    else
-      puts "\n!!! failed lookup for dependency_condition q: #{question_reference} a: #{question_reference}"
-    end
+# DependencyCondition model
+module SurveyorRedcapParserDependencyConditionMethods
+  DependencyCondition.instance_eval do
+    attr_accessor :question_reference, :answer_reference, :lookup_reference
+    attr_accessible :question_reference, :answer_reference, :lookup_reference
   end
 end
-class Answer < ActiveRecord::Base
-  def self.build_and_set(context, r)
+
+# Answer model
+module SurveyorRedcapParserAnswerMethods
+  def build_and_set(context, r)
     case r[:field_type]
     when "text"
-      context[:answer] = context[:question].answers.build(:response_class => "string", :text => "Text", :display_order => context[:question].answers.size)
+      self.attributes = {
+        :response_class => "string",
+        :text => "Text",
+        :display_order => context[:question].answers.size }
+      context[:question].answers << context[:answer] = self
     when "notes"
-      context[:answer] = context[:question].answers.build(:response_class => "text", :text => "Notes", :display_order => context[:question].answers.size)
+      self.attributes = {
+        :response_class => "text",
+        :text => "Notes",
+        :display_order => context[:question].answers.size }
+      context[:question].answers << context[:answer] = self
     when "file"
-      puts "\n!!! skipping answer: file"
+      Surveyor::RedcapParser.rake_trace "\n!!! skipping answer: file"
     end
     (r[:choices_or_calculations] || r[:choices_calculations_or_slider_labels]).to_s.split("|").each do |pair|
       aref, atext = pair.split(",").map(&:strip)
       if aref.blank? or atext.blank? or (aref.to_i.to_s != aref)
-        puts "\n!!! skipping answer #{pair}"
+        Surveyor::RedcapParser.rake_trace "\n!!! skipping answer #{pair}"
       else
-        context[:answer] = context[:question].answers.build(:reference_identifier => aref, :text => atext, :display_order => context[:question].answers.size)
+        a = Answer.new({
+          :reference_identifier => aref,
+          :text => atext,
+          :display_order => context[:question].answers.size })
+        context[:question].answers << context[:answer] = a
         unless context[:question].reference_identifier.blank? or aref.blank? or !context[:answer].valid?
           context[:lookup] ||= []
           context[:lookup] << [context[:question].reference_identifier, aref, context[:answer]]
         end
-        puts "#{context[:answer].errors.full_messages}, #{context[:answer].inspect}" unless context[:answer].valid?
-        print "answer_#{context[:answer].reference_identifier} "
+        Surveyor::RedcapParser.rake_trace "#{context[:answer].errors.full_messages}, #{context[:answer].inspect}" unless context[:answer].valid?
+        Surveyor::RedcapParser.rake_trace "answer_#{context[:answer].reference_identifier} "
       end
     end
   end
 end
-class Validation < ActiveRecord::Base
-  def self.build_and_set(context, r)
+
+# Validation model
+module SurveyorRedcapParserValidationMethods
+  def build_and_set(context, r)
     # text_validation_type text_validation_min text_validation_max
     min = r[:text_validation_min].to_s.blank? ? nil : r[:text_validation_min].to_s
     max = r[:text_validation_max].to_s.blank? ? nil : r[:text_validation_max].to_s
     type = r[:text_validation_type].to_s.blank? ? nil : r[:text_validation_type].to_s
     if min or max
       context[:question].answers.each do |a|
-        context[:validation] = a.validations.build(:rule => min ? max ? "A and B" : "A" : "B")
+        self.rule = (min ? max ? "A and B" : "A" : "B")
+        a.validations << context[:validation] = self
         context[:validation].validation_conditions.build(:rule_key => "A", :operator => ">=", :integer_value => min) if min
         context[:validation].validation_conditions.build(:rule_key => "B", :operator => "<=", :integer_value => max) if max
       end
@@ -224,30 +261,31 @@ class Validation < ActiveRecord::Base
         context[:question].display_type = :date if context[:question].display_type == :string
       when "email"
         context[:question].answers.each do |a|
-          context[:validation] = a.validations.build(:rule => "A")
+          self.rule = "A"
+          a.validations << context[:validation] = self
           context[:validation].validation_conditions.build(:rule_key => "A", :operator => "=~", :regexp => "^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$")
         end
       when "integer"
         context[:question].display_type = :integer if context[:question].display_type == :string
         context[:question].answers.each do |a|
-          context[:validation] = a.validations.build(:rule => "A")
+          self.rule = "A"
+          a.validations << context[:validation] = self
           context[:validation].validation_conditions.build(:rule_key => "A", :operator => "=~", :regexp => "\d+")
         end
       when "number"
         context[:question].display_type = :float if context[:question].display_type == :string
         context[:question].answers.each do |a|
-          context[:validation] = a.validations.build(:rule => "A")
+          self.rule = "A"
+          a.validations << context[:validation] = self
           context[:validation].validation_conditions.build(:rule_key => "A", :operator => "=~", :regexp => "^\d*(,\d{3})*(\.\d*)?$")
         end
       when "phone"
         context[:question].answers.each do |a|
-          context[:validation] = a.validations.build(:rule => "A")
+                    self.rule = "A"
+          a.validations << context[:validation] = self
           context[:validation].validation_conditions.build(:rule_key => "A", :operator => "=~", :regexp => "\d{3}.*\d{4}")
         end
       end
     end
   end
-
-end
-class ValidationCondition < ActiveRecord::Base
 end
