@@ -28,6 +28,9 @@ module Surveyor
         # Whitelisting attributes
         base.send :attr_accessible, :survey, :responses_attributes, :user_id, :survey_id
 
+        base.send :before_create, :ensure_start_timestamp
+        base.send :before_create, :ensure_identifiers
+
         # Class methods
         base.instance_eval do
           def has_blank_value?(hash)
@@ -38,14 +41,11 @@ module Surveyor
         end
       end
 
-      # Instance methods
-      def initialize(*args)
-        super(*args)
-        default_args
+      def ensure_start_timestamp
+        self.started_at ||= Time.now
       end
 
-      def default_args
-        self.started_at ||= Time.now
+      def ensure_identifiers
         self.access_code ||= random_unique_access_code
         self.api_id ||= Surveyor::Common.generate_api_id
       end
