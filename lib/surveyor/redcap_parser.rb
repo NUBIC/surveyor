@@ -14,7 +14,7 @@ module Surveyor
       puts
       puts
     end
-    
+
     # Instance methods
     def initialize
       self.context = {}
@@ -46,7 +46,7 @@ module Surveyor
     def missing_columns(r)
       missing = []
       missing << "choices_or_calculations" unless r.map(&:to_s).include?("choices_or_calculations") or r.map(&:to_s).include?("choices_calculations_or_slider_labels")
-      missing << "text_validation_type" unless r.map(&:to_s).include?("text_validation_type") or r.map(&:to_s).include?("text_validation_type_or_show_slider_number") 
+      missing << "text_validation_type" unless r.map(&:to_s).include?("text_validation_type") or r.map(&:to_s).include?("text_validation_type_or_show_slider_number")
       missing += (static_required_columns - r.map(&:to_s))
     end
     def static_required_columns
@@ -65,7 +65,7 @@ class SurveySection < ActiveRecord::Base
       if match = context[:survey].sections.detect{|ss| ss.reference_identifier == r[:form_name]}
         context[:current_survey_section] = match
       else
-        context[:survey_section] = context[:survey].sections.build({:title => r[:form_name].to_s.humanize, 
+        context[:survey_section] = context[:survey].sections.build({:title => r[:form_name].to_s.humanize,
                                                                     :reference_identifier => r[:form_name],
                                                                     :display_order => context[:survey].sections.size })
         print "survey_section_#{context[:survey_section].reference_identifier} "
@@ -93,7 +93,7 @@ class Question < ActiveRecord::Base
     unless context[:question].reference_identifier.blank?
       context[:lookup] ||= []
       context[:lookup] << [context[:question].reference_identifier, nil, context[:question]]
-    end    
+    end
     print "question_#{context[:question].reference_identifier} "
   end
   def self.pick_from_field_type(ft)
@@ -128,7 +128,7 @@ class Dependency < ActiveRecord::Base
       {:question_reference => match[1], :operator => match[2].gsub(/^=$/, "==").gsub(/^<>$/, "!="), :integer_value => match[3]}
     else
       puts "\n!!! skipping dependency_condition #{str}"
-    end    
+    end
   end
   def self.decompose_rule(str)
     # see spec/lib/redcap_parser_spec.rb for examples
@@ -149,7 +149,7 @@ class Dependency < ActiveRecord::Base
         # sub in rule key
         rule = rule.gsub(part, "(#{nums.map{letters.shift}.join(' and ')})")
       else
-        # 'or' on the right of the operator        
+        # 'or' on the right of the operator
         components[i] = components[i-1].gsub(/"(\d+)"/, part) if part.match(/^"(\d+)"$/) && i != 0
         # sub in rule key
         rule = rule.gsub(part){letters.shift}
@@ -162,7 +162,7 @@ class DependencyCondition < ActiveRecord::Base
   attr_accessor :question_reference, :answer_reference, :lookup_reference
   before_save :resolve_references
   attr_accessible :question_reference, :answer_reference, :lookup_reference
-  
+
   def resolve_references
     return unless lookup_reference
     print "resolve(#{question_reference},#{answer_reference})"
@@ -170,7 +170,7 @@ class DependencyCondition < ActiveRecord::Base
       print "...found "
       self.question = row[2]
       self.answer = self.question.answers.first
-    elsif row = lookup_reference.find{|r| r[0] == question_reference and r[1] == answer_reference}    
+    elsif row = lookup_reference.find{|r| r[0] == question_reference and r[1] == answer_reference}
       print "...found "
       self.answer = row[2]
       self.question = self.answer.question
@@ -247,7 +247,7 @@ class Validation < ActiveRecord::Base
       end
     end
   end
-  
+
 end
 class ValidationCondition < ActiveRecord::Base
 end

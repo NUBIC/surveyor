@@ -1,6 +1,6 @@
 # The redcap parser feature should run last. If it runs in between other features that use the surveyor parser,
 # it causes the DependencyCondition before_save :resolve_references hook to stop running, causing hard to trace failures.
-
+@focus
 Feature: Survey import from REDCap
   As a developer
   I want to write out the survey in the DSL

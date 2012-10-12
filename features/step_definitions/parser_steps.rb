@@ -1,5 +1,3 @@
-require 'surveyor/parser' # for Surveyor::Parser
-
 Given /^I parse$/ do |string|
   Surveyor::Parser.parse(string)
 end
