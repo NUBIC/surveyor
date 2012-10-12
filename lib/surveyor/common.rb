@@ -2,15 +2,29 @@ require 'uuidtools'
 
 module Surveyor
   class Common
-    RAND_CHARS = [('a'..'z'), ('A'..'Z'), (0..9)].map{|r| r.to_a}.flatten.join
     OPERATORS = %w(== != < > <= >= =~)
     
     class << self
-      def make_tiny_code(len = 10)
-        if RUBY_VERSION < "1.8.7"
-          (1..len).to_a.map{|i| RAND_CHARS[rand(RAND_CHARS.size), 1] }.join
-        else
-          len.times.map{|i| RAND_CHARS[rand(RAND_CHARS.size), 1] }.join
+      if RUBY_VERSION >= '1.9'
+        require 'securerandom'
+        def make_tiny_code
+          # 7 random bytes is increased to ~10 characters (sans padding) by
+          # base64 encoding
+          SecureRandom.urlsafe_base64(7)
+        end
+      else
+        begin
+          require 'active_support/secure_random'
+        rescue LoadError
+          abort 'Neither SecureRandom nor ActiveSupport::SecureRandom are present'
+        end
+
+        # Based on 1.9's SecureRandom.urlsafe_base64
+        def make_tiny_code
+          s = [ActiveSupport::SecureRandom.random_bytes(7)].pack("m*")
+          s.delete!("\n")
+          s.tr!("+/", "-_")
+          s.delete!("=")
         end
       end
 
