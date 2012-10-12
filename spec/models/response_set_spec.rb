@@ -55,14 +55,6 @@ describe ResponseSet do
       rs2.should_not be_valid
       rs2.should have(1).errors_on(:access_code)
     end
-
-    it 'defaults to a random, non-conflicting value on init' do
-      Surveyor::Common.should_receive(:make_tiny_code).and_return('one')
-      Surveyor::Common.should_receive(:make_tiny_code).and_return('two')
-      Surveyor::Common.should_receive(:make_tiny_code).and_return('three')
-
-      ResponseSet.new.access_code.should == 'three'
-    end
   end
 
   it "is completable" do

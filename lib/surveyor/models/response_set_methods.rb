@@ -46,18 +46,9 @@ module Surveyor
 
       def default_args
         self.started_at ||= Time.now
-        self.access_code ||= random_unique_access_code
+        self.access_code ||= Surveyor::Common.make_tiny_code
         self.api_id ||= Surveyor::Common.generate_api_id
       end
-
-      def random_unique_access_code
-        val = Surveyor::Common.make_tiny_code
-        while ResponseSet.find_by_access_code(val)
-          val = Surveyor::Common.make_tiny_code
-        end
-        val
-      end
-      private :random_unique_access_code
 
       def to_csv(access_code = false, print_header = true)
         qcols = Question.content_columns.map(&:name) - %w(created_at updated_at)
