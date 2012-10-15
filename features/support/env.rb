@@ -5,6 +5,8 @@
 # files.
 ENV["RAILS_ROOT"] ||= File.expand_path(File.dirname(__FILE__) + '/../../testbed')
 require 'cucumber/rails'
+
+
 # require File.expand_path(File.dirname(__FILE__) + '/../../testbed/config/environment.rb')
 # Capybara defaults to XPath selectors rather than Webrat's default of CSS3. In
 # order to ease the transition to Capybara we set the default here. If you'd
@@ -44,4 +46,9 @@ end
 
 Before do |scenario|
   Rails.logger.info "\n\nBeginning scenario #{scenario.file_colon_line} \"#{scenario.title}\""
+end
+
+require "json_spec/cucumber"
+JsonSpec.configure do
+  exclude_keys "id", "created_at", "updated_at", "uuid", "modified_at", "completed_at"
 end

@@ -4,7 +4,7 @@ Feature: Survey creation
   So that I can get paid
 
   Scenario: Creating basic questions
-    Given the survey
+    Given I parse
     """
       survey "Favorites" do
         section "Colors" do
@@ -38,7 +38,7 @@ Feature: Survey creation
       | brown  |
 
   Scenario: Creating default answers
-    Given the survey
+    Given I parse
     """
       survey "Favorites" do
         section "Foods" do
@@ -68,8 +68,9 @@ Feature: Survey creation
       | string_value    |
       | chicken |
 
+  @quiz
   Scenario: Creating, it's quiz time
-    Given the survey
+    Given I parse
     """
       survey "Favorites" do
         section "Foods" do
@@ -83,7 +84,7 @@ Feature: Survey creation
     Then question "1" should have correct answer "oink"
 
   Scenario: Creating custom css class
-    Given the survey
+    Given I parse
     """
       survey "Movies" do
         section "First" do
@@ -105,7 +106,7 @@ Feature: Survey creation
     And the element "input[type='text'].other_other_custom_class" should exist
 
   Scenario: Creating a pick one question with an option for other
-    Given the survey
+    Given I parse
     """
       survey "Favorites" do
         section "Foods" do
@@ -124,7 +125,7 @@ Feature: Survey creation
     | bacon |
 
   Scenario: Creating a repeater with a dropdown
-    Given the survey
+    Given I parse
     """
       survey "Movies" do
         section "Preferences" do
@@ -142,7 +143,7 @@ Feature: Survey creation
 
   # Issue 251 - text field with checkbox
   Scenario: Creating a group with a dropdown
-    Given the survey
+    Given I parse
     """
       survey "All Holidays" do
         section "Favorites" do
@@ -159,7 +160,7 @@ Feature: Survey creation
     Then a dropdown should exist with the options "Christmas, New Year, March 8th"
 
   Scenario: Creating another pick one question with an option for other
-    Given the survey
+    Given I parse
     """
       survey "Favorites" do
         section "Foods" do
@@ -179,7 +180,7 @@ Feature: Survey creation
     | shrimp |
 
   Scenario: Creating checkboxes with text area
-    Given the survey
+    Given I parse
     """
       survey "Websites" do
         section "Search engines" do
@@ -195,7 +196,7 @@ Feature: Survey creation
     And there should be 3 text areas
 
   Scenario: Creating double letter rule keys
-    Given the survey
+    Given I parse
     """
       survey "Doubles" do
         section "Two" do
@@ -229,7 +230,7 @@ Feature: Survey creation
     Then the question "Do you want to be part of an SNL skit?" should be triggered
 
   Scenario: Creating and changing dropdowns
-    Given the survey
+    Given I parse
     """
       survey "Drop" do
         section "Like it is hot" do
@@ -258,7 +259,7 @@ Feature: Survey creation
   # Issue 234 - text field with checkbox
   @javascript
   Scenario: Creating a question with an option checkbox for other and text input
-    Given the survey
+    Given I parse
     """
       survey "Favorite Cuisine" do
         section "Foods" do
@@ -277,7 +278,7 @@ Feature: Survey creation
   # Issue 234 - empty text field with checkbox
   @javascript
   Scenario: Creating a question with an option checkbox for other and an empty text input
-    Given the survey
+    Given I parse
     """
       survey "Favorite Cuisine" do
         section "Foods" do
@@ -296,7 +297,7 @@ Feature: Survey creation
   # Issue 234 - text field with radio buttons
   @javascript
    Scenario: Creating a question with an option radio button for other and text input
-    Given the survey
+    Given I parse
     """
       survey "Favorite Cuisine" do
         section "Foods" do
@@ -315,7 +316,7 @@ Feature: Survey creation
   # Issue 234 - empty text field with radio buttons
   @javascript
   Scenario: Creating another question with an option radio button for other and text input
-    Given the survey
+    Given I parse
     """
       survey "Favorite Cuisine" do
         section "Foods" do
@@ -336,7 +337,7 @@ Feature: Survey creation
   @javascript
   Scenario: Creating a question with an mustache syntax
     Given I have survey context of "FakeMustacheContext"
-    Given the survey
+    Given I parse
     """
       survey "Overall info" do
         section "Group of questions" do
@@ -365,7 +366,7 @@ Feature: Survey creation
 
 
   Scenario: Creating and saving grids
-    Given the survey
+    Given I parse
     """
       survey "Grid" do
         section "One" do
@@ -393,7 +394,7 @@ Feature: Survey creation
     Then there should be 1 response with answer "1"
 
   Scenario: Creating dates
-    Given the survey
+    Given I parse
     """
       survey "When" do
         section "One" do
@@ -448,7 +449,7 @@ Feature: Survey creation
 
   @javascript
   Scenario: Creating a date using the JS datepicker
-    Given the survey
+    Given I parse
     """
       survey "When" do
         section "One" do
@@ -466,7 +467,7 @@ Feature: Survey creation
     Then there should be a date response with value "2013-05-18"
 
   Scenario: Creating images
-    Given the survey
+    Given I parse
     """
       survey "Images" do
         section "One" do
@@ -482,7 +483,7 @@ Feature: Survey creation
 
   @javascript
   Scenario: Creating and unchecking checkboxes
-    Given the survey
+    Given I parse
     """
       survey "Travels" do
         section "Countries" do
@@ -516,7 +517,7 @@ Feature: Survey creation
     Then 0 responses should exist
 
   Scenario: Accessing outdated survey
-    Given the survey
+    Given I parse
     """
       survey "Travels" do
         section "Everything" do
@@ -527,7 +528,7 @@ Feature: Survey creation
         end
       end
     """
-    And the survey
+    And I parse
     """
       survey "Travels" do
         section "Countries" do
@@ -551,7 +552,7 @@ Feature: Survey creation
 
   # Issue 236 - ":text"- field doesn't show up in the multi-select questions
   Scenario: Pick one and pick any with text areas
-    Given the survey
+    Given I parse
     """
       survey "Pick plus text" do
         section "Examples" do
@@ -572,7 +573,7 @@ Feature: Survey creation
 
   # Issue 207 - Create separate fields for date and time
   Scenario: Pick one and pick any with dates
-  Given the survey
+  Given I parse
   """
     survey "Complex date survey" do
       section "Date questions with pick one and pick any" do
@@ -597,7 +598,7 @@ Feature: Survey creation
 
   # Issue #251 - Dropdowns inside of group display as radio buttons
   Scenario: Dropdown within a group
-  Given the survey
+  Given I parse
   """
     survey "Dropdowns" do
       section "Location" do
@@ -627,7 +628,7 @@ Feature: Survey creation
   # Issue #336 :is_exclusive doesn't disable other answers that are tagged as :is_exclusive
   @javascript
   Scenario: multiple exclusive checkboxes
-    Given the survey
+    Given I parse
     """
       survey "Heat" do
         section "Types" do

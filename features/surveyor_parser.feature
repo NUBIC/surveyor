@@ -3,6 +3,7 @@ Feature: Survey parser
   I want to write out the survey in the DSL
   So that I can give it to survey participants
 
+  @focus
   Scenario: Parsing basic questions
     Given I parse
     """
@@ -210,7 +211,7 @@ Feature: Survey parser
     And question "copd_sh_1ba" should have a dependency with rule "E"
 
   Scenario: Parsing dependencies on questions inside of a group
-    Given the survey
+    Given I parse
     """
       survey "Phone Screen Questions" do
         section "Phone Screen" do
@@ -250,7 +251,7 @@ Feature: Survey parser
     And 2 dependencies should depend on question groups
 
   Scenario: Parsing dependencies with "a"
-    Given the survey
+    Given I parse
     """
       survey "Dependencies with 'a'" do
         section "First" do
@@ -274,7 +275,7 @@ Feature: Survey parser
       | A        |
 
   Scenario: Parsing dependencies with "q"
-    Given the survey
+    Given I parse
     """
       survey "Dependencies with 'q'" do
         section "First" do
@@ -297,8 +298,9 @@ Feature: Survey parser
       | rule_key |
       | A        |
 
+  @quiz
   Scenario: Parsing a quiz
-    Given the survey
+    Given I parse
     """
       survey "Quiz time" do
         section "First" do
@@ -309,4 +311,82 @@ Feature: Survey parser
         end
       end
     """
-    Then there should be 1 question with a correct answer
+    Then the question "the_answer" should have correct answer "adams"
+
+  @quiz
+  Scenario: Parsing a quiz for #365
+  Given I parse
+  """
+    survey "Arithmetic" do
+      section "Addtion" do
+        q_1 "What is one plus one?", :pick => :one, :correct => "2"
+        a_1 "1"
+        a_2 "2"
+        a_3 "3"
+        a_4 "4"
+
+        q_2 "What is five plus one?", :pick => :one, :correct => "6"
+        a_5 "five"
+        a_6 "six"
+        a_7 "seven"
+        a_8 "eight"
+      end
+    end
+  """
+  Then the question "1" should have correct answer "2"
+  Then the question "2" should have correct answer "6"
+
+  Scenario: Parsing typos in blocks
+    Given the survey
+    """
+      survey "Basics" do
+        sectionals "Typo" do
+        end
+      end
+
+    """
+    Then the parser should fail with "Dropping the Sectionals block like it's hot!"
+
+  Scenario: Parsing bad references
+    Given the survey
+    """
+      survey "Refs" do
+        section "Bad" do
+          q_watch "Do you watch football?", :pick => :one
+          a_1 "Yes"
+          a_2 "No"
+
+          q "Do you like the replacement refs?", :pick => :one
+          dependency :rule => "A or B"
+          condition_A :q_1, "==", :a_1
+          condition_B :q_watch, "==", :b_1
+          a "Yes"
+          a "No"
+        end
+      end
+
+    """
+    Then the parser should fail with "Bad references: q_1; q_1, a_1; q_watch, a_b_1"
+
+  Scenario: Parsing repeated references
+    Given the survey
+    """
+      survey "Refs" do
+        section "Bad" do
+          q_watch "Do you watch football?", :pick => :one
+          a_1 "Yes"
+          a_1 "No"
+
+          q_watch "Do you watch baseball?", :pick => :one
+          a_yes "Yes"
+          a_no  "No"
+
+          q "Do you like the replacement refs?", :pick => :one
+          dependency :rule => "A or B"
+          condition_A :q_watch, "==", :a_1
+          a "Yes"
+          a "No"
+        end
+      end
+    """
+    Then the parser should fail with "Duplicate references: q_watch, a_1; q_watch"

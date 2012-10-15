@@ -5,7 +5,7 @@ Feature: Survey dependencies
 
   @javascript
   Scenario: "Simple question dependencies"
-    Given the survey
+    Given I parse
     """
       survey "Anybody" do
         section "First" do
@@ -48,7 +48,7 @@ Feature: Survey dependencies
 
   @javascript
   Scenario: "Dependencies inside of the question group"
-    Given the survey
+    Given I parse
     """
       survey "Anybody" do
         section "First" do
@@ -94,7 +94,7 @@ Feature: Survey dependencies
 
   @javascript
   Scenario: "Dependencies inside of the 'inline' question group"
-    Given the survey
+    Given I parse
     """
       survey "Anybody" do
         section "First" do
@@ -142,7 +142,7 @@ Feature: Survey dependencies
 
   @javascript
   Scenario: "Dependency on group"
-    Given the survey
+    Given I parse
     """
       survey "Anybody" do
         section "First" do
@@ -202,7 +202,7 @@ Feature: Survey dependencies
 
   @javascript
   Scenario: "Dependency on question in dependent group"
-    Given the survey
+    Given I parse
     """
       survey "Anybody" do
         section "First" do
@@ -279,7 +279,7 @@ Feature: Survey dependencies
   #issue #337 answer != condition returns false if question was never activated
   @javascript
   Scenario: Depending with != on questions without responses
-    Given the survey
+    Given I parse
     """
       survey "Cooling" do
         section "Basics" do
@@ -305,7 +305,7 @@ Feature: Survey dependencies
   #issue #337 answer != condition returns false if question was never activated
   @javascript
   Scenario: Depending with != on questions without responses
-    Given the survey
+    Given I parse
     """
       survey "Heating" do
         section "Basics" do

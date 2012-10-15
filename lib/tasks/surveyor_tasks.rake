@@ -16,7 +16,7 @@ namespace :surveyor do
     file = File.join(Rails.root, ENV["FILE"])
     raise "File does not exist: #{file}" unless FileTest.exists?(file)
     puts "--- Parsing #{file} ---"
-    Surveyor::RedcapParser.parse File.read(file), File.basename(file, ".csv")
+    Surveyor::RedcapParser.parse File.read(file), File.basename(file, ".csv"), {:trace => Rake.application.options.trace}
     puts "--- Done #{file} ---"
   end
   desc "generate a surveyor DSL file from a survey"
@@ -37,7 +37,7 @@ namespace :surveyor do
         puts "not found"
       end
     else
-      puts "There are no surveys available"      
+      puts "There are no surveys available"
     end
   end
   desc "remove surveys (that don't have response sets)"
@@ -57,15 +57,15 @@ namespace :surveyor do
         put "not found"
       end
     else
-      puts "There are no surveys without response sets"      
+      puts "There are no surveys without response sets"
     end
   end
   desc "dump all responses to a given survey"
   task :dump => :environment do
     require 'fileutils.rb'
-    survey_version = ENV["SURVEY_VERSION"] 
+    survey_version = ENV["SURVEY_VERSION"]
     access_code = ENV["SURVEY_ACCESS_CODE"]
-    
+
     raise "USAGE: rake surveyor:dump SURVEY_ACCESS_CODE=<access_code> [OUTPUT_DIR=<dir>] [SURVEY_VERSION=<survey_version>]" unless access_code
     params_string = "code #{access_code}"
 
@@ -76,7 +76,7 @@ namespace :surveyor do
       params_string += " and survey_version #{survey_version}"
       survey = surveys.where(:survey_version => survey_version).first
     end
-    
+
     raise "No Survey found with #{params_string}" unless survey
     dir = ENV["OUTPUT_DIR"] || Rails.root
     mkpath(dir) # Create all non-existent directories

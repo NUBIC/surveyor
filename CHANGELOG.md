@@ -31,6 +31,19 @@ History for Surveyor
 - Changed defaults for and interpretation of for Survey#active_at and
   Survey#inactive_at. (#258)
 
+- JSON export representation of DateTimes is 2010-04-08T10:30+00:00 and Dates is
+  2010-04-08 and Times is 10:30. (#355)
+
+- JSON representation of Response includes response_group. (#349)
+
+- Use Object#extend to inject SuryeyorParser and SurveyorRedcapParser methods into
+  instances of models instead of reopening classes. Move responsibility for keeping
+  track of and reporting duplicate and bad references from the models to the parsers.
+  Upgrade SurveyorRedcapParser to trace only when rake --trace is specified. (#341)
+
+- export Question#data_export_identifier, Answer#data_export_identifier,
+  Answer#reference_identifier in survey JSON export. (#368)
+
 ### Fixes
 
 - Ensure response set is available to `render_context` (#320)
@@ -48,6 +61,17 @@ History for Surveyor
 - Ensure that duplicate responses cannot be created by parallel AJAX requests.
   (#328)
 
+- Create default identifiers in before_create, not in the initializer. (#369)
+
+- Eliminate unnecessary (and incorrect) access code uniqueness checks.
+  Use SecureRandom for generating access codes. (#370)
+
+- Use json_spec for testing JSON responses, instead of
+  Surveyor::Common#deep_compare_excluding_wildcards. (#350)
+
+- Parser now sets Question#correct_answer_id correctly. The association is changed from
+  Question :has_one correct_answer => Question :belongs_to correct_answer. (#365)
+
 ### Infrastructure
 
 - Enabled Selenium-backed cucumber features in CI. (#333)
@@ -55,3 +79,5 @@ History for Surveyor
 - Added `testbed:surveys` task to load all sample surveys in the testbed.
 
 - Begin formal changelog.
+
+- Change test infra so that tx behavior can be tested. (#360)

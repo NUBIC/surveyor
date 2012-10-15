@@ -86,6 +86,54 @@ There are two other useful rake tasks:
 * `rake surveyor:unparse` exports a survey from the application into a
   file in the surveyor DSL.
 
+# Upgrading
+
+When you are ready to update to the latest version of Surveyor, just do
+
+    bundle update surveyor
+
+and you'll get the latest version that bundler thinks you can use based on the
+constraints in your Gemfile.
+
+After you've installed a new version, you should always re-run the surveyor
+generator:
+
+    script/rails generate surveyor:install
+
+This will copy over any new or updated assets and new migrations. Use your VCS'
+utilities to review what's changed, then commit the new versions.
+
+    git status
+    git diff
+    [...]
+    git add -A
+    git commit
+
+If there were new migrations, you'll want to be sure to run them before the next
+time you start your app:
+
+    bundle exec rake db:migrate
+
+Finally, review the [changelog][] entries corresponding to the versions between
+your original version and the version you've updated to. There may be changes
+which will affect your customizations. There should be hints in the changelog
+or the referenced issues for what to update when necessary.
+
+[changelog]: https://github.com/NUBIC/surveyor/blob/master/CHANGELOG.md
+
+## Following master
+
+If you are following along with pre-release versions of Surveyor using a `:git`
+source in your Gemfile, be particularly careful about reviewing migrations after
+updating Surveyor and re-running the generator. We will never change a migration
+between two released versions of Surveyor. However, we may on rare occasions
+change a migration which has been merged into master. When this happens, you'll
+need to assess the differences and decide on an appropriate course of action for
+your app.
+
+If you aren't sure what this means, we do not recommend that you deploy an app
+that's locked to surveyor master into production.
+
 # Customizing surveyor
 
 Surveyor's controller, models, and views may be customized via classes in your app/models, app/helpers and app/controllers directories. To generate a sample custom controller and layout, run:

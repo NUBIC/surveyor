@@ -4,7 +4,7 @@ Feature: showing a survey
   So that I can understand the data
 
   Scenario: Take a survey, then look at it
-    Given the survey
+    Given I parse
     """
       survey "Favorites" do
         section "Colors" do

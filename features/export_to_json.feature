@@ -17,14 +17,15 @@ Feature: Survey export
           answer :other
 
           q_2b "Choose the colors you don't like", :pick => :any
-          a_1 "orange"
-          a_2 "purple"
-          a_3 "brown"
+          a "orange"
+          a "purple"
+          a "brown"
           a :omit
         end
       end
     """
-    Then the json for "Simple json" should be
+    And I visit "/surveys/simple-json.json"
+    Then the JSON should be:
     """
     {
       "title": "Simple json",
@@ -39,6 +40,38 @@ Feature: Survey export
         }]
       }
     """
+
+  Scenario: Exporting export and reference identifiers
+    Given I parse
+    """
+      survey "Exportable" do
+        section "First section" do
+          question_1 "What is your favorite color?", :pick => :one, :data_export_identifier => "favorite_color"
+          a_red "red"
+          a_blue "blue"
+
+          q_2b "Choose the colors you don't like", :pick => :any
+          a_1 "orange", :data_export_identifier => "dont_like_orange"
+          a_2 "purple"
+        end
+      end
+    """
+    And I visit "/surveys/exportable.json"
+    Then the JSON should be:
+    """
+    {
+      "title": "Exportable",
+      "uuid": "*",
+      "sections": [{
+        "title": "First section",
+        "display_order":0,
+        "questions_and_groups": [
+          { "uuid": "*", "reference_identifier": "1", "pick": "one", "text": "What is your favorite color?", "data_export_identifier": "favorite_color", "answers": [{"text": "red", "uuid": "*", "reference_identifier": "red"}, {"text": "blue", "uuid": "*", "reference_identifier": "blue"}]},
+          { "uuid": "*", "reference_identifier": "2b", "pick": "any", "text": "Choose the colors you don't like", "answers": [{"text": "orange", "uuid": "*", "reference_identifier": "1", "data_export_identifier": "dont_like_orange"},{"text": "purple", "uuid": "*", "reference_identifier": "2"}]}]
+        }]
+      }
+    """
+
   Scenario: Exporting versioned survey questions
   Given I parse
   """
@@ -53,9 +86,9 @@ Feature: Survey export
         answer :other
 
         q_2b "Choose the colors you don't like", :pick => :any
-        a_1 "orange"
-        a_2 "purple"
-        a_3 "brown"
+        a "orange"
+        a "purple"
+        a "brown"
         a :omit
       end
     end
@@ -73,14 +106,15 @@ Feature: Survey export
         answer :other
 
         q_2b "Choose the colors you don't like", :pick => :any
-        a_1 "orange"
-        a_2 "purple"
-        a_3 "brown"
+        a "orange"
+        a "purple"
+        a "brown"
         a :omit
       end
     end
   """
-  Then the json for "Simple json" should be
+  And I visit "/surveys/simple-json.json"
+  Then the JSON should be:
   """
   {
     "title": "Simple json",
@@ -95,7 +129,8 @@ Feature: Survey export
       }]
     }
   """
-  And the json for "Simple json" version "0" should be
+  And I visit "/surveys/simple-json.json?survey_version=0"
+  Then the JSON should be:
   """
   {
     "title": "Simple json",
@@ -115,7 +150,7 @@ Feature: Survey export
   Given I parse
   """
     survey "Simple json response sets" do
-      section "Colors" do
+      section "Section 1" do
 
         question_1 "What is your favorite color?", :pick => :one
         answer "red"
@@ -126,46 +161,27 @@ Feature: Survey export
         q_2b "What color don't you like?"
         a_1 "color", :string
       end
-      section "Other" do
+      section "Section 2" do
         label "no"
       end
     end
   """
   When I start the "Simple json response sets" survey
   And I choose "red"
-  And I press "Other"
-  And I press "Colors"
+  And I press "Section 2"
+  And I press "Section 1"
   And I fill in "color" with "orange"
-  And I press "Other"
+  And I press "Section 2"
   And I press "Click here to finish"
   Then there should be 1 response set with 2 responses with:
     | answer |
     | red    |
-  And the json for the last response set for "Simple json response sets" should be
-  """
-  {
-    "uuid":"*",
-    "survey_id":"*",
-    "created_at":"*",
-    "completed_at":"*",
-    "responses":[{
-      "uuid":"*",
-      "answer_id":"*",
-      "question_id":"*",
-      "response_group":null,
-      "created_at":"*",
-      "modified_at":"*"
-    },{
-      "uuid":"*",
-      "answer_id":"*",
-      "question_id":"*",
-      "response_group":null,
-      "created_at":"*",
-      "modified_at":"*",
-      "value":"orange"
-    }]
-  }
-  """
+  And I export the response set
+  Then the JSON at "responses" should have 2 entries
+  Then the JSON should not have "responses/0/value"
+  And the JSON response at "responses/0/answer_id" should correspond to an answer with text "red"
+  And the JSON response at "responses/1/value" should be "orange"
+  And the JSON response at "responses/1/answer_id" should correspond to an answer with text "color"
 
   # Issue #294 - ResponseSet#to_json generates unexpected results with zero Responses
   Scenario: Exporting response sets without responses
@@ -189,7 +205,9 @@ Feature: Survey export
     end
   """
   When I start the "Simple json response sets" survey
-  Then the json for the last response set for "Simple json response sets" should include '"responses":[]'
+  And I export the response set
+  Then the JSON at "responses" should be an array
+  Then the JSON at "responses" should have 0 entries
 
   Scenario: Exporting response sets for versioned surveys
   Given I parse
@@ -197,58 +215,30 @@ Feature: Survey export
     survey "Simple json response sets" do
       section "Colors" do
         question "What is your least favorite color?"
-        a "color", :string
+        a "least favorite color", :string
       end
     end
   """
   And I start the "Simple json response sets" survey
   And I fill in "color" with "orange"
   And I press "Click here to finish"
+  And I export the response set
+  Then the JSON at "responses" should have 1 entry
+  And the JSON response at "responses/0/value" should be "orange"
+  And the JSON response at "responses/0/answer_id" should correspond to an answer with text "least favorite color"
   And I parse
   """
     survey "Simple json response sets" do
       section "Colors" do
         question_1 "What is your most favorite color?"
-        a "color", :string
+        a "most favorite color", :string
       end
     end
   """
   And I start the "Simple json response sets" survey
   And I fill in "color" with "blueish"
   And I press "Click here to finish"
-  Then the json for the first response set for "Simple json response sets" should be
-  """
-  {
-    "uuid":"*",
-    "survey_id":"*",
-    "created_at":"*",
-    "completed_at":"*",
-    "responses":[{
-      "uuid":"*",
-      "answer_id":"*",
-      "question_id":"*",
-      "response_group":null,
-      "created_at":"*",
-      "modified_at":"*",
-      "value":"orange"
-    }]
-  }
-  """
-  And the json for the last response set for "Simple json response sets" should be
-  """
-  {
-    "uuid":"*",
-    "survey_id":"*",
-    "created_at":"*",
-    "completed_at":"*",
-    "responses":[{
-      "uuid":"*",
-      "answer_id":"*",
-      "question_id":"*",
-      "response_group":null,
-      "created_at":"*",
-      "modified_at":"*",
-      "value":"blueish"
-    }]
-  }
-  """
+  And I export the response set
+  Then the JSON at "responses" should have 1 entry
+  And the JSON response at "responses/0/value" should be "blueish"
+  And the JSON response at "responses/0/answer_id" should correspond to an answer with text "most favorite color"

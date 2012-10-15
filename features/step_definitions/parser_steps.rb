@@ -1,5 +1,13 @@
-Given /^I parse$|^the survey$/ do |string|
+Given /^I parse$/ do |string|
   Surveyor::Parser.parse(string)
+end
+
+Given /^the survey$/ do |string|
+  @survey_string = string
+end
+
+Then /^the parser should fail with "(.*)"$/ do |error_message|
+  lambda { Surveyor::Parser.parse(@survey_string) }.should raise_error(Surveyor::ParserError, /#{error_message}/)
 end
 
 Given /^the questions?$/ do |q_string|
