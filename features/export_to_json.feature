@@ -17,9 +17,9 @@ Feature: Survey export
           answer :other
 
           q_2b "Choose the colors you don't like", :pick => :any
-          a_1 "orange"
-          a_2 "purple"
-          a_3 "brown"
+          a "orange"
+          a "purple"
+          a "brown"
           a :omit
         end
       end
@@ -40,6 +40,38 @@ Feature: Survey export
         }]
       }
     """
+
+  Scenario: Exporting export and reference identifiers
+    Given I parse
+    """
+      survey "Exportable" do
+        section "First section" do
+          question_1 "What is your favorite color?", :pick => :one, :data_export_identifier => "favorite_color"
+          a_red "red"
+          a_blue "blue"
+
+          q_2b "Choose the colors you don't like", :pick => :any
+          a_1 "orange", :data_export_identifier => "dont_like_orange"
+          a_2 "purple"
+        end
+      end
+    """
+    And I visit "/surveys/exportable.json"
+    Then the JSON should be:
+    """
+    {
+      "title": "Exportable",
+      "uuid": "*",
+      "sections": [{
+        "title": "First section",
+        "display_order":0,
+        "questions_and_groups": [
+          { "uuid": "*", "reference_identifier": "1", "pick": "one", "text": "What is your favorite color?", "data_export_identifier": "favorite_color", "answers": [{"text": "red", "uuid": "*", "reference_identifier": "red"}, {"text": "blue", "uuid": "*", "reference_identifier": "blue"}]},
+          { "uuid": "*", "reference_identifier": "2b", "pick": "any", "text": "Choose the colors you don't like", "answers": [{"text": "orange", "uuid": "*", "reference_identifier": "1", "data_export_identifier": "dont_like_orange"},{"text": "purple", "uuid": "*", "reference_identifier": "2"}]}]
+        }]
+      }
+    """
+
   Scenario: Exporting versioned survey questions
   Given I parse
   """
@@ -54,9 +86,9 @@ Feature: Survey export
         answer :other
 
         q_2b "Choose the colors you don't like", :pick => :any
-        a_1 "orange"
-        a_2 "purple"
-        a_3 "brown"
+        a "orange"
+        a "purple"
+        a "brown"
         a :omit
       end
     end
@@ -74,9 +106,9 @@ Feature: Survey export
         answer :other
 
         q_2b "Choose the colors you don't like", :pick => :any
-        a_1 "orange"
-        a_2 "purple"
-        a_3 "brown"
+        a "orange"
+        a "purple"
+        a "brown"
         a :omit
       end
     end
