@@ -4,6 +4,8 @@ When /^I start the "([^"]*)" survey$/ do |name|
     Then I should see "#{name}\"
     When I press "Take it"
   }
+  @survey_code       = current_path.split("/")[2] # /surveys/:survey_code/:response_set_code/take
+  @response_set_code = current_path.split("/")[3] # /surveys/:survey_code/:response_set_code/take
 end
 
 When /^I start the survey$/ do
@@ -11,6 +13,8 @@ When /^I start the survey$/ do
     When I go to the surveys page
      And I press "Take it"
   }
+  @survey_code       = current_path.split("/")[2] # /surveys/:survey_code/:response_set_code/take
+  @response_set_code = current_path.split("/")[3] # /surveys/:survey_code/:response_set_code/take
 end
 
 # When I fill in the (nth) (string) for "(ref_id)" with "(value to fill)"
@@ -166,49 +170,25 @@ Then /^(\d+) responses should exist$/ do |response_count|
   Response.count.should == response_count.to_i
 end
 
-Then /^the json for "([^"]*)" should be$/ do |title, string|
-  visit "/surveys/#{Survey.to_normalized_string(title)}.json"
-  puts page.find('body').text
-  Surveyor::Common.equal_json_excluding_wildcards(page.find('body').text, string).should == true
+## JSON
+
+def last_json
+  page.find('body').text
 end
 
-Then /^the json for "([^"]*)" version "([^"]*)" should be$/ do |title, version, string|
-  visit "/surveys/#{Survey.to_normalized_string(title)}.json?survey_version=#{version}"
-  puts page.find('body').text
-  Surveyor::Common.equal_json_excluding_wildcards(page.find('body').text, string).should == true
+When /^I visit "(.*?)"$/ do |path|
+  visit path
 end
 
-Then /^the json for the ([^"]*) response set for "([^"]*)" should be$/ do |order, title, string|
-  response_sets = ResponseSet.joins(:survey).where(:surveys => { :title => title }).order(:updated_at)
-  response_sets.should_not be_empty
-
-  case order
-  when "last"
-    response_set = response_sets.last
-  when "first"
-    response_set = response_sets.first
-  end
-  response_set.should_not be_nil
-  visit "/surveys/#{response_set.survey.access_code}/#{response_set.access_code}.json"
-  Surveyor::Common.equal_json_excluding_wildcards(page.find('body').text, string).should == true
+Then /^I export the response set$/ do
+  visit "/surveys/#{@survey_code}/#{@response_set_code}.json"
 end
 
-Then /^the json for the ([^"]*) response set for "(.*?)" should include '(.*?)'$/ do |order, title, string|
-  response_sets = ResponseSet.joins(:survey).where(:surveys => { :title => title }).order(:updated_at)
-  response_sets.should_not be_empty
-
-  case order
-  when "last"
-    response_set = response_sets.last
-  when "first"
-    response_set = response_sets.first
-  end
-  response_set.should_not be_nil
-  visit "/surveys/#{response_set.survey.access_code}/#{response_set.access_code}.json"
-
-  page.find('body').text.include?(string).should == true
+Then /^the JSON response at "(.*?)" should correspond to an answer with text "(.*?)"$/ do |path, text|
+  last_json.should be_json_eql(JsonSpec.remember("\"#{Answer.find_by_text(text).api_id}\"")).at_path(path)
 end
 
+## Hidden and shown elements
 
 Then /the element "([^\"]*)" should be hidden$/ do |selector|
   wait_until do
@@ -225,7 +205,10 @@ Then /the element "([^\"]*)" should not be hidden$/ do |selector|
     (its_not_hidden && its_in_dom).should be_true
   end
 end
-Given /^I have survey context of "([^"]*)"$/ do |context|
+
+## Context and substitution with mustache
+
+Given /^I have survey context of "(.*)"$/ do |context|
   class SurveyorController < ApplicationController
     require 'mustache'
     class FakeMustacheContext < ::Mustache
@@ -241,6 +224,8 @@ Given /^I have survey context of "([^"]*)"$/ do |context|
     end
   end
 end
+
+## Various input elements
 
 Then /^I should see (\d+) textareas on the page$/ do |i|
   page.has_css?('textarea', :count => i)
