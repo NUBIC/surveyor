@@ -298,6 +298,7 @@ Feature: Survey parser
       | rule_key |
       | A        |
 
+  @quiz
   Scenario: Parsing a quiz
     Given I parse
     """
@@ -310,7 +311,30 @@ Feature: Survey parser
         end
       end
     """
-    Then there should be 1 question with a correct answer
+    Then the question "the_answer" should have correct answer "adams"
+
+  @quiz
+  Scenario: Parsing a quiz for #365
+  Given I parse
+  """
+    survey "Arithmetic" do
+      section "Addtion" do
+        q_1 "What is one plus one?", :pick => :one, :correct => "2"
+        a_1 "1"
+        a_2 "2"
+        a_3 "3"
+        a_4 "4"
+
+        q_2 "What is five plus one?", :pick => :one, :correct => "6"
+        a_5 "five"
+        a_6 "six"
+        a_7 "seven"
+        a_8 "eight"
+      end
+    end
+  """
+  Then the question "1" should have correct answer "2"
+  Then the question "2" should have correct answer "6"
 
   Scenario: Parsing typos in blocks
     Given the survey

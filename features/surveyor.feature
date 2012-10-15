@@ -68,6 +68,7 @@ Feature: Survey creation
       | string_value    |
       | chicken |
 
+  @quiz
   Scenario: Creating, it's quiz time
     Given I parse
     """

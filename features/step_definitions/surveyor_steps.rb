@@ -258,3 +258,9 @@ Then /^I wait for things to settle out( longer)?$/ do |longer|
     end
   end
 end
+
+## quizzes
+
+Then /^the question "(.*?)" should have correct answer "(.*?)"$/ do |q, a|
+  Question.find_by_reference_identifier(q).correct_answer.reference_identifier.should == a
+end
