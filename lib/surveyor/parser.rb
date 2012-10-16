@@ -49,7 +49,7 @@ module Surveyor
           resolve_question_correct_answers
           report_lost_and_duplicate_references
           Surveyor::Parser.rake_trace "\n"
-          Surveyor::Parser.rake_trace context[:survey].save ? "saved. " : " not saved! #{context[type.to_sym].errors.full_messages.join(", ")} "
+          Surveyor::Parser.rake_trace context[:survey].save ? "saved. " : " not saved! #{context[type.to_sym].errors.each_full{|x| x }.join(", ")} "
         else
           context[type.to_sym].clear(context)
         end
