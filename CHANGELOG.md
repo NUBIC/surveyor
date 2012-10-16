@@ -72,8 +72,6 @@ History for Surveyor
 - Parser now sets Question#correct_answer_id correctly. The association is changed from
   Question :has_one correct_answer => Question :belongs_to correct_answer. (#365)
 
-- Error reporting for Rails 3 (#363)
-
 ### Infrastructure
 
 - Enabled Selenium-backed cucumber features in CI. (#333)
