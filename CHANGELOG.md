@@ -1,7 +1,7 @@
 History for Surveyor
 ====================
 
-0.23.0
+1.0.0
 ------
 
 ### Features
