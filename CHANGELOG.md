@@ -6,7 +6,7 @@ History for Surveyor
 
 ### Fixes
 
-- Replaced deprecated ActiveRecord::Errors#each_full with ActiveRecord::Errors#full_messages
+- Replaced deprecated ActiveRecord::Errors#each_full with ActiveRecord::Errors#full_messages. (#363)
 
 1.0.0
 ------
