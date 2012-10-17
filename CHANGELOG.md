@@ -4,6 +4,13 @@ History for Surveyor
 1.0.1
 ------
 
+### Features
+
+- Question#display_type == "hidden" and QuestionGroup#display_type == "hidden"
+  now exclude the question or question group from the DOM. These display types are
+  used to inject data (responses) into surveys. Note, custom_class => "hidden" doesn't
+  have any effect until a custom css rule is created by the end user. (#197)
+
 ### Fixes
 
 - Replaced deprecated ActiveRecord::Errors#each_full with ActiveRecord::Errors#full_messages. (#363)

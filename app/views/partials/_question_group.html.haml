@@ -1,40 +1,41 @@
 - renderer = g.renderer
-= f.inputs q_text(g, @render_context), :id => "g_#{g.id}", :class => "g_#{renderer} #{g.css_class(@response_set)}" do
-  %li.help= render_help_text(g, @render_context)
-  - case renderer
-    - when :grid
-      %li
-        %table
-          %col.pre
-          - qs.first.answers.each do |a|
-            %col{:class => cycle("odd", "even")}
-          %col.post
-          %tbody
-            - qs.each_slice(10) do |ten_questions| # header row every 10
-              %tr
-                %th &nbsp;
-                - ten_questions.first.answers.each do |a|
-                  %th= a_text(a)
-                %th &nbsp;
-              - ten_questions.each_with_index do |q, i|
-                %tr{:id => "q_#{q.id}", :class => "q_#{renderer} #{q.css_class(@response_set)}"}
-                  %th
-                    = q.split_text(:pre)
-                    - if q.pick == "one"
-                      - r = response_for(@response_set, q, nil, g)
-                      - i = response_idx  # increment the response index since the answer partial skips for q.pick == one
-                      = f.semantic_fields_for i, r do |ff|
-                        = ff.input :question_id, :as => :quiet
-                        = ff.input :api_id, :as => :quiet
-                  - q.answers.each do |a|
-                    %td= render a.custom_renderer || '/partials/answer', :g => g, :q => q, :a => a, :f => f
-                  %th= q.split_text(:post)
-    - when :repeater
-      - (@response_set.count_group_responses(qs) + 1).times do |rg|
+- unless g.display_type == "hidden"
+  = f.inputs q_text(g, @render_context), :id => "g_#{g.id}", :class => "g_#{renderer} #{g.css_class(@response_set)}" do
+    %li.help= render_help_text(g, @render_context)
+    - case renderer
+      - when :grid
         %li
-          - qs.each do |q|
-            = render q.custom_renderer || "/partials/question", :g => g, :rg => rg, :q => q, :f => f
-      = submit_tag("+ add row", :name => "section[#{@section.id}][g_#{g.id}]", :class => "add_row")
-    - else # :inline
-      - qs.each do |q|
-        = render q.custom_renderer || "/partials/question", :g => g, :q => q, :f => f
+          %table
+            %col.pre
+            - qs.first.answers.each do |a|
+              %col{:class => cycle("odd", "even")}
+            %col.post
+            %tbody
+              - qs.each_slice(10) do |ten_questions| # header row every 10
+                %tr
+                  %th &nbsp;
+                  - ten_questions.first.answers.each do |a|
+                    %th= a_text(a)
+                  %th &nbsp;
+                - ten_questions.each_with_index do |q, i|
+                  %tr{:id => "q_#{q.id}", :class => "q_#{renderer} #{q.css_class(@response_set)}"}
+                    %th
+                      = q.split_text(:pre)
+                      - if q.pick == "one"
+                        - r = response_for(@response_set, q, nil, g)
+                        - i = response_idx  # increment the response index since the answer partial skips for q.pick == one
+                        = f.semantic_fields_for i, r do |ff|
+                          = ff.input :question_id, :as => :quiet
+                          = ff.input :api_id, :as => :quiet
+                    - q.answers.each do |a|
+                      %td= render a.custom_renderer || '/partials/answer', :g => g, :q => q, :a => a, :f => f
+                    %th= q.split_text(:post)
+      - when :repeater
+        - (@response_set.count_group_responses(qs) + 1).times do |rg|
+          %li
+            - qs.each do |q|
+              = render q.custom_renderer || "/partials/question", :g => g, :rg => rg, :q => q, :f => f
+        = submit_tag("+ add row", :name => "section[#{@section.id}][g_#{g.id}]", :class => "add_row")
+      - else # :inline
+        - qs.each do |q|
+          = render q.custom_renderer || "/partials/question", :g => g, :q => q, :f => f

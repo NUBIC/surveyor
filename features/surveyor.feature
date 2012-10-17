@@ -660,3 +660,34 @@ Feature: Survey creation
     When I check "Refused"
     Then the checkbox for "Electric" should be disabled
      And the checkbox for "Don't know" should be disabled
+
+  # #197 - Add a hidden field type, don't show hidden questions and groups in the DOM
+  #        don't use up question numbers on them either. custom class "hidden" doesn't
+  #        do anything until you add your own css to hide it
+  Scenario: hidden questions for injecting data
+    Given I parse
+    """
+      survey "Sesame Street" do
+        section "The Count" do
+          q_name "What is your name?", :display_type => :hidden
+          a :string, :help_text => "(e.g. Count Von Count)"
+
+          group "Friends", :display_type => :hidden do
+            q "Who are your friends?"
+            a :string
+          end
+
+          label "AH AH AH AH AH!"
+
+          q_numbers "What is your favorite number?", :pick => :one, :custom_class => "hidden"
+          a "One"
+          a "Two"
+          a "Three!"
+        end
+      end
+    """
+    When I start the "Sesame Street" survey
+    Then I should see "AH AH AH AH AH!"
+      And I should see "1) What is your favorite number?"
+      And I should not see "What is your name?"
+
