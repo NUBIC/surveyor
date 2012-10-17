@@ -48,8 +48,11 @@ module Surveyor
           resolve_dependency_condition_references
           resolve_question_correct_answers
           report_lost_and_duplicate_references
-          Surveyor::Parser.rake_trace "\n"
-          Surveyor::Parser.rake_trace context[:survey].save ? "saved. " : " not saved! #{context[type.to_sym].errors.each_full{|x| x }.join(", ")} "
+          if context[:survey].save
+            Surveyor::Parser.rake_trace "\nsaved."
+          else
+            raise Surveyor::ParserError, "Survey not saved: #{context[:survey].errors.full_messages.join(", ")}"
+          end
         else
           context[type.to_sym].clear(context)
         end

@@ -4,6 +4,10 @@ History for Surveyor
 1.0.1
 ------
 
+### Fixes
+
+- Replaced deprecated ActiveRecord::Errors#each_full with ActiveRecord::Errors#full_messages
+
 1.0.0
 ------
 
