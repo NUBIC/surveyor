@@ -78,9 +78,37 @@ describe DependencyCondition do
     dependency_condition.to_hash(rs).should == {:C => false}
   end
 
+
+  it "should not assume that Response#as is not nil" do
+    # q_HEIGHT_FT "Portion of height in whole feet (e.g., 5)",
+    # :pick=>:one
+    # a :integer
+    # a_neg_1 "Refused"
+    # a_neg_2 "Don't know"
+    # label "Provided value is outside of the suggested range (4 to 7 feet). This value is admissible, but you may wish to verify."
+    # dependency :rule=>"A or B"
+    # condition_A :q_HEIGHT_FT, "<", {:integer_value => "4"}
+    # condition_B :q_HEIGHT_FT, ">", {:integer_value => "7"}
+
+    answer = Factory(:answer, :response_class => :integer)
+    @dependency_condition = DependencyCondition.new(
+      :dependency => Factory(:dependency),
+      :question => answer.question,
+      :answer => answer,
+      :operator => ">",
+      :integer_value => 4,
+      :rule_key => "A")
+
+    response = Factory(:response, :answer => answer, :question => answer.question)
+    response_set = response.response_set
+    response.integer_value.should == nil
+
+    @dependency_condition.to_hash(response_set).should == {:A => false}
+  end
+
   describe "evaluate '==' operator" do
     before(:each) do
-      @a = Factory(:answer)
+      @a = Factory(:answer, :response_class => "answer")
       @b = Factory(:answer, :question => @a.question)
       @r = Factory(:response, :question => @a.question, :answer => @a)
       @rs = @r.response_set
@@ -310,7 +338,7 @@ describe DependencyCondition do
   end
 
   describe "evaluating with response_class string" do
-    it "should compare answer ids when the string_value is nil" do
+    it "should compare answer ids when the dependency condition string_value is nil" do
       @a = Factory(:answer, :response_class => "string")
       @b = Factory(:answer, :question => @a.question)
       @r = Factory(:response, :question => @a.question, :answer => @a, :string_value => "")
@@ -319,7 +347,7 @@ describe DependencyCondition do
       @dc.to_hash(@rs).should == {:J => true}
     end
 
-    it "should compare strings when the string_value is not nil, even if it is blank" do
+    it "should compare strings when the dependency condition string_value is not nil, even if it is blank" do
       @a = Factory(:answer, :response_class => "string")
       @b = Factory(:answer, :question => @a.question)
       @r = Factory(:response, :question => @a.question, :answer => @a, :string_value => "foo")
@@ -389,4 +417,5 @@ describe DependencyCondition do
       @dc.to_hash(@rs).should == {:M => true}
     end
   end
+
 end

@@ -46,11 +46,11 @@ module Surveyor
           return {rule_key.to_sym => true}
         elsif response = responses.detect{|r| r.answer.id == self.answer.id}
           klass = response.answer.response_class
-          klass = "answer" if self.as(klass).nil?
+          klass = "answer" if self.as(klass).nil? # it should compare answer ids when the dependency condition *_value is nil
           case self.operator
           when "==", "<", ">", "<=", ">="
             # logger.warn( {rule_key.to_sym => response.as(klass).send(self.operator, self.as(klass))})
-            return {rule_key.to_sym => response.as(klass).send(self.operator, self.as(klass))}
+            return {rule_key.to_sym => !response.as(klass).nil? && response.as(klass).send(self.operator, self.as(klass))}
           when "!="
             # logger.warn( {rule_key.to_sym => !response.as(klass).send("==", self.as(klass))})
             return {rule_key.to_sym => !response.as(klass).send("==", self.as(klass))}

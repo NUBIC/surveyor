@@ -2,7 +2,7 @@
 require 'rubygems'
 require 'factory_girl'
 
-Factory.sequence(:unique_survey_access_code){|n| "simple_survey" << n.to_s }
+Factory.sequence(:unique_survey_access_code){|n| "simple survey #{UUIDTools::UUID.random_create.to_s}" }
 
 Factory.define :survey do |s|
   s.title           {"Simple survey"}
