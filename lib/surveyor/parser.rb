@@ -172,6 +172,7 @@ module SurveyorParserQuestionGroupMethods
   end
   def clear(context)
     [ :question_group,
+      :grid_answers,
       :question,
       :dependency,
       :dependency_condition,
