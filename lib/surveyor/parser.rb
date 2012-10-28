@@ -31,6 +31,7 @@ module Surveyor
     def method_missing(missing_method, *args, &block)
       method_name, reference_identifier = missing_method.to_s.split("_", 2)
       type = full(method_name)
+      Surveyor::Parser.raise_error( "\"#{type}\" is not a surveyor method." )if !%w(survey survey_section question_group question dependency dependency_condition answer validation validation_condition).include?(type)
 
       Surveyor::Parser.rake_trace reference_identifier.blank? ? "#{type} " : "#{type}_#{reference_identifier} "
 
@@ -65,8 +66,8 @@ module Surveyor
     def full(method_name)
       case method_name.to_s
       when /^section$/; "survey_section"
-      when /^g|grid|group|repeater$/; "question_group"
-      when /^q|label|image$/; "question"
+      when /^g$|^grid$|^group$|^repeater$/; "question_group"
+      when /^q$|^label$|^image$/; "question"
       when /^a$/; "answer"
       when /^d$/; "dependency"
       when /^c(ondition)?$/; context[:validation] ? "validation_condition" : "dependency_condition"

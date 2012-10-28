@@ -22,11 +22,15 @@ describe Surveyor::Parser do
     @parser.send(:full, "condition").should == "dependency_condition"
     @parser.send(:full, "c").should == "dependency_condition"
   end
+  it "should not translate bad shortcuts" do
+    @parser.send(:full, "quack").should == "quack"
+    @parser.send(:full, "grizzly").should == "grizzly"
+  end
   it "should identify models that take blocks" do
     @parser.send(:block_models).should == %w(survey survey_section question_group)
   end
   it "should return a survey object" do
     Surveyor::Parser.new.parse("survey 'hi' do\n end").is_a?(Survey).should be_true
   end
-  
+
 end

@@ -3,7 +3,6 @@ Feature: Survey parser
   I want to write out the survey in the DSL
   So that I can give it to survey participants
 
-  @focus
   Scenario: Parsing basic questions
     Given I parse
     """
@@ -404,3 +403,16 @@ Feature: Survey parser
     end
    """
    Then the parser should fail with "Survey not saved: Title can't be blank"
+
+   Scenario: Parsing bad shortcuts
+    Given the survey
+    """
+      survey "shortcuts" do
+        section "Bad" do
+          quack "Do you like ducks?", :pick => :one
+          a_1 "Yes"
+          a_1 "No"
+        end
+      end
+    """
+    Then the parser should fail with "\"quack\" is not a surveyor method."
