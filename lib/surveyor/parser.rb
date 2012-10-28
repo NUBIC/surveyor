@@ -165,7 +165,8 @@ module SurveyorParserSurveyMethods
       :bad_references => [],
       :duplicate_references => [],
       :dependency_conditions => [],
-      :questions_with_correct_answers => {} })
+      :questions_with_correct_answers => {}
+    })
   end
 end
 
@@ -185,6 +186,7 @@ module SurveyorParserSurveySectionMethods
   def clear(context)
     [ :survey_section,
       :question_group,
+      :grid_answers,
       :question,
       :dependency,
       :dependency_condition,
@@ -208,12 +210,14 @@ module SurveyorParserQuestionGroupMethods
   end
   def clear(context)
     [ :question_group,
+      :grid_answers,
       :question,
       :dependency,
       :dependency_condition,
       :answer,
       :validation,
       :validation_condition ].each{|k| context.delete k}
+    context[:grid_answers] = []
   end
 end
 
@@ -310,8 +314,7 @@ module SurveyorParserAnswerMethods
 
     # add answers to grid
     if context[:question_group] && context[:question_group].display_type == "grid"
-      context[:grid_answers] ||= []
-      self.attributes = ({:display_order => [:grid_answers].size}.merge(attrs))
+      self.attributes = ({:display_order => context[:grid_answers].size}.merge(attrs))
       context[:grid_answers] << context[:answer] = self
     else
       self.attributes = ({:display_order => context[:question].answers.size}.merge(attrs))

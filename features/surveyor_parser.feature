@@ -391,20 +391,20 @@ Feature: Survey parser
     Then the parser should fail with "Duplicate references: q_watch, a_1; q_watch"
 
   Scenario: Parsing with Rails validation errors
-   Given the survey
-   """
-     survey do
-      section "Usage" do
-        q_PLACED_BAG_1 "Is the bag placed?", :pick => :one
-        a_1 "Yes"
-        a_2 "No"
-        a_3 "Refused"
+    Given the survey
+    """
+      survey do
+        section "Usage" do
+          q_PLACED_BAG_1 "Is the bag placed?", :pick => :one
+          a_1 "Yes"
+          a_2 "No"
+          a_3 "Refused"
+        end
       end
-    end
-   """
-   Then the parser should fail with "Survey not saved: Title can't be blank"
+    """
+    Then the parser should fail with "Survey not saved: Title can't be blank"
 
-   Scenario: Parsing bad shortcuts
+  Scenario: Parsing bad shortcuts
     Given the survey
     """
       survey "shortcuts" do
@@ -416,3 +416,36 @@ Feature: Survey parser
       end
     """
     Then the parser should fail with "\"quack\" is not a surveyor method."
+
+  Scenario: Clearing grid answers
+    Given I parse
+    """
+      survey "Grids" do
+        section "Leaking" do
+          grid "How would you rate the following?" do
+            a "bad"
+            a "neutral"
+            a "good"
+            q "steak" , :pick => :one
+            q "chicken", :pick => :one
+            q "fish", :pick => :one
+          end
+          grid "How do you feel about the following?" do
+            a "sad"
+            a "indifferent"
+            a "happy"
+            q "births" , :pick => :one
+            q "weddings", :pick => :one
+            q "funerals", :pick => :one
+          end
+        end
+      end
+    """
+    Then there should be 18 answers with:
+      | text        | display_order |
+      | bad         | 0             |
+      | neutral     | 1             |
+      | good        | 2             |
+      | sad         | 0             |
+      | indifferent | 1             |
+      | happy       | 2             |

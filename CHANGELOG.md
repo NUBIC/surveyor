@@ -16,6 +16,7 @@ History for Surveyor
 
 - Replaced deprecated ActiveRecord::Errors#each_full with ActiveRecord::Errors#full_messages. (#363)
 - fixing dependency condition evaluation where #Response.*_value is nil. (#297)
+- fixing grid answers leak, introduced in 5baa7ac3. thanks @jsurrett (#375, #377)
 
 1.0.0
 ------
