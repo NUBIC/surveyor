@@ -2,21 +2,53 @@
 module Surveyor
   class ParserError < StandardError; end
   class Parser
-    class << self; attr_accessor :options end
+    class << self; attr_accessor :options, :log end
 
     # Attributes
     attr_accessor :context
 
     # Class methods
     def self.parse(str, options={})
+      self.ensure_attrs
       self.options = options
+      self.log[:source] = str
       Surveyor::Parser.rake_trace "\n"
       Surveyor::Parser.new.parse(str)
       Surveyor::Parser.rake_trace "\n"
     end
-    def self.rake_trace(str)
+    def self.ensure_attrs
       self.options ||= {}
-      print str if self.options[:trace] == true
+      self.log ||= {}
+      self.log[:indent] ||= 0
+      self.log[:source] ||= ""
+    end
+    def self.rake_trace(str, indent_increment=0)
+      self.ensure_attrs
+      unless str.blank?
+        puts "#{' ' * self.log[:indent]}#{str}" if self.options[:trace] == true
+      end
+      self.log[:indent] += indent_increment
+    end
+    # from https://github.com/rails/rails/blob/master/actionpack/lib/action_view/template/error.rb#L81
+    def self.source_extract(line)
+      source_code = self.log[:source].split("\n")
+      radius = 3
+      start_on_line = [ line - radius - 1, 0 ].max
+      end_on_line   = [ line + radius - 1, source_code.length].min
+
+      return unless source_code = source_code[start_on_line..end_on_line]
+      line_counter = start_on_line
+      source_code.sum do |line|
+        line_counter += 1
+        "#{line_counter}: #{line}\n"
+      end
+    end
+    def self.raise_error(str, skip_trace = false)
+      self.ensure_attrs
+      line =  caller[1].split('/').last.split(':')[1].to_i
+
+      raise Surveyor::ParserError, "#{str}\n" if skip_trace
+      raise Surveyor::ParserError, "#{self.source_extract(line)}\nline \##{line}: #{str}\n"
     end
 
     # Instance methods
@@ -33,11 +65,12 @@ module Surveyor
       type = full(method_name)
       Surveyor::Parser.raise_error( "\"#{type}\" is not a surveyor method." )if !%w(survey survey_section question_group question dependency dependency_condition answer validation validation_condition).include?(type)
 
-      Surveyor::Parser.rake_trace reference_identifier.blank? ? "#{type} " : "#{type}_#{reference_identifier} "
+      Surveyor::Parser.rake_trace(reference_identifier.blank? ? "#{type} #{args.map(&:inspect).join ', '}" : "#{type}_#{reference_identifier} #{args.map(&:inspect).join ', '}",
+                                  block_models.include?(type) ? 2 : 0)
 
       # check for blocks
-      raise Surveyor::ParserError, "Error: A #{type.humanize} cannot be empty" if block_models.include?(type) && !block_given?
-      raise Surveyor::ParserError, "Error: Dropping the #{type.humanize} block like it's hot!" if !block_models.include?(type) && block_given?
+      Surveyor::Parser.raise_error "A #{type.humanize.downcase} should take a block" if block_models.include?(type) && !block_given?
+      Surveyor::Parser.raise_error "A #{type.humanize.downcase} doesn't take a block" if !block_models.include?(type) && block_given?
 
       # parse and build
       type.classify.constantize.new.extend("SurveyorParser#{type.classify}Methods".constantize).parse_and_build(context, args, method_name, reference_identifier)
@@ -49,12 +82,14 @@ module Surveyor
           resolve_dependency_condition_references
           resolve_question_correct_answers
           report_lost_and_duplicate_references
+          Surveyor::Parser.rake_trace("", -2)
           if context[:survey].save
-            Surveyor::Parser.rake_trace "\nsaved."
+            Surveyor::Parser.rake_trace "Survey saved."
           else
-            raise Surveyor::ParserError, "Survey not saved: #{context[:survey].errors.full_messages.join(", ")}"
+            Surveyor::Parser.raise_error "Survey not saved: #{context[:survey].errors.full_messages.join(", ")}"
           end
         else
+          Surveyor::Parser.rake_trace("", -2)
           context[type.to_sym].clear(context)
         end
       end
@@ -81,8 +116,8 @@ module Surveyor
       %w(survey survey_section question_group)
     end
     def report_lost_and_duplicate_references
-      raise Surveyor::ParserError, "Bad references: #{self.context[:bad_references].join("; ")}" unless self.context[:bad_references].empty?
-      raise Surveyor::ParserError, "Duplicate references: #{self.context[:duplicate_references].join("; ")}" unless self.context[:duplicate_references].empty?
+      Surveyor::Parser.raise_error("Bad references: #{self.context[:bad_references].join("; ")}", true) unless self.context[:bad_references].empty?
+      Surveyor::Parser.raise_error("Duplicate references: #{self.context[:duplicate_references].join("; ")}", true) unless self.context[:duplicate_references].empty?
     end
     def resolve_question_correct_answers
       self.context[:questions_with_correct_answers].each do |question_reference_idenitifer, correct_answer_reference|

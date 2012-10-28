@@ -344,7 +344,7 @@ Feature: Survey parser
       end
 
     """
-    Then the parser should fail with "Dropping the Sectionals block like it's hot!"
+    Then the parser should fail with "\"sectionals\" is not a surveyor method."
 
   Scenario: Parsing bad references
     Given the survey
