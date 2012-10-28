@@ -10,10 +10,12 @@ History for Surveyor
   now exclude the question or question group from the DOM. These display types are
   used to inject data (responses) into surveys. Note, custom_class => "hidden" doesn't
   have any effect until a custom css rule is created by the end user. (#197)
+- more readable parser and more strict parser method aliases (#278)
 
 ### Fixes
 
 - Replaced deprecated ActiveRecord::Errors#each_full with ActiveRecord::Errors#full_messages. (#363)
+- fixing dependency condition evaluation where #Response.*_value is nil. (#297)
 
 1.0.0
 ------
