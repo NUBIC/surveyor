@@ -1,12 +1,14 @@
 # encoding: UTF-8
-survey "Kitchen Sink survey" do
+# Question#is_mandatory is now false by default. The default_mandatory option allows you to set
+#   is_mandatory for all questions in a survey.
+survey "Kitchen Sink survey", :default_mandatory => false do
 
   section "Basic questions" do
     # A label is a question that accepts no answers
     label "These questions are examples of the basic supported input types"
 
     # A basic question with radio buttons
-    question_1 "What is your favorite color?", :pick => :one
+    question "What is your favorite color?", :pick => :one
     answer "red"
     answer "blue"
     answer "green"
@@ -14,7 +16,10 @@ survey "Kitchen Sink survey" do
     answer :other
 
     # A basic question with checkboxes
-    # "question" and "answer" may be abbreviated as "q" and "a"
+    # The "question" and "answer" methods may be abbreviated as "q" and "a".
+    # Append a reference identifier (a short string used for dependencies and validations) using the "_" underscore.
+    # Question reference identifiers must be unique within a survey.
+    # Answer reference identifiers must be unique within a question
     q_2 "Choose the colors you don't like", :pick => :any
     a_1 "red"
     a_2 "blue"
@@ -23,8 +28,7 @@ survey "Kitchen Sink survey" do
     a :omit
 
     # A dependent question, with conditions and rule to logically join them
-    # the question's reference identifier is "2a", and the answer's reference_identifier is "1"
-    # question reference identifiers used in conditions need to be unique on a survey for the lookups to work
+    # If the conditions, logically joined into the rule, are met, then the question will be shown.
     q_2a "Please explain why you don't like this color?"
     a_1 "explanation", :text, :help_text => "Please give an explanation for each color you don't like"
     dependency :rule => "A or B or C or D"
@@ -79,10 +83,10 @@ survey "Kitchen Sink survey" do
     condition_A :q_cooling_1, "!=", :a_4
 
     # Surveys, sections, questions, groups, and answers all take the following reference arguments
-    # :reference_identifier   # usually from paper
-    # :data_export_identifier # data export
-    # :common_namespace       # maping to a common vocab
-    # :common_identifier      # maping to a common vocab
+    # :reference_identifier   # used for parsing references, usually derived from the paper version
+    # :data_export_identifier # used for data export
+    # :common_namespace       # maping to a common vocabulary - the namespace
+    # :common_identifier      # maping to a common vocabulary - the identifier within the namespace
     q "Get me started on an improv sketch", :reference_identifier => "improv_start", :data_export_identifier => "i_s", :common_namespace => "sketch comedy questions", :common_identifier => "get me started"
     a "who", :string
     a "what", :string

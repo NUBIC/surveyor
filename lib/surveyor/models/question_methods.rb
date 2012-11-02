@@ -39,7 +39,7 @@ module Surveyor
       end
 
       def default_args
-        self.is_mandatory ||= true
+        self.is_mandatory ||= false
         self.display_type ||= "default"
         self.pick ||= "none"
         self.data_export_identifier ||= Surveyor::Common.normalize(text)

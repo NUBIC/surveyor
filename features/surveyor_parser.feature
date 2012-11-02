@@ -449,3 +449,27 @@ Feature: Survey parser
       | sad         | 0             |
       | indifferent | 1             |
       | happy       | 2             |
+
+  Scenario: Parsing mandatory questions
+    Given I parse
+    """
+      survey "Chores", :default_mandatory => true do
+        section "Morning" do
+          q "Did you take out the trash", :pick => :one
+          a "Yes"
+          a "No"
+
+          q "Did you do the laundry", :pick => :one
+          a "Yes"
+          a "No"
+
+          q "Optional comments", :is_mandatory => false
+          a :string
+        end
+      end
+    """
+    And there should be 3 questions with:
+      | text                       | is_mandatory |
+      | Did you take out the trash | true         |
+      | Did you do the laundry     | true         |
+      | Optional comments          | false        |

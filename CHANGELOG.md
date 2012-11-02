@@ -1,8 +1,13 @@
 History for Surveyor
 ====================
 
-1.0.2
+1.1.0
 -----
+
+### Features
+
+- Breaking change: Question#is_mandatory => false by default. For those who found it useful to have 
+  all questions mandatory, the parser accepts `:default_mandatory => true` as an argument to the survey.
 
 ### Fixes
 

@@ -20,7 +20,7 @@ Given /^the questions?$/ do |q_string|
   SURVEY
 end
 
-Given /^I parse redcap file "([^"]*)"$/ do |name|
+Given /^I parse redcap file "(.*)"$/ do |name|
   Surveyor::RedcapParser.parse File.read(File.join(Rails.root, '..', 'features', 'support', name)), name
 end
 
@@ -50,7 +50,9 @@ Then /^there should be (\d+) question(?:s?) with:$/ do |x, table|
   table.hashes.each do |hash|
     hash["reference_identifier"] = nil if hash["reference_identifier"] == "nil"
     hash["custom_class"] = nil if hash["custom_class"] == "nil"
-    Question.find(:first, :conditions => hash).should_not be_nil
+    hash["is_mandatory"] = (hash["is_mandatory"] == "true" ? true : (hash["is_mandatory"] == "false" ? false : hash["is_mandatory"]))
+    result = Question.find(:first, :conditions => hash)
+    result.should_not be_nil
   end
 end
 
