@@ -50,8 +50,11 @@ Then /^there should be (\d+) question(?:s?) with:$/ do |x, table|
   table.hashes.each do |hash|
     hash["reference_identifier"] = nil if hash["reference_identifier"] == "nil"
     hash["custom_class"] = nil if hash["custom_class"] == "nil"
-    hash["is_mandatory"] = (hash["is_mandatory"] == "true" ? true : (hash["is_mandatory"] == "false" ? false : hash["is_mandatory"]))
+    if hash.has_key?("is_mandatory")
+      hash["is_mandatory"] = (hash["is_mandatory"] == "true" ? true : (hash["is_mandatory"] == "false" ? false : hash["is_mandatory"]))
+    end
     result = Question.find(:first, :conditions => hash)
+    puts hash if result.nil?
     result.should_not be_nil
   end
 end
