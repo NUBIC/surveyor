@@ -58,6 +58,24 @@ describe DependencyCondition do
       @dependency_condition.operator = "#"
       @dependency_condition.should have(1).error_on(:operator)
     end
+    it "should have a properly formed count operator" do
+      %w(count>1 count<1 count>=1 count<=1 count==1 count!=1).each do |o|
+        @dependency_condition.operator = o
+        @dependency_condition.should have(0).errors_on(:operator)
+      end
+      %w(count> count< count>= count<= count== count!=).each do |o|
+        @dependency_condition.operator = o
+        @dependency_condition.should have(1).errors_on(:operator)
+      end
+      %w(count=1 count><1 count<>1 count!1 count!!1 count=>1 count=<1).each do |o|
+        @dependency_condition.operator = o
+        @dependency_condition.should have(1).errors_on(:operator)
+      end
+      %w(count= count>< count<> count! count!! count=> count=< count> count< count>= count<= count== count!=).each do |o|
+        @dependency_condition.operator = o
+        @dependency_condition.should have(1).errors_on(:operator)
+      end
+    end
 
     it "should protect timestamps" do
       saved_attrs = @dependency_condition.attributes

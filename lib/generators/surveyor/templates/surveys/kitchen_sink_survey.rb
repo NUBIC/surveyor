@@ -33,10 +33,8 @@ survey "Kitchen Sink survey" do
     condition_C :q_2, "==", :a_3
     condition_D :q_2, "==", :a_4
 
-    # A dependant question demonstrating the count operator. The
-    # dependency condition checks the answer count for the referenced question.
-    # It understands conditions of the form count> count< count>= count<=
-    # count!=
+    # The count operator checks how many responses exist for the referenced question.
+    # It understands conditions of the form: count== count!= count> count< count>= count<=
     q_2b "Please explain why you dislike so many colors?"
     a_1 "explanation", :text
     dependency :rule => "Z"

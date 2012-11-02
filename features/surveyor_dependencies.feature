@@ -328,3 +328,36 @@ Feature: Survey dependencies
     Then the question "How much does it cost to run your non-passive heating solutions?" should be hidden
     And I choose "Oven"
     Then the question "How much does it cost to run your non-passive heating solutions?" should be triggered
+
+  @javascript
+  Scenario: Count== dependencies
+    Given I parse
+    """
+      survey "Counting" do
+        section "First" do
+          q_counts "How many times do you count a day", :pick => :any
+          a_1 "Once for me"
+          a_2 "Once for you"
+          a_3 "Once for everyone"
+
+          label "Good!"
+          dependency :rule => "A"
+          condition_A :q_counts, "count==1"
+
+          label "Twice as good!"
+          dependency :rule => "A"
+          condition_A :q_counts, "count==2"
+        end
+      end
+    """
+    When I go to the surveys page
+    And I start the "Counting" survey
+    Then I should see "How many times do you count a day"
+      And the element "#q_2" should be hidden
+      And the element "#q_3" should be hidden
+    When I check "Once for me"
+    Then the element "#q_2" should not be hidden
+      And the element "#q_3" should be hidden
+    When I check "Once for you"
+    Then the element "#q_3" should not be hidden
+      And the element "#q_2" should be hidden
