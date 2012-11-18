@@ -25,6 +25,10 @@ module Surveyor
         # Whitelisting attributes
         base.send :attr_accessible, :title, :description, :reference_identifier, :data_export_identifier, :common_namespace, :common_identifier, :css_url, :custom_class, :display_order
 
+        # Derived attributes
+        base.send :before_save, :generate_access_code
+        base.send :before_save, :increment_version
+
         # Class methods
         base.instance_eval do
           def to_normalized_string(value)
@@ -45,16 +49,6 @@ module Surveyor
         self.display_order ||= Survey.count
       end
 
-      def title=(value)
-        return if value == self.title
-        surveys = Survey.where(:access_code => Survey.to_normalized_string(value)).order("survey_version DESC")
-        self.survey_version     = surveys.first.survey_version.to_i + 1 if surveys.any?
-        self.access_code = Survey.to_normalized_string(value)
-        super(value)
-        # self.access_code = Survey.to_normalized_string(value)
-        # super
-      end
-
       def active?
         self.active_as_of?(DateTime.now)
       end
@@ -72,7 +66,22 @@ module Surveyor
       def as_json(options = nil)
         template_paths = ActionController::Base.view_paths.collect(&:to_path)
         Rabl.render(self, 'surveyor/export.json', :view_path => template_paths, :format => "hash")
-      end      
+      end
+
+      def default_access_code
+        self.class.to_normalized_string(title)
+      end
+
+      def generate_access_code
+        self.access_code ||= default_access_code
+      end
+
+      def increment_version
+        surveys = self.class.select(:survey_version).where(:access_code => access_code).order("survey_version DESC")
+        next_version = surveys.any? ? surveys.first.survey_version.to_i + 1 : 0
+
+        self.survey_version = next_version
+      end
     end
   end
 end
