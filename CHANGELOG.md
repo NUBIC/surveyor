@@ -4,6 +4,10 @@ History for Surveyor
 1.1.1
 -----
 
+### Fixes
+
+- Surveyor will never require 'fastercsv' on Ruby 1.9. (#381)
+
 1.1.0
 -----
 
