@@ -37,6 +37,23 @@ module Surveyor
       def generate_api_id
         UUIDTools::UUID.random_create.to_s
       end
+
+      ##
+      # @private Intended for internal use only.
+      #
+      # Loads and uses either `FasterCSV` (for Ruby 1.8) or the stdlib `CSV`
+      # (for Ruby 1.9+).
+      #
+      # @return [Class] either `CSV` for `FasterCSV`.
+      def csv_impl
+        @csv_impl ||= if RUBY_VERSION < '1.9'
+                         require 'fastercsv'
+                         FasterCSV
+                       else
+                         require 'csv'
+                         CSV
+                       end
+      end
     end
   end
 end

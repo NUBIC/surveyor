@@ -1,5 +1,3 @@
-require 'fastercsv'
-require 'csv'
 require 'rabl'
 
 module Surveyor
@@ -54,8 +52,7 @@ module Surveyor
         qcols = Question.content_columns.map(&:name) - %w(created_at updated_at)
         acols = Answer.content_columns.map(&:name) - %w(created_at updated_at)
         rcols = Response.content_columns.map(&:name)
-        csvlib = CSV.const_defined?(:Reader) ? FasterCSV : CSV
-        result = csvlib.generate do |csv|
+        result = Surveyor::Common.csv_impl.generate do |csv|
           if print_header
             csv << (access_code ? ["response set access code"] : []) +
               qcols.map{|qcol| "question.#{qcol}"} +
