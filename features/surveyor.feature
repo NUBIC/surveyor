@@ -721,3 +721,22 @@ Feature: Survey creation
       And I should see "1) What is your favorite number?"
       And I should not see "What is your name?"
 
+  @numbers
+  Scenario: hidden numbers
+    Given I parse
+    """
+      survey "Alpha" do
+        section "A-C" do
+          q "Aligator"
+          q "Barber"
+          q "Camel"
+        end
+      end
+    """
+      And I replace question numbers with letters
+    When I start the "Alpha" survey
+    Then show me the page
+    Then I should see "A. Aligator"
+      And I should see "B. Barber"
+      And I should see "C. Camel"
+

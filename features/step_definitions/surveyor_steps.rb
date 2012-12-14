@@ -233,6 +233,18 @@ Given /^I have a simple hash context$/ do
   end
 end
 
+Given /^I replace question numbers with letters$/ do
+  module SurveyorHelper
+    include Surveyor::Helpers::SurveyorHelperMethods
+    def next_question_number(question)
+      @letters ||= ("A".."Z").to_a
+      @n ||= 25
+      "<span class='qnum'>#{@letters[(@n += 1)%26]}. </span>"
+    end
+  end
+end
+
+
 ## Various input elements
 
 Then /^I should see (\d+) textareas on the page$/ do |i|

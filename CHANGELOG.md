@@ -6,7 +6,8 @@ History for Surveyor
 
 ### Features
 
-- Allow rendering of simple hash contexts with Mustache
+- Allow rendering of simple hash contexts with Mustache (#296)
+- Allow configuration of question numbering (#136)
 
 ### Fixes
 
