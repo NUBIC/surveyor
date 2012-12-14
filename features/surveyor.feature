@@ -735,7 +735,6 @@ Feature: Survey creation
     """
       And I replace question numbers with letters
     When I start the "Alpha" survey
-    Then show me the page
     Then I should see "A. Aligator"
       And I should see "B. Barber"
       And I should see "C. Camel"
