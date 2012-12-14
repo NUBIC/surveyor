@@ -225,6 +225,14 @@ Given /^I have survey context of "(.*)"$/ do |context|
   end
 end
 
+Given /^I have a simple hash context$/ do
+  class SurveyorController < ApplicationController
+    def render_context
+      {:name => "Moses", :site => "Northwestern"}
+    end
+  end
+end
+
 ## Various input elements
 
 Then /^I should see (\d+) textareas on the page$/ do |i|

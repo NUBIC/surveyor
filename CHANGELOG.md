@@ -4,6 +4,10 @@ History for Surveyor
 1.1.1
 -----
 
+### Features
+
+- Allow rendering of simple hash contexts with Mustache
+
 ### Fixes
 
 - Surveyor will never require 'fastercsv' on Ruby 1.9. (#381)
@@ -13,7 +17,7 @@ History for Surveyor
 
 ### Features
 
-- Breaking change: Question#is_mandatory => false by default. For those who found it useful to have 
+- Breaking change: Question#is_mandatory => false by default. For those who found it useful to have
   all questions mandatory, the parser accepts `:default_mandatory => true` as an argument to the survey.
 
 ### Fixes

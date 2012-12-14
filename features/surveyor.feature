@@ -334,7 +334,7 @@ Feature: Survey creation
 
 
   # Issue 259 - substitution of the text with Mustache
-  @javascript
+  @javascript @mustache
   Scenario: Creating a question with an mustache syntax
     Given I have survey context of "FakeMustacheContext"
     Given I parse
@@ -364,6 +364,36 @@ Feature: Survey creation
     And I should see "Santa Claus lives on South Pole"
     And I should see "Santa Claus doesn't exist"
 
+  # Issue 296 - Mustache rendering doesn't work with simple hash contexts
+  @javascript @mustache
+  Scenario: Creating a question with an mustache syntax
+    Given I have a simple hash context
+    Given I parse
+    """
+      survey "Overall info" do
+        section "Group of questions" do
+          group "Information on {{name}}?", :help_text => "Answer all you know on {{name}}" do
+            label "{{name}} does not work for {{site}}!", :help_text => "Make sure you sure {{name}} doesn't work for {{site}}"
+
+            q "Where does {{name}} live?", :pick => :one,
+            :help_text => "If you don't know where {{name}} lives, skip the question"
+            a "{{name}} lives on North Pole"
+            a "{{name}} lives on South Pole"
+            a "{{name}} doesn't exist"
+          end
+        end
+      end
+    """
+    When I start the "Overall info" survey
+    Then I should see "Information on Moses"
+    And I should see "Answer all you know on Moses"
+    And I should see "Moses does not work for Northwestern!"
+    And I should see "Make sure you sure Moses doesn't work for Northwestern"
+    And I should see "Where does Moses live?"
+    And I should see "If you don't know where Moses lives, skip the question"
+    And I should see "Moses lives on North Pole"
+    And I should see "Moses lives on South Pole"
+    And I should see "Moses doesn't exist"
 
   Scenario: Creating and saving grids
     Given I parse
