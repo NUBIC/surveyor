@@ -8,6 +8,7 @@ History for Surveyor
 
 - Allow rendering of simple hash contexts with Mustache (#296)
 - Allow configuration of question numbering (#136)
+- Allow references to question_ and answer_ in dependency conditions (#345)
 
 ### Fixes
 

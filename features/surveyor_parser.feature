@@ -473,3 +473,32 @@ Feature: Survey parser
       | Did you take out the trash | true         |
       | Did you do the laundry     | true         |
       | Optional comments          | false        |
+
+  @javascript
+  Scenario: Parsing dependencies with "question_" and "answer_" syntax
+    Given I parse
+    """
+      survey "Days" do
+        section "Fridays" do
+          q_is_it_friday "Is it Friday?", :pick => :one
+          a_yes "Yes"
+          a_no  "No"
+
+          label "woot!"
+          dependency :rule => "A"
+          condition_A :question_is_it_friday, "==", :answer_yes
+        end
+      end
+    """
+    Then there should be 1 dependency with:
+      | rule |
+      | A    |
+    And there should be 1 resolved dependency_condition with:
+      | rule_key |
+      | A        |
+    When I go to the surveys page
+    And I start the "Days" survey
+    Then the question "woot!" should be hidden
+    And I choose "Yes"
+    Then the question "woot!" should be triggered
+

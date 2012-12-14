@@ -299,9 +299,9 @@ module SurveyorParserDependencyConditionMethods
     a0, a1, a2 = args
     self.attributes = ({
       :operator => a1 || "==",
-      :question_reference => a0.to_s.gsub(/^q_/, ""),
+      :question_reference => a0.to_s.gsub(/^q_|^question_/, ""),
       :rule_key => reference_identifier
-    }.merge( a2.is_a?(Hash) ? a2 : { :answer_reference => a2.to_s.gsub(/^a_/, "") }))
+    }.merge( a2.is_a?(Hash) ? a2 : { :answer_reference => a2.to_s.gsub(/^a_|^answer_/, "") }))
     context[:dependency].dependency_conditions << context[:dependency_condition] = self
     context[:dependency_conditions] << self
   end
