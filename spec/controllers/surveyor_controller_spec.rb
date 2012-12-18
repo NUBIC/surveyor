@@ -338,4 +338,84 @@ describe SurveyorController do
       end
     end
   end
+
+  describe "serialize a survey: GET /surveys/XYZ.json" do
+    render_views
+
+    let(:json) {
+      get :export, :survey_code => survey.access_code, :format => 'json'
+      JSON.parse(response.body)
+    }
+
+    describe 'for the same question inside and outside a question group' do
+      def question_text(refid)
+        <<-SURVEY
+          q "Where is a foo?", :pick => :one, :help_text => 'Look around.', :reference_identifier => #{refid.inspect},
+            :data_export_identifier => 'X.FOO', :common_namespace => 'F', :common_identifier => 'f'
+          a_L 'To the left', :data_export_identifier => 'X.L', :common_namespace => 'F', :common_identifier => 'l'
+          a_R 'To the right', :data_export_identifier => 'X.R', :common_namespace => 'F', :common_identifier => 'r'
+          a_O 'Elsewhere', :string
+
+          dependency :rule => 'R'
+          condition_R :q_bar, "==", :a_1
+        SURVEY
+      end
+
+      let(:survey_text) {
+        <<-SURVEY
+          survey 'xyz' do
+            section 'Sole' do
+              q_bar "Should that other question show up?", :pick => :one
+              a_1 'Yes'
+              a_2 'No'
+
+              #{question_text('foo_solo')}
+
+              group do
+                #{question_text('foo_grouped')}
+              end
+            end
+          end
+        SURVEY
+      }
+
+      let(:survey) {
+        Surveyor::Parser.new.parse(survey_text)
+      }
+
+      let(:solo_question_json)    { json['sections'][0]['questions_and_groups'][1] }
+      let(:grouped_question_json) { json['sections'][0]['questions_and_groups'][2]['questions'][0] }
+
+      def remove_key_recursively(node, key)
+        case node
+        when Hash
+          node.delete(key)
+          node.values.each { |val| remove_key_recursively(val, key) }
+        when Array
+          node.each { |val| remove_key_recursively(val, key) }
+        end
+      end
+
+      it 'produces identical JSON except for API IDs and question reference identifers' do
+        [solo_question_json, grouped_question_json].each do |node|
+          node.reject! { |k, v| k == 'reference_identifier' }
+          remove_key_recursively(node, 'uuid')
+        end
+
+        # easier to see differences this way
+        solo_question_json['answers'].should    == grouped_question_json['answers']
+        solo_question_json['dependency'].should == grouped_question_json['dependency']
+
+        solo_question_json.should == grouped_question_json
+      end
+
+      it 'produces the expected reference identifier for the solo question' do
+        solo_question_json['reference_identifier'].should == 'foo_solo'
+      end
+
+      it 'produces the expected reference identifer for the question in the group' do
+        grouped_question_json['reference_identifier'].should == 'foo_grouped'
+      end
+    end
+  end
 end
