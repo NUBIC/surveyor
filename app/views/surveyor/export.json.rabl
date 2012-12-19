@@ -51,6 +51,7 @@ child :sections => :sections do
       node(:post_text, :if => lambda { |q| !q.split_text(:post).blank? }){ |q| q.split_text(:post) }
       node(:help_text, :if => lambda { |q| !q.help_text.blank? }){ |q| q.help_text }
       node(:reference_identifier, :if => lambda { |q| !q.reference_identifier.blank? }){ |q| q.reference_identifier }
+      node(:data_export_identifier,   :if => lambda { |q| !q.data_export_identifier.blank? }){ |q| q.data_export_identifier }
       node(:type, :if => lambda { |q| q.display_type != "default" }){ |q| q.display_type }
       node(:pick, :if => lambda { |q| q.pick != "none" }){ |q| q.pick }
 
@@ -61,6 +62,8 @@ child :sections => :sections do
         node(:text){ |a| a.split_or_hidden_text(:pre) }
         node(:post_text, :if => lambda { |a| !a.split_or_hidden_text(:post).blank? }){ |a| a.split_or_hidden_text(:post) }
         node(:type, :if => lambda { |a| a.response_class != "answer" }){ |a| a.response_class }
+        node(:reference_identifier,   :if => lambda { |a| !a.reference_identifier.blank? }){ |a| a.reference_identifier }
+        node(:data_export_identifier, :if => lambda { |a| !a.data_export_identifier.blank? }){ |a| a.data_export_identifier }
       end
 
       child :dependency, :if => lambda { |q| q.dependency } do

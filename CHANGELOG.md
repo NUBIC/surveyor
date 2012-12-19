@@ -13,6 +13,8 @@ History for Surveyor
 ### Fixes
 
 - Surveyor will never require 'fastercsv' on Ruby 1.9. (#381)
+- Add question_groups/question/answer/reference_identifier to JSON
+  serialization for Survey. (#390)
 
 1.1.0
 -----
