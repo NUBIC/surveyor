@@ -388,3 +388,35 @@ Feature: Survey dependencies
     Then the question "How much does it cost to run your non-passive heating solutions?" should be triggered
       And I uncheck "Forced air"
     Then the question "How much does it cost to run your non-passive heating solutions?" should be hidden
+
+  @javascript @focus
+  Scenario: Dependency evaluation within groups
+    Given I parse
+      """
+      survey "Body" do
+        section "Joints" do
+          group "Muscle" do
+            q_muscles_joints_bones "Muscles, Joints, Bones", :pick => :any, :data_export_identifier => "muscles_joints_bones"
+            a_1 "Weakness"
+            a_2 "Arthritis"
+            a_3 "Cane/Walker"
+            a_4 "Morning stiffness"
+            a_5 "Joint pain"
+            a_6 "Muscle tenderness"
+            a_7 :other
+
+            q_muscles_joints_bones_other "Explain", :data_export_identifier => "muscles_joints_bones_other"
+            dependency :rule => "A"
+            condition_A :q_muscles_joints_bones, "==", :a_7
+            a "Explain", :string
+          end
+        end
+      end
+      """
+    When I go to the surveys page
+      And I start the "Body" survey
+    Then the question "Explain" should be hidden
+    When I check "Other"
+    Then the question "Explain" should be triggered
+    When I uncheck "Other"
+    Then the question "Explain" should be hidden
