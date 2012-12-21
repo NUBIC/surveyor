@@ -739,3 +739,41 @@ Feature: Survey creation
       And I should see "B. Barber"
       And I should see "C. Camel"
 
+  Scenario: help text
+    Given I parse
+    """
+      survey "Help!" do
+        section "Songs" do
+          q "Do you need anybody?", :pick => :one, :help_text => "select one of the following"
+          a "I need somebody to love", :help_text => "like The Beatles"
+          a "I am a rock, I am an island", :help_text => "like Simon and Garfunkel"
+
+          grid "How would these artists respond to 'Do you need anybody?'", :help_text => "in your opinion" do
+            a "Yes", :help_text => "would say yes"
+            a "No", :help_text => "would say no"
+            q "Bobby Darrin", :pick => :one
+            q "Kurt Cobain", :pick => :one
+            q "Ella Fitzgerald", :pick => :one
+            q "Kanye West", :pick => :one
+          end
+
+          repeater "Over and over" do
+            q "Row row row your boat", :pick => :any, :help_text => "the 1st part of a round"
+            a "gently down the stream", :help_text => "the 2nd part of a round"
+            a "merrily merrily merrily merrily", :help_text => "the 3rd part of a round"
+            a "life is but a dream", :help_text => "the 4th part of a round"
+          end
+        end
+      end
+    """
+    When I start the "Help!" survey
+    Then I should see "select one of the following"
+      And I should see "like The Beatles"
+      And I should see "like Simon and Garfunkel"
+      And I should see "in your opinion"
+      And I should see "would say yes"
+      And I should see "would say no"
+      And I should see "the 1st part of a round"
+      And I should see "the 2nd part of a round"
+      And I should see "the 3rd part of a round"
+      And I should see "the 4th part of a round"

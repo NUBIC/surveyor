@@ -16,6 +16,7 @@ History for Surveyor
 - Add question_groups/question/answer/reference_identifier to JSON
   serialization for Survey. (#390)
 - Evaluate dependencies even when the last response is removed (#362)
+- Add answer help text (#373)
 
 1.1.0
 -----

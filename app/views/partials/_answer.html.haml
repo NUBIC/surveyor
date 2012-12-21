@@ -4,6 +4,7 @@
 - i = response_idx(q.pick != "one") # argument will be false (don't increment i) if we're on radio buttons
 - disabled = defined?(disableFlag) ? disableFlag : false
 = f.semantic_fields_for i, r do |ff|
+  %span.help= render_help_text(a, @render_context) unless g && g.display_type == "grid"
   = ff.input :question_id, :as => :quiet unless q.pick == "one" # don't repeat question_id if we're on radio buttons
   = ff.input :api_id, :as => :quiet unless q.pick == "one"
   = ff.input :response_group, :value => rg, :as => :quiet if q.pick != "one" && g && g.display_type == "repeater"
