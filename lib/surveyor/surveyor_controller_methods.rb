@@ -145,6 +145,12 @@ module Surveyor
       else
         @survey = surveys.where(:survey_version => params[:survey_version]).first
       end
+      render_404 and return if @survey.blank?
+    end
+
+    def render_404
+      head :status => 404
+      true
     end
 
     private

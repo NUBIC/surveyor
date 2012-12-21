@@ -242,3 +242,7 @@ Feature: Survey export
   Then the JSON at "responses" should have 1 entry
   And the JSON response at "responses/0/value" should be "blueish"
   And the JSON response at "responses/0/answer_id" should correspond to an answer with text "most favorite color"
+
+  Scenario: Exporting non-existent surveys
+    When I visit "/surveys/simple-json.json"
+    Then I should get a "404" response

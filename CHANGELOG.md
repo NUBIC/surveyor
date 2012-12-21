@@ -17,6 +17,7 @@ History for Surveyor
   serialization for Survey. (#390)
 - Evaluate dependencies even when the last response is removed (#362)
 - Add answer help text (#373)
+- SurveyorController#export now renders 404 when surveys are not found (#391)
 
 1.1.0
 -----
