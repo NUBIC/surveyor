@@ -361,3 +361,30 @@ Feature: Survey dependencies
     When I check "Once for you"
     Then the element "#q_3" should not be hidden
       And the element "#q_2" should be hidden
+
+  @javascript
+  Scenario: Dependency evaluation when the last response is removed
+    Given I parse
+      """
+      survey "Heating" do
+        section "Basics" do
+          q_heating_1 "How do you heat your home?", :pick => :any
+          a_1 "Forced air"
+          a_2 "Radiators"
+          a_3 "Oven"
+          a_4 "Passive"
+
+          q_heating_2 "How much does it cost to run your non-passive heating solutions?"
+          dependency :rule => "A"
+          condition_A :q_heating_1, "==", :a_1
+          a_1 "$", :float
+        end
+      end
+      """
+    When I go to the surveys page
+      And I start the "Heating" survey
+    Then the question "How much does it cost to run your non-passive heating solutions?" should be hidden
+      And I check "Forced air"
+    Then the question "How much does it cost to run your non-passive heating solutions?" should be triggered
+      And I uncheck "Forced air"
+    Then the question "How much does it cost to run your non-passive heating solutions?" should be hidden
