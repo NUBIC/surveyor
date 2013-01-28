@@ -99,7 +99,7 @@ module Surveyor
         }
 
         found = formats[answer.response_class]
-        found ?  datetime_value.strftime(found) : as(answer.response_class)
+        found ?  datetime_value.try(:strftime, found) : as(answer.response_class)
       end
     end
   end
