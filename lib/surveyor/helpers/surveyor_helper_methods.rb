@@ -61,7 +61,7 @@ module Surveyor
 
       # Help_text
       def render_help_text(obj, context=nil)
-        obj.render_help_text(context)
+        obj.render_help_text(context).html_safe
       end
 
       # Answers
