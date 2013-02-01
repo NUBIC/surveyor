@@ -243,6 +243,24 @@ Feature: Survey export
   And the JSON response at "responses/0/value" should be "blueish"
   And the JSON response at "responses/0/answer_id" should correspond to an answer with text "most favorite color"
 
+  Scenario: Exporting null datetime response
+  Given I parse
+  """
+    survey "Health" do
+      section "Doctor" do
+        question "When did you visit?", :pick => :one
+        a "Date", :date
+        a "Not sure"
+      end
+    end
+  """
+  And I start the "Health" survey
+  And I choose "Date"
+  And I press "Click here to finish"
+  And I export the response set
+  Then the JSON at "responses" should have 1 entry
+  And the JSON response at "responses/0/value" should be null
+  
   Scenario: Exporting non-existent surveys
     When I visit "/surveys/simple-json.json"
     Then I should get a "404" response
