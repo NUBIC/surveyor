@@ -61,6 +61,12 @@ describe SurveyorHelper do
     helper.a_text(a2, nil, FakeMustacheContext).should == "Yes, I do work for Northwestern"
   end
 
+  it "should return html_safe text for answer" do
+    q1 = Factory(:question, :text => "Do you work for {{site}}", :answers => [a1 = Factory(:answer, :text => "No, I don't work for {{site}}"), a2 = Factory(:answer, :text => "Yes, I do work for {{site}}") ])
+    helper.a_text(a1, nil, FakeMustacheContext).html_safe?.should be_true
+  end
+  
+
   it "should return the group text with number" do
     g1 = Factory(:question_group)
     helper.q_text(g1, FakeMustacheContext).should == "<span class='qnum'>1) </span>#{g1.text}"
