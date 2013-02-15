@@ -10,7 +10,18 @@ module Surveyor
         if asset_pipeline_enabled?
           stylesheet_link_tag('surveyor_all') + javascript_include_tag('surveyor_all')
         else
-          stylesheet_link_tag('surveyor/reset', 'surveyor/dateinput', 'surveyor/jquery-ui.custom', 'surveyor/jquery-ui-timepicker-addon', 'surveyor', 'custom') + javascript_include_tag('surveyor/jquery.tools.min', 'surveyor/jquery-ui', 'surveyor/jquery-ui-timepicker-addon', 'surveyor/jquery.surveyor')
+          stylesheet_link_tag('surveyor/reset',
+                              'surveyor/jquery-ui-1.10.0.custom',
+                              'surveyor/jquery-ui-timepicker-addon',
+                              'surveyor/ui.slider.extras',
+                              'surveyor/results',
+                              'surveyor',
+                              'custom') +
+          javascript_include_tag('surveyor/jquery-1.9.0',
+                                  'surveyor/jquery-ui-1.10.0.custom',
+                                  'surveyor/jquery-ui-timepicker-addon',
+                                  'surveyor/jquery.selectToUISlider',
+                                  'surveyor/jquery.surveyor')
         end
       end
       # Helper for displaying warning/notice/error flash messages
