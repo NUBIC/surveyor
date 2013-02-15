@@ -4,6 +4,18 @@ History for Surveyor
 1.2.1
 -----
 
+### Features
+
+Upgrade to jQuery UI 1.10.0, jQuery 1.9.0, jQueryUI timepicker addons 1.2, and remove jQuery tools (#409)
+
+### Fixes
+
+- Export null when datetime response has null datetime value
+- Move the help text to be after the answer text (#401)
+- Fix response serialization for date pick one answers (#400)
+- Remove ordering default scope on survey section methods (#417, #290)
+- Answers of labels should not be shown, within or without groups (#304)
+- Inline group questions should display inline (#303)
 
 1.2.0
 -----
