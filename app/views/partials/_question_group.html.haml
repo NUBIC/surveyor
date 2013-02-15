@@ -29,9 +29,9 @@
                         = f.semantic_fields_for i, r do |ff|
                           = ff.input :question_id, :as => :quiet
                           = ff.input :api_id, :as => :quiet
-                    - q.answers.each do |a|
-                      %td= render a.custom_renderer || '/partials/answer', :g => g, :q => q, :a => a, :f => f
-                    %th= q.split_text(:post)
+                      - q.answers.each do |a|
+                        %td= render(a.custom_renderer || '/partials/answer', :g => g, :q => q, :a => a, :f => f) unless q.display_type == "label"
+                      %th= q.split_text(:post)
       - when :repeater
         - (@response_set.count_group_responses(qs) + 1).times do |rg|
           %li

@@ -6,7 +6,7 @@
   = f.inputs q_text(q, @render_context), :id => rg ? "q_#{q.id}_#{rg}" : "q_#{q.id}", :class => "q_#{renderer} #{q.css_class(@response_set)}" do
     %span.help= render_help_text(q, @render_context)
     - case renderer
-    - when :image, :label
+    - when  :image, :label, :default_label, :inline_label, :repeater_label
     - when :dropdown, :inline_dropdown, :default_dropdown, :slider, :repeater_dropdown
       - r = response_for(@response_set, q, nil, rg)
       - i = response_idx

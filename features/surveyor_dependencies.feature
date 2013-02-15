@@ -389,7 +389,7 @@ Feature: Survey dependencies
       And I uncheck "Forced air"
     Then the question "How much does it cost to run your non-passive heating solutions?" should be hidden
 
-  @javascript @focus
+  @javascript
   Scenario: Dependency evaluation within groups
     Given I parse
       """

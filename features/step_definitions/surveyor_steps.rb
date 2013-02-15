@@ -247,12 +247,20 @@ end
 
 ## Various input elements
 
-Then /^I should see (\d+) textareas on the page$/ do |i|
-  page.has_css?('textarea', :count => i)
+Then /^I should see (\d+) textarea(?:s?) on the page$/ do |i|
+  page.has_css?('textarea', :count => i).should == true
 end
 
-Then /^I should see (\d+) "(.*?)" input on the page$/ do |i, css_class|
-  page.has_css?("input.#{css_class}", :count => i)
+Then /^I should see (\d+) text input(?:s?) on the page$/ do |i|
+  page.has_css?('input[type="text"]', :count => i).should == true
+end
+
+Then /^I should see no text input(?:s?) on the page$/ do
+  page.has_css?('input[type="text"]').should == false
+end
+
+Then /^I should see (\d+) "(.*?)" input(?:s?) on the page$/ do |i, css_class|
+  page.has_css?("input.#{css_class}", :count => i).should == true
 end
 
 Then /^I should see (\d+) select on the page$/ do |i|

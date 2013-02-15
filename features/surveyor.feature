@@ -777,3 +777,37 @@ Feature: Survey creation
       And I should see "the 2nd part of a round"
       And I should see "the 3rd part of a round"
       And I should see "the 4th part of a round"
+
+  Scenario: labels in groups
+    Given I parse
+    """
+      survey "Labels" do
+        section "One" do
+          group "Grouped" do
+            label "Grouped greetings"
+            a "Your response", :string
+          end
+          group "Inline group", :display_type => :inline do
+            label "Inline greetings"
+            a "Your response", :string
+          end
+          repeater "Repeater" do
+            label "Repeater greetings"
+            a "Your response", :string
+          end
+          grid "Grid" do
+            a "Grid response", :string
+            label "Grid greetings"
+          end
+        end
+      end
+    """
+    When I start the "Labels" survey
+    Then I should see "Grouped greetings"
+      And I should see "Inline greetings"
+      And I should see "Repeater greetings"
+      And I should see "Grid greetings"
+      And I should not see "Your response"
+      And I should see "Grid response"
+      And I should see no text inputs on the page
+
