@@ -80,6 +80,7 @@ module Surveyor
     end
 
     def update
+      question_ids_for_dependencies = (params[:r] || []).map{|k,v| v["question_id"] }.compact.uniq
       saved = load_and_update_response_set_with_retries
 
       return redirect_with_message(surveyor_finish, :notice, t('surveyor.completed_survey')) if saved && params[:finish]
@@ -96,7 +97,7 @@ module Surveyor
         end
         format.js do
           if @response_set
-            render :json => @response_set.reload.all_dependencies
+            render :json => @response_set.reload.all_dependencies(question_ids_for_dependencies)
           else
             render :text => "No response set #{params[:response_set_code]}",
               :status => 404
