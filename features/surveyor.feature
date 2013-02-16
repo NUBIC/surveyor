@@ -810,4 +810,30 @@ Feature: Survey creation
       And I should not see "Your response"
       And I should see "Grid response"
       And I should see no text inputs on the page
-
+  @javascript
+  Scenario: dates in pick one
+    Given I parse
+    """
+      survey "Dates" do
+        section "One" do
+          q_test_1 "When will you stop by?", :pick=>:one
+          a_date "On", :date, :custom_class => "date"
+          a_neg_1 "REFUSED"
+          a_neg_2 "DON'T KNOW"
+        end
+        section "Two" do
+          label "second section"
+        end
+      end
+    """
+    When I start the survey
+      And I click "On"
+      And I click the first date field
+      And I select "Mar" as the datepicker's month
+      And I select "2013" as the datepicker's year
+      And I follow "9"
+    Then there should be a date response with value "2013-03-09"
+    When I press "Two"
+      And I press "One"
+    Then the first date field should contain "2013-03-09"
+      And the first date field should not contain "2013-03-09 00:00:00.000000"

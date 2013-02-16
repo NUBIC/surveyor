@@ -7,6 +7,7 @@ History for Surveyor
 ### Features
 
 - Upgrade to jQuery UI 1.10.0, jQuery 1.9.0, jQueryUI timepicker addons 1.2, and remove jQuery tools (#409)
+- Upgrade reset css
 
 ### Fixes
 
@@ -17,6 +18,7 @@ History for Surveyor
 - Answers of labels should not be shown, within or without groups (#304)
 - Inline group questions should display inline (#303)
 - Evaluate all submitted questions for depdencies (#396)
+- Pick one answers with dates should display their dates correctly (#378)
 
 1.2.0
 -----
