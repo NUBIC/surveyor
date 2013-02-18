@@ -1,198 +1,84 @@
-# Surveys On Rails
+# Why surveyor?
 
 Surveyor is a developer tool that brings surveys into Rails
-applications. Surveys are written in the Surveyor DSL (Domain Specific
-Language). Internally, Surveyor is a Rails engine distributed as a
+applications. Surveys are written in the surveyor DSL (Domain Specific
+Language). Internally, surveyor is a Rails engine distributed as a
 ruby gem, meaning it is straightforward to override or extend its
 behaviors in your Rails app without maintaining a fork.
 
-## Why you might want to use Surveyor
+## Why you might want to use surveyor
 
-If your Rails app needs to asks users questions as part of a survey, quiz, or questionnaire then you should consider using Surveyor. This gem was designed to deliver clinical research surveys to large populations, but it can be used for any type of survey.
+If your Rails app needs to asks users questions as part of a survey, quiz, or questionnaire then you should consider using surveyor. This gem was designed to deliver clinical research surveys to large populations, but it can be used for any type of survey.
 
-The Surveyor DSL defines questions, answers, question groups, survey sections, dependencies (e.g. if response to question 4 is A, then show question 5), and validations. Answers are the options available for each question - user input is called "responses" and are grouped into "response sets". A DSL makes it significantly easier to import long surveys (no more click/copy/paste). It also enables non-programmers to write out, edit, re-edit... any number of surveys.
+The surveyor DSL defines questions, answers, question groups, survey sections, dependencies (e.g. if response to question 4 is A, then show question 5), and validations. Answers are the options available for each question - user input is called "responses" and are grouped into "response sets". A DSL makes it significantly easier to import long surveys (no more click/copy/paste). It also enables non-programmers to write out, edit, re-edit... any number of surveys.
 
-## DSL example
-
-The Surveyor DSL supports a wide range of question types (too many to list here) and complex dependency logic. Here are the first few questions of the "kitchen sink" survey which should give you and idea of how it works. The full example with all the types of questions available if you follow the installation instructions below.
-
-    survey "Kitchen Sink survey" do
-
-      section "Basic questions" do
-        # A label is a question that accepts no answers
-        label "These questions are examples of the basic supported input types"
-
-        # A basic question with radio buttons
-        question_1 "What is your favorite color?", :pick => :one
-        answer "red"
-        answer "blue"
-        answer "green"
-        answer "yellow"
-        answer :other
-
-        # A basic question with checkboxes
-        # "question" and "answer" may be abbreviated as "q" and "a"
-        q_2 "Choose the colors you don't like", :pick => :any
-        a_1 "red"
-        a_2 "blue"
-        a_3 "green"
-        a_4 "yellow"
-        a :omit
-
-        # A dependent question, with conditions and rule to logically join them
-        # the question's reference identifier is "2a", and the answer's reference_identifier is "1"
-        # question reference identifiers used in conditions need to be unique on a survey for the lookups to work
-        q_2a "Please explain why you don't like this color?"
-        a_1 "explanation", :text
-        dependency :rule => "A or B or C or D"
-        condition_A :q_2, "==", :a_1
-        condition_B :q_2, "==", :a_2
-        condition_C :q_2, "==", :a_3
-        condition_D :q_2, "==", :a_4
-
-        # ... other question, sections and such. See surveys/kitchen_sink_survey.rb for more.
-     end
-
-    end
-
-The first question is "pick one" (radio buttons) with "other". The second question is "pick any" (checkboxes) with the option to "omit". It also features a dependency with a follow up question. Notice the dependency rule is defined as a string. We support complex dependency such as "A and (B or C) and D" or "A or ((B and C) or D)". The conditions are evaluated separately using the operators "==","!=","<>", ">=","<" the substituted by letter into to the dependency rule and evaluated.
-
-# Installation
-
-Add surveyor to your Gemfile:
-
-    gem "surveyor"
-
-Then run:
-
-    bundle install
-
-Generate assets, run migrations:
-
-    script/rails generate surveyor:install
-    bundle exec rake db:migrate
-
-Try out the "kitchen sink" survey. The rake task above generates surveys from our custom survey DSL (a good format for end users and stakeholders).
-
-    bundle exec rake surveyor FILE=surveys/kitchen_sink_survey.rb
-
-Start up your app and visit http://localhost:3000/surveys
-
-Try taking the survey and compare it to the contents of the DSL file kitchen\_sink\_survey.rb. See how the DSL maps to what you see.
-
-There are two other useful rake tasks:
-
-* `surveyor:remove` removes all unused surveys.
-* `rake surveyor:unparse` exports a survey from the application into a
-  file in the surveyor DSL.
-
-# Upgrading
-
-When you are ready to update to the latest version of Surveyor, just do
-
-    bundle update surveyor
-
-and you'll get the latest version that bundler thinks you can use based on the
-constraints in your Gemfile.
-
-After you've installed a new version, you should always re-run the surveyor
-generator:
-
-    script/rails generate surveyor:install
-
-This will copy over any new or updated assets and new migrations. Use your VCS'
-utilities to review what's changed, then commit the new versions.
-
-    git status
-    git diff
-    [...]
-    git add -A
-    git commit
-
-If there were new migrations, you'll want to be sure to run them before the next
-time you start your app:
-
-    bundle exec rake db:migrate
-
-Finally, review the [changelog][] entries corresponding to the versions between
-your original version and the version you've updated to. There may be changes
-which will affect your customizations. There should be hints in the changelog
-or the referenced issues for what to update when necessary.
-
-[changelog]: https://github.com/NUBIC/surveyor/blob/master/CHANGELOG.md
-
-## Following master
-
-If you are following along with pre-release versions of Surveyor using a `:git`
-source in your Gemfile, be particularly careful about reviewing migrations after
-updating Surveyor and re-running the generator. We will never change a migration
-between two released versions of Surveyor. However, we may on rare occasions
-change a migration which has been merged into master. When this happens, you'll
-need to assess the differences and decide on an appropriate course of action for
-your app.
-
-If you aren't sure what this means, we do not recommend that you deploy an app
-that's locked to surveyor master into production.
-
-# Customizing surveyor
-
-Surveyor's controller, models, and views may be customized via classes in your app/models, app/helpers and app/controllers directories. To generate a sample custom controller and layout, run:
-
-    script/rails generate surveyor:custom
-
-and read surveys/EXTENDING\_SURVEYOR
-
-# The asset pipeline
-
-Surveyor is now aware of the Rails asset pipeline (http://guides.rubyonrails.org/asset_pipeline.html). With the asset pipeline enabled `Rails.application.config.assets.enabled == true`, then the `surveyor:install` generator will generate `app/assets/stylesheets/surveyor_all.css` and `app/assets/javascripts/surveyor_all.js` manifest files and link them from the surveyor\_default layout.  Assets remain in the gem and are picked up for inclusion and pre-compilation from there if `config/environments/production.rb` is set to include surveyor assets.
-
-    # Precompile additional assets (application.js, application.css, and all non-JS/CSS are already added)
-    config.assets.precompile += %w( surveyor_all.js surveyor_all.css )
-
-The previous copy-to-application behavior still exists in the case where the asset pipeline is missing or disabled.
-
-# PDF support
-
-* Add the following lines to your Gemfile:
-
-<pre>
-	gem 'pdfkit'
-	gem 'wkhtmltopdf'
-</pre>
-
-or on OSX:
-
-<pre>
-	gem 'pdfkit'
-	gem 'wkhtmltopdf-binary'
-</pre>
-
-* Add the following to your application.rb:
-
-<pre>
-	config.middleware.use PDFKit::Middleware
-</pre>
-
-* Create links with :format => 'pdf' in them, for example:
-
-<pre>
-	%li= link_to "PDF", view_my_survey_path(:survey_code => response_set.survey.access_code, :response_set_code => response_set.access_code, :format => 'pdf')
-</pre>
-
-# Requirements
+## Requirements
 
 Surveyor works with:
 
 * Ruby 1.8.7, 1.9.2, and 1.9.3
 * Rails 3.0-3.2
 
-Some key library dependencies are:
+Some key dependencies are:
 
 * HAML
 * Sass
 * Formtastic
 
-A more exhaustive list can be found in the gemspec.
+A more exhaustive list can be found in the [gemspec][].
+
+[gemspec]: https://github.com/NUBIC/surveyor/blob/master/surveyor.gemspec
+
+## Install
+
+Add surveyor to your Gemfile:
+
+    gem "surveyor"
+
+Bundle, install, and migrate:
+
+    bundle install
+    script/rails generate surveyor:install
+    bundle exec rake db:migrate
+
+Parse the "kitchen sink" survey ([kitchen sink](http://en.wiktionary.org/wiki/everything_but_the_kitchen_sink) means almost everything)
+
+    bundle exec rake surveyor FILE=surveys/kitchen_sink_survey.rb
+
+Start up your app, visit `/surveys`, compare what you see to [kitchen\_sink\_survey.rb][kitchensink] and try responding to the survey.
+
+[kitchensink]: http://github.com/NUBIC/surveyor/blob/master/lib/generators/surveyor/templates/surveys/kitchen_sink_survey.rb
+
+## Customize surveyor
+
+Surveyor's controller, helper, models, and views may be overridden by classes in your `app` folder. To generate a sample custom controller and layout run:
+
+    script/rails generate surveyor:custom
+
+and read `surveys/EXTENDING\_SURVEYOR`
+
+## Upgrade
+
+To get the latest version of surveyor, bundle, install and migrate:
+
+    bundle update surveyor
+    script/rails generate surveyor:install
+    bundle exec rake db:migrate
+
+and review the [changelog][] for changes that may affect your customizations.
+
+[changelog]: https://github.com/NUBIC/surveyor/blob/master/CHANGELOG.md
+
+## Follow master
+
+If you are following pre-release versions of surveyor using a `:git`
+source in your Gemfile, be particularly careful about reviewing migrations after
+updating surveyor and re-running the generator. We will never change a migration
+between two released versions of surveyor. However, we may on rare occasions
+change a migration which has been merged into master. When this happens, you'll
+need to assess the differences and decide on an appropriate course of action for
+your app. If you aren't sure what this means, we do not recommend that you deploy an app
+that's locked to surveyor master into production.
 
 # Support
 
@@ -200,8 +86,8 @@ For general discussion (e.g., "how do I do this?"), please send a message to the
 [surveyor-dev][] group. This group is moderated to keep out spam; don't be
 surprised if your message isn't posted immediately.
 
-For reproducible bugs, please file an issue on the [GitHub issue
-tracker][issues]. Please include a minimal test case (a detailed description of
+For reproducible bugs, please file an issue on the [GitHub issue tracker][issues].
+Please include a minimal test case (a detailed description of
 how to trigger the bug in a clean rails application). If you aren't sure how to
 isolate the bug, send a message to [surveyor-dev][] with what you know and we'll
 try to help.
@@ -209,32 +95,21 @@ try to help.
 [surveyor-dev]: https://groups.google.com/group/surveyor-dev
 [issues]: https://github.com/NUBIC/surveyor/issues
 
-# Contributing, testing
+## Contribute, test
 
 To work on the code, fork this github project. Install [bundler][] if
-you don't have it, then run
+you don't have it, then bundle, generate the app in `testbed`, and run the specs and features
 
     $ bundle update
-
-to install all the necessary gems. Then
-
     $ bundle exec rake testbed
-
-to generate a test app in `testbed`. Now you can run
-
     $ bundle exec rake spec
-
-to run the specs and
-
     $ bundle exec rake cucumber
-
-to run the features and start writing tests!
 
 [bundler]: http://gembundler.com/
 
 ## Selenium
 
-Some of Surveyor's integration tests use Selenium WebDriver and Capybara. The
+Some of surveyor's integration tests use Selenium WebDriver and Capybara. The
 WebDriver-based tests default to running in Chrome due to an unfortunate
 [Firefox bug][FF566671]. For them to run, you'll either need:
 
@@ -253,4 +128,6 @@ Firefox to retain focus, otherwise some tests will fail.
 [FF566671]: https://bugzilla.mozilla.org/show_bug.cgi?id=566671
 [chromedriver]: http://code.google.com/p/selenium/wiki/ChromeDriver
 
-Copyright (c) 2008-2011 Brian Chamberlain and Mark Yoon, released under the MIT license
+Copyright (c) 2008-2013 Brian Chamberlain and Mark Yoon, released under the [MIT license][mit]
+
+[mit]: https://github.com/NUBIC/surveyor/blob/master/MIT-LICENSE
