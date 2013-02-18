@@ -1,16 +1,19 @@
-# Why surveyor?
+## Why surveyor?
 
-Surveyor is a developer tool that brings surveys into Rails
-applications. Surveys are written in the surveyor DSL (Domain Specific
-Language). Internally, surveyor is a Rails engine distributed as a
-ruby gem, meaning it is straightforward to override or extend its
-behaviors in your Rails app without maintaining a fork.
+Surveyor is a developer tool to deliver surveys in Rails applications.
+Surveys are written in the surveyor DSL (Domain Specific
+Language). A DSL makes it significantly easier to import long surveys
+(one of the motivations for building surveyor was copy/paste fatigue).
+It enables non-programmers to write out, edit, and review surveys.
 
-## Why you might want to use surveyor
+If your Rails app needs to asks users questions as part of a survey, quiz,
+or questionnaire then you should consider using surveyor. This gem was
+designed to deliver clinical research surveys to large populations,
+but it can be used for any type of survey.
 
-If your Rails app needs to asks users questions as part of a survey, quiz, or questionnaire then you should consider using surveyor. This gem was designed to deliver clinical research surveys to large populations, but it can be used for any type of survey.
-
-The surveyor DSL defines questions, answers, question groups, survey sections, dependencies (e.g. if response to question 4 is A, then show question 5), and validations. Answers are the options available for each question - user input is called "responses" and are grouped into "response sets". A DSL makes it significantly easier to import long surveys (no more click/copy/paste). It also enables non-programmers to write out, edit, re-edit... any number of surveys.
+Surveyor is a Rails engine distributed as a ruby gem, meaning it is
+straightforward to override or extend its behaviors in your Rails app
+without maintaining a fork.
 
 ## Requirements
 
@@ -80,7 +83,7 @@ need to assess the differences and decide on an appropriate course of action for
 your app. If you aren't sure what this means, we do not recommend that you deploy an app
 that's locked to surveyor master into production.
 
-# Support
+## Support
 
 For general discussion (e.g., "how do I do this?"), please send a message to the
 [surveyor-dev][] group. This group is moderated to keep out spam; don't be
