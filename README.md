@@ -95,8 +95,14 @@ how to trigger the bug in a clean rails application). If you aren't sure how to
 isolate the bug, send a message to [surveyor-dev][] with what you know and we'll
 try to help.
 
+For build status see our [continuous integration page][ci].
+
+Take a look at our [screencast][] (a bit dated now).
+
 [surveyor-dev]: https://groups.google.com/group/surveyor-dev
 [issues]: https://github.com/NUBIC/surveyor/issues
+[ci]:https://public-ci.nubic.northwestern.edu/job/surveyor/
+[screencast]:http://vimeo.com/7051279
 
 ## Contribute, test
 
