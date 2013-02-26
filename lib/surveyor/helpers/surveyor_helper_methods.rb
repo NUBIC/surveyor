@@ -96,11 +96,11 @@ module Surveyor
       end
 
       def input_mask_javascript(answer)
-        selector = "$(\"input[type='text'].#{answer.api_id}\")"
-        mask = "'#{answer.input_mask}'"
-        placeholder = "{ placeholder: '#{answer.placeholder}' }" if answer.placeholder
-        mask_args = [mask, placeholder].compact.join(', ')
-        "#{selector}.mask(#{mask_args})"
+        if answer.input_mask
+          selector = "input[type='text'].#{answer.api_id}"
+          placeholder = "placeholder: '#{answer.placeholder}'" if answer.placeholder
+          "$(\"#{selector}\").mask('#{answer.input_mask}', {#{placeholder}})"          
+        end
       end
     end
   end
