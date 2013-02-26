@@ -21,7 +21,8 @@ module Surveyor
                                   'surveyor/jquery-ui-1.10.0.custom',
                                   'surveyor/jquery-ui-timepicker-addon',
                                   'surveyor/jquery.selectToUISlider',
-                                  'surveyor/jquery.surveyor')
+                                  'surveyor/jquery.surveyor',
+                                  'jquery.maskedinput')
         end
       end
       # Helper for displaying warning/notice/error flash messages
@@ -92,6 +93,14 @@ module Surveyor
       def response_idx(increment = true)
         @rc ||= 0
         (increment ? @rc += 1 : @rc).to_s
+      end
+
+      def input_mask_javascript(answer)
+        selector = "$(\"input[type='text'].#{answer.api_id}\")"
+        mask = "'#{answer.input_mask}'"
+        placeholder = "{ placeholder: '#{answer.placeholder}' }" if answer.placeholder
+        mask_args = [mask, placeholder].compact.join(', ')
+        "#{selector}.mask(#{mask_args})"
       end
     end
   end
