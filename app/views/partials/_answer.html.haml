@@ -19,7 +19,7 @@
                   :as         => rc_to_as(a.response_class),
                   :label      => a.text_for(:pre, @render_context, I18n.locale).blank? ? false : a.text_for(:pre, @render_context, I18n.locale),
                   :hint       => a.text_for(:post, @render_context, I18n.locale),
-                  :input_html => generate_pick_none_input_html(r.as(a.response_class), a.default_value_for(@render_context, I18n.locale), a.css_class, a.response_class, disabled)
+                  :input_html => generate_pick_none_input_html(r.as(a.response_class), a.default_value_for(@render_context, I18n.locale), a.css_class, a.response_class, disabled, a.input_mask, a.placeholder)
     - else
       = a.text_for(nil, @render_context, I18n.locale)
   %span.help= a.help_text_for(@render_context, I18n.locale) unless g && g.display_type == "grid"

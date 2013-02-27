@@ -76,12 +76,17 @@ module Surveyor
         end
       end
 
-      def generate_pick_none_input_html(value, default_value, css_class, response_class, disabled)
+      def generate_pick_none_input_html(value, default_value, css_class, response_class, disabled, input_mask, placeholder)
         html = {}
         html[:class] = [response_class,css_class].reject{ |c| c.blank? }
         html[:value] = default_value if value.blank?
         html[:disabled] = disabled unless disabled.blank?
-        html
+        if input_mask
+          data = {}
+          data['data-input_mask'] = input_mask
+          data['data-placeholder'] = placeholder unless placeholder.blank?
+          html[:data] = data
+        end
       end
 
       # Responses
@@ -93,14 +98,6 @@ module Surveyor
       def response_idx(increment = true)
         @rc ||= 0
         (increment ? @rc += 1 : @rc).to_s
-      end
-
-      def input_mask_javascript(answer)
-        if answer.input_mask
-          selector = "input[type='text'].#{answer.api_id}"
-          placeholder = "placeholder: '#{answer.placeholder}'" if answer.placeholder
-          "$(\"#{selector}\").mask('#{answer.input_mask}', {#{placeholder}})"          
-        end
       end
     end
   end
