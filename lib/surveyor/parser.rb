@@ -183,6 +183,7 @@ module SurveyorParserSurveySectionMethods
     title = args[0]
     self.attributes = ({
       :title => title,
+      :reference_identifier => reference_identifier,
       :display_order => context[:survey].sections.size }.merge(args[1] || {}))
     context[:survey].sections << context[:survey_section] = self
   end
@@ -208,6 +209,7 @@ module SurveyorParserQuestionGroupMethods
     # build and set context
     self.attributes = ({
       :text => args[0] || "Question Group",
+      :reference_identifier => reference_identifier,
       :display_type => (original_method =~ /grid|repeater/ ? original_method : "default")}.merge(args[1] || {}))
     context[:question_group] = self
   end
