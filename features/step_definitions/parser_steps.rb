@@ -31,6 +31,13 @@ Then /^there should be (\d+) survey(?:s?) with:$/ do |x, table|
   end
 end
 
+Then /^there should be (\d+) translations with$/ do |x, table|
+  SurveyTranslation.count.should == x.to_i
+  table.hashes.each do |hash|
+    SurveyTranslation.find(:first, :conditions => hash).should_not be_nil
+  end
+end
+
 Then /^there should be (\d+) section(?:s?) with:$/ do |x, table|
   SurveySection.count.should == x.to_i
   table.hashes.each do |hash|

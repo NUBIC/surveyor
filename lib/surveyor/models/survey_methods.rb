@@ -9,19 +9,20 @@ module Surveyor
         base.send :has_many, :sections, :class_name => "SurveySection", :order => 'display_order', :dependent => :destroy
         base.send :has_many, :sections_with_questions, :include => :questions, :class_name => "SurveySection", :order => 'display_order'
         base.send :has_many, :response_sets
+        base.send :has_many, :translations, :class_name => "SurveyTranslation"
 
         # Scopes
         base.send :scope, :with_sections, {:include => :sections}
-        
+
         @@validations_already_included ||= nil
         unless @@validations_already_included
           # Validations
           base.send :validates_presence_of, :title
           base.send :validates_uniqueness_of, :survey_version, :scope => :access_code, :message => "survey with matching access code and version already exists"
-          
+
           @@validations_already_included = true
         end
-        
+
         # Whitelisting attributes
         base.send :attr_accessible, :title, :description, :reference_identifier, :data_export_identifier, :common_namespace, :common_identifier, :css_url, :custom_class, :display_order
 
