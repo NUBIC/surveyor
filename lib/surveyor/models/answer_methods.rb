@@ -8,10 +8,13 @@ module Surveyor
         base.send :belongs_to, :question
         base.send :has_many, :responses
         base.send :has_many, :validations, :dependent => :destroy
-        
+
         # Scopes
         base.send :default_scope, :order => "display_order ASC"
-        
+
+        # Mustache
+        base.send :include, MustacheContext
+
         @@validations_already_included ||= nil
         unless @@validations_already_included
           # Validations
@@ -20,12 +23,10 @@ module Surveyor
           # base.send :validates_numericality_of, :question_id, :allow_nil => false, :only_integer => true
           @@validations_already_included = true
         end
-        
+
         # Whitelisting attributes
         base.send :attr_accessible, :question, :question_id, :text, :short_text, :help_text, :weight, :response_class, :reference_identifier, :data_export_identifier, :common_namespace, :common_identifier, :display_order, :is_exclusive, :display_length, :custom_class, :custom_renderer, :default_value, :display_type
       end
-      
-      include RenderText      
 
       # Instance Methods
       def initialize(*args)
@@ -41,14 +42,44 @@ module Surveyor
         self.data_export_identifier ||= Surveyor::Common.normalize(text)
         self.api_id ||= Surveyor::Common.generate_api_id
       end
-      
+      def display_type=(val)
+        write_attribute(:display_type, val.nil? ? nil : val.to_s)
+      end
+
       def css_class
         [(is_exclusive ? "exclusive" : nil), custom_class].compact.join(" ")
       end
-      
-      def split_or_hidden_text(part = nil, context = nil)
+
+      def text_for(position = nil, context = nil, locale = nil)
         return "" if display_type == "hidden_label"
-        part == :pre ? self.render_answer_text(text.split("|",2)[0], context) : (part == :post ? self.render_answer_text(text.split("|",2)[1], context) : self.render_answer_text(text, context))
+        imaged(split(in_context(translation(locale)[:text], context), position))
+      end
+      def help_text_for(context = nil, locale = nil)
+        in_context(translation(locale)[:help_text], context)
+      end
+      def default_value_for(context = nil, locale = nil)
+        in_context(translation(locale)[:default_value], context)
+      end
+      def split(text, position=nil)
+        case position
+        when :pre
+          text.split("|",2)[0]
+        when :post
+          text.split("|",2)[1]
+        else
+          text
+        end.to_s
+      end
+      def translation(locale)
+        {:text => self.text, :help_text => self.help_text, :default_value => self.default_value}.with_indifferent_access.merge(
+          (self.question.translation(locale)[:answers] || {})[self.reference_identifier] || {}
+        )
+      end
+
+      private
+
+      def imaged(text)
+        self.display_type == "image" && !text.blank? ? ActionController::Base.helpers.image_tag(text) : text
       end
     end
   end

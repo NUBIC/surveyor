@@ -1,3 +1,4 @@
+# encoding: utf-8
 # http://github.com/thoughtbot/factory_girl/tree/master
 require 'rubygems'
 require 'factory_girl'
@@ -5,13 +6,26 @@ require 'factory_girl'
 Factory.sequence(:unique_survey_access_code){|n| "simple survey #{UUIDTools::UUID.random_create.to_s}" }
 
 Factory.define :survey do |s|
-  s.title           {"Simple survey"}
-  s.description     {"A simple survey for testing"}
-  s.access_code     {Factory.next :unique_survey_access_code}
-  s.active_at       {Time.now}
-  s.inactive_at     {}
-  s.css_url         {}
-  s.survey_version  {0}
+  s.title           "Simple survey"
+  s.description     "A simple survey for testing"
+  s.access_code     { Factory.next :unique_survey_access_code }
+  s.survey_version  0
+end
+
+Factory.define :survey_translation do |t|
+  t.locale "es"
+  t.translation %(title: "Un idioma nunca es suficiente"
+survey_sections:
+  one:
+    title: "Uno"
+questions:
+  hello:
+    text: "¡Hola!"
+  name:
+    text: "¿Cómo se llama Usted?"
+    answers:
+      name:
+        help_text: "Mi nombre es...")
 end
 
 Factory.sequence(:survey_section_display_order){|n| n }

@@ -3,7 +3,7 @@ require File.expand_path(File.dirname(__FILE__) + '/../spec_helper')
 describe SurveyorHelper do
   context "numbering" do
     let(:asset_directory){ asset_pipeline_enabled? ? "assets" : "images" }
-    it "should return the question text with number" do
+    it "should return the question text with number, except for labels, dependencies, images, and grouped questions" do
       q1 = Factory(:question)
       q2 = Factory(:question, :display_type => "label")
       q3 = Factory(:question, :dependency => Factory(:dependency))
@@ -15,37 +15,16 @@ describe SurveyorHelper do
       helper.q_text(q4).should == %Q(<img alt="Something" src="/#{asset_directory}/something.jpg" />)
       helper.q_text(q5).should == q5.text
     end
-    it "should return the group text with number" do
-      g1 = Factory(:question_group)
-      helper.q_text(g1, nil).should == "<span class='qnum'>1) </span>#{g1.text}"
-    end
   end
 
   context "with mustache text substitution" do
     require 'mustache'
     let(:mustache_context){ Class.new(::Mustache){ def site; "Northwestern"; end; def somethingElse; "something new"; end; def group; "NUBIC"; end } }
-    it "substitues vaues in Question#text" do
+    it "substitues values into Question#text" do
       q1 = Factory(:question, :text => "You are in {{site}}")
       label = Factory(:question, :display_type => "label", :text => "Testing {{somethingElse}}")
       helper.q_text(q1, mustache_context).should == "<span class='qnum'>1) </span>You are in Northwestern"
       helper.q_text(label, mustache_context).should == "Testing something new"
-    end
-    it "substitutes values in Question#help_text" do
-      q2 = Factory(:question, :display_type => "label", :text => "Is you site Northwestern?", :help_text => "If your site is not {{site}}, pick 'no' for the answer")
-      helper.render_help_text(q2, mustache_context).should == "If your site is not Northwestern, pick 'no' for the answer"
-    end
-    it "substitues vaues in QuestionGroup#text" do
-      g1 = Factory(:question_group, :text => "You are part of the {{group}}")
-      helper.q_text(g1, mustache_context).should == "<span class='qnum'>1) </span>You are part of the NUBIC"
-    end
-    it "substitues vaues in QuestionGroup#help_text" do
-      g1 = Factory(:question_group, :text => "You are part of the {{group}}", :help_text => "Make sure you know what the {{group}} stands for")
-      helper.render_help_text(g1, mustache_context).should == "Make sure you know what the NUBIC stands for"
-    end
-    it "substitues vaues in Answer#text" do
-      q1 = Factory(:question, :text => "Do you work for {{site}}", :answers => [a1 = Factory(:answer, :text => "No, I don't work for {{site}}"), a2 = Factory(:answer, :text => "Yes, I do work for {{site}}") ])
-      helper.a_text(a1, nil, mustache_context).should == "No, I don't work for Northwestern"
-      helper.a_text(a2, nil, mustache_context).should == "Yes, I do work for Northwestern"
     end
   end
 

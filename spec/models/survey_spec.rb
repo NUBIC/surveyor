@@ -1,3 +1,4 @@
+# encoding: UTF-8
 require File.expand_path(File.dirname(__FILE__) + '/../spec_helper')
 
 describe Survey do
@@ -132,7 +133,7 @@ describe Survey do
     end
 
     it{ survey.should have(3).sections}
-    it "gets survey_sections in order" do      
+    it "gets survey_sections in order" do
       survey.sections.should == [s3, s1, s2]
       survey.sections.map(&:display_order).should == [1,2,3]
     end
@@ -166,6 +167,25 @@ describe Survey do
       actual[:sections].size.should == 2
       actual[:sections][0][:questions_and_groups].size.should == 1
       actual[:sections][1][:questions_and_groups].size.should == 2
+    end
+  end
+
+  context "with translations" do
+    require 'yaml'
+    let(:survey_translation){
+      Factory(:survey_translation, :locale => :es, :translation => {
+        :title => "Un idioma nunca es suficiente"
+      }.to_yaml)
+    }
+    before do
+      survey.translations << survey_translation
+    end
+    it "returns its own translation" do
+      YAML.load(survey_translation.translation).should_not be_nil
+      survey.translation(:es)[:title].should == "Un idioma nunca es suficiente"
+    end
+    it "returns its own default values" do
+      survey.translation(:de).should == {"title" => survey.title, "description" => survey.description}
     end
   end
 end

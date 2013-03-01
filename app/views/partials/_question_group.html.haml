@@ -1,7 +1,7 @@
 - renderer = g.renderer
 - unless g.display_type == "hidden"
-  = f.inputs q_text(g, @render_context), :id => "g_#{g.id}", :class => "g_#{renderer} #{g.css_class(@response_set)}" do
-    %li.help= render_help_text(g, @render_context)
+  = f.inputs "#{next_question_number(g)}#{g.text_for(@render_context, I18n.locale)}", :id => "g_#{g.id}", :class => "g_#{renderer} #{g.css_class(@response_set)}" do
+    %li.help= g.help_text_for(@render_context, I18n.locale)
     - case renderer
       - when :grid
         %li
@@ -16,13 +16,14 @@
                   %th &nbsp;
                   - ten_questions.first.answers.each do |a|
                     %th
-                      =a_text(a)
-                      %span.help= render_help_text(a, @render_context)
+                      = a.text_for(nil, @render_context, I18n.locale)
+                      %span.help= a.help_text_for(@render_context, I18n.locale)
                   %th &nbsp;
                 - ten_questions.each_with_index do |q, i|
                   %tr{:id => "q_#{q.id}", :class => "q_#{renderer} #{q.css_class(@response_set)}"}
                     %th
-                      = q.split_text(:pre)
+                      = q.text_for(:pre, @render_context, I18n.locale)
+                      = q.help_text_for(@render_context, I18n.locale)
                       - if q.pick == "one"
                         - r = response_for(@response_set, q, nil, g)
                         - i = response_idx  # increment the response index since the answer partial skips for q.pick == one
@@ -31,7 +32,7 @@
                           = ff.input :api_id, :as => :quiet
                       - q.answers.each do |a|
                         %td= render(a.custom_renderer || '/partials/answer', :g => g, :q => q, :a => a, :f => f) unless q.display_type == "label"
-                      %th= q.split_text(:post)
+                      %th= q.text_for(:post, @render_context, I18n.locale)
       - when :repeater
         - (@response_set.count_group_responses(qs) + 1).times do |rg|
           %li

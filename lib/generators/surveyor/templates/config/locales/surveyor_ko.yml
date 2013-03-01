@@ -1,0 +1,18 @@
+# encoding: UTF-8
+# Sample localization file for Korean. Add more files in this directory for other locales.
+# See http://github.com/svenfuchs/rails-i18n/tree/master/rails%2Flocale for starting points.
+
+ko:
+  surveyor:
+    take_these_surveys: "설문에 답을 하셔도 좋습니다"
+    take_it: "답을 하십시요"
+    completed_survey: "완료된 설문"
+    unable_to_find_your_responses: "설문에 대한 답을 찾을 수 없습니다"
+    unable_to_update_survey: "설문을 업데이트 할 수 없습니다"
+    unable_to_find_that_survey: "이 설문을 찾을 수 없습니다"
+    survey_started_success: "설문 조사가 성공적으로 시작되었습니다"
+    click_here_to_finish: "종료 하려면 여기를 누르십시요"
+    previous_section: "&laquo; 이전 항목으로"
+    next_section: "다음 항목으로 &raquo;"
+    select_one: "하나를 선택하십시요"
+    sections: "항목"

@@ -9,19 +9,12 @@ module Surveyor
       base.send :before_filter, :determine_if_javascript_is_enabled, :only => [:create, :update]
       base.send :before_filter, :set_response_set_and_render_context, :only => [:edit, :show]
       base.send :layout, 'surveyor_default'
+      base.send :before_filter, :set_locale
     end
 
     # Actions
     def new
-      @surveys = Survey.find(:all)
-      @codes = @surveys.inject({}) do |codes,s|
-        codes[s.access_code] ||= {}
-        codes[s.access_code][:title] = s.title
-        codes[s.access_code][:survey_versions] ||= []
-        codes[s.access_code][:survey_versions] << s.survey_version
-        codes
-      end
-      @title = "You can take these surveys"
+      @surveys_by_access_code = Survey.order("created_at DESC, survey_version DESC").all.group_by(&:access_code)
       redirect_to surveyor_index unless surveyor_index == available_surveys_path
     end
 
@@ -154,6 +147,10 @@ module Surveyor
       true
     end
 
+    def url_options
+      ((I18n.locale == I18n.default_locale) ? {} : {:locale => I18n.locale}).merge(super)
+    end
+
     private
 
     # This is a hook method for surveyor-using applications to override and provide the context object
@@ -170,6 +167,14 @@ module Surveyor
       @response_set = ResponseSet.
         find_by_access_code(params[:response_set_code], :include => {:responses => [:question, :answer]})
       @render_context = render_context
+    end
+
+     def set_locale
+       if params[:locale]
+         I18n.locale = params[:locale]
+       else
+         I18n.locale = I18n.default_locale
+       end
     end
 
     # Params: the name of some submit buttons store the section we'd like to go
@@ -228,6 +233,5 @@ module Surveyor
         session[:surveyor_javascript] = "not_enabled"
       end
     end
-
   end
 end

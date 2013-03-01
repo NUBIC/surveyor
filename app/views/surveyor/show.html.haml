@@ -48,10 +48,10 @@
                                   - if q.pick == "one"
                                     - r = response_for(@response_set, q, nil, g)
                                     - j = response_idx  # increment the response index since the answer partial skips for q.pick == one
-                                  %th= q.split_text(:pre)
+                                  %th= q.split(q.text, :pre)
                                   - q.answers.each do |a|
                                     %td= render a.custom_renderer || '/partials/answer', :g => g, :q => q, :a => a, :f => f, :disableFlag => true
-                                  %th= q.split_text(:post)
+                                  %th= q.split(q.text, :post)
                     - when :repeater
                       - (@response_set.count_group_responses(group_questions) + 1).times do |rg|
                         %li

@@ -1,3 +1,4 @@
+# encoding: UTF-8
 require File.expand_path(File.dirname(__FILE__) + '/../spec_helper')
 
 describe SurveySection do
@@ -45,7 +46,7 @@ describe SurveySection do
       [question_1, question_2, question_3].each{|q| survey_section.questions << q }
     end
     it{ survey_section.should have(3).questions}
-    it "gets questions in order" do      
+    it "gets questions in order" do
       survey_section.questions.should == [question_2, question_3, question_1]
       survey_section.questions.map(&:display_order).should == [1,2,3]
     end
@@ -53,6 +54,32 @@ describe SurveySection do
       question_ids = survey_section.questions.map(&:id)
       survey_section.destroy
       question_ids.each{|id| Question.find_by_id(id).should be_nil}
+    end
+  end
+
+  context "with translations" do
+    require 'yaml'
+    let(:survey){ Factory(:survey) }
+    let(:survey_translation){
+      Factory(:survey_translation, :locale => :es, :translation => {
+        :survey_sections => {
+          :one => {
+            :title => "Uno"
+          }
+        }
+      }.to_yaml)
+    }
+    before do
+      survey_section.reference_identifier = "one"
+      survey_section.survey = survey
+      survey.translations << survey_translation
+    end
+    it "returns its own translation" do
+      YAML.load(survey_translation.translation).should_not be_nil
+      survey_section.translation(:es)[:title].should == "Uno"
+    end
+    it "returns its own default values" do
+      survey_section.translation(:de).should == {"title" => survey_section.title, "description" => survey_section.description}
     end
   end
 end

@@ -83,6 +83,13 @@ module Surveyor
 
         self.survey_version = next_version
       end
+
+      def translation(locale_symbol)
+        t = self.translations.where(:locale => locale_symbol.to_s).first
+        {:title => self.title, :description => self.description}.with_indifferent_access.merge(
+          t ? YAML.load(t.translation || "{}").with_indifferent_access : {}
+        )
+      end
     end
   end
 end

@@ -11,11 +11,19 @@ end
 When /^I start the survey$/ do
   steps %Q{
     When I go to the surveys page
-     And I press "Take it"
+      And I press "Take it"
   }
   @survey_code       = current_path.split("/")[2] # /surveys/:survey_code/:response_set_code/take
   @response_set_code = current_path.split("/")[3] # /surveys/:survey_code/:response_set_code/take
 end
+
+When /^I start the survey in "(.*?)"$/ do |locale|
+    visit(available_surveys_path(:locale => locale))
+    steps %Q{
+      And I press "#{I18n.t 'surveyor.take_it'}"
+    }
+end
+
 
 # When I fill in the (nth) (string) for "(ref_id)" with "(value to fill)"
 When /^I fill in the (\d+[a-z]{0,2} )?(\w+) for "([^"]+)" with "([^"]+)"$/ do |index, type, answer_reference_id, value|
