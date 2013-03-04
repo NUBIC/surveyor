@@ -175,6 +175,11 @@ survey "Kitchen Sink survey", :default_mandatory => false do
     a "maybe"
     a "no"
     a "I don't know"
+
+    # Questions may also have input masks with fancy placeholders
+    q "What is your phone number?"
+    a :string, :input_mask => '(999)999-9999', :input_mask_placeholder => '#'
+    
   end
 
   section "Complicated questions" do
