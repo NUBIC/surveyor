@@ -1,0 +1,14 @@
+# encoding: UTF-8
+title: "ידיעת שפה אחת אינה מספיקה"
+survey_sections:
+  one:
+    title: "אחת"
+question_groups:
+  hello:
+    text: "שלום"
+questions:
+  name:
+    text: "מה שמך?"
+    answers:
+      name:
+        help_text: "שמי..."

@@ -45,6 +45,12 @@ module Surveyor
           end
         end.compact
       end
+
+      def translation(locale)
+        {:title => self.title, :description => self.description}.with_indifferent_access.merge(
+          (self.survey.translation(locale)[:survey_sections] || {})[self.reference_identifier] || {}
+        )
+      end
     end
   end
 end

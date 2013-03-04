@@ -7,7 +7,7 @@ Feature: Survey parser
     Given I parse
     """
       survey "Simple survey" do
-        section "Basic questions" do
+        section_basic "Basic questions" do
           label "These questions are examples of the basic supported input types"
 
           question_1 "What is your favorite color?", :pick => :one
@@ -22,7 +22,7 @@ Feature: Survey parser
           a_3 "brown", :display_order => 0
           a :omit
         end
-        section "Second section" do
+        section_second "Second section" do
         end
       end
       survey "Second survey" do
@@ -33,9 +33,9 @@ Feature: Survey parser
       | Simple survey | 0             |
       | Second survey | 1             |
     And there should be 2 sections with:
-      | title           | display_order |
-      | Basic questions | 0             |
-      | Second section  | 1             |
+      | title           | display_order | reference_identifier |
+      | Basic questions | 0             | basic                |
+      | Second section  | 1             | second               |
     And there should be 3 questions with:
       | reference_identifier | text                                                            | pick | display_type | display_order |
       | nil                  | These questions are examples of the basic supported input types | none | label        | 0             |
@@ -57,7 +57,7 @@ Feature: Survey parser
     """
       survey "Complex survey" do
         section "Complicated questions" do
-          grid "Tell us how you feel today" do
+          grid_feel "Tell us how you feel today" do
             a "-2"
             a "-1"
             a "0"
@@ -74,7 +74,7 @@ Feature: Survey parser
           a "knife", :string
           a :other, :string
 
-          repeater "Tell us about the cars you own" do
+          repeater_cars "Tell us about the cars you own" do
             q "Make", :pick => :one, :display_type => :dropdown
             a "Toyota"
             a "Ford"
@@ -95,9 +95,9 @@ Feature: Survey parser
       | title          |
       | Complex survey |
     And there should be 2 question groups with:
-      | text                           | display_type |
-      | Tell us how you feel today     | grid         |
-      | Tell us about the cars you own | repeater     |
+      | text                           | display_type | reference_identifier |
+      | Tell us how you feel today     | grid         | feel                 |
+      | Tell us about the cars you own | repeater     | cars                 |
     And there should be 7 questions with:
       | text    | pick | display_type |
       | Make    | one  | dropdown     |

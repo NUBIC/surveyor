@@ -9,19 +9,20 @@ module Surveyor
         base.send :has_many, :sections, :class_name => "SurveySection", :order => 'display_order', :dependent => :destroy
         base.send :has_many, :sections_with_questions, :include => :questions, :class_name => "SurveySection", :order => 'display_order'
         base.send :has_many, :response_sets
+        base.send :has_many, :translations, :class_name => "SurveyTranslation"
 
         # Scopes
         base.send :scope, :with_sections, {:include => :sections}
-        
+
         @@validations_already_included ||= nil
         unless @@validations_already_included
           # Validations
           base.send :validates_presence_of, :title
           base.send :validates_uniqueness_of, :survey_version, :scope => :access_code, :message => "survey with matching access code and version already exists"
-          
+
           @@validations_already_included = true
         end
-        
+
         # Whitelisting attributes
         base.send :attr_accessible, :title, :description, :reference_identifier, :data_export_identifier, :common_namespace, :common_identifier, :css_url, :custom_class, :display_order
 
@@ -81,6 +82,13 @@ module Surveyor
         next_version = surveys.any? ? surveys.first.survey_version.to_i + 1 : 0
 
         self.survey_version = next_version
+      end
+
+      def translation(locale_symbol)
+        t = self.translations.where(:locale => locale_symbol.to_s).first
+        {:title => self.title, :description => self.description}.with_indifferent_access.merge(
+          t ? YAML.load(t.translation || "{}").with_indifferent_access : {}
+        )
       end
     end
   end

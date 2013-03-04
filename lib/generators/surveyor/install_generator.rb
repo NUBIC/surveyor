@@ -38,6 +38,7 @@ module Surveyor
       add_unique_index_on_access_code_and_version_in_surveys
       update_blank_versions_on_surveys
       api_ids_must_be_unique
+      create_survey_translations
     )
 
     def readme
@@ -84,6 +85,8 @@ module Surveyor
       copy_file "surveys/kitchen_sink_survey.rb"
       copy_file "surveys/quiz.rb"
       copy_file "surveys/date_survey.rb"
+      copy_file "surveys/languages.rb"
+      directory "surveys/translations"
     end
 
     def locales
