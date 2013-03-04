@@ -6,10 +6,10 @@ module Surveyor
         base.send :belongs_to, :response_set
         base.send :belongs_to, :question
         base.send :belongs_to, :answer
-        
+
         # Scopes
         base.send :default_scope, :order => "created_at ASC"
-        
+
         @@validations_already_included ||= nil
         unless @@validations_already_included
           # Validations
@@ -21,7 +21,7 @@ module Surveyor
 
         # Whitelisting attributes
         base.send :attr_accessible, :response_set, :question, :answer, :date_value, :time_value, :response_set_id, :question_id, :answer_id, :datetime_value, :integer_value, :float_value, :unit, :text_value, :string_value, :response_other, :response_group, :survey_section_id
-        
+
         # Class methods
         base.instance_eval do
           def applicable_attributes(attrs)
@@ -45,7 +45,7 @@ module Surveyor
       def default_args
         self.api_id ||= Surveyor::Common.generate_api_id
       end
-      
+
       def answer_id=(val)
         write_attribute :answer_id, (val.is_a?(Array) ? val.detect{|x| !x.to_s.blank?} : val)
       end
@@ -58,7 +58,7 @@ module Surveyor
       end
 
       def time_value=(val)
-        self.datetime_value = Time.zone.parse("#{Date.today.to_s} #{val}").to_datetime
+        self.datetime_value = Time.zone.parse("#{Date.today.to_s} #{val}") ? Time.zone.parse("#{Date.today.to_s} #{val}").to_datetime : nil
       end
 
       def date_value
@@ -66,7 +66,7 @@ module Surveyor
       end
 
       def date_value=(val)
-        self.datetime_value = Time.zone.parse(val).to_datetime
+        self.datetime_value = Time.zone.parse(val) ? Time.zone.parse(val).to_datetime : nil
       end
 
       def time_format
