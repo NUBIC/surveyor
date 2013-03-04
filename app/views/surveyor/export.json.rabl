@@ -33,7 +33,7 @@ child :sections => :sections do
       node(:reference_identifier,   :if => lambda { |a| !a.reference_identifier.blank? }){ |a| a.reference_identifier }
       node(:data_export_identifier, :if => lambda { |a| !a.data_export_identifier.blank? }){ |a| a.data_export_identifier }
       node(:input_mask, :if => lambda { |a| !a.input_mask.blank? }){ |a| a.input_mask }
-      node(:placeholder, :if => lambda { |a| !a.placeholder.blank? }){ |a| a.placeholder }
+      node(:input_mask_placeholder, :if => lambda { |a| !a.input_mask_placeholder.blank? }){ |a| a.input_mask_placeholder }
     end
 
     # both questions and question_groups have dependencies

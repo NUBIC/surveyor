@@ -76,7 +76,7 @@ module Surveyor
         end
       end
 
-      def generate_pick_none_input_html(value, default_value, css_class, response_class, disabled, input_mask, placeholder)
+      def generate_pick_none_input_html(value, default_value, css_class, response_class, disabled, input_mask, input_mask_placeholder)
         html = {}
         html[:class] = [response_class,css_class].reject{ |c| c.blank? }
         html[:value] = default_value if value.blank?
@@ -84,7 +84,7 @@ module Surveyor
         if input_mask
           data = {}
           data['data-input_mask'] = input_mask
-          data['data-placeholder'] = placeholder unless placeholder.blank?
+          data['data-input_mask_placeholder'] = input_mask_placeholder unless input_mask_placeholder.blank?
           html[:data] = data
         end
       end
