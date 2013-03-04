@@ -3,8 +3,8 @@
 - renderer = q.renderer(g ||= nil)
 - disabled = defined?(disableFlag) ? disableFlag : false
 - unless q.display_type == "hidden"
-  = f.inputs q_text(q, @render_context), :id => rg ? "q_#{q.id}_#{rg}" : "q_#{q.id}", :class => "q_#{renderer} #{q.css_class(@response_set)}" do
-    %span.help= render_help_text(q, @render_context)
+  = f.inputs q_text(q, @render_context, I18n.locale), :id => rg ? "q_#{q.id}_#{rg}" : "q_#{q.id}", :class => "q_#{renderer} #{q.css_class(@response_set)}" do
+    %span.help= q.help_text_for(@render_context, I18n.locale)
     - case renderer
     - when  :image, :label, :default_label, :inline_label, :repeater_label
     - when :dropdown, :inline_dropdown, :default_dropdown, :slider, :repeater_dropdown

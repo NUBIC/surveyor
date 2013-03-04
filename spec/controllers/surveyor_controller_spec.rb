@@ -21,12 +21,12 @@ describe SurveyorController do
       response.should render_template('new')
     end
 
-    it "should list codes and survey_versions for all surveys" do
+    it "assigns surveys_by_access_code to surveys grouped by access_code" do
       original = Factory(:survey, :title => "Foo", :access_code => 'foo')
       supplant = Factory(:survey, :title => "Foo", :access_code => 'foo', :survey_version => 1)
-      hash = {"foo"=>{"title"=>"Foo", "survey_versions"=>[0, 1]}}
+      hash = {"foo"=>[supplant, original]}
       do_get
-      assigns(:codes).should eq hash
+      assigns(:surveys_by_access_code).should eq hash
     end
   end
 

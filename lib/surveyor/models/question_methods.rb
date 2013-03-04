@@ -14,6 +14,9 @@ module Surveyor
         # Scopes
         base.send :default_scope, :order => "display_order ASC"
 
+        # Mustache
+        base.send :include, MustacheContext
+
         @@validations_already_included ||= nil
         unless @@validations_already_included
           # Validations
@@ -29,8 +32,6 @@ module Surveyor
         # Whitelisting attributes
         base.send :attr_accessible, :survey_section, :question_group, :survey_section_id, :question_group_id, :text, :short_text, :help_text, :pick, :reference_identifier, :data_export_identifier, :common_namespace, :common_identifier, :display_order, :display_type, :is_mandatory, :display_width, :custom_class, :custom_renderer, :correct_answer_id
       end
-
-      include RenderText
 
       # Instance Methods
       def initialize(*args)
@@ -75,14 +76,40 @@ module Surveyor
         self.question_group.nil?
       end
 
-      def split_text(part = nil)
-        (part == :pre ? text.split("|",2)[0] : (part == :post ? text.split("|",2)[1] : text)).to_s
+      def text_for(position = nil, context = nil, locale = nil)
+        return "" if display_type == "hidden_label"
+        imaged(split(in_context(translation(locale)[:text], context), position))
       end
-
+      def help_text_for(context = nil, locale = nil)
+        in_context(translation(locale)[:help_text], context)
+      end
+      def split(text, position=nil)
+        case position
+        when :pre
+          text.split("|",2)[0]
+        when :post
+          text.split("|",2)[1]
+        else
+          text
+        end.to_s
+      end
       def renderer(g = question_group)
         r = [g ? g.renderer.to_s : nil, display_type].compact.join("_")
         r.blank? ? :default : r.to_sym
       end
+      def translation(locale)
+        {:text => self.text, :help_text => self.help_text}.with_indifferent_access.merge(
+          (self.survey_section.survey.translation(locale)[:questions] || {})[self.reference_identifier] || {}
+        )
+      end
+
+      private
+
+
+      def imaged(text)
+        self.display_type == "image" && !text.blank? ? ActionController::Base.helpers.image_tag(text) : text
+      end
+
     end
   end
 end

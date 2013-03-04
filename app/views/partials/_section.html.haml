@@ -1,5 +1,5 @@
 = div_for @section, :class => @section.custom_class do
-  %span.title= @section.title
+  %span.title= @section.translation(I18n.locale)[:title]
   - qs ||= []
   - (questions = @section.questions).each_with_index do |q, i|
     - if q.part_of_group?

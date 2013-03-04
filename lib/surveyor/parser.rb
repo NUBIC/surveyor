@@ -1,4 +1,4 @@
-%w(survey survey_section question_group question dependency dependency_condition answer validation validation_condition).each {|model| require model }
+%w(survey survey_translation survey_section question_group question dependency dependency_condition answer validation validation_condition).each {|model| require model }
 module Surveyor
   class ParserError < StandardError; end
   class Parser
@@ -63,7 +63,7 @@ module Surveyor
     def method_missing(missing_method, *args, &block)
       method_name, reference_identifier = missing_method.to_s.split("_", 2)
       type = full(method_name)
-      Surveyor::Parser.raise_error( "\"#{type}\" is not a surveyor method." )if !%w(survey survey_section question_group question dependency dependency_condition answer validation validation_condition).include?(type)
+      Surveyor::Parser.raise_error( "\"#{type}\" is not a surveyor method." )if !%w(survey survey_translation survey_section question_group question dependency dependency_condition answer validation validation_condition).include?(type)
 
       Surveyor::Parser.rake_trace(reference_identifier.blank? ? "#{type} #{args.map(&:inspect).join ', '}" : "#{type}_#{reference_identifier} #{args.map(&:inspect).join ', '}",
                                   block_models.include?(type) ? 2 : 0)
@@ -100,6 +100,7 @@ module Surveyor
 
     def full(method_name)
       case method_name.to_s
+      when /^translations$/; "survey_translation"
       when /^section$/; "survey_section"
       when /^g$|^grid$|^group$|^repeater$/; "question_group"
       when /^q$|^label$|^image$/; "question"
@@ -174,6 +175,16 @@ module SurveyorParserSurveyMethods
 end
 
 # SurveySection model
+module SurveyorParserSurveyTranslationMethods
+  def parse_and_build(context, args, original_method, reference_identifier)
+    # build, no change in context
+    args[0].each do |k,v|
+      context[:survey].translations << self.class.new(:locale => k.to_s, :translation => File.read(Rails.root.join("surveys", v)))
+    end
+  end
+end
+
+# SurveySection model
 module SurveyorParserSurveySectionMethods
   def parse_and_build(context, args, original_method, reference_identifier)
     # clear context
@@ -183,6 +194,7 @@ module SurveyorParserSurveySectionMethods
     title = args[0]
     self.attributes = ({
       :title => title,
+      :reference_identifier => reference_identifier,
       :display_order => context[:survey].sections.size }.merge(args[1] || {}))
     context[:survey].sections << context[:survey_section] = self
   end
@@ -208,6 +220,7 @@ module SurveyorParserQuestionGroupMethods
     # build and set context
     self.attributes = ({
       :text => args[0] || "Question Group",
+      :reference_identifier => reference_identifier,
       :display_type => (original_method =~ /grid|repeater/ ? original_method : "default")}.merge(args[1] || {}))
     context[:question_group] = self
   end
