@@ -12,16 +12,16 @@ module Surveyor
 
         # Scopes
         base.send :scope, :with_sections, {:include => :sections}
-        
+
         @@validations_already_included ||= nil
         unless @@validations_already_included
           # Validations
           base.send :validates_presence_of, :title
           base.send :validates_uniqueness_of, :survey_version, :scope => :access_code, :message => "survey with matching access code and version already exists"
-          
+
           @@validations_already_included = true
         end
-        
+
         # Whitelisting attributes
         base.send :attr_accessible, :title, :description, :reference_identifier, :data_export_identifier, :common_namespace, :common_identifier, :css_url, :custom_class, :display_order
 
@@ -75,7 +75,6 @@ module Surveyor
       def filtered_for_json
         self
       end
-      protected :filtered_for_json
 
       def default_access_code
         self.class.to_normalized_string(title)

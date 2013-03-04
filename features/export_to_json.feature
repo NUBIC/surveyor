@@ -260,7 +260,48 @@ Feature: Survey export
   And I export the response set
   Then the JSON at "responses" should have 1 entry
   And the JSON response at "responses/0/value" should be null
-  
+
   Scenario: Exporting non-existent surveys
     When I visit "/surveys/simple-json.json"
     Then I should get a "404" response
+
+  Scenario: Exporting with survey modifications
+  Given I parse
+  """
+    survey "Simple" do
+      section "Colors" do
+        question "What is your least favorite color?"
+        a "least favorite color", :string
+      end
+    end
+  """
+  When I prefix the titles of exported surveys with "NUBIC - "
+  Then the JSON representation for "Simple" should be:
+  """
+  {
+    "title": "NUBIC - Simple",
+    "uuid": "*",
+    "sections": [{
+      "title": "Colors",
+      "display_order":0,
+      "questions_and_groups": [
+        { "uuid": "*", "text": "What is your least favorite color?", "answers": [{"text": "least favorite color", "uuid": "*", "type": "string"}]}
+      ]
+    }]
+  }
+  """
+  When I visit "/surveys/simple.json"
+  Then the JSON should be:
+  """
+  {
+    "title": "NUBIC - Simple",
+    "uuid": "*",
+    "sections": [{
+      "title": "Colors",
+      "display_order":0,
+      "questions_and_groups": [
+        { "uuid": "*", "text": "What is your least favorite color?", "answers": [{"text": "least favorite color", "uuid": "*", "type": "string"}]}
+      ]
+    }]
+  }
+  """

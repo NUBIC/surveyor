@@ -7,6 +7,7 @@ History for Surveyor
 ### Features
 
 - Upgrade to jQuery UI 1.10.0, jQuery 1.9.0, jQueryUI timepicker addons 1.2, and remove jQuery tools (#409)
+- Add extension point for pre-JSON-export survey modifications (#416)
 
 ### Fixes
 

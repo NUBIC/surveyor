@@ -141,12 +141,9 @@ module Surveyor
 
     def export
       surveys = Survey.where(:access_code => params[:survey_code]).order("survey_version DESC")
-      if params[:survey_version].blank?
-        @survey = surveys.first
-      else
-        @survey = surveys.where(:survey_version => params[:survey_version]).first
-      end
-      render_404 and return if @survey.blank?
+      s = params[:survey_version].blank? ? surveys.first : surveys.where(:survey_version => params[:survey_version]).first
+      render_404 and return if s.blank?
+      @survey = s.filtered_for_json
     end
 
     def render_404

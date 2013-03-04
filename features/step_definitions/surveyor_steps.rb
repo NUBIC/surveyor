@@ -188,6 +188,22 @@ Then /^the JSON response at "(.*?)" should correspond to an answer with text "(.
   last_json.should be_json_eql(JsonSpec.remember("\"#{Answer.find_by_text(text).api_id}\"")).at_path(path)
 end
 
+Then /^the JSON representation for "(.*?)" should be:$/ do |title, string|
+  Survey.find_by_title(title).as_json.to_json.should be_json_eql(string)
+end
+
+Given /^I prefix the titles of exported surveys with "(.*?)"$/ do |prefix|
+  PREFIX = prefix
+  class Survey < ActiveRecord::Base
+    include Surveyor::Models::SurveyMethods
+    def filtered_for_json
+      dolly = self.clone
+      dolly.title = "#{PREFIX}#{dolly.title}"
+      dolly
+    end
+  end
+end
+
 ## Hidden and shown elements
 
 Then /the element "([^\"]*)" should be hidden$/ do |selector|
@@ -243,7 +259,6 @@ Given /^I replace question numbers with letters$/ do
     end
   end
 end
-
 
 ## Various input elements
 
