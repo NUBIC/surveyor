@@ -64,9 +64,17 @@ module Surveyor
         self.inactive_at = DateTime.now
         self.active_at = nil
       end
+
       def as_json(options = nil)
         template_paths = ActionController::Base.view_paths.collect(&:to_path)
-        Rabl.render(self, 'surveyor/export.json', :view_path => template_paths, :format => "hash")
+        Rabl.render(filtered_for_json, 'surveyor/export.json', :view_path => template_paths, :format => "hash")
+      end
+
+      ##
+      # A hook that allows the survey object to be modified before it is
+      # serialized by the #as_json method.
+      def filtered_for_json
+        self
       end
 
       def default_access_code

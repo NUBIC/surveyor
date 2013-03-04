@@ -9,6 +9,7 @@ History for Surveyor
 - Upgrade to jQuery UI 1.10.0, jQuery 1.9.0, jQueryUI timepicker addons 1.2, and remove jQuery tools (#409)
 - Upgrade reset css
 - Added surveyor_translations table to support YAML-based localizations of surveys. (#420)
+- Add extension point for pre-JSON-export survey modifications (#416)
 
 ### Fixes
 
