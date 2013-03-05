@@ -846,7 +846,7 @@ Feature: Survey creation
       survey "Personal" do
         section "One" do
           q "What is your phone number?"
-          a 'phone', :string, :input_mask => '(999)999-9999', :input_mask_placeholder => '#'
+          a "phone", :string, :input_mask => '(999)999-9999', :input_mask_placeholder => '#'
         end
       end
     """
