@@ -173,7 +173,7 @@ Feature: Survey export
               {
                 "input_mask": "(999)999-9999",
                 "input_mask_placeholder": "#",
-                "text": "",
+                "text": "String",
                 "type": "string", 
                 "uuid": "*"
               }
