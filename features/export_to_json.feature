@@ -151,7 +151,7 @@ Feature: Survey export
   """
     survey "Personal" do
       section "Guy" do
-        question "What is your phone number?"
+        q "What is your phone number?"
         a :string, :input_mask => '(999)999-9999', :input_mask_placeholder => '#'
       end
     end
