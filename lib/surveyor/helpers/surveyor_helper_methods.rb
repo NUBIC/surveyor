@@ -22,7 +22,7 @@ module Surveyor
                                   'surveyor/jquery-ui-timepicker-addon',
                                   'surveyor/jquery.selectToUISlider',
                                   'surveyor/jquery.surveyor',
-                                  'jquery.maskedinput')
+                                  'surveyor/jquery.maskedinput')
         end
       end
       # Helper for displaying warning/notice/error flash messages
