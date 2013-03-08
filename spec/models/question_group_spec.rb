@@ -78,7 +78,7 @@ describe QuestionGroup do
     before do
       question_group.text = "Goodbye"
       question_group.reference_identifier = "goodbye"
-      question_group.questions << question
+      question_group.questions = [question]
       question.survey_section = survey_section
       survey_section.survey = survey
       survey.translations << survey_translation

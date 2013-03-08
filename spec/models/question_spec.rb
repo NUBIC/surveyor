@@ -172,10 +172,14 @@ describe Question do
   end
 
   context "for views" do
+    let(:asset_directory){ asset_pipeline_enabled? ? "assets" : "images" }
+    before do
+      ActionController::Base.helpers.config.assets_dir = "public" unless asset_pipeline_enabled?
+    end
     it "#text_for with #display_type == image" do
       question.text = "rails.png"
       question.display_type = :image
-      question.text_for.should == '<img alt="Rails" src="/assets/rails.png" />'
+      question.text_for.should == %(<img alt="Rails" src="/#{asset_directory}/rails.png" />)
     end
     it "#help_text_for"
     it "#text_for preserves strings" do
