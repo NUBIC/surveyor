@@ -507,9 +507,10 @@ Feature: Survey creation
         end
       end
     """
+      And I set the asset directory
     When I start the "Images" survey
     Then I should see the image "/images/surveyor/next.gif"
-    And I should see the image "/images/surveyor/prev.gif"
+      And I should see the image "/images/surveyor/prev.gif"
 
   @javascript
   Scenario: Creating and unchecking checkboxes

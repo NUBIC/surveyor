@@ -206,6 +206,7 @@ Given /^I prefix the titles of exported surveys with "(.*?)"$/ do |prefix|
     include Surveyor::Models::SurveyMethods
     def filtered_for_json
       dolly = self.clone
+      dolly.sections = self.sections
       dolly.title = "#{PREFIX}#{dolly.title}"
       dolly
     end
@@ -314,4 +315,9 @@ end
 
 Then /^the question "(.*?)" should have correct answer "(.*?)"$/ do |q, a|
   Question.find_by_reference_identifier(q).correct_answer.reference_identifier.should == a
+end
+
+## for Rails 3.0
+Then /^I set the asset directory$/ do
+  ActionController::Base.helpers.config.assets_dir = "public" unless asset_pipeline_enabled?
 end

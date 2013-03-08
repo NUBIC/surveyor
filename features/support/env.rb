@@ -6,6 +6,8 @@
 ENV["RAILS_ROOT"] ||= File.expand_path(File.dirname(__FILE__) + '/../../testbed')
 require 'cucumber/rails'
 
+# For Rails 3.0
+include Surveyor::Helpers::AssetPipeline
 
 # require File.expand_path(File.dirname(__FILE__) + '/../../testbed/config/environment.rb')
 # Capybara defaults to XPath selectors rather than Webrat's default of CSS3. In
