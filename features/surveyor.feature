@@ -810,6 +810,7 @@ Feature: Survey creation
       And I should not see "Your response"
       And I should see "Grid response"
       And I should see no text inputs on the page
+
   @javascript
   Scenario: dates in pick one
     Given I parse
@@ -837,3 +838,57 @@ Feature: Survey creation
       And I press "One"
     Then the first date field should contain "2013-03-09"
       And the first date field should not contain "2013-03-09 00:00:00.000000"
+
+  @javascript
+  Scenario: input mask and input mask placeholder
+    Given I parse
+    """
+      survey "Personal" do
+        section "One" do
+          q "What is your phone number?"
+          a "phone", :string, :input_mask => '(999)999-9999', :input_mask_placeholder => '#'
+        end
+      end
+    """
+    When  I start the "Personal" survey
+      And I fill in "phone" with "1234567890"
+      And I press "Click here to finish"
+    Then there should be 1 response set with 1 responses with:
+      | string_value  |
+      | (123)456-7890 |
+
+    @javascript
+    Scenario: numeric input mask with alphanumeric input
+    Given I parse
+    """
+      survey "Personal" do
+        section "One" do
+          q "What is your phone number?"
+          a 'phone', :string, :input_mask => '(999)999-9999'
+        end
+      end
+    """
+    When  I start the "Personal" survey
+      And I fill in "phone" with "1a2b3c4d5e6f7g8h9i0"
+      And I press "Click here to finish"
+    Then there should be 1 response set with 1 responses with:
+      | string_value  |
+      | (123)456-7890 |
+
+    @javascript
+    Scenario: alpha input mask with alphanumeric input
+    Given I parse
+    """
+      survey "Personal" do
+        section "One" do
+          q "What are your favorite letters?"
+          a 'letters', :string, :input_mask => 'aaaaaaaaa'
+        end
+      end
+    """
+    When  I start the "Personal" survey
+      And I fill in "letters" with "1a2b3c4d5e6f7g8h9i0"
+      And I press "Click here to finish"
+    Then there should be 1 response set with 1 responses with:
+      | string_value  |
+      | abcdefghi     |

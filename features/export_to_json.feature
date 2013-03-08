@@ -146,6 +146,43 @@ Feature: Survey export
     }
   """
 
+  Scenario: Exporting input mask and mask placeholder
+  Given I parse
+  """
+    survey "Personal" do
+      section "Guy" do
+        q "What is your phone number?"
+        a :string, :input_mask => '(999)999-9999', :input_mask_placeholder => '#'
+      end
+    end
+  """
+  And I visit "/surveys/personal.json"
+  Then the JSON should be:
+    """
+    {
+      "title": "Personal",
+      "uuid": "*",
+      "sections": [{
+        "display_order": 0,
+        "title": "Guy",
+        "questions_and_groups": [
+          { 
+            "uuid": "*", 
+            "text": "What is your phone number?",
+            "answers": [
+              {
+                "input_mask": "(999)999-9999",
+                "input_mask_placeholder": "#",
+                "text": "String",
+                "type": "string", 
+                "uuid": "*"
+              }
+            ]
+          }]
+        }]
+      }
+    """
+
   Scenario: Exporting response sets
   Given I parse
   """
