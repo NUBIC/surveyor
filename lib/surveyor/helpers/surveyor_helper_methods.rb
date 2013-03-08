@@ -21,7 +21,8 @@ module Surveyor
                                   'surveyor/jquery-ui-1.10.0.custom',
                                   'surveyor/jquery-ui-timepicker-addon',
                                   'surveyor/jquery.selectToUISlider',
-                                  'surveyor/jquery.surveyor')
+                                  'surveyor/jquery.surveyor',
+                                  'surveyor/jquery.maskedinput')
         end
       end
       # Helper for displaying warning/notice/error flash messages
@@ -75,11 +76,17 @@ module Surveyor
         end
       end
 
-      def generate_pick_none_input_html(value, default_value, css_class, response_class, disabled)
+      def generate_pick_none_input_html(value, default_value, css_class, response_class, disabled, input_mask, input_mask_placeholder)
         html = {}
         html[:class] = [response_class,css_class].reject{ |c| c.blank? }
         html[:value] = default_value if value.blank?
         html[:disabled] = disabled unless disabled.blank?
+        if input_mask
+          data = {}
+          data['input-mask'] = input_mask
+          data['input-mask-placeholder'] = input_mask_placeholder unless input_mask_placeholder.blank?
+          html[:data] = data
+        end
         html
       end
 

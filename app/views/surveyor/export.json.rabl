@@ -32,6 +32,8 @@ child :sections => :sections do
       node(:type,                   :if => lambda { |a| a.response_class != "answer" }){ |a| a.response_class }
       node(:reference_identifier,   :if => lambda { |a| !a.reference_identifier.blank? }){ |a| a.reference_identifier }
       node(:data_export_identifier, :if => lambda { |a| !a.data_export_identifier.blank? }){ |a| a.data_export_identifier }
+      node(:input_mask, :if => lambda { |a| !a.input_mask.blank? }){ |a| a.input_mask }
+      node(:input_mask_placeholder, :if => lambda { |a| !a.input_mask_placeholder.blank? }){ |a| a.input_mask_placeholder }
     end
 
     # both questions and question_groups have dependencies
@@ -64,6 +66,8 @@ child :sections => :sections do
         node(:type, :if => lambda { |a| a.response_class != "answer" }){ |a| a.response_class }
         node(:reference_identifier,   :if => lambda { |a| !a.reference_identifier.blank? }){ |a| a.reference_identifier }
         node(:data_export_identifier, :if => lambda { |a| !a.data_export_identifier.blank? }){ |a| a.data_export_identifier }
+        node(:input_mask, :if => lambda { |a| !a.input_mask.blank? }){ |a| a.input_mask }
+        node(:input_mask_placeholder, :if => lambda { |a| !a.input_mask_placeholder.blank? }){ |a| a.input_mask_placeholder }
       end
 
       child :dependency, :if => lambda { |q| q.dependency } do
