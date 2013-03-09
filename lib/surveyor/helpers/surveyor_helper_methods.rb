@@ -82,10 +82,8 @@ module Surveyor
         html[:value] = default_value if value.blank?
         html[:disabled] = disabled unless disabled.blank?
         if input_mask
-          data = {}
-          data['input-mask'] = input_mask
-          data['input-mask-placeholder'] = input_mask_placeholder unless input_mask_placeholder.blank?
-          html[:data] = data
+          html[:'data-input-mask'] = input_mask
+          html[:'data-input-mask-placeholder'] = input_mask_placeholder unless input_mask_placeholder.blank?
         end
         html
       end

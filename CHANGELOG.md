@@ -10,6 +10,7 @@ History for Surveyor
 - Upgrade reset css
 - Added surveyor_translations table to support YAML-based localizations of surveys. (#420)
 - Add extension point for pre-JSON-export survey modifications (#416)
+- Add input mask for text entry fields (#415)
 
 ### Fixes
 
