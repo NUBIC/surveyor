@@ -23,6 +23,10 @@ History for Surveyor
 - Evaluate all submitted questions for depdencies (#396)
 - Pick one answers with dates should display their dates correctly (#378)
 
+### Infrastructure
+
+- Added stacktests.sh shell script for testing different stacks
+
 1.2.0
 -----
 
