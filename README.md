@@ -72,6 +72,19 @@ and review the [changelog][] for changes that may affect your customizations.
 
 [changelog]: https://github.com/NUBIC/surveyor/blob/master/CHANGELOG.md
 
+## Users of spork
+
+There is [an issue with spork and custom inputs in formatstic (#851)][851]. A workaround (thanks rmm5t!):
+
+    Spork.prefork do
+      # ...
+      surveyor_path = Gem.loaded_specs['surveyor'].full_gem_path
+      Dir["#{surveyor_path}/app/inputs/*_input.rb"].each { |f| require File.basename(f) }
+      # ...
+    end
+
+[851]: https://github.com/justinfrench/formtastic/issues/851
+
 ## Follow master
 
 If you are following pre-release versions of surveyor using a `:git`
