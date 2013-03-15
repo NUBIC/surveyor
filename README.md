@@ -20,7 +20,7 @@ without maintaining a fork.
 Surveyor works with:
 
 * Ruby 1.8.7, 1.9.2, and 1.9.3
-* Rails 3.0-3.2
+* Rails 3.1-3.2
 
 Some key dependencies are:
 

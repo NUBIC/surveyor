@@ -4,6 +4,9 @@ History for Surveyor
 1.3.1
 -----
 
+### Dependencies
+
+- Removing support for Rails 3.0. Applications requiring Rails 3.0 should use Surveyor v1.3.0
 
 1.3.0
 -----

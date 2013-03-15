@@ -7,7 +7,7 @@ PS3="Choose a stack or 'q' to quit: "
 
 options=""
 rubies=(ree 1.9.3)
-rails_versions=(rails_3.0 rails_3.1 rails_3.2)
+rails_versions=(rails_3.1 rails_3.2)
 
 for i in "${rubies[@]}"
 do
