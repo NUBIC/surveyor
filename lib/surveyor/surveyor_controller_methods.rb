@@ -15,7 +15,7 @@ module Surveyor
     # Actions
     def new
       @surveys_by_access_code = Survey.order("created_at DESC, survey_version DESC").all.group_by(&:access_code)
-      redirect_to surveyor_index unless surveyor_index == available_surveys_path
+      redirect_to surveyor_index unless surveyor_index == surveyor.available_surveys_path
     end
 
     def create
@@ -29,7 +29,7 @@ module Surveyor
         create(:survey => @survey, :user_id => (@current_user.nil? ? @current_user : @current_user.id))
       if (@survey && @response_set)
         flash[:notice] = t('surveyor.survey_started_success')
-        redirect_to(edit_my_survey_path(
+        redirect_to(surveyor.edit_my_survey_path(
           :survey_code => @survey.access_code, :response_set_code  => @response_set.access_code))
       else
         flash[:notice] = t('surveyor.Unable_to_find_that_survey')
@@ -81,10 +81,10 @@ module Surveyor
       respond_to do |format|
         format.html do
           if @response_set.nil?
-            return redirect_with_message(available_surveys_path, :notice, t('surveyor.unable_to_find_your_responses'))
+            return redirect_with_message(surveyor.available_surveys_path, :notice, t('surveyor.unable_to_find_your_responses'))
           else
             flash[:notice] = t('surveyor.unable_to_update_survey') unless saved
-            redirect_to edit_my_survey_path(
+            redirect_to surveyor.edit_my_survey_path(
               :anchor => anchor_from(params[:section]), :section => section_id_from(params[:section]))
           end
         end
@@ -186,10 +186,10 @@ module Surveyor
     end
 
     def surveyor_index
-      available_surveys_path
+      surveyor.available_surveys_path
     end
     def surveyor_finish
-      available_surveys_path
+      surveyor.available_surveys_path
     end
 
     def redirect_with_message(path, message_type, message)

@@ -69,6 +69,10 @@ module Surveyor
       end
     end
 
+    def routes
+      route('mount Surveyor::Engine => "/surveys", :as => "surveyor"')
+    end
+
     def assets
       if asset_pipeline_enabled?
         directory "app/assets"

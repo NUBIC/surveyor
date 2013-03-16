@@ -3,6 +3,9 @@ History for Surveyor
 
 1.3.1
 -----
+### Features
+
+- Routes are namespaced (e.g. `surveyor.available_surveys_path`) and may be mounted at a different root (e.g. `mount Surveyor::Engine, :at => '/instruments'`) (#398, #421)
 
 ### Fixes
 

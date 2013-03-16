@@ -18,7 +18,7 @@ When /^I start the survey$/ do
 end
 
 When /^I start the survey in "(.*?)"$/ do |locale|
-    visit(available_surveys_path(:locale => locale))
+    visit(surveyor.available_surveys_path(:locale => locale))
     steps %Q{
       And I press "#{I18n.t 'surveyor.take_it'}"
     }
