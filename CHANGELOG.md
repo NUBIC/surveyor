@@ -4,6 +4,10 @@ History for Surveyor
 1.3.1
 -----
 
+### Fixes
+
+- Remove default order on Response. (#423)
+
 ### Dependencies
 
 - Removing support for Rails 3.0. Applications requiring Rails 3.0 should use Surveyor v1.3.0

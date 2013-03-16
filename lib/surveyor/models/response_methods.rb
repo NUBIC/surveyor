@@ -7,9 +7,6 @@ module Surveyor
         base.send :belongs_to, :question
         base.send :belongs_to, :answer
 
-        # Scopes
-        base.send :default_scope, :order => "created_at ASC"
-
         @@validations_already_included ||= nil
         unless @@validations_already_included
           # Validations

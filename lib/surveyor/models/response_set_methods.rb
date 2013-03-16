@@ -7,7 +7,7 @@ module Surveyor
         # Associations
         base.send :belongs_to, :survey
         base.send :belongs_to, :user
-        base.send :has_many, :responses, :dependent => :destroy
+        base.send :has_many, :responses, :order => 'created_at ASC', :dependent => :destroy
         base.send :accepts_nested_attributes_for, :responses, :allow_destroy => true
 
         @@validations_already_included ||= nil
