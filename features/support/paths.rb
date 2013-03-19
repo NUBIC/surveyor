@@ -10,10 +10,13 @@ module NavigationHelpers
 
     when /^the home\s?page$/
       '/'
-    when /the surveys page/
+    when /^the surveys page$/
       '/surveys'
+    when /the surveys page in "(.*)"$/
+      "/surveys?locale=#{$1}"
     when /the last response set show page/
-      surveyor.view_my_survey_path(:survey_code => ResponseSet.last.survey.access_code, :response_set_code => ResponseSet.last.access_code)
+      "/surveys/#{ResponseSet.last.survey.access_code}/#{ResponseSet.last.access_code}"
+
     # Add more mappings here.
     # Here is an example that pulls values out of the Regexp:
     #
