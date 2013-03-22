@@ -3,6 +3,8 @@ title: "ידיעת שפה אחת אינה מספיקה"
 survey_sections:
   one:
     title: "אחת"
+  two:
+    title: "שנים"
 question_groups:
   hello:
     text: "שלום"
@@ -12,3 +14,5 @@ questions:
     answers:
       name:
         help_text: "שמי..."
+  color:
+    text: "מהו הצבע האהוב עליך?"

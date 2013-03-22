@@ -3,6 +3,8 @@ title: "한가지 언어로는 충분치 않습니다."
 survey_sections:
   one:
     title: "하나"
+  two:
+    title: "두"
 question_groups:
   hello:
     text: "안녕하십니까"
@@ -12,3 +14,5 @@ questions:
     answers:
       name:
         help_text: "제 이름은 ... 입니다"
+  color:
+    text: "좋아하는 색은 무엇입니까?"

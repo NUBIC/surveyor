@@ -1,5 +1,22 @@
 .surveyor_menu
+  - if !@survey.translations.empty?
+    .surveyor_language_selection
+      = label_tag "locale", t('surveyor.language')
+      %select{:id=>"locale", :name=>"new_locale", :onchange => "sendSection(this.form)"}
+        - if @survey.translations.select{|t| t.translation == {}}.empty?
+          %option{:value=>"default", :selected => @survey.translations.find_by_locale(I18n.locale).nil?}default
+        = options_for_select(@survey.translations.map(&:locale),I18n.locale)
+
   = t('surveyor.sections')
   %ul
     - @sections.each do |s|
       %li{:class => ("active" if s == @section)}= menu_button_for(s)
+
+:javascript
+  function sendSection(f){
+    $(f).append('<input type=\'hidden\' name=\'section\' value=\'#{@section.id}\'/>');
+    $(f).submit();
+  }
+  $(document).ready(function() {
+    $(".surveyor_language_selection").show();
+  });

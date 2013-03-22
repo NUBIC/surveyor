@@ -85,7 +85,7 @@ module Surveyor
           else
             flash[:notice] = t('surveyor.unable_to_update_survey') unless saved
             redirect_to surveyor.edit_my_survey_path(
-              :anchor => anchor_from(params[:section]), :section => section_id_from(params[:section]))
+              :anchor => anchor_from(params[:section]), :section => section_id_from(params[:section]), :locale => params[:new_locale] || I18n.locale)
           end
         end
         format.js do
