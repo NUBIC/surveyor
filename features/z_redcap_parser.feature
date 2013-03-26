@@ -21,12 +21,12 @@ Feature: Survey import from REDCap
     And there should be 2 dependencies with:
       | rule    |
       | A       |
-      | A and B |				
+      | A and B |
   Scenario: Question level dependencies from REDCap
     Given I parse redcap file "redcap_siblings.csv"
     Then there should be 1 survey with:
-      | title 				|
-      | redcap_siblings.csv |
+      ||
+      ||
     And there should be 1 section with:
       ||
     And there should be 2 questions with:

@@ -61,7 +61,7 @@ Then /^there should be (\d+) question(?:s?) with:$/ do |x, table|
       hash["is_mandatory"] = (hash["is_mandatory"] == "true" ? true : (hash["is_mandatory"] == "false" ? false : hash["is_mandatory"]))
     end
     result = Question.find(:first, :conditions => hash)
-    p hash if result.nil?
+    puts hash if result.nil?
     result.should_not be_nil
   end
 end

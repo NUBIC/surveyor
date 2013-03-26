@@ -30,7 +30,7 @@ module Surveyor
       begin
         csvlib.parse(str, :headers => :first_row, :return_headers => true, :header_converters => :symbol) do |r|
           if r.header_row? # header row
-            return Surveyor::RedcapParser.rake_trace("Missing headers: #{missing_columns(r.headers).inspect}\n\n") unless missing_columns(r.headers).blank?
+            return Surveyor::RedcapParser.rake_trace "Missing headers: #{missing_columns(r.headers).inspect}\n\n" unless missing_columns(r.headers).blank?
             context[:survey] = Survey.new(:title => filename)
             Surveyor::RedcapParser.rake_trace "survey_#{context[:survey].access_code} "
           else # non-header rows
@@ -63,13 +63,11 @@ module Surveyor
     def resolve_references
       context[:dependency_conditions].each do |dc|
         Surveyor::RedcapParser.rake_trace "resolve(#{dc.question_reference},#{dc.answer_reference})"
-        
         if dc.answer_reference.blank? and (context[:question_references][dc.question_reference].answers.size == 1)
           Surveyor::RedcapParser.rake_trace "...found "
           dc.question = context[:question_references][dc.question_reference]
           dc.answer = dc.question.answers.first
         elsif answer = context[:answer_references][dc.question_reference][dc.answer_reference]
-
           Surveyor::RedcapParser.rake_trace "...found "
           dc.answer = answer
           dc.question = context[:question_references][dc.question_reference]
@@ -108,7 +106,6 @@ module SurveyorRedcapParserQuestionMethods
       context[:survey_section].questions.build({:display_type => "label", :text => r[:section_header], :display_order => context[:survey_section].questions.size})
       Surveyor::RedcapParser.rake_trace "label_ "
     end
-    
     self.attributes = ({
       :reference_identifier => r[:variable__field_name],
       :text => r[:field_label],
@@ -119,7 +116,6 @@ module SurveyorRedcapParserQuestionMethods
       :display_order => context[:survey_section].questions.size
     })
     context[:survey_section].questions << context[:question] = self
-   
     unless context[:question].reference_identifier.blank?
       context[:question_references] ||= {}
       context[:question_references][context[:question].reference_identifier] = context[:question]
@@ -141,12 +137,10 @@ module SurveyorRedcapParserDependencyMethods
       # TODO: forgot to tie rule key to component, counting on the sequence of components
       letters = ('A'..'Z').to_a
       hash = decompose_rule(bl)
-
       self.attributes = {:rule => hash[:rule]}
       context[:question].dependency = context[:dependency] = self
       hash[:components].each do |component|
         dc = context[:dependency].dependency_conditions.build(decompose_component(component).merge({ :rule_key => letters.shift } ))
-        
         context[:dependency_conditions] << dc
       end
       Surveyor::RedcapParser.rake_trace "dependency(#{hash[:rule]}) "
