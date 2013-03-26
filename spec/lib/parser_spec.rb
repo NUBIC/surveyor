@@ -101,7 +101,7 @@ survey "One language is never enough" do
 END
 
           sf = Tempfile.new('surveyor:parser_spec.rb',dir);sf.write(s);sf.flush
-          Surveyor::Parser.parsef(sf)
+          Surveyor::Parser.parse_file(sf)
           survey = Survey.where(:title=>'One language is never enough').first
           survey.nil?.should == false
           survey.translation(:es)['title'].should == "Un idioma nunca es suficiente"

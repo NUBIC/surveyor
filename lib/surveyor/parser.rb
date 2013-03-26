@@ -11,8 +11,8 @@ module Surveyor
     attr_accessor :context
 
     # Class methods
-    def self.parsef(f, options={})
-      self.parse(File.read(f),{:source => f}.merge(options))
+    def self.parse_file(filename, options={})
+      self.parse(File.read(filename),{:source => filename}.merge(options))
     end
     def self.parse(str, options={})
       self.ensure_attrs
