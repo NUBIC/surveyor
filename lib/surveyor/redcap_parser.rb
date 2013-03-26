@@ -62,16 +62,15 @@ module Surveyor
     end
     def resolve_references
       context[:dependency_conditions].each do |dc|
-        return unless dc.lookup_reference
         Surveyor::RedcapParser.rake_trace "resolve(#{dc.question_reference},#{dc.answer_reference})"
-        if dc.answer_reference.blank? and (row = dc.lookup_reference.find{|r| r[0] == dc.question_reference and r[1] == nil}) and row[2].answers.size == 1
+        if dc.answer_reference.blank? and (context[:question_references][dc.question_reference].answers.size == 1)
           Surveyor::RedcapParser.rake_trace "...found "
-          dc.question = row[2]
+          dc.question = context[:question_references][dc.question_reference]
           dc.answer = dc.question.answers.first
-        elsif row = dc.lookup_reference.find{|r| r[0] == dc.question_reference and r[1] == dc.answer_reference}
+        elsif answer = context[:answer_references][dc.question_reference][dc.answer_reference]
           Surveyor::RedcapParser.rake_trace "...found "
-          dc.answer = row[2]
-          dc.question = dc.answer.question
+          dc.answer = answer
+          dc.question = context[:question_references][dc.question_reference]
         else
           Surveyor::RedcapParser.rake_trace "\n!!! failed lookup for dependency_condition q: #{question_reference} a: #{question_reference}"
         end
@@ -118,8 +117,8 @@ module SurveyorRedcapParserQuestionMethods
     })
     context[:survey_section].questions << context[:question] = self
     unless context[:question].reference_identifier.blank?
-      context[:lookup] ||= []
-      context[:lookup] << [context[:question].reference_identifier, nil, context[:question]]
+      context[:question_references] ||= {}
+      context[:question_references][context[:question].reference_identifier] = context[:question]
     end
     Surveyor::RedcapParser.rake_trace "question_#{context[:question].reference_identifier} "
   end
@@ -141,7 +140,7 @@ module SurveyorRedcapParserDependencyMethods
       self.attributes = {:rule => hash[:rule]}
       context[:question].dependency = context[:dependency] = self
       hash[:components].each do |component|
-        dc = context[:dependency].dependency_conditions.build(decompose_component(component).merge(:lookup_reference => context[:lookup], :rule_key => letters.shift))
+        dc = context[:dependency].dependency_conditions.build(decompose_component(component).merge({ :rule_key => letters.shift } ))
         context[:dependency_conditions] << dc
       end
       Surveyor::RedcapParser.rake_trace "dependency(#{hash[:rule]}) "
@@ -193,8 +192,8 @@ end
 # DependencyCondition model
 module SurveyorRedcapParserDependencyConditionMethods
   DependencyCondition.instance_eval do
-    attr_accessor :question_reference, :answer_reference, :lookup_reference
-    attr_accessible :question_reference, :answer_reference, :lookup_reference
+    attr_accessor :question_reference, :answer_reference
+    attr_accessible :question_reference, :answer_reference
   end
 end
 
@@ -228,8 +227,9 @@ module SurveyorRedcapParserAnswerMethods
           :display_order => context[:question].answers.size })
         context[:question].answers << context[:answer] = a
         unless context[:question].reference_identifier.blank? or aref.blank? or !context[:answer].valid?
-          context[:lookup] ||= []
-          context[:lookup] << [context[:question].reference_identifier, aref, context[:answer]]
+          context[:answer_references] ||= {}
+          context[:answer_references][context[:question].reference_identifier] ||= {}
+          context[:answer_references][context[:question].reference_identifier][aref] = context[:answer]
         end
         Surveyor::RedcapParser.rake_trace "#{context[:answer].errors.full_messages}, #{context[:answer].inspect}" unless context[:answer].valid?
         Surveyor::RedcapParser.rake_trace "answer_#{context[:answer].reference_identifier} "
