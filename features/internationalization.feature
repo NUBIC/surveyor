@@ -8,7 +8,9 @@ Feature: Internationalization
   Given I parse
     """
     survey "One language is never enough" do
-      translations :es => "translations/languages.es.yml", :he => "translations/languages.he.yml", :ko => "translations/languages.ko.yml"
+      translations :es => {"title"=>"Un idioma nunca es suficiente", "survey_sections"=>{"one"=>{"title"=>"Uno"}}, "question_groups"=>{"hello"=>{"text"=>"¡Hola!"}}, "questions"=>{"name"=>{"text"=>"¿Cómo se llama Usted?", "answers"=>{"name"=>{"help_text"=>"Mi nombre es..."}}}}}
+      translations :he => {"title"=>"ידיעת שפה אחת אינה מספיקה", "survey_sections"=>{"one"=>{"title"=>"אחת"}}, "question_groups"=>{"hello"=>{"text"=>"שלום"}}, "questions"=>{"name"=>{"text"=>"מה שמך?", "answers"=>{"name"=>{"help_text"=>"שמי..."}}}}}
+      translations :ko => {"title"=>"한가지 언어로는 충분치 않습니다.", "survey_sections"=>{"one"=>{"title"=>"하나"}}, "question_groups"=>{"hello"=>{"text"=>"안녕하십니까"}}, "questions"=>{"name"=>{"text"=>"성함이 어떻게 되십니까?", "answers"=>{"name"=>{"help_text"=>"제 이름은 ... 입니다"}}}}}
       section_one "One" do
         g_hello "Hello" do
           q_name "What is your name?"

@@ -1,4 +1,7 @@
 %w(survey survey_translation survey_section question_group question dependency dependency_condition answer validation validation_condition).each {|model| require model }
+
+require 'yaml'
+
 module Surveyor
   class ParserError < StandardError; end
   class Parser
@@ -8,6 +11,9 @@ module Surveyor
     attr_accessor :context
 
     # Class methods
+    def self.parsef(f, options={})
+      self.parse(File.read(f),{:source => f}.merge(options))
+    end
     def self.parse(str, options={})
       self.ensure_attrs
       self.options = options
@@ -177,9 +183,16 @@ end
 # SurveySection model
 module SurveyorParserSurveyTranslationMethods
   def parse_and_build(context, args, original_method, reference_identifier)
+    dir = Surveyor::Parser.options[:source].nil? ? Dir.pwd : File.dirname(Surveyor::Parser.options[:source])
     # build, no change in context
     args[0].each do |k,v|
-      context[:survey].translations << self.class.new(:locale => k.to_s, :translation => File.read(Rails.root.join("surveys", v)))
+      case v
+      when Hash
+          trans = YAML::dump(v)
+      when String
+          trans = File.read(File.join(dir,v))
+      end
+      context[:survey].translations << self.class.new(:locale => k.to_s, :translation => trans)
     end
   end
 end
