@@ -10,6 +10,7 @@ History for Surveyor
 ### Fixes
 
 - Remove default order on Response. (#423)
+- Bug fix for RedCap Parser for DependencyConditions. thanks @ariel-perez-birchbox
 
 ### Dependencies
 
