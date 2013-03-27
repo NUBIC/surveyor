@@ -14,7 +14,10 @@ Feature: Survey import from REDCap
     And there should be 233 answers with:
       ||
     And there should be 3 resolved dependency_conditions with:
-      ||
+      | rule_key	| operator	| question_reference | answer_reference |
+      | A	 		| ==		| sex				 | 0	  			|
+      | A	 		| ==		| sex				 | 0	  			|
+      | B	 		| ==		| given_birth		 | 1	  			|	
     And there should be 2 dependencies with:
       | rule    |
       | A       |
