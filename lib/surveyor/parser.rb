@@ -12,7 +12,7 @@ module Surveyor
 
     # Class methods
     def self.parse_file(filename, options={})
-      self.parse(File.read(filename),{:source => filename}.merge(options))
+      self.parse(File.read(filename),{:filename => filename}.merge(options))
     end
     def self.parse(str, options={})
       self.ensure_attrs
@@ -183,7 +183,7 @@ end
 # SurveySection model
 module SurveyorParserSurveyTranslationMethods
   def parse_and_build(context, args, original_method, reference_identifier)
-    dir = Surveyor::Parser.options[:source].nil? ? Dir.pwd : File.dirname(Surveyor::Parser.options[:source])
+    dir = Surveyor::Parser.options[:filename].nil? ? Dir.pwd : File.dirname(Surveyor::Parser.options[:filename])
     # build, no change in context
     args[0].each do |k,v|
       case v

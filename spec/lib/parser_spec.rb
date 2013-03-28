@@ -57,8 +57,8 @@ END
 
   context 'when a translation is specified as a String' do
 
-    context 'when the source is not given' do
-      it 'should look for the translation file in pwd' do
+    context 'when the survey filename is not given' do
+      it 'should look for the translation file relative to pwd' do
         Dir.mktmpdir do |dir|
           FileUtils.cd(dir) do
             t = YAML::dump({'title' => 'Un idioma nunca es suficiente'})
@@ -83,8 +83,8 @@ END
         end
       end
     end
-    context 'when the source is given' do
-      it 'should look for the translation file at the given source' do
+    context 'when the survey filename is given' do
+      it 'should look for the translation file relative to the survey directory' do
         Dir.mktmpdir do |dir|
           t = YAML::dump({'title' => 'Un idioma nunca es suficiente'})
             tf = Tempfile.new('surveyor:parser_spec.rb',dir);tf.write(t);tf.flush
