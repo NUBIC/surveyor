@@ -6,6 +6,8 @@ History for Surveyor
 ### Features
 
 - Routes are namespaced (e.g. `surveyor.available_surveys_path`) and may be mounted at a different root (e.g. `mount Surveyor::Engine, :at => '/instruments'`) (#398, #421)
+- Surveyor::Parser.parse_file takes an options[:filename] parameter, used to locate translations (#429)
+- Surveyor::Parser allows translations to be specified inline using a hash (#429)
 
 ### Fixes
 
