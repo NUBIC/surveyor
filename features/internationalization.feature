@@ -8,7 +8,10 @@ Feature: Internationalization
   Given I parse
     """
     survey "One language is never enough" do
-      translations :es => "translations/languages.es.yml", :he => "translations/languages.he.yml", :ko => "translations/languages.ko.yml"
+      translations :en => :default    
+      translations :es => {"title"=>"Un idioma nunca es suficiente", "survey_sections"=>{"one"=>{"title"=>"Uno"}}, "question_groups"=>{"hello"=>{"text"=>"¡Hola!"}}, "questions"=>{"name"=>{"text"=>"¿Cómo se llama Usted?", "answers"=>{"name"=>{"help_text"=>"Mi nombre es..."}}}}}
+      translations :he => {"title"=>"ידיעת שפה אחת אינה מספיקה", "survey_sections"=>{"one"=>{"title"=>"אחת"}}, "question_groups"=>{"hello"=>{"text"=>"שלום"}}, "questions"=>{"name"=>{"text"=>"מה שמך?", "answers"=>{"name"=>{"help_text"=>"שמי..."}}}}}
+      translations :ko => {"title"=>"한가지 언어로는 충분치 않습니다.", "survey_sections"=>{"one"=>{"title"=>"하나"}}, "question_groups"=>{"hello"=>{"text"=>"안녕하십니까"}}, "questions"=>{"name"=>{"text"=>"성함이 어떻게 되십니까?", "answers"=>{"name"=>{"help_text"=>"제 이름은 ... 입니다"}}}}}
       section_one "One" do
         g_hello "Hello" do
           q_name "What is your name?"
@@ -17,12 +20,19 @@ Feature: Internationalization
       end
     end
     """
-  Then there should be 3 translations with
+  Then there should be 4 translations with
     | locale |
+    | en     |
     | es     |
     | he     |
     | ko     |
   When I start the survey
+  Then I should see "One language is never enough"
+    And I should see "One"
+    And I should see "Hello"
+    And I should see "What is your name?"
+    And I should see "My name is..."
+  When I start the survey in "en"
   Then I should see "One language is never enough"
     And I should see "One"
     And I should see "Hello"

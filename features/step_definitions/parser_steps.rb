@@ -88,7 +88,22 @@ end
 
 Then /^there should be (\d+) resolved dependency_condition(?:s?) with:$/ do |x, table|
   DependencyCondition.count.should == x.to_i
+  
   table.hashes.each do |hash|
+    if hash.has_key?("question_reference")
+      question = Question.find_by_reference_identifier(hash.delete("question_reference"))
+      question.should_not be_nil
+      
+      hash.merge!({ :question_id => question.id })
+      
+      if hash.has_key?("answer_reference")
+        answer = Answer.find(:first, :conditions => { :question_id => question.id, :reference_identifier => hash.delete("answer_reference") })
+        answer.should_not be_nil
+        
+        hash.merge!({ :answer_id => answer.id })
+      end
+    end
+   
     d = DependencyCondition.find(:first, :conditions => hash)
     d.should_not be_nil
     d.question.should_not be_nil

@@ -7,7 +7,7 @@ namespace :surveyor do
     file = File.join(Rails.root, ENV["FILE"])
     raise "File does not exist: #{file}" unless FileTest.exists?(file)
     puts "--- Parsing #{file} ---"
-    Surveyor::Parser.parse(File.read(file), {:trace => Rake.application.options.trace})
+    Surveyor::Parser.parse_file(file, {:trace => Rake.application.options.trace})
     puts "--- Done #{file} ---"
   end
   desc "generate and load survey from REDCap Data Dictionary (specify FILE=surveys/redcap.csv)"
