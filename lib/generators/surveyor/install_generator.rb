@@ -96,8 +96,6 @@ module Surveyor
 
     def locales
       directory "config/locales"
-      directory "config/initializers"
-      copy_file "config/initializers/i18n.rb"
     end
   end
 end
