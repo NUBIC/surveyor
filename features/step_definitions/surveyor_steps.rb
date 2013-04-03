@@ -320,3 +320,7 @@ end
 Then /^I set the asset directory$/ do
   ActionController::Base.helpers.config.assets_dir = "public" unless asset_pipeline_enabled?
 end
+
+When(/^I change the locale to "(.*?)"$/) do |locale|
+  steps %Q{When I select "#{locale}" from "new_locale"}
+end

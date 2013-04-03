@@ -60,11 +60,7 @@ module Surveyor
       if @response_set
         @survey = Survey.with_sections.find_by_id(@response_set.survey_id)
         @sections = @survey.sections
-        if params[:section]
-          @section = @sections.with_includes.find(section_id_from(params[:section])) || @sections.with_includes.first
-        else
-          @section = @sections.with_includes.first
-        end
+        @section = @sections.with_includes.find(section_id_from(params) || :first) || @sections.with_includes.first
         set_dependents
       else
         flash[:notice] = t('surveyor.unable_to_find_your_responses')
@@ -84,8 +80,7 @@ module Surveyor
             return redirect_with_message(surveyor.available_surveys_path, :notice, t('surveyor.unable_to_find_your_responses'))
           else
             flash[:notice] = t('surveyor.unable_to_update_survey') unless saved
-            redirect_to surveyor.edit_my_survey_path(
-              :anchor => anchor_from(params[:section]), :section => section_id_from(params[:section]))
+            redirect_to surveyor.edit_my_survey_path(:anchor => anchor_from(params[:section]), :section => section_id_from(params))
           end
         end
         format.js do
@@ -167,18 +162,26 @@ module Surveyor
     end
 
      def set_locale
-       if params[:locale]
-         I18n.locale = params[:locale]
-       else
-         I18n.locale = I18n.default_locale
-       end
+      if params[:new_locale]
+        I18n.locale = params[:new_locale]
+      elsif params[:locale]
+        I18n.locale = params[:locale]
+      else
+        I18n.locale = I18n.default_locale
+      end
     end
 
     # Params: the name of some submit buttons store the section we'd like to go
     # to. for repeater questions, an anchor to the repeater group is also stored
     # e.g. params[:section] = {"1"=>{"question_group_1"=>"<= add row"}}
-    def section_id_from(p)
-      p.respond_to?(:keys) ? p.keys.first : p
+    def section_id_from(p = {})
+      if p[:section] && p[:section].respond_to?(:keys)
+        p[:section].keys.first
+      elsif p[:section]
+        p[:section]
+      elsif p[:current_section]
+        p[:current_section]
+      end
     end
 
     def anchor_from(p)
