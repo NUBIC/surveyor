@@ -33,39 +33,65 @@ describe Surveyor::Parser do
   end
 
 
-  context 'when a translation is specified as a Hash' do
-    it 'should should treat the hash as an inline translation' do
+  describe 'translations' do
+
+    it 'should produce the survey text for :default locale' do
       survey_text = <<END
-survey "One language is never enough" do
-      translations :es => {"title"=>"Un idioma nunca es suficiente", "survey_sections"=>{"one"=>{"title"=>"Uno"}}, "question_groups"=>{"hello"=>{"text"=>"¡Hola!"}}, "questions"=>{"name"=>{"text"=>"¿Cómo se llama Usted?", "answers"=>{"name"=>{"help_text"=>"Mi nombre es..."}}}}}
-      section_one "One" do
-        g_hello "Hello" do
-          q_name "What is your name?"
-          a_name :string, :help_text => "My name is..."
-        end
-      end
+  survey "One language is never enough" do
+   translations :en => :default, :es =>{'questions' => {'name' =>{ 'text' => '¡Hola!'}}}
+    section_one "One" do
+      label_name "Hello!"
     end
+  end
 END
       survey = Surveyor::Parser.new.parse(survey_text)
       survey.is_a?(Survey).should == true
-      survey.translations.size.should == 1
-      survey.translation(:es)['title'].should == "Un idioma nunca es suficiente"
+      survey.translations.size.should == 2
+      question = survey.sections.first.questions.first
+      question.translation(:en)[:text].should == "Hello!"
+      question.translation(:es)[:text].should == "¡Hola!"
+    end
+
+
+    it 'should raise an error w/o :default locale' do
+      survey_text = <<END
+  survey "One language is never enough" do
+   translations :es =>{'questions' => {'name' =>{ 'text' => '¡Hola!'}}}
+    section_one "One" do
+      label_name "Hello!"
     end
   end
+END
+      s = Survey.all.size
+      expect {survey = Surveyor::Parser.new.parse(survey_text)}.to raise_error
+      Survey.all.size.should == s
+    end
 
-  context 'when a translation is specified as a String' do
 
-    context 'when the survey filename is not given' do
-      it 'should look for the translation file relative to pwd' do
-        Dir.mktmpdir do |dir|
-          FileUtils.cd(dir) do
-            translation_yaml = YAML::dump({'title' => 'Un idioma nunca es suficiente'})
-            translation_temp_file = Tempfile.new('parser_spec_translation.yml',dir)
-            translation_temp_file.write(translation_yaml)
-            translation_temp_file.flush
-            survey_text = <<END
+    it 'should allow multiple default locales' do
+      survey_text = <<END
+  survey "Just don't talk about tyres" do
+   translations :'en-US' => :default, :'en-GB' => :default, :es =>{'questions' => {'name' =>{'text' => '¡Hola!'}}}
+   section_one "One" do
+     label_name "Hello!"
+   end
+  end
+END
+
+      survey = Surveyor::Parser.new.parse(survey_text)
+      survey.is_a?(Survey).should == true
+      survey.translations.size.should == 3
+      question = survey.sections.first.questions.first
+      question.translation(:'en-US')[:text].should == "Hello!"
+      question.translation(:'en-GB')[:text].should == "Hello!"
+      question.translation(:es)[:text].should == "¡Hola!"
+    end
+
+    context 'when a translation is specified as a Hash' do
+      it 'should should treat the hash as an inline translation' do
+        survey_text = <<END
 survey "One language is never enough" do
-      translations :es =>'#{File.basename(translation_temp_file.path)}'
+      translations :en => :default, :es => {"title"=>"Un idioma nunca es suficiente", "survey_sections"=>{"one"=>{"title"=>"Uno"}}, "question_groups"=>{"hello"=>{"text"=>"¡Hola!"}}, "questions"=>{"name"=>{"text"=>"¿Cómo se llama Usted?", "answers"=>{"name"=>{"help_text"=>"Mi nombre es..."}}}}}
       section_one "One" do
         g_hello "Hello" do
           q_name "What is your name?"
@@ -74,27 +100,55 @@ survey "One language is never enough" do
       end
     end
 END
-            survey_temp_file = Tempfile.new('parser_spec_survey.rb',dir)
-            survey_temp_file.write(survey_text)
-            survey_temp_file.flush
-            Surveyor::Parser.parse(File.read(survey_temp_file.path))
-            survey = Survey.where(:title=>'One language is never enough').first
-            survey.nil?.should == false
-            survey.translation(:es)['title'].should == "Un idioma nunca es suficiente"
-          end
+        survey = Surveyor::Parser.new.parse(survey_text)
+        survey.is_a?(Survey).should == true
+        survey.translations.size.should == 2
+        survey.translation(:es)['title'].should == "Un idioma nunca es suficiente"
+      end
+    end
+
+    context 'when a translation is specified as a String' do
+
+      context 'when the survey filename is not given' do
+        it 'should look for the translation file relative to pwd' do
+          Dir.mktmpdir do |dir|
+            FileUtils.cd(dir) do
+              translation_yaml = YAML::dump({'title' => 'Un idioma nunca es suficiente'})
+              translation_temp_file = Tempfile.new('parser_spec_translation.yml',dir)
+              translation_temp_file.write(translation_yaml)
+              translation_temp_file.flush
+              survey_text = <<END
+survey "One language is never enough" do
+      translations :es =>'#{File.basename(translation_temp_file.path)}', :en => :default
+      section_one "One" do
+        g_hello "Hello" do
+          q_name "What is your name?"
+          a_name :string, :help_text => "My name is..."
         end
       end
     end
-    context 'when the survey filename is given' do
-      it 'should look for the translation file relative to the survey directory' do
-        Dir.mktmpdir do |dir|
-          translation_yaml = YAML::dump({'title' => 'Un idioma nunca es suficiente'})
+END
+              survey_temp_file = Tempfile.new('parser_spec_survey.rb',dir)
+              survey_temp_file.write(survey_text)
+              survey_temp_file.flush
+              Surveyor::Parser.parse(File.read(survey_temp_file.path))
+              survey = Survey.where(:title=>'One language is never enough').first
+              survey.nil?.should == false
+              survey.translation(:es)['title'].should == "Un idioma nunca es suficiente"
+            end
+          end
+        end
+      end
+      context 'when the survey filename is given' do
+        it 'should look for the translation file relative to the survey directory' do
+          Dir.mktmpdir do |dir|
+            translation_yaml = YAML::dump({'title' => 'Un idioma nunca es suficiente'})
             translation_temp_file = Tempfile.new('surveyor:parser_spec.rb',dir)
             translation_temp_file.write(translation_yaml)
             translation_temp_file.flush
             survey_text = <<END
 survey "One language is never enough" do
-      translations :es =>'#{File.basename(translation_temp_file.path)}'
+      translations :es =>'#{File.basename(translation_temp_file.path)}', :en => :default
       section_one "One" do
         g_hello "Hello" do
           q_name "What is your name?"
@@ -103,13 +157,14 @@ survey "One language is never enough" do
       end
     end
 END
-          survey_temp_file = Tempfile.new('surveyor:parser_spec.rb',dir)
-          survey_temp_file.write(survey_text)
-          survey_temp_file.flush
-          Surveyor::Parser.parse_file(survey_temp_file.path)
-          survey = Survey.where(:title=>'One language is never enough').first
-          survey.nil?.should == false
-          survey.translation(:es)['title'].should == "Un idioma nunca es suficiente"
+            survey_temp_file = Tempfile.new('surveyor:parser_spec.rb',dir)
+            survey_temp_file.write(survey_text)
+            survey_temp_file.flush
+            Surveyor::Parser.parse_file(survey_temp_file.path)
+            survey = Survey.where(:title=>'One language is never enough').first
+            survey.nil?.should == false
+            survey.translation(:es)['title'].should == "Un idioma nunca es suficiente"
+          end
         end
       end
     end

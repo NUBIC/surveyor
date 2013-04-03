@@ -88,6 +88,7 @@ module Surveyor
           resolve_dependency_condition_references
           resolve_question_correct_answers
           report_lost_and_duplicate_references
+          report_missing_default_locale
           Surveyor::Parser.rake_trace("", -2)
           if context[:survey].save
             Surveyor::Parser.rake_trace "Survey saved."
@@ -121,6 +122,11 @@ module Surveyor
     end
     def block_models
       %w(survey survey_section question_group)
+    end
+    def report_missing_default_locale
+      if !self.context[:survey].translations.empty? && self.context[:survey].translations.select{|t|YAML::load(t.translation)=={}}.empty?
+        Surveyor::Parser.raise_error("No default locale specified for translations.",true)
+      end
     end
     def report_lost_and_duplicate_references
       Surveyor::Parser.raise_error("Bad references: #{self.context[:bad_references].join("; ")}", true) unless self.context[:bad_references].empty?
@@ -188,9 +194,11 @@ module SurveyorParserSurveyTranslationMethods
     args[0].each do |k,v|
       case v
       when Hash
-          trans = YAML::dump(v)
+        trans = YAML::dump(v)
       when String
-          trans = File.read(File.join(dir,v))
+        trans = File.read(File.join(dir,v))
+      when :default
+        trans = YAML::dump({})
       end
       context[:survey].translations << self.class.new(:locale => k.to_s, :translation => trans)
     end
