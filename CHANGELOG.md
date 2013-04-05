@@ -15,6 +15,7 @@ History for Surveyor
 
 - Remove default order on Response. (#423)
 - Bug fix for RedCap Parser for DependencyConditions. thanks @ariel-perez-birchbox
+- Make Surveyor::Parser accept Answer#reference_identifier via underscore or hash syntax (#439)
 
 ### Dependencies
 

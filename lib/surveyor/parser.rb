@@ -358,10 +358,10 @@ module SurveyorParserAnswerMethods
       self.attributes = ({:display_order => context[:question].answers.size}.merge(attrs))
       context[:question].answers << context[:answer] = self
       # keep reference for dependencies
-      unless context[:question].reference_identifier.blank? or reference_identifier.blank?
+      unless context[:question].reference_identifier.blank? or self.reference_identifier.blank?
         context[:answer_references][context[:question].reference_identifier] ||= {}
-        context[:duplicate_references].push "q_#{context[:question].reference_identifier}, a_#{reference_identifier}" if context[:answer_references][context[:question].reference_identifier].has_key?(reference_identifier)
-        context[:answer_references][context[:question].reference_identifier][reference_identifier] = context[:answer]
+        context[:duplicate_references].push "q_#{context[:question].reference_identifier}, a_#{self.reference_identifier}" if context[:answer_references][context[:question].reference_identifier].has_key?(self.reference_identifier)
+        context[:answer_references][context[:question].reference_identifier][self.reference_identifier] = context[:answer]
       end
     end
   end
