@@ -43,7 +43,11 @@ module Surveyor
         [(dependent? ? "g_dependent" : nil), (triggered?(response_set) ? nil : "g_hidden"), custom_class].compact.join(" ")
       end
 
-      def text_for(context = nil, locale = nil)
+      def text_for(_, context = nil, locale = nil)
+        return "" if display_type == "hidden_label"
+        in_context(translation(locale)[:text], context)
+      end
+      def q_text_for(context = nil, locale = nil)
         return "" if display_type == "hidden_label"
         in_context(translation(locale)[:text], context)
       end

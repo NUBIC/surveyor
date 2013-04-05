@@ -1,6 +1,6 @@
 - renderer = g.renderer
 - unless g.display_type == "hidden"
-  = f.inputs "#{next_question_number(g)}#{g.text_for(@render_context, I18n.locale)}", :id => "g_#{g.id}", :class => "g_#{renderer} #{g.css_class(@response_set)}" do
+  = f.inputs "#{next_question_number(g)}#{g.q_text_for(@render_context, I18n.locale)}", :id => "g_#{g.id}", :class => "g_#{renderer} #{g.css_class(@response_set)}" do
     %li.help= g.help_text_for(@render_context, I18n.locale)
     - case renderer
       - when :grid
