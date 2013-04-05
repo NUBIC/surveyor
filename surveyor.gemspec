@@ -18,7 +18,9 @@ Gem::Specification.new do |s|
   s.require_paths = ["lib"]
 
   s.add_dependency('rails', '~> 3.0')
-  s.add_dependency('haml', '~> 3.1.3')
+  # '< 5.0' is to be conservative; once 5.0 comes out we should test with it and
+  # allow it if it works.
+  s.add_dependency('haml', '>= 3.1.3', '< 5.0')
   s.add_dependency('sass')
   s.add_dependency('fastercsv', '~> 1.5.4')
   s.add_dependency('formtastic', '~> 2.1.0')
