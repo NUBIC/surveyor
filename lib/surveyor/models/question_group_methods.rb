@@ -43,18 +43,44 @@ module Surveyor
         [(dependent? ? "g_dependent" : nil), (triggered?(response_set) ? nil : "g_hidden"), custom_class].compact.join(" ")
       end
 
-      def text_for(context = nil, locale = nil)
+      def text_for(position = nil, context = nil, locale = nil)
         return "" if display_type == "hidden_label"
-        in_context(translation(locale)[:text], context)
+        imaged(split(in_context(translation(locale)[:text], context), position))
       end
       def help_text_for(context = nil, locale = nil)
         in_context(translation(locale)[:help_text], context)
       end
+      def split(text, position=nil)
+        case position
+        when :pre
+          text.split("|",2)[0]
+        when :post
+          text.split("|",2)[1]
+        else
+          text
+        end.to_s
+      end
+
+      def part_of_group?
+      end
 
       def translation(locale)
-        {:text => self.text, :help_text => self.help_text}.with_indifferent_access.merge(
-          (self.questions.first.survey_section.survey.translation(locale)[:question_groups] || {})[self.reference_identifier] || {}
+        questions = self.questions
+        text_hash = {:text => self.text,
+                    :help_text => self.help_text}.with_indifferent_access
+        if ! questions.empty?
+          text_hash.merge(
+            (questions.first.survey_section.survey.translation(locale)[:question_groups] || {})[self.reference_identifier] || {}
         )
+        else
+          text_hash
+        end
+      end
+
+      private
+
+      def imaged(text)
+        self.display_type == "image" && !text.blank? ? ActionController::Base.helpers.image_tag(text) : text
       end
     end
   end

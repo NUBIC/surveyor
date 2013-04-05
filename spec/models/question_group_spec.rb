@@ -90,4 +90,37 @@ describe QuestionGroup do
       question_group.translation(:de).should == {"text" => "Goodbye", "help_text" => nil}
     end
   end
+  context "for views" do
+    let(:asset_directory){ asset_pipeline_enabled? ? "assets" : "images" }
+    before do
+      ActionController::Base.helpers.config.assets_dir = "public" unless asset_pipeline_enabled?
+    end
+    it "#text_for with #display_type == image" do
+      question_group.text = "rails.png"
+      question_group.display_type = :image
+      question_group.text_for.should == %(<img alt="Rails" src="/#{asset_directory}/rails.png" />)
+    end
+    it "#help_text_for"
+    it "#text_for preserves strings" do
+      question_group.text_for.should == "Describe your family"
+    end
+    it "#text_for(:pre) preserves strings" do
+      question_group.text_for(:pre).should == "Describe your family"
+    end
+    it "#text_for(:post) preserves strings" do
+      question_group.text_for(:post).should == ""
+    end
+    it "#text_for splits strings" do
+      question_group.text = "before|after|extra"
+      question_group.text_for.should == "before|after|extra"
+    end
+    it "#text_for(:pre) splits strings" do
+      question_group.text = "before|after|extra"
+      question_group.text_for(:pre).should == "before"
+    end
+    it "#text_for(:post) splits strings" do
+      question_group.text = "before|after|extra"
+      question_group.text_for(:post).should == "after|extra"
+    end
+  end
 end
