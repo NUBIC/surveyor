@@ -119,6 +119,7 @@ end
 Then /^there should (not )?be a (\w+ )?response(?: for answer "([^"]+)")?(?: with value "([^"]+)")?(?: on question "([^"]+)")?$/ do |neg, type, answer_reference_id, value, question_reference_id|
   conditions = []
   values = []
+  where = {}
   expected_count = neg.blank? ? 1 : 0
   if type
     attribute = case type.strip
@@ -131,10 +132,8 @@ Then /^there should (not )?be a (\w+ )?response(?: for answer "([^"]+)")?(?: wit
                 end
     if value
       case type.strip
-      when 'date'
-        # Work around deficient SQLite date handling
-        conditions << "date(#{attribute}) = date(?)"
-        values << value
+      when 'date' || 'datetime' || 'time'
+        where[:datetime_value] = Time.zone.parse(value).utc
       else
         conditions << "#{attribute} = ?"
         values << value
@@ -162,7 +161,7 @@ Then /^there should (not )?be a (\w+ )?response(?: for answer "([^"]+)")?(?: wit
     values << answer
   end
 
-  Response.where(conditions.join(' AND '), *values).count.should == expected_count
+  Response.where(conditions.join(' AND '), *values).where(where).count.should == expected_count
 end
 
 Then /^I should see the image "([^"]*)"$/ do |src|

@@ -10,6 +10,7 @@ module Surveyor
     desc "Generate surveyor README, migrations, assets and sample survey"
     class_option :skip_migrations, :type => :boolean, :desc => "skip migrations, but generate everything else"
 
+
     MIGRATION_ORDER = %w(
       create_surveys
       create_survey_sections
@@ -97,5 +98,12 @@ module Surveyor
     def locales
       directory "config/locales"
     end
+
+    def application_config
+      application do
+        "config.time_zone = 'Rome'"
+      end
+    end
+
   end
 end
