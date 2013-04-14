@@ -3,7 +3,7 @@ module Surveyor
     module SurveySectionMethods
       def self.included(base)
         # Associations
-        base.send :has_many, :questions, :order => "display_order ASC", :dependent => :destroy
+        base.send :has_many, :questions, :dependent => :destroy
         base.send :belongs_to, :survey
 
         # Scopes

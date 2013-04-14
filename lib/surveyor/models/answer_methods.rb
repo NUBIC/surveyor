@@ -10,7 +10,7 @@ module Surveyor
         base.send :has_many, :validations, :dependent => :destroy
 
         # Scopes
-        base.send :default_scope, :order => "display_order ASC"
+        base.send :default_scope, :order => "#{base.quoted_table_name}.display_order ASC"
 
         # Mustache
         base.send :include, MustacheContext
