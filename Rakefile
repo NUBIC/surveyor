@@ -56,7 +56,7 @@ namespace :testbed do
   task :migrate do
     chdir('testbed') do
       Bundler.with_clean_env do
-        sh 'bundle exec rails generate surveyor:install'
+        sh 'bundle exec rails generate surveyor:install --timezone=Rome'
         sh 'bundle exec rake db:migrate db:test:prepare'
       end
     end

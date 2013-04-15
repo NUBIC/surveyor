@@ -9,6 +9,7 @@ module Surveyor
     source_root File.expand_path("../templates", __FILE__)
     desc "Generate surveyor README, migrations, assets and sample survey"
     class_option :skip_migrations, :type => :boolean, :desc => "skip migrations, but generate everything else"
+    class_option :timezone,       :type => :string,  :desc => "set the Rails timezone in config/application.rb", :default => ""
 
 
     MIGRATION_ORDER = %w(
@@ -100,8 +101,10 @@ module Surveyor
     end
 
     def application_config
-      application do
-        "config.time_zone = 'Rome'"
+      unless options[:timezone].blank?
+        application do
+          "config.time_zone = '#{options[:timezone]}'"
+        end
       end
     end
 
