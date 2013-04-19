@@ -37,6 +37,35 @@ Feature: showing a survey
       | orange |
       | brown  |
     When I go to the last response set show page
+    Then I should see "You with the sad eyes don't be discouraged"
     Then the "blue" radiobutton should be checked
     And the "orange" checkbox should be checked
     And the "brown" checkbox should be checked
+
+  Scenario: Take a survey with group questions, then look at it
+    Given I parse
+    """
+      survey "Grid question test", :default_mandatory => false do
+        section 'Communication Skills' do
+          grid 'Identify communication and interviewing skills' do
+            a 'Yes'
+            a 'No'
+
+            q 'Able to articulate job duties and skills', :pick => :one
+          end
+
+          q 'Communication Skills Comments'
+          a :text
+        end
+      end
+    """
+    When I start the "Grid question test" survey
+    Then I should see "Identify communication and interviewing skills"
+    And I choose "Yes"
+    And I press "Click here to finish"
+    Then there should be 1 response set with 1 responses with:
+      | answer |
+      | Yes    |
+    When I go to the last response set show page
+    Then I should see "Identify communication and interviewing skills"
+    Then the "Yes" radiobutton should be checked
