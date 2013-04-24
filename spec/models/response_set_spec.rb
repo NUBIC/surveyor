@@ -132,11 +132,13 @@ describe ResponseSet do
       end
 
       [
-        ['string_value',   'foo',           '', 'foo'],
-        ['datetime_value', '2010-10-01',    '', Date.new(2010, 10, 1)],
-        ['integer_value',  '9',             '', 9],
-        ['float_value',    '4.0',           '', 4.0],
-        ['text_value',     'more than foo', '', 'more than foo']
+        ['string_value',   'foo',              '', 'foo'],
+        ['datetime_value', '2010-10-01 17:15', '', Time.zone.parse('2010-10-1 17:15')],
+        ['date_value',     '2010-10-01',       '', '2010-10-01'],
+        ['time_value',     '17:15',            '', '17:15'],
+        ['integer_value',  '9',                '', 9],
+        ['float_value',    '4.0',              '', 4.0],
+        ['text_value',     'more than foo',    '', 'more than foo']
       ].each do |value_type, set_value, blank_value, expected_value|
         describe "plus #{value_type}" do
           it 'saves the value' do
