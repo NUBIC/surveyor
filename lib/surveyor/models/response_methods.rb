@@ -75,7 +75,23 @@ module Surveyor
       end
 
       def datetime_format
-        '%Y-%m-%d %H:%M'
+        '%Y-%m-%d %H:%M:%S'
+      end
+
+      def to_formatted_s
+        return "" if answer.nil? || answer.response_class.nil?
+        return case t = answer.response_class.to_sym
+               when :string, :text, :integer, :float
+                 send("#{t}_value".to_sym).to_s
+               when :date
+                 date_value
+               when :time
+                 time_value
+               when :datetime
+                 read_attribute(:datetime_value).strftime(datetime_format)
+               else
+                 to_s
+               end
       end
 
       def to_s # used in dependency_explanation_helper
@@ -96,7 +112,7 @@ module Surveyor
         }
 
         found = formats[answer.response_class]
-        found ?  datetime_value.try(:strftime, found) : as(answer.response_class)
+        found ? datetime_value.try{|d| d.utc.strftime(found)} : as(answer.response_class)
       end
     end
   end

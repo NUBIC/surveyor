@@ -40,7 +40,10 @@ task :testbed => 'testbed:rebuild'
 namespace :testbed do
   desc 'Generate a minimal surveyor-using rails app'
   task :generate do
-    sh 'bundle exec rails new testbed --skip-bundle' # don't run bundle install until the Gemfile modifications
+    Tempfile.open('surveyor_Rakefile') do |f|
+      f.write("application \"config.time_zone='Rome'\"");f.flush
+      sh "bundle exec rails new testbed --skip-bundle -m #{f.path}" # don't run bundle install until the Gemfile modifications
+    end
     chdir('testbed') do
       gem_file_contents = File.read('Gemfile')
       gem_file_contents.sub!(/^(gem 'rails'.*)$/, %Q{# \\1\nplugin_root = File.expand_path('../..', __FILE__)\neval(File.read File.join(plugin_root, 'Gemfile.rails_version'))\ngem 'surveyor', :path => plugin_root})

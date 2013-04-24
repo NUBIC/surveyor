@@ -1,6 +1,6 @@
 #!/bin/bash -xe
 
-BUNDLER_VERSION=1.1.5
+BUNDLER_VERSION=1.3.1
 GEMSET=surveyor
 
 if [ -z $CI_RUBY ]; then
