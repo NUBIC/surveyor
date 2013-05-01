@@ -174,3 +174,33 @@ describe Response, '#json_value' do
     end
   end
 end
+
+describe Response, 'value methods' do
+  let(:response) { Response.new }
+
+  describe '#date_value=' do
+    it 'accepts a parseable date string' do
+      response.date_value = '2010-01-15'
+      response.datetime_value.strftime('%Y %m %d').should == '2010 01 15'
+    end
+
+    it 'clears when given nil' do
+      response.datetime_value = Time.new
+      response.date_value = nil
+      response.datetime_value.should be_nil
+    end
+  end
+
+  describe 'time_value=' do
+    it 'accepts a parseable time string' do
+      response.time_value = '11:30'
+      response.datetime_value.strftime('%H %M %S').should == '11 30 00'
+    end
+
+    it 'clears when given nil' do
+      response.datetime_value = Time.new
+      response.time_value = nil
+      response.datetime_value.should be_nil
+    end
+  end
+end
