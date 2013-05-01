@@ -4,6 +4,10 @@ History for Surveyor
 1.4.1
 -----
 
+### Fixes
+
+- Handle `nil` in `ResponseMethods#date_value=` and `ResponseMethods#time_value`.
+  (#450)
 
 1.4.0
 -----

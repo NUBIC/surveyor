@@ -55,7 +55,12 @@ module Surveyor
       end
 
       def time_value=(val)
-        self.datetime_value = Time.zone.parse("#{Date.today.to_s} #{val}") ? Time.zone.parse("#{Date.today.to_s} #{val}").to_datetime : nil
+        self.datetime_value =
+          if val && time = Time.zone.parse("#{Date.today.to_s} #{val}")
+            time.to_datetime
+          else
+            nil
+          end
       end
 
       def date_value
@@ -63,7 +68,12 @@ module Surveyor
       end
 
       def date_value=(val)
-        self.datetime_value = Time.zone.parse(val) ? Time.zone.parse(val).to_datetime : nil
+        self.datetime_value =
+          if val && time = Time.zone.parse(val)
+            time.to_datetime
+          else
+            nil
+          end
       end
 
       def time_format
