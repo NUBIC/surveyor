@@ -14,6 +14,6 @@ class CreateSurveyTranslations < ActiveRecord::Migration
   end
 
   def self.down
-    drop_table :surveys
+    drop_table :survey_translations
   end
 end
