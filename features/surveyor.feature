@@ -280,7 +280,7 @@ Feature: Survey creation
   Scenario: Creating a question with an option checkbox for other and an empty text input
     Given I parse
     """
-      survey "Favorite Cuisine" do
+      survey "Favorite Cuisine again" do
         section "Foods" do
           q "What is the best cuisine?", :pick => :any
           a "french"
@@ -290,7 +290,7 @@ Feature: Survey creation
         end
       end
     """
-    When I start the "Favorite Cuisine" survey
+    When I start the "Favorite Cuisine again" survey
     And I change "r_4_string_value" to ""
     Then the "other" checkbox should not be checked
 
@@ -299,7 +299,7 @@ Feature: Survey creation
    Scenario: Creating a question with an option radio button for other and text input
     Given I parse
     """
-      survey "Favorite Cuisine" do
+      survey "Favorite Cuisine again again" do
         section "Foods" do
           q "What is the best cuisine?", :pick => :one
           a "french"
@@ -309,7 +309,7 @@ Feature: Survey creation
         end
       end
     """
-    When I start the "Favorite Cuisine" survey
+    When I start the "Favorite Cuisine again again" survey
     And I change "r_1_string_value" to "thai"
     Then the "other" radiobutton should be checked
 
