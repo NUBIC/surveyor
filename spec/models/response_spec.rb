@@ -128,6 +128,18 @@ describe Response, "applicable_attributes" do
   end
 end
 
+describe Response, '#to_formatted_s' do
+  context "when datetime" do
+    let(:r) { Response.new(:answer => Answer.new(:response_class => 'datetime')) }
+
+    it 'returns "" when nil' do
+      r.datetime_value = nil
+
+      r.to_formatted_s.should == ""
+    end
+  end
+end
+
 describe Response, '#json_value' do
   context "when integer" do
     let(:r) {Response.new(:integer_value => 2, :answer => Answer.new(:response_class => 'integer'))}
