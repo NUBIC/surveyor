@@ -8,6 +8,7 @@ History for Surveyor
 
 - Handle `nil` in `ResponseMethods#date_value=` and `ResponseMethods#time_value`.
   (#450)
+- Handle `nil` datetime values in `ResponseMethods#to_formatted_s`.  (#459)
 
 1.4.0
 -----
