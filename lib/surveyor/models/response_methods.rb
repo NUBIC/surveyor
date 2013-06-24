@@ -51,7 +51,7 @@ module Surveyor
       end
 
       def time_value
-        datetime_value.try(:strftime, time_format)
+        read_attribute(:datetime_value).strftime( time_format ) unless read_attribute(:datetime_value).blank?
       end
 
       def time_value=(val)
@@ -64,7 +64,7 @@ module Surveyor
       end
 
       def date_value
-        datetime_value.try(:strftime, date_format)
+        read_attribute(:datetime_value).strftime( date_format ) unless read_attribute(:datetime_value).blank?
       end
 
       def date_value=(val)
@@ -74,10 +74,6 @@ module Surveyor
           else
             nil
           end
-      end
-
-      def datetime_value
-        read_attribute(:datetime_value)
       end
 
       def time_format
@@ -102,7 +98,7 @@ module Surveyor
                when :time
                  time_value
                when :datetime
-                 datetime_value.try(:strftime, datetime_format) || ''
+                 (read_attribute(:datetime_value).strftime( datetime_format ) unless read_attribute(:datetime_value).blank?) || ''
                else
                  to_s
                end
