@@ -10,6 +10,10 @@ History for Surveyor
   (#450)
 - Handle `nil` datetime values in `ResponseMethods#to_formatted_s`.  (#459)
 
+### Dependencies
+
+- Removing support for Ruby 1.8.7. Applications requiring Ruby 1.8.7 should use Surveyor v1.4.0
+
 1.4.0
 -----
 ### Features

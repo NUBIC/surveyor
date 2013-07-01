@@ -4,9 +4,12 @@ echo ""
 
 # Set the prompt for the select command
 PS3="Choose a stack or 'q' to quit: "
+export CUCUMBER_OPTS="--format CucumberSpinner::ProgressBarFormatter"
+export SPEC_OPTS="--format Fuubar --color spec"
+export BUNDLER_VERSION=1.3.1
 
 options=""
-rubies=(ree 1.9.3)
+rubies=(1.9.3)
 rails_versions=(rails_3.1 rails_3.2)
 
 for i in "${rubies[@]}"
@@ -22,7 +25,6 @@ options+="all"
 select combo in $options; do
   case $combo in
   all)
-    read -p "Press [Enter] to run tests on all..."
     for i in "${rubies[@]}"
     do
       for j in "${rails_versions[@]}"
@@ -31,7 +33,13 @@ select combo in $options; do
         export RAILS_VERSION=$j
         source ~/.rvm/scripts/rvm
         rvm use $CI_RUBY@surveyor-$RAILS_VERSION --create
-        ./ci-exec.sh
+        read -p "Press [Enter] to run tests on $CI_RUBY@$RAILS_VERSION..."
+        gem list -i bundler -v $BUNDLER_VERSION
+        if [ $? -ne 0 ]; then
+          gem install bundler -v $BUNDLER_VERSION
+        fi
+        bundle _${BUNDLER_VERSION}_ update
+        bundle _${BUNDLER_VERSION}_ exec rake testbed spec cucumber cucumber:wip
       done
     done
     ;;
@@ -45,7 +53,12 @@ select combo in $options; do
     source ~/.rvm/scripts/rvm
     rvm use $CI_RUBY@surveyor-$RAILS_VERSION --create
     read -p "Press [Enter] to run tests on $CI_RUBY@$RAILS_VERSION..."
-    ./ci-exec.sh
+    gem list -i bundler -v $BUNDLER_VERSION
+    if [ $? -ne 0 ]; then
+      gem install bundler -v $BUNDLER_VERSION
+    fi
+    bundle _${BUNDLER_VERSION}_ update
+    bundle _${BUNDLER_VERSION}_ exec rake testbed spec cucumber cucumber:wip
     ;;
   esac
   break

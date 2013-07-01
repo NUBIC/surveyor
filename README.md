@@ -19,8 +19,10 @@ without maintaining a fork.
 
 Surveyor works with:
 
-* Ruby 1.8.7, 1.9.2, and 1.9.3
+* Ruby 1.9.2, and 1.9.3
 * Rails 3.1-3.2
+
+In keeping with the Rails team maintenance [policy] we no longer support Rails 3.0 (stick with v1.3.0 if you need Rails 3.0) or Ruby 1.8.7 (stick with v1.4.0 if you need Ruby 1.8.7).
 
 Some key dependencies are:
 
@@ -31,6 +33,7 @@ Some key dependencies are:
 A more exhaustive list can be found in the [gemspec][].
 
 [gemspec]: https://github.com/NUBIC/surveyor/blob/master/surveyor.gemspec
+[policy]: http://weblog.rubyonrails.org/2013/2/24/maintenance-policy-for-ruby-on-rails/
 
 ## Install
 
