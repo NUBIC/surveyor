@@ -2,7 +2,7 @@
 require File.expand_path(File.dirname(__FILE__) + '/../spec_helper')
 
 describe SurveySection do
-    let(:survey_section){ Factory(:survey_section) }
+    let(:survey_section){ FactoryGirl.create(:survey_section) }
 
   context "when creating" do
     it "is invalid without #title" do
@@ -39,9 +39,9 @@ describe SurveySection do
   end
 
   context "with questions" do
-    let(:question_1){ Factory(:question, :survey_section => survey_section, :display_order => 3, :text => "Peep")}
-    let(:question_2){ Factory(:question, :survey_section => survey_section, :display_order => 1, :text => "Little")}
-    let(:question_3){ Factory(:question, :survey_section => survey_section, :display_order => 2, :text => "Bo")}
+    let(:question_1){ FactoryGirl.create(:question, :survey_section => survey_section, :display_order => 3, :text => "Peep")}
+    let(:question_2){ FactoryGirl.create(:question, :survey_section => survey_section, :display_order => 1, :text => "Little")}
+    let(:question_3){ FactoryGirl.create(:question, :survey_section => survey_section, :display_order => 2, :text => "Bo")}
     before do
       [question_1, question_2, question_3].each{|q| survey_section.questions << q }
     end
@@ -59,9 +59,9 @@ describe SurveySection do
 
   context "with translations" do
     require 'yaml'
-    let(:survey){ Factory(:survey) }
+    let(:survey){ FactoryGirl.create(:survey) }
     let(:survey_translation){
-      Factory(:survey_translation, :locale => :es, :translation => {
+      FactoryGirl.create(:survey_translation, :locale => :es, :translation => {
         :survey_sections => {
           :one => {
             :title => "Uno"

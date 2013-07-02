@@ -10,7 +10,7 @@ FactoryGirl.define do
   factory :survey do |s|
     s.title           "Simple survey"
     s.description     "A simple survey for testing"
-    s.access_code     { FactoryGirl.next :unique_survey_access_code }
+    s.access_code     { FactoryGirl.generate :unique_survey_access_code }
     s.survey_version  0
   end
 
@@ -37,7 +37,7 @@ FactoryGirl.define do
     s.association               :survey # s.survey_id                 {}
     s.title                     {"Demographics"}
     s.description               {"Asking you about your personal data"}
-    s.display_order             {FactoryGirl.next :survey_section_display_order}
+    s.display_order             {FactoryGirl.generate :survey_section_display_order}
     s.reference_identifier      {"demographics"}
     s.data_export_identifier    {"demographics"}
   end
@@ -87,7 +87,7 @@ FactoryGirl.define do
     # a.data_export_identifier    {}
     # a.common_namespace          {}
     # a.common_identifier         {}
-    a.display_order             {FactoryGirl.next :answer_display_order}
+    a.display_order             {FactoryGirl.generate :answer_display_order}
     # a.is_exclusive              {}
     a.display_type              "default"
     # a.display_length            {}

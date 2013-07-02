@@ -6,10 +6,10 @@ describe SurveyorController do
     @routes = Surveyor::Engine.routes
   end
 
-  let!(:survey)           { Factory(:survey, :title => "Alphabet", :access_code => "alpha", :survey_version => 0)}
-  let!(:survey_beta)      { Factory(:survey, :title => "Alphabet", :access_code => "alpha", :survey_version => 1)}
-  let!(:response_set)      { Factory(:response_set, :survey => survey, :access_code => "pdq")}
-  let!(:response_set_beta) { Factory(:response_set, :survey => survey_beta, :access_code => "rst")}
+  let!(:survey)           { FactoryGirl.create(:survey, :title => "Alphabet", :access_code => "alpha", :survey_version => 0)}
+  let!(:survey_beta)      { FactoryGirl.create(:survey, :title => "Alphabet", :access_code => "alpha", :survey_version => 1)}
+  let!(:response_set)      { FactoryGirl.create(:response_set, :survey => survey, :access_code => "pdq")}
+  let!(:response_set_beta) { FactoryGirl.create(:response_set, :survey => survey_beta, :access_code => "rst")}
   before { ResponseSet.stub!(:create).and_return(response_set) }
 
   # match '/', :to                                     => 'surveyor#new', :as    => 'available_surveys', :via => :get
@@ -114,7 +114,7 @@ describe SurveyorController do
 
   context "#edit" do
     def do_get(params = {})
-      survey.sections = [Factory(:survey_section, :survey => survey)]
+      survey.sections = [FactoryGirl.create(:survey_section, :survey => survey)]
       get :edit, {:survey_code => "alpha", :response_set_code => "pdq"}.merge(params)
     end
     it "renders edit" do
@@ -132,13 +132,13 @@ describe SurveyorController do
       response.should redirect_to(available_surveys_path)
     end
     it "assigns dependents if javascript not enabled" do
-      controller.stub!(:get_unanswered_dependencies_minus_section_questions).and_return([Factory(:question)])
+      controller.stub!(:get_unanswered_dependencies_minus_section_questions).and_return([FactoryGirl.create(:question)])
       session[:surveyor_javascript].should be_nil
       do_get
       assigns[:dependents].should_not be_empty
     end
     it "does not assign dependents if javascript is enabled" do
-      controller.stub!(:get_unanswered_dependencies_minus_section_questions).and_return([Factory(:question)])
+      controller.stub!(:get_unanswered_dependencies_minus_section_questions).and_return([FactoryGirl.create(:question)])
       session[:surveyor_javascript] = "enabled"
       do_get
       assigns[:dependents].should be_empty
@@ -149,7 +149,7 @@ describe SurveyorController do
       assigns[:survey].should == survey
     end
     it "assigns later survey_version" do
-      survey_beta.sections = [Factory(:survey_section, :survey => survey_beta)]
+      survey_beta.sections = [FactoryGirl.create(:survey_section, :survey => survey_beta)]
       do_get :response_set_code => "rst"
       assigns[:survey].should == survey_beta
       assigns[:response_set].should == response_set_beta

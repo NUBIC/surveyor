@@ -2,7 +2,7 @@ require File.expand_path(File.dirname(__FILE__) + '/../spec_helper')
 
 describe Dependency do
   before(:each) do
-    @dependency = Factory(:dependency)
+    @dependency = FactoryGirl.create(:dependency)
   end
 
   it "should be valid" do
@@ -91,9 +91,9 @@ end
 describe Dependency, "with conditions" do
   it "should destroy conditions when destroyed" do
     @dependency = Dependency.new(:rule => "A and B and C", :question_id => 1)
-    Factory(:dependency_condition, :dependency => @dependency, :rule_key => "A")
-    Factory(:dependency_condition, :dependency => @dependency, :rule_key => "B")
-    Factory(:dependency_condition, :dependency => @dependency, :rule_key => "C")
+    FactoryGirl.create(:dependency_condition, :dependency => @dependency, :rule_key => "A")
+    FactoryGirl.create(:dependency_condition, :dependency => @dependency, :rule_key => "B")
+    FactoryGirl.create(:dependency_condition, :dependency => @dependency, :rule_key => "C")
     dc_ids = @dependency.dependency_conditions.map(&:id)
     @dependency.destroy
     dc_ids.each{|id| DependencyCondition.find_by_id(id).should == nil}
