@@ -11,7 +11,7 @@ module Surveyor
         unless @@validations_already_included
           # Validations
           base.send :validates_presence_of, :rule
-          base.send :validates_format_of, :rule, :with => /^(?:and|or|\)|\(|[A-Z]|\s)+$/ #TODO properly formed parenthesis etc.
+          base.send :validates_format_of, :rule, :with => /^(?:and|or|\)|\(|[A-Z]|\s)+$/, :multiline => true #TODO properly formed parenthesis etc. # SMELL with :multiline => true Rails reports a security risk
           base.send :validates_numericality_of, :question_id, :if => Proc.new { |d| d.question_group_id.nil? }
           base.send :validates_numericality_of, :question_group_id, :if => Proc.new { |d| d.question_id.nil? }
           

@@ -1,6 +1,8 @@
 # For testing against different releases of Rails.  This is in a
 # separate fragment so that it can be sourced from the test
 # application's Gemfile in addition to the main development Gemfile.
+
+ENV['RAILS_VERSION'] = '4.0.0' # SMELL Explicitly setting RAILS_VERSION as it's not set
 if ENV['RAILS_VERSION']
   case ENV['RAILS_VERSION']
   when /3.0$/
@@ -13,7 +15,14 @@ if ENV['RAILS_VERSION']
     gem 'rails', '~> 3.2.0'
     # A JS runtime is required for Rails 3.1+
     gem 'therubyracer', '~> 0.10.2'
+  when /4.0.0$/
+    gem 'rails', '~> 4.0.0'
+    # A JS runtime is required for Rails 4.0+
+    gem 'therubyracer', platforms: :ruby  
+    gem 'protected_attributes' # SMELL remove this to provide full Rails 4 support for Strong Parameters
   else
     fail "Unknown Rails version #{ENV['RAILS_VERSION']}"
   end
+else 
+  fail "ENV['RAILS_VERSION'] not set"
 end
