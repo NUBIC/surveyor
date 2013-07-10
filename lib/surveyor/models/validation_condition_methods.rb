@@ -46,7 +46,8 @@ module Surveyor
           !(response.as(klass) == compare_to.as(klass))
         when "=~"
           return false if compare_to != self
-          !(response.as(klass).to_s =~ Regexp.new(self.regexp || "")).nil?
+          # SMELL Eval regex!!
+          !(response.as(klass).to_s =~ Regexp.new(eval(self.regexp) || "")).nil?
         else
           false
         end

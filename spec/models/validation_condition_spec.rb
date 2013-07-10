@@ -69,8 +69,8 @@ describe ValidationCondition, "validating responses" do
   end
   
   it "should validate a response by regexp" do
-    test_var({:operator => "=~", :regexp => /^[a-z]{1,6}$/}, {:response_class => "string"}, {:string_value => "clear"}).should be_true
-    test_var({:operator => "=~", :regexp => /^[a-z]{1,6}$/}, {:response_class => "string"}, {:string_value => "foobarbaz"}).should be_false
+    test_var({:operator => "=~", :regexp => '/^[a-z]{1,6}$/'}, {:response_class => "string"}, {:string_value => "clear"}).should be_true
+    test_var({:operator => "=~", :regexp => '/^[a-z]{1,6}$/'}, {:response_class => "string"}, {:string_value => "foobarbaz"}).should be_false
   end
   it "should validate a response by integer comparison" do
     test_var({:operator => ">", :integer_value => 3}, {:response_class => "integer"}, {:integer_value => 4}).should be_true

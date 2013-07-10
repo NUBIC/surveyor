@@ -13,7 +13,7 @@ describe Answer do
     end
     it "protects #api_id" do
       saved_attrs = answer.attributes
-      if defined? ActiveModel::MassAssignmentSecurity::Error
+      if defined? ActiveModel::MassAssignmentSecurity::Error 
         expect { answer.update_attributes(:api_id => "NEW") }.to raise_error(ActiveModel::MassAssignmentSecurity::Error)
       else
         answer.attributes = {:api_id => "NEW"} # Rails doesn't return false, but this will be checked in the comparison to saved_attrs
