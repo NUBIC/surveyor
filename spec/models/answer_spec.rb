@@ -2,18 +2,18 @@
 require File.expand_path(File.dirname(__FILE__) + '/../spec_helper')
 
 describe Answer do
-  let(:answer){ Factory(:answer) }
+  let(:answer){ FactoryGirl.create(:answer) }
 
   context "when creating" do
     it { answer.should be_valid }
     it "deletes validation when deleted" do
-      v_id = Factory(:validation, :answer => answer).id
+      v_id = FactoryGirl.create(:validation, :answer => answer).id
       answer.destroy
       Validation.find_by_id(v_id).should be_nil
     end
     it "protects #api_id" do
       saved_attrs = answer.attributes
-      if defined? ActiveModel::MassAssignmentSecurity::Error
+      if defined? ActiveModel::MassAssignmentSecurity::Error 
         expect { answer.update_attributes(:api_id => "NEW") }.to raise_error(ActiveModel::MassAssignmentSecurity::Error)
       else
         answer.attributes = {:api_id => "NEW"} # Rails doesn't return false, but this will be checked in the comparison to saved_attrs
@@ -60,10 +60,10 @@ describe Answer do
 
   context "with translations" do
     require 'yaml'
-    let(:survey){ Factory(:survey) }
-    let(:survey_section){ Factory(:survey_section) }
+    let(:survey){ FactoryGirl.create(:survey) }
+    let(:survey_section){ FactoryGirl.create(:survey_section) }
     let(:survey_translation){
-      Factory(:survey_translation, :locale => :es, :translation => {
+      FactoryGirl.create(:survey_translation, :locale => :es, :translation => {
         :questions => {
           :name => {
             :answers => {
@@ -75,7 +75,7 @@ describe Answer do
         }
       }.to_yaml)
     }
-    let(:question){ Factory(:question, :reference_identifier => "name") }
+    let(:question){ FactoryGirl.create(:question, :reference_identifier => "name") }
     before do
       answer.reference_identifier = "name"
       answer.help_text = "My name is..."
