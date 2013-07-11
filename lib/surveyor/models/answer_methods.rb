@@ -24,8 +24,9 @@ module Surveyor
           @@validations_already_included = true
         end
 
-        # Whitelisting attributes
-        base.send :attr_accessible, :question, :question_id, :text, :short_text, :help_text, :weight, :response_class, :reference_identifier, :data_export_identifier, :common_namespace, :common_identifier, :display_order, :is_exclusive, :display_length, :custom_class, :custom_renderer, :default_value, :display_type, :input_mask, :input_mask_placeholder
+          # Whitelisting attributes
+          base.send :attr_accessible, :question, :question_id, :text, :short_text, :help_text, :weight, :response_class, :reference_identifier, :data_export_identifier, :common_namespace, :common_identifier, :display_order, :is_exclusive, :display_length, :custom_class, :custom_renderer, :default_value, :display_type, :input_mask, :input_mask_placeholder
+
       end
 
       # Instance Methods
