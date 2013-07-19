@@ -61,7 +61,9 @@ Surveyor's controller, helper, models, and views may be overridden by classes in
 
     script/rails generate surveyor:custom
 
-and read the instructions generated in [`surveys/EXTENDING_SURVEYOR.MD`][https://github.com/NUBIC/surveyor/blob/master/lib/generators/surveyor/templates/surveys/EXTENDING_SURVEYOR.md]
+and read the instructions generated in [`surveys/EXTENDING_SURVEYOR.MD`][extending]
+
+[extending]: https://github.com/NUBIC/surveyor/blob/master/lib/generators/surveyor/templates/surveys/EXTENDING_SURVEYOR.md
 
 ## Upgrade surveyor
 
