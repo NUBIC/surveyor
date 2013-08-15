@@ -88,7 +88,7 @@ describe Question do
     let(:dependency){ FactoryGirl.create(:dependency) }
     before do
       question.dependency = dependency
-      dependency.stub!(:is_met?).with(response_set).and_return true
+      dependency.stub(:is_met?).with(response_set).and_return true
     end
     it "checks its dependency" do
       question.triggered?(response_set).should be_true
