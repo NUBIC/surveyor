@@ -182,8 +182,8 @@ module Surveyor
 
       def dependencies(question_ids = nil)
         question_ids = survey.sections.map(&:questions).flatten.map(&:id) if responses.blank? and question_ids.blank?
-        deps = Dependency.all(:include => :dependency_conditions,
-          :conditions => {:dependency_conditions => {:question_id => question_ids || responses.map(&:question_id)}})
+        deps = Dependency.includes(:dependency_conditions).
+          where({:dependency_conditions => {:question_id => question_ids || responses.map(&:question_id)}})
         # this is a work around for a bug in active_record in rails 2.3 which incorrectly eager-loads associatins when a
         # condition clause includes an association limiter
         deps.each{|d| d.dependency_conditions.reload}
