@@ -36,7 +36,14 @@ Gem::Specification.new do |s|
   s.add_development_dependency('factory_girl')#, '~> 2.1.2')
   s.add_development_dependency('sqlite3')
   s.add_development_dependency('cucumber-rails')#, '~> 1.1.1')
-  s.add_development_dependency('database_cleaner')#, '~> 0.6.7')
+
+  # FIXME
+  # https://github.com/bmabey/database_cleaner/issues/224
+  # tests failed because the database_cleaner postgresql monkeypatch
+  # was being applied to the same adapter as the sqlite monkeypatch.
+  # 1.0.1 is the last known-good version.
+  s.add_development_dependency('database_cleaner', '= 1.0.1')
+
   s.add_development_dependency('launchy')#, '~> 2.0.5')
   s.add_development_dependency('capybara')#, '~> 1.1.1')
   s.add_development_dependency('ci_reporter')#, '1.6.6')
