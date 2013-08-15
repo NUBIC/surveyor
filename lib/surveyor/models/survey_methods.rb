@@ -12,7 +12,7 @@ module Surveyor
         base.send :has_many, :translations, :class_name => "SurveyTranslation"
 
         # Scopes
-        base.send :scope, :with_sections, {:include => :sections}
+        base.instance_eval {scope :with_sections, ->{includes :sections}}
 
         @@validations_already_included ||= nil
         unless @@validations_already_included
