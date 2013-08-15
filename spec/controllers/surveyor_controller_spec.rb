@@ -91,7 +91,8 @@ describe SurveyorController do
       response.should render_template('show')
     end
     it "finds ResponseSet with includes" do
-      ResponseSet.should_receive(:find_by_access_code).with("pdq",{:include=>{:responses=>[:question, :answer]}})
+      ResponseSet.should_receive(:includes).with(:responses => [:question, :answer]).and_return(response_set)
+      response_set.should_receive(:find_by).with(:access_code => "pdq").and_return(response_set)
       do_get
     end
     it "redirects for missing response set" do
@@ -167,11 +168,13 @@ describe SurveyorController do
     }
     shared_examples "#update action" do
       before do
-        ResponseSet.stub(:find_by_access_code).and_return(response_set)
+        ResponseSet.stub(:includes).and_return(response_set)
+        response_set.stub(:find_by).and_return(response_set)
         responses_ui_hash['11'] = {'api_id' => 'something', 'answer_id' => '56', 'question_id' => '9'}
       end
       it "finds a response set" do
-        ResponseSet.should_receive(:find_by_access_code).and_return(response_set)
+        ResponseSet.should_receive(:includes).and_return(response_set)
+        response_set.should_receive(:find_by).and_return(response_set)
         do_put
       end
       it "saves responses" do
@@ -236,7 +239,8 @@ describe SurveyorController do
 
       it_behaves_like "#update action"
       it "returns dependencies" do
-        ResponseSet.stub(:find_by_access_code).and_return(response_set)
+        ResponseSet.should_receive(:includes).and_return(response_set)
+        response_set.should_receive(:find_by).and_return(response_set)
         response_set.should_receive(:all_dependencies).and_return({"show" => ['q_1'], "hide" => ['q_2']})
 
         do_put
