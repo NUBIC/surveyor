@@ -2,7 +2,6 @@ require File.expand_path(File.dirname(__FILE__) + '/../spec_helper')
 
 describe SurveyorHelper do
   context "numbering" do
-    let(:asset_directory){ asset_pipeline_enabled? ? "assets" : "images" }
     before do
       ActionController::Base.helpers.config.assets_dir = "public" unless asset_pipeline_enabled?
     end
@@ -15,7 +14,7 @@ describe SurveyorHelper do
       helper.q_text(q1).should == "<span class='qnum'>1) </span>#{q1.text}"
       helper.q_text(q2).should == q2.text
       helper.q_text(q3).should == q3.text
-      helper.q_text(q4).should == %Q(<img alt="Something" src="/#{asset_directory}/something.jpg" />)
+      helper.q_text(q4).should == %Q(<img alt="Something" src="/images/something.jpg" />)
       helper.q_text(q5).should == q5.text
     end
   end
