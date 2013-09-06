@@ -184,7 +184,7 @@ describe SurveyorController do
       end
       context "with update exceptions" do
         it 'retries the update on a constraint violation' do
- response_set.should_receive(:update_from_ui_hash).ordered.with(responses_ui_hash).and_raise(ActiveRecord::StatementInvalid.new('statement invalid'))
+          response_set.should_receive(:update_from_ui_hash).ordered.with(responses_ui_hash).and_raise(ActiveRecord::StatementInvalid.new('statement invalid'))
           response_set.should_receive(:update_from_ui_hash).ordered.with(responses_ui_hash)
 
           expect { do_put(:r => responses_ui_hash) }.to_not raise_error

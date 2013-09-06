@@ -10,7 +10,7 @@ describe ValidationCondition do
   before(:each) do
     @validation_condition = FactoryGirl.create(:validation_condition)
   end
-  
+
   it "should be valid" do
      @validation_condition.should be_valid
   end
@@ -24,7 +24,7 @@ describe ValidationCondition do
     @validation_condition.operator = nil
     @validation_condition.should have(2).errors_on(:operator)
   end
-  
+
   it "should be invalid without a rule_key" do
     @validation_condition.should be_valid
     @validation_condition.rule_key = nil
@@ -67,10 +67,10 @@ describe ValidationCondition, "validating responses" do
     r = FactoryGirl.create(:response, {:answer => a, :question => a.question}.merge(rhash))
     return v.is_valid?(r)
   end
-  
+
   it "should validate a response by regexp" do
-    test_var({:operator => "=~", :regexp => '/^[a-z]{1,6}$/'}, {:response_class => "string"}, {:string_value => "clear"}).should be_true
-    test_var({:operator => "=~", :regexp => '/^[a-z]{1,6}$/'}, {:response_class => "string"}, {:string_value => "foobarbaz"}).should be_false
+    test_var({:operator => "=~", :regexp => /^[a-z]{1,6}$/.to_s}, {:response_class => "string"}, {:string_value => "clear"}).should be_true
+    test_var({:operator => "=~", :regexp => /^[a-z]{1,6}$/.to_s}, {:response_class => "string"}, {:string_value => "foobarbaz"}).should be_false
   end
   it "should validate a response by integer comparison" do
     test_var({:operator => ">", :integer_value => 3}, {:response_class => "integer"}, {:integer_value => 4}).should be_true

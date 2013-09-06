@@ -10,7 +10,7 @@ export BUNDLER_VERSION=1.3.1
 
 options=""
 rubies=(1.9.3)
-rails_versions=(rails_3.1 rails_3.2)
+rails_versions=(rails_3.1 rails_3.2 rails_4.0)
 
 for i in "${rubies[@]}"
 do
