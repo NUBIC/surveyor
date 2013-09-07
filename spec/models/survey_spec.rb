@@ -138,8 +138,8 @@ describe Survey do
       survey.sections.map(&:display_order).should == [1,2,3]
     end
     it "gets survey_sections_with_questions in order" do
-      survey.sections_with_questions.map(&:questions).flatten.should have(4).questions
-      survey.sections_with_questions.map(&:questions).flatten.should == [q4,q1,q3,q2]
+      survey.with_sections_and_questions.sections.map(&:questions).flatten.should have(4).questions
+      survey.with_sections_and_questions.sections.map(&:questions).flatten.should == [q4,q1,q3,q2]
     end
     it "deletes child survey_sections when deleted" do
       survey_section_ids = survey.sections.map(&:id)

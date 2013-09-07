@@ -36,7 +36,7 @@ module Surveyor
       # Instance methods
       def to_hash(response_set)
         # all responses to associated question
-        responses = question.blank? ? [] : response_set.responses.where("responses.answer_id in (?)", question.answer_ids).all
+        responses = question.blank? ? [] : response_set.responses.where("responses.answer_id in (?)", question.answer_ids)
         if self.operator.match /^count(>|>=|<|<=|==|!=)\d+$/
           op, i = self.operator.scan(/^count(>|>=|<|<=|==|!=)(\d+)$/).flatten
           # logger.warn({rule_key.to_sym => responses.count.send(op, i.to_i)})
@@ -44,7 +44,7 @@ module Surveyor
         elsif operator == "!=" and (responses.blank? or responses.none?{|r| r.answer.id == self.answer.id})
           # logger.warn( {rule_key.to_sym => true})
           return {rule_key.to_sym => true}
-        elsif response = responses.detect{|r| r.answer.id == self.answer.id}
+        elsif response = responses.load.detect{|r| r.answer.id == self.answer.id}
           klass = response.answer.response_class
           klass = "answer" if self.as(klass).nil? # it should compare answer ids when the dependency condition *_value is nil
           case self.operator

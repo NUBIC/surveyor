@@ -1,5 +1,3 @@
-require 'rabl'
-
 module Surveyor
   module Models
     module ResponseSetMethods
@@ -7,7 +5,7 @@ module Surveyor
         # Associations
         base.send :belongs_to, :survey
         base.send :belongs_to, :user
-        base.send :has_many, :responses, :order => "#{Response.quoted_table_name}.created_at ASC", :dependent => :destroy
+        base.send :has_many, :responses, :dependent => :destroy
         base.send :accepts_nested_attributes_for, :responses, :allow_destroy => true
 
         @@validations_already_included ||= nil
@@ -86,7 +84,7 @@ module Surveyor
         responses.all?(&:correct?)
       end
       def correctness_hash
-        { :questions => survey.sections_with_questions.map(&:questions).flatten.compact.size,
+        { :questions => survey.with_sections_and_questions.sections.map(&:questions).flatten.compact.size,
           :responses => responses.compact.size,
           :correct => responses.find_all(&:correct?).compact.size
         }
@@ -95,7 +93,7 @@ module Surveyor
         progress_hash[:triggered_mandatory] == progress_hash[:triggered_mandatory_completed]
       end
       def progress_hash
-        qs = survey.sections_with_questions.map(&:questions).flatten
+        qs = survey.with_sections_and_questions.sections.map(&:questions).flatten
         ds = dependencies(qs.map(&:id))
         triggered = qs - ds.select{|d| !d.is_met?(self)}.map(&:question)
         { :questions => qs.compact.size,
@@ -182,8 +180,7 @@ module Surveyor
 
       def dependencies(question_ids = nil)
         question_ids = survey.sections.map(&:questions).flatten.map(&:id) if responses.blank? and question_ids.blank?
-        deps = Dependency.all(:include => :dependency_conditions,
-          :conditions => {:dependency_conditions => {:question_id => question_ids || responses.map(&:question_id)}})
+        deps = Dependency.includes(:dependency_conditions).where({:dependency_conditions => {:question_id => question_ids || responses.map(&:question_id)}})
         # this is a work around for a bug in active_record in rails 2.3 which incorrectly eager-loads associatins when a
         # condition clause includes an association limiter
         deps.each{|d| d.dependency_conditions.reload}

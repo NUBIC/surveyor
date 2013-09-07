@@ -7,7 +7,7 @@ module Surveyor
         base.send :belongs_to, :survey
 
         # Scopes
-        base.send :scope, :with_includes, { :include => {:questions => [:answers, :question_group, {:dependency => :dependency_conditions}]}}
+        base.send :scope, :with_includes, -> { base.includes({:questions => [:answers, :question_group, {:dependency => :dependency_conditions}]})}
 
         @@validations_already_included ||= nil
         unless @@validations_already_included

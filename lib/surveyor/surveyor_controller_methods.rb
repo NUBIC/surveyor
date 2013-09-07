@@ -14,7 +14,7 @@ module Surveyor
 
     # Actions
     def new
-      @surveys_by_access_code = Survey.order("created_at DESC, survey_version DESC").all.group_by(&:access_code)
+      @surveys_by_access_code = Survey.order("created_at DESC, survey_version DESC").load.group_by(&:access_code)
       redirect_to surveyor_index unless surveyor_index == surveyor.available_surveys_path
     end
 
@@ -58,7 +58,7 @@ module Surveyor
     def edit
       # @response_set is set in before_filter - set_response_set_and_render_context
       if @response_set
-        @survey = Survey.with_sections.find_by_id(@response_set.survey_id)
+        @survey = Survey.with_sections_and_questions.find_by_id(@response_set.survey_id)
         @sections = @survey.sections
         @section = @sections.with_includes.find(section_id_from(params) || :first) || @sections.with_includes.first
         set_dependents
@@ -108,8 +108,7 @@ module Surveyor
 
     def load_and_update_response_set
       ResponseSet.transaction do
-        @response_set = ResponseSet.
-          find_by_access_code(params[:response_set_code], :include => {:responses => :answer})
+        @response_set = ResponseSet.includes({:responses => :answer}).where(:access_code => params[:response_set_code]).first
         if @response_set
           saved = true
           if params[:r]
@@ -156,8 +155,7 @@ module Surveyor
     end
 
     def set_response_set_and_render_context
-      @response_set = ResponseSet.
-        find_by_access_code(params[:response_set_code], :include => {:responses => [:question, :answer]})
+      @response_set = ResponseSet.includes({:responses => [:question, :answer]}).where(:access_code => params[:response_set_code]).first
       @render_context = render_context
     end
 
