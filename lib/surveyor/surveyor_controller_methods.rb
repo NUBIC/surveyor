@@ -60,7 +60,7 @@ module Surveyor
       if @response_set
         @survey = Survey.with_sections_and_questions.find_by_id(@response_set.survey_id)
         @sections = @survey.sections
-        @section = @sections.with_includes.find(section_id_from(params) || :first) || @sections.with_includes.first
+        @section = (section_id_from(params) ? @sections.with_includes.find(section_id_from(params)) : @sections.with_includes.first) || @sections.with_includes.first
         set_dependents
       else
         flash[:notice] = t('surveyor.unable_to_find_your_responses')
