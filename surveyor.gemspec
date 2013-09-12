@@ -18,6 +18,8 @@ Gem::Specification.new do |s|
   s.require_paths = ["lib"]
 
   s.add_dependency('rails', '~> 4.0')
+  # observers used to be part of core Rails but now are a separate gem
+  s.add_dependency('rails-observers', '~> 0.1')
   # '< 5.0' is to be conservative; once 5.0 comes out we should test with it and
   # allow it if it works.
   s.add_dependency('haml')#, '>= 3.1.3', '< 5.0')
