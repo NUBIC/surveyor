@@ -17,14 +17,13 @@ Gem::Specification.new do |s|
   s.executables   = `git ls-files -- bin/*`.split("\n").map{ |f| File.basename(f) }
   s.require_paths = ["lib"]
 
-  s.add_dependency('rails', '>= 3.1')
+  s.add_dependency('rails', '>= 3.2')
   s.add_dependency('haml', '~> 4.0')
   s.add_dependency('sass')
   s.add_dependency('formtastic', '~> 2.2.1') # 2.1 requries actionpack 3.0
   s.add_dependency('uuidtools', '~> 2.1')
   s.add_dependency('mustache', '~> 0.99')
   s.add_dependency('rabl', '~> 0.6')
-  s.add_dependency('protected_attributes') # SMELL remove this to provide full Rails 4 support for Strong Parameters
 
   s.add_development_dependency('yard')
   s.add_development_dependency('rake')
