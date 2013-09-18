@@ -10,6 +10,6 @@ class SurveySectionSweeper < ActionController::Caching::Sweeper
   end
   
   def expire_cache(section)
-    expire_fregment "section_#{section.id}"
+    expire_fragment "section_#{section.id}"
   end
 end
