@@ -18,9 +18,6 @@ module Surveyor
           @@validations_already_included = true
         end
 
-        # Whitelisting attributes
-        base.send :attr_accessible, :question, :question_group, :question_id, :question_group_id, :rule
-
         # Attribute aliases
         base.send :alias_attribute, :dependent_question_id, :question_id
       end

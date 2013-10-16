@@ -20,9 +20,6 @@ module Surveyor
 
         base.send :include, Surveyor::ActsAsResponse # includes "as" instance method
 
-        # Whitelisting attributes
-        base.send :attr_accessible, :validation, :validation_id, :rule_key, :operator, :question_id, :answer_id, :datetime_value, :integer_value, :float_value, :unit, :text_value, :string_value, :response_other, :regexp
-
         # Class methods
         base.instance_eval do
           def operators

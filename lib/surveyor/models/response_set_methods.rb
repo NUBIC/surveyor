@@ -18,12 +18,7 @@ module Surveyor
           @@validations_already_included = true
         end
 
-        # Attributes
-        base.send :attr_protected, :completed_at
-
-        # Whitelisting attributes
-        base.send :attr_accessible, :survey, :responses_attributes, :user_id, :survey_id
-
+        # Derived attributes
         base.send :before_create, :ensure_start_timestamp
         base.send :before_create, :ensure_identifiers
 

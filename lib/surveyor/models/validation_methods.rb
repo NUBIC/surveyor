@@ -18,9 +18,6 @@ module Surveyor
 
           @@validations_already_included = true
         end
-
-        # Whitelisting attributes
-        base.send :attr_accessible, :answer, :answer_id, :rule, :message
       end
 
       # Instance Methods

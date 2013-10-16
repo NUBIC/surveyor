@@ -42,9 +42,6 @@ namespace :testbed do
   task :generate do
     Tempfile.open('surveyor_Rakefile') do |f|
       f.write("application \"config.time_zone='Rome'\"\n")
-      # SMELL add support for protected_attributes
-      f.write("application \"config.active_record.whitelist_attributes = true if defined?(Rails) && Rails::VERSION::MAJOR == 4\"\n")
-      f.write("application \"config.active_record.mass_assignment_sanitizer = :strict if defined?(Rails) && Rails::VERSION::MAJOR == 4\"\n")
       f.flush
       sh "bundle exec rails new testbed --skip-bundle -m #{f.path}" # don't run bundle install until the Gemfile modifications
     end

@@ -12,8 +12,6 @@ if ENV['RAILS_VERSION']
     gem 'rails', '~> 4.0.0'
     # A JS runtime is required for Rails 4.0+
     gem 'therubyracer', platforms: :ruby
-    gem 'protected_attributes', :git => 'git://github.com/rails/protected_attributes.git' # SMELL remove this to provide full Rails 4 support for Strong Parameters
-    gem 'rails-observers'
   else
     fail "Unsupported Rails version #{ENV['RAILS_VERSION']}"
   end
