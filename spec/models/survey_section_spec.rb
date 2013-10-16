@@ -20,8 +20,8 @@ describe SurveySection do
     end
     it{ survey_section.should have(3).questions}
     it "gets questions in order" do
-      survey_section.questions.should == [question_2, question_3, question_1]
-      survey_section.questions.map(&:display_order).should == [1,2,3]
+      survey_section.questions.order(display_order: :asc).should == [question_2, question_3, question_1]
+      survey_section.questions.order(display_order: :asc).map(&:display_order).should == [1,2,3]
     end
     it "deletes child questions when deleted" do
       question_ids = survey_section.questions.map(&:id)

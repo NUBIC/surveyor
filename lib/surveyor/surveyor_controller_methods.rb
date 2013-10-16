@@ -60,9 +60,9 @@ module Surveyor
     def edit
       # @response_set is set in before_filter - set_response_set_and_render_context
       if @response_set
-        @survey = Survey.with_sections_and_questions.find_by_id(@response_set.survey_id)
-        @sections = @survey.sections
-        @section = (section_id_from(params) ? @sections.with_includes.find(section_id_from(params)) : @sections.with_includes.first) || @sections.with_includes.first
+        @sections = SurveySection.where(survey_id: @response_set.survey_id).includes([:survey, {questions: [{answers: :question}, {question_group: :dependency}, :dependency]}])
+        @section = (section_id_from(params) ? @sections.where(id: section_id_from(params)).first : @sections.first) || @sections.first
+        @survey = @section.survey
         set_dependents
       else
         flash[:notice] = t('surveyor.unable_to_find_your_responses')

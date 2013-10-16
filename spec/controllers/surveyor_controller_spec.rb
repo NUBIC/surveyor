@@ -10,7 +10,7 @@ describe SurveyorController do
   let!(:survey_beta)      { FactoryGirl.create(:survey, :title => "Alphabet", :access_code => "alpha", :survey_version => 1)}
   let!(:response_set)      { FactoryGirl.create(:response_set, :survey => survey, :access_code => "pdq")}
   let!(:response_set_beta) { FactoryGirl.create(:response_set, :survey => survey_beta, :access_code => "rst")}
-  before { ResponseSet.stub!(:create).and_return(response_set) }
+  before { ResponseSet.stub(:create).and_return(response_set) }
 
   # match '/', :to                                     => 'surveyor#new', :as    => 'available_surveys', :via => :get
   # match '/:survey_code', :to                         => 'surveyor#create', :as => 'take_survey', :via       => :post
@@ -90,10 +90,6 @@ describe SurveyorController do
       response.should be_success
       response.should render_template('show')
     end
-    it "finds ResponseSet with includes" do
-      ResponseSet.should_receive(:find_by_access_code).with("pdq",{:include=>{:responses=>[:question, :answer]}})
-      do_get
-    end
     it "redirects for missing response set" do
       do_get :response_set_code => "DIFFERENT"
       response.should redirect_to(available_surveys_path)
@@ -132,13 +128,13 @@ describe SurveyorController do
       response.should redirect_to(available_surveys_path)
     end
     it "assigns dependents if javascript not enabled" do
-      controller.stub!(:get_unanswered_dependencies_minus_section_questions).and_return([FactoryGirl.create(:question)])
+      controller.stub(:get_unanswered_dependencies_minus_section_questions).and_return([FactoryGirl.create(:question)])
       session[:surveyor_javascript].should be_nil
       do_get
       assigns[:dependents].should_not be_empty
     end
     it "does not assign dependents if javascript is enabled" do
-      controller.stub!(:get_unanswered_dependencies_minus_section_questions).and_return([FactoryGirl.create(:question)])
+      controller.stub(:get_unanswered_dependencies_minus_section_questions).and_return([FactoryGirl.create(:question)])
       session[:surveyor_javascript] = "enabled"
       do_get
       assigns[:dependents].should be_empty
@@ -167,16 +163,11 @@ describe SurveyorController do
     }
     shared_examples "#update action" do
       before do
-        ResponseSet.stub!(:find_by_access_code).and_return(response_set)
+        ResponseSet.stub_chain(:includes, :where, :first).and_return(response_set)
         responses_ui_hash['11'] = {'api_id' => 'something', 'answer_id' => '56', 'question_id' => '9'}
-      end
-      it "finds a response set" do
-        ResponseSet.should_receive(:find_by_access_code).and_return(response_set)
-        do_put
       end
       it "saves responses" do
         response_set.should_receive(:update_from_ui_hash).with(responses_ui_hash)
-
         do_put(:r => responses_ui_hash)
       end
       it "does not fail when there are no responses" do
@@ -236,7 +227,7 @@ describe SurveyorController do
 
       it_behaves_like "#update action"
       it "returns dependencies" do
-        ResponseSet.stub!(:find_by_access_code).and_return(response_set)
+        ResponseSet.stub_chain(:includes, :where, :first).and_return(response_set)
         response_set.should_receive(:all_dependencies).and_return({"show" => ['q_1'], "hide" => ['q_2']})
 
         do_put

@@ -98,12 +98,12 @@ describe Survey do
 
     it{ survey.should have(3).sections}
     it "gets survey_sections in order" do
-      survey.sections.should == [s3, s1, s2]
-      survey.sections.map(&:display_order).should == [1,2,3]
+      survey.sections.order(display_order: :asc).should == [s3, s1, s2]
+      survey.sections.order(display_order: :asc).map(&:display_order).should == [1,2,3]
     end
     it "gets survey_sections_with_questions in order" do
-      survey.with_sections_and_questions.sections.map(&:questions).flatten.should have(4).questions
-      survey.with_sections_and_questions.sections.map(&:questions).flatten.should == [q4,q1,q3,q2]
+      survey.sections.order(display_order: :asc).map{|ss| ss.questions.order(display_order: :asc)}.flatten.should have(4).questions
+      survey.sections.order(display_order: :asc).map{|ss| ss.questions.order(display_order: :asc)}.flatten.should == [q4,q1,q3,q2]
     end
     it "deletes child survey_sections when deleted" do
       survey_section_ids = survey.sections.map(&:id)

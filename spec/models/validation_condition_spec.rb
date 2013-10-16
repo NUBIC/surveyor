@@ -67,9 +67,9 @@ describe ValidationCondition, "validating responses" do
   end
   it "should represent itself as a hash" do
     @v = FactoryGirl.create(:validation_condition, :rule_key => "A")
-    @v.stub!(:is_valid?).and_return(true)
+    @v.stub(:is_valid?).and_return(true)
     @v.to_hash("foo").should == {:A => true}
-    @v.stub!(:is_valid?).and_return(false)
+    @v.stub(:is_valid?).and_return(false)
     @v.to_hash("foo").should == {:A => false}
   end
 end

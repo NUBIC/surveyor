@@ -76,7 +76,7 @@ module Surveyor
         responses.all?(&:correct?)
       end
       def correctness_hash
-        { :questions => survey.with_sections_and_questions.sections.map(&:questions).flatten.compact.size,
+        { :questions => Survey.where(id: self.survey_id).includes(sections: :questions).first.sections.map(&:questions).flatten.compact.size,
           :responses => responses.compact.size,
           :correct => responses.find_all(&:correct?).compact.size
         }
@@ -85,7 +85,7 @@ module Surveyor
         progress_hash[:triggered_mandatory] == progress_hash[:triggered_mandatory_completed]
       end
       def progress_hash
-        qs = survey.with_sections_and_questions.sections.map(&:questions).flatten
+        qs = Survey.where(id: self.survey_id).includes(sections: :questions).first.sections.map(&:questions).flatten
         ds = dependencies(qs.map(&:id))
         triggered = qs - ds.select{|d| !d.is_met?(self)}.map(&:question)
         { :questions => qs.compact.size,

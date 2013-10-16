@@ -57,10 +57,10 @@ describe Dependency, "when evaluating dependency conditions of a question in a r
     @dep_c2 = mock_model(DependencyCondition, :id => 2, :rule_key => "B", :to_hash => {:B => false})
     @dep_c3 = mock_model(DependencyCondition, :id => 3, :rule_key => "C", :to_hash => {:C => true})
 
-    @dep.stub!(:dependency_conditions).and_return([@dep_c])
-    @dep2.stub!(:dependency_conditions).and_return([@dep_c, @dep_c2])
-    @dep3.stub!(:dependency_conditions).and_return([@dep_c, @dep_c2])
-    @dep4.stub!(:dependency_conditions).and_return([@dep_c, @dep_c2, @dep_c3])
+    @dep.stub(:dependency_conditions).and_return([@dep_c])
+    @dep2.stub(:dependency_conditions).and_return([@dep_c, @dep_c2])
+    @dep3.stub(:dependency_conditions).and_return([@dep_c, @dep_c2])
+    @dep4.stub(:dependency_conditions).and_return([@dep_c, @dep_c2, @dep_c3])
   end
 
   it "knows if the dependencies are met" do
