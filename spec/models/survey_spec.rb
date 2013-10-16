@@ -40,42 +40,6 @@ describe Survey do
     it "has #api_id with 36 characters by default" do
       survey.api_id.length.should == 36
     end
-    it "protects #access_code" do
-      saved_attrs = survey.attributes
-      if defined? ActiveModel::MassAssignmentSecurity::Error
-        expect { survey.update_attributes(:access_code => "NEW") }.to raise_error(ActiveModel::MassAssignmentSecurity::Error)
-      else
-        survey.attributes = {:access_code => "NEW"} # Rails doesn't return false, but this will be checked in the comparison to saved_attrs
-      end
-      survey.attributes.should == saved_attrs
-    end
-    it "protects #api_id" do
-      saved_attrs = survey.attributes
-      if defined? ActiveModel::MassAssignmentSecurity::Error
-        expect { survey.update_attributes(:api_id => "NEW") }.to raise_error(ActiveModel::MassAssignmentSecurity::Error)
-      else
-        survey.attributes = {:api_id => "NEW"} # Rails doesn't return false, but this will be checked in the comparison to saved_attrs
-      end
-      survey.attributes.should == saved_attrs
-    end
-    it "protects #created_at" do
-      saved_attrs = survey.attributes
-      if defined? ActiveModel::MassAssignmentSecurity::Error
-        expect { survey.update_attributes(:created_at => 3.days.ago) }.to raise_error(ActiveModel::MassAssignmentSecurity::Error)
-      else
-        survey.attributes = {:created_at => 3.days.ago} # Rails doesn't return false, but this will be checked in the comparison to saved_attrs
-      end
-      survey.attributes.should == saved_attrs
-    end
-    it "protects #updated_at" do
-      saved_attrs = survey.attributes
-      if defined? ActiveModel::MassAssignmentSecurity::Error
-        expect { survey.update_attributes(:updated_at => 3.hours.ago) }.to raise_error(ActiveModel::MassAssignmentSecurity::Error)
-      else
-        survey.attributes = {:updated_at => 3.hours.ago} # Rails doesn't return false, but this will be checked in the comparison to saved_attrs
-      end
-      survey.attributes.should == saved_attrs
-    end
   end
 
   context "activating" do

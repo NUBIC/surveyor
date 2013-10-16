@@ -32,33 +32,6 @@ describe QuestionGroup do
       dependency.should_receive(:is_met?).and_return(false)
       question_group.css_class(response_set).should == "g_dependent g_hidden foo bar"
     end
-    it "protects #api_id" do
-      saved_attrs = question_group.attributes
-      if defined? ActiveModel::MassAssignmentSecurity::Error
-        expect { question_group.update_attributes(:api_id => "NEW") }.to raise_error(ActiveModel::MassAssignmentSecurity::Error)
-      else
-        question_group.attributes = {:api_id => "NEW"} # Rails doesn't return false, but this will be checked in the comparison to saved_attrs
-      end
-      question_group.attributes.should == saved_attrs
-    end
-    it "protects #created_at" do
-      saved_attrs = question_group.attributes
-      if defined? ActiveModel::MassAssignmentSecurity::Error
-        expect { question_group.update_attributes(:created_at => 3.days.ago) }.to raise_error(ActiveModel::MassAssignmentSecurity::Error)
-      else
-        question_group.attributes = {:created_at => 3.days.ago} # Rails doesn't return false, but this will be checked in the comparison to saved_attrs
-      end
-      question_group.attributes.should == saved_attrs
-    end
-    it "protects #updated_at" do
-      saved_attrs = question_group.attributes
-      if defined? ActiveModel::MassAssignmentSecurity::Error
-        expect { question_group.update_attributes(:updated_at => 3.hours.ago) }.to raise_error(ActiveModel::MassAssignmentSecurity::Error)
-      else
-        question_group.attributes = {:updated_at => 3.hours.ago} # Rails doesn't return false, but this will be checked in the comparison to saved_attrs
-      end
-      question_group.attributes.should == saved_attrs
-    end
   end
 
   context "with translations" do
