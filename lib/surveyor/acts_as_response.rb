@@ -1,5 +1,7 @@
 module Surveyor
   module ActsAsResponse
+    extend ActiveSupport::Concern
+    
     # Returns the response as a particular response_class type
     def as(type_symbol)
       return case type_symbol.to_sym

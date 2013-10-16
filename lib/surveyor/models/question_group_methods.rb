@@ -3,13 +3,15 @@ require 'surveyor/common'
 module Surveyor
   module Models
     module QuestionGroupMethods
-      def self.included(base)
-        # Associations
-        base.send :has_many, :questions
-        base.send :has_one, :dependency
-      end
-
+      extend ActiveSupport::Concern
+      include ActiveModel::Validations
       include MustacheContext
+
+      included do
+        # Associations
+        has_many :questions
+        has_one :dependency
+      end
 
       # Instance Methods
       def initialize(*args)

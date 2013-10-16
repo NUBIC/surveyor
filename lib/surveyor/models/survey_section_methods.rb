@@ -1,23 +1,16 @@
 module Surveyor
   module Models
     module SurveySectionMethods
-      def self.included(base)
+      extend ActiveSupport::Concern
+      include ActiveModel::Validations
+
+      included do
         # Associations
-        base.send :has_many, :questions, :dependent => :destroy
-        base.send :belongs_to, :survey
+        has_many :questions, :dependent => :destroy
+        belongs_to :survey
 
-        # Scopes
-        base.send :scope, :with_includes, -> { base.includes({:questions => [:answers, :question_group, {:dependency => :dependency_conditions}]})}
-
-        @@validations_already_included ||= nil
-        unless @@validations_already_included
-          # Validations
-          base.send :validates_presence_of, :title, :display_order
-          # this causes issues with building and saving
-          #, :survey
-
-          @@validations_already_included = true
-        end
+        # Validations
+        validates_presence_of :title, :display_order
       end
 
       # Instance Methods

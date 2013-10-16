@@ -1,34 +1,31 @@
 module Surveyor
   module Models
     module ResponseSetMethods
-      def self.included(base)
+      extend ActiveSupport::Concern
+      include ActiveModel::Validations
+
+      included do
         # Associations
-        base.send :belongs_to, :survey
-        base.send :belongs_to, :user
-        base.send :has_many, :responses, :dependent => :destroy
-        base.send :accepts_nested_attributes_for, :responses, :allow_destroy => true
+        belongs_to :survey
+        belongs_to :user
+        has_many :responses, :dependent => :destroy
+        accepts_nested_attributes_for :responses, :allow_destroy => true
 
-        @@validations_already_included ||= nil
-        unless @@validations_already_included
-          # Validations
-          base.send :validates_presence_of, :survey_id
-          base.send :validates_associated, :responses
-          base.send :validates_uniqueness_of, :access_code
-
-          @@validations_already_included = true
-        end
+        # Validations
+        validates_presence_of :survey_id
+        validates_associated :responses
+        validates_uniqueness_of :access_code
 
         # Derived attributes
-        base.send :before_create, :ensure_start_timestamp
-        base.send :before_create, :ensure_identifiers
+        before_create :ensure_start_timestamp
+        before_create :ensure_identifiers
+      end
 
-        # Class methods
-        base.instance_eval do
-          def has_blank_value?(hash)
-            return true if hash["answer_id"].blank?
-            return false if (q = Question.find_by_id(hash["question_id"])) and q.pick == "one"
-            hash.any?{|k,v| v.is_a?(Array) ? v.all?{|x| x.to_s.blank?} : v.to_s.blank?}
-          end
+      module ClassMethods
+        def has_blank_value?(hash)
+          return true if hash["answer_id"].blank?
+          return false if (q = Question.find_by_id(hash["question_id"])) and q.pick == "one"
+          hash.any?{|k,v| v.is_a?(Array) ? v.all?{|x| x.to_s.blank?} : v.to_s.blank?}
         end
       end
 

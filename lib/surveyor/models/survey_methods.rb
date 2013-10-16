@@ -4,34 +4,28 @@ require 'rabl'
 module Surveyor
   module Models
     module SurveyMethods
-      def self.included(base)
+      extend ActiveSupport::Concern
+      include ActiveModel::Validations
+
+      included do
         # Associations
-        base.send :has_many, :sections, class_name: 'SurveySection', :dependent => :destroy
-        base.send :has_many, :response_sets
-        base.send :has_many, :translations, :class_name => "SurveyTranslation"
+        has_many :sections, class_name: 'SurveySection', :dependent => :destroy
+        has_many :response_sets
+        has_many :translations, :class_name => "SurveyTranslation"
 
-        # Scopes
-        base.send :scope, :with_sections_and_questions, -> { base.includes(sections: :questions) }
-
-        @@validations_already_included ||= nil
-        unless @@validations_already_included
-          # Validations
-          base.send :validates_presence_of, :title
-          base.send :validates_uniqueness_of, :survey_version, :scope => :access_code, :message => "survey with matching access code and version already exists"
-
-          @@validations_already_included = true
-        end
-
+        # Validations
+        validates_presence_of :title
+        validates_uniqueness_of :survey_version, :scope => :access_code, :message => "survey with matching access code and version already exists"
+        
         # Derived attributes
-        base.send :before_save, :generate_access_code
-        base.send :before_save, :increment_version
+        before_save :generate_access_code
+        before_save :increment_version
+      end
 
-        # Class methods
-        base.instance_eval do
-          def to_normalized_string(value)
-            # replace non-alphanumeric with "-". remove repeat "-"s. don't start or end with "-"
-            value.to_s.downcase.gsub(/[^a-z0-9]/,"-").gsub(/-+/,"-").gsub(/-$|^-/,"")
-          end
+      module ClassMethods
+        def to_normalized_string(value)
+          # replace non-alphanumeric with "-". remove repeat "-"s. don't start or end with "-"
+          value.to_s.downcase.gsub(/[^a-z0-9]/,"-").gsub(/-+/,"-").gsub(/-$|^-/,"")
         end
       end
 

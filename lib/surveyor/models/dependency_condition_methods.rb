@@ -1,32 +1,26 @@
 module Surveyor
   module Models
     module DependencyConditionMethods
-      def self.included(base)
+      extend ActiveSupport::Concern
+      include ActiveModel::Validations
+      include Surveyor::ActsAsResponse # includes "as" instance method
+
+      included do
         # Associations
-        base.send :belongs_to, :answer
-        base.send :belongs_to, :dependency
-        base.send :belongs_to, :dependent_question, :foreign_key => :question_id, :class_name => :question
-        base.send :belongs_to, :question
+        belongs_to :answer
+        belongs_to :dependency
+        belongs_to :dependent_question, :foreign_key => :question_id, :class_name => :question
+        belongs_to :question
 
-        @@validations_already_included ||= nil
-        unless @@validations_already_included
-          # Validations
-          base.send :validates_presence_of, :operator, :rule_key
-          base.send :validate, :validates_operator
-          base.send :validates_uniqueness_of, :rule_key, :scope => :dependency_id
-          # this causes issues with building and saving
-          # base.send :validates_numericality_of, :question_id, :dependency_id
+        # Validations
+        validates_presence_of :operator, :rule_key
+        validate :validates_operator
+        validates_uniqueness_of :rule_key, :scope => :dependency_id
+      end
 
-          @@validations_already_included = true
-        end
-
-        base.send :include, Surveyor::ActsAsResponse # includes "as" instance method
-
-        # Class methods
-        base.instance_eval do
-          def operators
-            Surveyor::Common::OPERATORS
-          end
+      module ClassMethods
+        def operators
+          Surveyor::Common::OPERATORS
         end
       end
 

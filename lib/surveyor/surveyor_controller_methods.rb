@@ -4,12 +4,14 @@ Rabl.configure {|config| config.include_child_root = false }
 Rabl.configure {|config| config.include_json_root = false }
 module Surveyor
   module SurveyorControllerMethods
-    def self.included(base)
-      base.send :before_filter, :get_current_user, :only => [:new, :create]
-      base.send :before_filter, :determine_if_javascript_is_enabled, :only => [:create, :update]
-      base.send :before_filter, :set_response_set_and_render_context, :only => [:edit, :show]
-      base.send :layout, 'surveyor_default'
-      base.send :before_filter, :set_locale
+    extend ActiveSupport::Concern
+    included do
+      before_filter :get_current_user, :only => [:new, :create]
+      before_filter :determine_if_javascript_is_enabled, :only => [:create, :update]
+      before_filter :set_response_set_and_render_context, :only => [:edit, :show]
+
+      layout 'surveyor_default'
+      before_filter :set_locale
     end
 
     # Actions
