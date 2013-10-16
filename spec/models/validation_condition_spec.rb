@@ -1,11 +1,5 @@
 require File.expand_path(File.dirname(__FILE__) + '/../spec_helper')
 
-describe ValidationCondition, "Class methods" do
-  it "should have a list of operators" do
-    %w(== != < > <= >= =~).each{|operator| ValidationCondition.operators.include?(operator).should be_true }
-  end
-end
-
 describe ValidationCondition do
   before(:each) do
     @validation_condition = FactoryGirl.create(:validation_condition)
@@ -41,8 +35,8 @@ describe ValidationCondition do
    @validation_condition.should have(1).errors_on(:rule_key)
   end
 
-  it "should have an operator in ValidationCondition.operators" do
-    ValidationCondition.operators.each do |o|
+  it "should have an operator in Surveyor::Common::OPERATORS" do
+    Surveyor::Common::OPERATORS.each do |o|
       @validation_condition.operator = o
       @validation_condition.should have(0).errors_on(:operator)
     end

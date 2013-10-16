@@ -15,12 +15,6 @@ module Surveyor
         validates_uniqueness_of :rule_key, :scope => :validation_id
       end
 
-      module ClassMethods
-        def operators
-          Surveyor::Common::OPERATORS
-        end
-      end
-
       # Instance Methods
       def to_hash(response)
         {rule_key.to_sym => (response.nil? ? false : self.is_valid?(response))}
