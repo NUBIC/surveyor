@@ -323,7 +323,6 @@ end
 module SurveyorParserDependencyConditionMethods
   DependencyCondition.instance_eval do
     attr_accessor :question_reference, :answer_reference
-    attr_accessible :question_reference, :answer_reference
   end
   def parse_and_build(context, args, original_method, reference_identifier)
     # clear context
