@@ -142,6 +142,7 @@ module Surveyor
         {
           :show => arr[0].map{|d| d.question_group_id.nil? ? "q_#{d.question_id}" : "g_#{d.question_group_id}"},
           :hide => arr[1].map{|d| d.question_group_id.nil? ? "q_#{d.question_id}" : "g_#{d.question_group_id}"}
+          # :invalid => invalid_hash # :question_id => "message" - the questions which are invalid
         }
       end
 
