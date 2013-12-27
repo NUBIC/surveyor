@@ -48,6 +48,13 @@ end
 
 Before do |scenario|
   Rails.logger.info "\n\nBeginning scenario #{scenario.file_colon_line} \"#{scenario.title}\""
+  # SMELL: this is a kludge, and I'm not sure why we need to do this,
+  # but if we don't, many cucumber tests fail because the app can't
+  # find the QuietInput class, which is a custom surveyor formtastic
+  # enhancement.  This page suggested this kludge, but there should be
+  # a cleaner way to handle this.
+  # https://github.com/jonleighton/spring/issues/95
+  Dir["app/inputs/*_input.rb"].each { |f| require File.basename(f) }
 end
 
 require "json_spec/cucumber"
