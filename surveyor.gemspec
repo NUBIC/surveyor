@@ -37,7 +37,7 @@ Gem::Specification.new do |s|
   s.add_development_dependency('bundler')#, '~> 1.0', '>= 1.0.21')
   s.add_development_dependency('factory_girl')#, '~> 2.1.2')
   s.add_development_dependency('sqlite3')
-  s.add_development_dependency('cucumber-rails')#, '~> 1.1.1')
+  s.add_development_dependency('cucumber-rails', '~> 1.1.1')
 
   # FIXME
   # https://github.com/bmabey/database_cleaner/issues/224
@@ -47,7 +47,7 @@ Gem::Specification.new do |s|
   s.add_development_dependency('database_cleaner', '= 1.0.1')
 
   s.add_development_dependency('launchy')#, '~> 2.0.5')
-  s.add_development_dependency('capybara')#, '~> 1.1.1')
+  s.add_development_dependency('capybara', '~> 1.1.1')
   s.add_development_dependency('ci_reporter')#, '1.6.6')
   s.add_development_dependency('json_spec')#, '~> 1.0.3')
 end
