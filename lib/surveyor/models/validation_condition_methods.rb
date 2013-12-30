@@ -29,6 +29,9 @@ module Surveyor
             Surveyor::Common::OPERATORS
           end
         end
+
+        # special serialization instructions
+        base.send :serialize, :regexp
       end
 
       # Instance Methods
