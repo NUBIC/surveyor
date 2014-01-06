@@ -63,7 +63,13 @@ module Surveyor
         self.dependency != nil
       end
       def triggered?(response_set)
-        dependent? ? self.dependency.is_met?(response_set) : true
+        if dependent?
+          dependency.is_met?(response_set)
+        elsif question_group.try(:dependent?)
+          question_group.dependency.is_met?(response_set)
+        else
+          true
+        end
       end
       def css_class(response_set)
         [(dependent? ? "q_dependent" : nil), (triggered?(response_set) ? nil : "q_hidden"), custom_class].compact.join(" ")
