@@ -16,7 +16,7 @@
     - if %w(date datetime time float integer string text).include? a.response_class
       - css_class = "#{a.css_class} surveyor_#{a.response_class}_answer"
       - if q.mandatory?
-        - css_class << " surveyor_required"
+        - css_class << " required"
       = ff.input :answer_id, :as => :quiet, :input_html => {:class => css_class, :value => a.id}
       = ff.input rc_to_attr(a.response_class),
                   :as         => rc_to_as(a.response_class),
