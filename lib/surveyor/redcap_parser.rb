@@ -69,7 +69,7 @@ module Surveyor
             Surveyor::RedcapParser.rake_trace "...found "
             dc.question = context[:question_references][dc.question_reference]
             dc.answer = dc.question.answers.first
-          elsif answer = context[:answer_references][dc.question_reference][dc.answer_reference]
+          elsif context[:answer_references] && answer = context[:answer_references][dc.question_reference][dc.answer_reference]
             Surveyor::RedcapParser.rake_trace "...found "
             dc.answer = answer
             dc.question = context[:question_references][dc.question_reference]
@@ -211,7 +211,7 @@ module SurveyorRedcapParserAnswerMethods
     case r[:field_type]
     when "text"
       self.attributes = {
-        :response_class => "string",
+        :response_class => r[:text_validation_type],
         :text => "Text",
         :display_order => context[:question].answers.size }
       context[:question].answers << context[:answer] = self
