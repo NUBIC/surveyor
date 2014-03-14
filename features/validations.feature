@@ -19,6 +19,24 @@ Feature: Survey with validations
     And I press "Click here to finish"
     Then I should see "This field is required."
 
+
+  @javascript
+  Scenario: Creating a mandatory pick-one question
+    Given I parse
+    """
+      survey "Mandatory Question" do
+        section "Required" do
+          q "What do you prefer?", :pick => :one, :is_mandatory => true
+          a "enchiladas"
+          a "tamales"
+          a "tacos"
+        end
+      end
+    """
+    When I start the "Mandatory Question" survey
+    And I press "Click here to finish"
+    Then I should see "This field is required."
+
   @javascript
   Scenario: Creating a question with an integer answer
     Given I parse
