@@ -56,7 +56,7 @@ module Surveyor
 
       def time_value=(val)
         self.datetime_value =
-          if val && time = Time.zone.parse("#{Date.today.to_s} #{val}")
+          if val && time = Time.zone.parse(val, Date.today)
             time.to_datetime
           else
             nil
