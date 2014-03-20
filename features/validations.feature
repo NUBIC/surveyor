@@ -54,6 +54,25 @@ Feature: Survey with validations
     Then I should see "A positive or negative non-decimal number please"
 
   @javascript
+  Scenario: Creating a question with an range rule
+    Given I parse
+    """
+      survey "Integer Question" do
+        section "Your age" do
+          q "How old are you?"
+          a "Age", :integer
+          validation :rule => "A and B"
+          condition_A ">=", :integer_value => 18
+          condition_B "<=", :integer_value => 50
+        end
+      end
+    """
+    When I start the "Integer Question" survey
+    And I fill in "Age" with "Fifty One"
+    And I press "Click here to finish"
+    Then I should see "Please enter a value between 18 and 60 characters long."
+
+  @javascript
   Scenario: Creating a question with an float answer
     Given I parse
     """
