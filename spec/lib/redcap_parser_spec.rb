@@ -55,16 +55,16 @@ describe Surveyor::RedcapParser do
     Dependency.new.extend(SurveyorRedcapParserDependencyMethods).decompose_rule('[initial_119(1)(2)(3)(4)(5)] = "1"').should == {:rule => "(A and B and C and D and E)", :components => ['[initial_119(1)] = "1"', '[initial_119(2)] = "1"', '[initial_119(3)] = "1"', '[initial_119(4)] = "1"', '[initial_119(5)] = "1"']}
   end
   it "should decompose components" do
-    Dependency.new.extend(SurveyorRedcapParserDependencyMethods).decompose_component('[initial_52] = "1"').should == {:question_reference => 'initial_52', :operator => '==', :answer_reference => '1'}
-    Dependency.new.extend(SurveyorRedcapParserDependencyMethods).decompose_component('[initial_119(2)] = "1"').should == {:question_reference => 'initial_119', :operator => '==', :answer_reference => '2'}
-    Dependency.new.extend(SurveyorRedcapParserDependencyMethods).decompose_component('[f1_q15] >= 21').should == {:question_reference => 'f1_q15', :operator => '>=', :integer_value => '21'}
+    Dependency.new.extend(SurveyorRedcapParserDependencyMethods).decompose_component(nil,'[initial_52] = "1"').should == {:question_reference => 'initial_52', :operator => '==', :answer_reference => '1', :main_question=>nil}
+    Dependency.new.extend(SurveyorRedcapParserDependencyMethods).decompose_component(nil,'[initial_119(2)] = "1"').should == {:question_reference => 'initial_119', :operator => '==', :answer_reference => '2', :main_question=>nil}
+    Dependency.new.extend(SurveyorRedcapParserDependencyMethods).decompose_component(nil,'[f1_q15] >= 21').should == {:question_reference => 'f1_q15', :operator => '>=', :integer_value => '21', :main_question=>nil}
     # basic, blanks
-    Dependency.new.extend(SurveyorRedcapParserDependencyMethods).decompose_component("[f1_q15]=''").should == {:question_reference => 'f1_q15', :operator => '==', :answer_reference => ''}
+    Dependency.new.extend(SurveyorRedcapParserDependencyMethods).decompose_component(nil,"[f1_q15]=''").should == {:question_reference => 'f1_q15', :operator => '==', :answer_reference => '', :main_question=>nil}
     # basic, negatives
-    Dependency.new.extend(SurveyorRedcapParserDependencyMethods).decompose_component("[f1_q15]='-2'").should == {:question_reference => 'f1_q15', :operator => '==', :answer_reference => '-2'}
+    Dependency.new.extend(SurveyorRedcapParserDependencyMethods).decompose_component(nil,"[f1_q15]='-2'").should == {:question_reference => 'f1_q15', :operator => '==', :answer_reference => '-2', :main_question=>nil}
     # internal parenthesis
-    Dependency.new.extend(SurveyorRedcapParserDependencyMethods).decompose_component("[hiprep_heat2(97)] = '1'").should == {:question_reference => 'hiprep_heat2', :operator => '==', :answer_reference => '97'}
-    Dependency.new.extend(SurveyorRedcapParserDependencyMethods).decompose_component("[hi_event1_type] <> ''").should == {:question_reference => 'hi_event1_type', :operator => '!=', :answer_reference => ''}
+    Dependency.new.extend(SurveyorRedcapParserDependencyMethods).decompose_component(nil,"[hiprep_heat2(97)] = '1'").should == {:question_reference => 'hiprep_heat2', :operator => '==', :answer_reference => '97', :main_question=>nil}
+    Dependency.new.extend(SurveyorRedcapParserDependencyMethods).decompose_component(nil,"[hi_event1_type] <> ''").should == {:question_reference => 'hi_event1_type', :operator => '!=', :answer_reference => '', :main_question=>nil}
 
   end
   it "should return a survey object" do
