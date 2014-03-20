@@ -76,6 +76,25 @@ module Surveyor
         )
       end
 
+      def data_rules
+        #create data rules for validations, see 'lib/assets/javascripts/surveyor/jquery.validate.js:887'
+        rules = {}
+        if response_class == 'integer'
+          validations.map{ |v| v.validation_conditions }.flatten.each do |condition|
+            case condition.operator
+            when "<=" then rules.merge!({ 'rule-max'     => condition.integer_value })
+            when "<"  then rules.merge!({ 'rule-max'     => ( condition.integer_value + 1 ) })
+            when ">"  then rules.merge!({ 'rule-min'     => ( condition.integer_value - 1 ) })
+            when ">=" then rules.merge!({ 'rule-min'     => condition.integer_value })
+            when "==" then rules.merge!({ 'rule-equalto' => condition.integer_value })
+            end
+          end
+        else
+          #TODO: Implement rules for the other response_class
+        end
+        rules
+      end
+
       private
 
       def imaged(text)
