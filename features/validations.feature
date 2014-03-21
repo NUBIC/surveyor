@@ -54,6 +54,28 @@ Feature: Survey with validations
     Then I should see "A positive or negative non-decimal number please"
 
   @javascript
+  Scenario: Creating a question with an range rule
+    Given I parse
+    """
+      survey "Integer Question" do
+        section "Your age" do
+          q "How old are you?"
+          a "Age", :integer
+          validation :rule => "A and B"
+          condition_A ">=", :integer_value => 18
+          condition_B "<=", :integer_value => 50
+        end
+      end
+    """
+    When I start the "Integer Question" survey
+    And I fill in "Age" with "51"
+    And I press "Click here to finish"
+    Then I should see "Please enter a value between 18 and 50"
+    And I fill in "Age" with "17"
+    And I press "Click here to finish"
+    Then I should see "Please enter a value between 18 and 50"
+
+  @javascript
   Scenario: Creating a question with an float answer
     Given I parse
     """
@@ -85,3 +107,21 @@ Feature: Survey with validations
     And I fill in "Time" with "0900"
     When I press "Click here to finish"
     Then I should see "Please enter a valid time, between 00:00 and 23:59"
+
+  @javascript
+  Scenario: Creating a question with pattern validation
+    Given I parse
+    """
+      survey "String Question" do
+        section "Profile" do
+          q "What's your email?"
+          a "email", :string
+          validation :rule => "A"
+          condition_A "=~", :regexp => "[-0-9a-zA-Z.+_]+@[-0-9a-zA-Z.+_]+\.[a-zA-Z]{2,4}"
+        end
+      end
+    """
+    When I start the "String Question" survey
+    And I fill in "email" with "foo@bar"
+    When I press "Click here to finish"
+    Then I should see "Invalid format"
