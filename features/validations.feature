@@ -68,9 +68,9 @@ Feature: Survey with validations
       end
     """
     When I start the "Integer Question" survey
-    And I fill in "Age" with "Fifty One"
+    And I fill in "Age" with "51"
     And I press "Click here to finish"
-    Then I should see "Please enter a value between 18 and 60 characters long."
+    Then I should see "Please enter a value between 18 and 50"
 
   @javascript
   Scenario: Creating a question with an float answer
