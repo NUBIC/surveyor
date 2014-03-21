@@ -42,7 +42,13 @@ module Surveyor
           end
         end
         resolve_references
-        Surveyor::RedcapParser.rake_trace context[:survey].save ? "saved. " : " not saved! #{context[:survey].errors.full_messages.join(", ")} "
+        Surveyor::RedcapParser.rake_trace  "\n\n-----SAVING SURVEY--------\n\n"
+        Surveyor::RedcapParser.rake_trace context[:survey].save ? "saved. " : 
+          " not saved!   There may be model validation errors...
+          SURVEY ERRORS: #{context[:survey].errors.full_messages.join(",")}
+          SECTION ERRORS: #{context[:survey].sections.map{|x| x.errors.full_messages{|y| y}.join}.join }
+          QUESTION ERRORS: #{context[:survey].sections.map(&:questions).flatten.map{|x| x.errors.full_messages{|y| y}.join}.join }
+          ANSWER ERRORS: #{context[:survey].sections.map(&:questions).flatten.map(&:answers).flatten.map{|x| x.errors.full_messages{|y| y}.join}.join }"
         # Surveyor::RedcapParser.rake_trace context[:survey].sections.map(&:questions).flatten.map(&:answers).flatten.map{|x| x.errors.each_full{|y| y}.join}.join
       rescue csvlib::MalformedCSVError
         raise Surveyor::RedcapParserError, "Oops. Not a valid CSV file."
@@ -225,6 +231,8 @@ module SurveyorRedcapParserAnswerMethods
       Surveyor::RedcapParser.rake_trace "\n!!! skipping answer: file"
     when "descriptive"
       Surveyor::RedcapParser.rake_trace "\n!!! skipping answer: descriptive"
+      #Question Model validates for presence of :text, so we need to seed this so validation doesn't fail if needed.
+      context[:question].text ="Descriptive field with BLANK TEXT" if context[:question].text.blank?
     when "dropdown", "radio", "checkbox"
       (r[:choices_or_calculations] || r[:choices_calculations_or_slider_labels]).to_s.split("|").each do |pair|
         aref, atext = pair.split(",").map(&:strip)
