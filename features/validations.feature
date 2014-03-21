@@ -107,3 +107,21 @@ Feature: Survey with validations
     And I fill in "Time" with "0900"
     When I press "Click here to finish"
     Then I should see "Please enter a valid time, between 00:00 and 23:59"
+
+  @javascript
+  Scenario: Creating a question with pattern validation
+    Given I parse
+    """
+      survey "String Question" do
+        section "Profile" do
+          q "What's your email?"
+          a "email", :string
+          validation :rule => "A"
+          condition_A "=~", :regexp => "[-0-9a-zA-Z.+_]+@[-0-9a-zA-Z.+_]+\.[a-zA-Z]{2,4}"
+        end
+      end
+    """
+    When I start the "String Question" survey
+    And I fill in "email" with "foo@bar"
+    When I press "Click here to finish"
+    Then I should see "Invalid format"

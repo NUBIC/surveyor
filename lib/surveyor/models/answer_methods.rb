@@ -78,19 +78,32 @@ module Surveyor
 
       def data_rules
         #create data rules for validations, see 'lib/assets/javascripts/surveyor/jquery.validate.js:887'
+        case response_class
+          when 'integer'        then integer_conditions
+          when 'text', 'string' then text_conditions
+        end
+      end
+
+      def integer_conditions
         rules = {}
-        if response_class == 'integer'
-          validations.map{ |v| v.validation_conditions }.flatten.each do |condition|
-            case condition.operator
-            when "<=" then rules.merge!({ 'rule-max'     => condition.integer_value })
-            when "<"  then rules.merge!({ 'rule-max'     => ( condition.integer_value + 1 ) })
-            when ">"  then rules.merge!({ 'rule-min'     => ( condition.integer_value - 1 ) })
-            when ">=" then rules.merge!({ 'rule-min'     => condition.integer_value })
-            when "==" then rules.merge!({ 'rule-equalto' => condition.integer_value })
-            end
+        validations.map{ |v| v.validation_conditions }.flatten.each do |condition|
+          case condition.operator
+          when "<=" then rules.merge!({ 'rule-max'     => condition.integer_value })
+          when "<"  then rules.merge!({ 'rule-max'     => ( condition.integer_value + 1 ) })
+          when ">"  then rules.merge!({ 'rule-min'     => ( condition.integer_value - 1 ) })
+          when ">=" then rules.merge!({ 'rule-min'     => condition.integer_value })
+          when "==" then rules.merge!({ 'rule-equalto' => condition.integer_value })
           end
-        else
-          #TODO: Implement rules for the other response_class
+        end
+        rules
+      end
+
+      def text_conditions
+        rules = {}
+        validations.map{ |v| v.validation_conditions }.flatten.each do |condition|
+          case condition.operator
+          when "=~" then rules.merge!({ 'rule-pattern' => condition.regexp })
+          end
         end
         rules
       end
@@ -103,3 +116,4 @@ module Surveyor
     end
   end
 end
+
