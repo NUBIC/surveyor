@@ -61,18 +61,24 @@ module Surveyor
       %w(variable__field_name form_name section_header field_type field_label field_note text_validation_min text_validation_max identifier branching_logic_show_field_only_if required_field)
     end
     def resolve_references
+      Surveyor::RedcapParser.rake_trace "\n\n##########Resolve Branching Logic Dependencies##########\n"
       context[:dependency_conditions].each do |dc|
-        Surveyor::RedcapParser.rake_trace "resolve(#{dc.question_reference},#{dc.answer_reference})"
-        if dc.answer_reference.blank? and (context[:question_references][dc.question_reference].answers.size == 1)
-          Surveyor::RedcapParser.rake_trace "...found "
-          dc.question = context[:question_references][dc.question_reference]
-          dc.answer = dc.question.answers.first
-        elsif answer = context[:answer_references][dc.question_reference][dc.answer_reference]
-          Surveyor::RedcapParser.rake_trace "...found "
-          dc.answer = answer
-          dc.question = context[:question_references][dc.question_reference]
-        else
-          Surveyor::RedcapParser.rake_trace "\n!!! failed lookup for dependency_condition q: #{question_reference} a: #{question_reference}"
+        Surveyor::RedcapParser.rake_trace "\n#{dc.main_question}: resolve(#{dc.question_reference},#{dc.answer_reference})"
+        begin
+          if dc.answer_reference.blank? and (context[:question_references][dc.question_reference].answers.size == 1)
+            Surveyor::RedcapParser.rake_trace "...found "
+            dc.question = context[:question_references][dc.question_reference]
+            dc.answer = dc.question.answers.first
+          elsif answer = context[:answer_references][dc.question_reference][dc.answer_reference]
+            Surveyor::RedcapParser.rake_trace "...found "
+            dc.answer = answer
+            dc.question = context[:question_references][dc.question_reference]
+          else
+            Surveyor::RedcapParser.rake_trace "\n!!! failed lookup for dependency_condition q: #{dc.question_reference} a: #{dc.question_reference}"
+          end
+        rescue Exception => e
+          Surveyor::RedcapParser.rake_trace "\n!!! failed lookup for dependency_condition q: #{dc.question_reference} a: #{dc.answer_reference}"
+          Surveyor::RedcapParser.rake_trace "\nERROR: #{e.message}\n"
         end
       end
     end
@@ -120,13 +126,13 @@ module SurveyorRedcapParserQuestionMethods
       context[:question_references] ||= {}
       context[:question_references][context[:question].reference_identifier] = context[:question]
     end
-    Surveyor::RedcapParser.rake_trace "question_#{context[:question].reference_identifier} "
+    Surveyor::RedcapParser.rake_trace "\n\nquestion_#{context[:question].reference_identifier}: "
   end
   def pick_from_field_type(ft)
     {"checkbox" => :any, "radio" => :one}[ft] || :none
   end
   def display_type_from_field_type(ft)
-    {"text" => :string, "dropdown" => :dropdown, "notes" => :text}[ft]
+    {"text" => :string, "dropdown" => :dropdown, "notes" => :text, "descriptive" => :label}[ft]
   end
 end
 
@@ -139,23 +145,25 @@ module SurveyorRedcapParserDependencyMethods
       hash = decompose_rule(bl)
       self.attributes = {:rule => hash[:rule]}
       context[:question].dependency = context[:dependency] = self
+      #Surveyor::RedcapParser.rake_trace "self(#{self.inspect}) "
       hash[:components].each do |component|
-        dc = context[:dependency].dependency_conditions.build(decompose_component(component).merge({ :rule_key => letters.shift } ))
+        main_question = context[:question].reference_identifier
+        dc = context[:dependency].dependency_conditions.build(decompose_component(main_question,component).merge({ :rule_key => letters.shift } ))
         context[:dependency_conditions] << dc
       end
-      Surveyor::RedcapParser.rake_trace "dependency(#{hash[:rule]}) "
+      Surveyor::RedcapParser.rake_trace " dependency(#{hash[:rule]})"
     end
   end
-  def decompose_component(str)
+  def decompose_component(main_question,str)
     # [initial_52] = "1" or [f1_q15] = '' or [f1_q15] = '-2' or [hi_event1_type] <> ''
     if match = str.match(/^\[(\w+)\] ?([!=><]+) ?['"](-?\w*)['"]$/)
-      {:question_reference => match[1], :operator => match[2].gsub(/^=$/, "==").gsub(/^<>$/, "!="), :answer_reference => match[3]}
+      {:question_reference => match[1], :operator => match[2].gsub(/^=$/, "==").gsub(/^<>$/, "!="), :answer_reference => match[3], :main_question => main_question}
     # [initial_119(2)] = "1" or [hiprep_heat2(97)] = '1'
     elsif match = str.match(/^\[(\w+)\((\w+)\)\] ?([!=><]+) ?['"]1['"]$/)
-      {:question_reference => match[1], :operator => match[3].gsub(/^=$/, "==").gsub(/^<>$/, "!="), :answer_reference => match[2]}
+      {:question_reference => match[1], :operator => match[3].gsub(/^=$/, "==").gsub(/^<>$/, "!="), :answer_reference => match[2], :main_question => main_question}
     # [f1_q15] >= 21 or [f1_q15] >= -21
     elsif match = str.match(/^\[(\w+)\] ?([!=><]+) ?(-?\d+)$/)
-      {:question_reference => match[1], :operator => match[2].gsub(/^=$/, "==").gsub(/^<>$/, "!="), :integer_value => match[3]}
+      {:question_reference => match[1], :operator => match[2].gsub(/^=$/, "==").gsub(/^<>$/, "!="), :integer_value => match[3], :main_question => main_question}
     else
       Surveyor::RedcapParser.rake_trace "\n!!! skipping dependency_condition #{str}"
     end
@@ -170,7 +178,7 @@ module SurveyorRedcapParserDependencyMethods
       if match = part.match(/^(\[[^\]]+\][^\"]+)"([0-9 ]+,[0-9 ,]+)"$/)
         nums = match[2].split(",").map(&:strip)
         components[i] = nums.map{|x| "#{match[1]}\"#{x}\""}
-        # sub in rule key
+        # sub in rule key e.g.  '([vigorous] = '7' or [vigorous] = '8') and [vigdk(1)] = '1''
         rule = rule.gsub(part, "(#{nums.map{letters.shift}.join(' and ')})")
       # multiple internal parenthesis on the left  e.g. '[initial_119(1)(2)(3)(4)(6)] = "1"'
       elsif match = part.match(/^\[(\w+)(\(\d+\)\([\d\(\)]+)\]([^\"]+"\d+")$/)
@@ -192,8 +200,8 @@ end
 # DependencyCondition model
 module SurveyorRedcapParserDependencyConditionMethods
   DependencyCondition.instance_eval do
-    attr_accessor :question_reference, :answer_reference
-    attr_accessible :question_reference, :answer_reference
+    attr_accessor :question_reference, :answer_reference, :main_question
+    attr_accessible :question_reference, :answer_reference, :main_question
   end
 end
 
@@ -215,25 +223,30 @@ module SurveyorRedcapParserAnswerMethods
       context[:question].answers << context[:answer] = self
     when "file"
       Surveyor::RedcapParser.rake_trace "\n!!! skipping answer: file"
-    end
-    (r[:choices_or_calculations] || r[:choices_calculations_or_slider_labels]).to_s.split("|").each do |pair|
-      aref, atext = pair.split(",").map(&:strip)
-      if aref.blank? or atext.blank? or (aref.to_i.to_s != aref)
-        Surveyor::RedcapParser.rake_trace "\n!!! skipping answer #{pair}"
-      else
-        a = Answer.new({
-          :reference_identifier => aref,
-          :text => atext,
-          :display_order => context[:question].answers.size })
-        context[:question].answers << context[:answer] = a
-        unless context[:question].reference_identifier.blank? or aref.blank? or !context[:answer].valid?
-          context[:answer_references] ||= {}
-          context[:answer_references][context[:question].reference_identifier] ||= {}
-          context[:answer_references][context[:question].reference_identifier][aref] = context[:answer]
+    when "descriptive"
+      Surveyor::RedcapParser.rake_trace "\n!!! skipping answer: descriptive"
+    when "dropdown", "radio", "checkbox"
+      (r[:choices_or_calculations] || r[:choices_calculations_or_slider_labels]).to_s.split("|").each do |pair|
+        aref, atext = pair.split(",").map(&:strip)
+        if aref.blank? or atext.blank? or (aref.to_i.to_s != aref)
+          Surveyor::RedcapParser.rake_trace "\n!!! skipping answer #{pair}"
+        else
+          a = Answer.new({
+            :reference_identifier => aref,
+            :text => atext,
+            :display_order => context[:question].answers.size })
+          context[:question].answers << context[:answer] = a
+          unless context[:question].reference_identifier.blank? or aref.blank? or !context[:answer].valid?
+            context[:answer_references] ||= {}
+            context[:answer_references][context[:question].reference_identifier] ||= {}
+            context[:answer_references][context[:question].reference_identifier][aref] = context[:answer]
+          end
+          Surveyor::RedcapParser.rake_trace "#{context[:answer].errors.full_messages}, #{context[:answer].inspect}" unless context[:answer].valid?
+          Surveyor::RedcapParser.rake_trace "answer_#{context[:answer].reference_identifier} "
         end
-        Surveyor::RedcapParser.rake_trace "#{context[:answer].errors.full_messages}, #{context[:answer].inspect}" unless context[:answer].valid?
-        Surveyor::RedcapParser.rake_trace "answer_#{context[:answer].reference_identifier} "
       end
+    else
+      Surveyor::RedcapParser.rake_trace "\n!!!Skipping unknown field_type: #{r[:field_type]}"
     end
   end
 end
