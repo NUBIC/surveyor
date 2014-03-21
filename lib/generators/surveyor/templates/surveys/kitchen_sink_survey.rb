@@ -196,7 +196,7 @@ survey "Kitchen Sink survey", :default_mandatory => false do
 
     # "grid" is a shortcut for group with :display_type => :grid
     # The answers will be repeated every 10 rows, but long grids aren't recommended as they are generally tedious
-    grid "Tell us how you feel today day" do
+    grid "Tell us how you feel today" do
       a "-2"
       a "-1"
       a "0"
