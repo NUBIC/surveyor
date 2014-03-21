@@ -274,12 +274,12 @@ module SurveyorParserQuestionMethods
     hash_args = args[1] || {}
     correct = hash_args.delete :correct
     self.attributes = PermittedParams.new({
-      :question_group => context[:question_group],
       :reference_identifier => reference_identifier,
       :is_mandatory => context[:default_mandatory],
       :text => text,
       :display_type => (original_method =~ /label|image/ ? original_method : "default"),
       :display_order => context[:survey_section].questions.size }.merge(hash_args)).question
+    self.question_group = context[:question_group]
     context[:survey_section].questions << context[:question] = self
 
     # keep reference for correct answers
