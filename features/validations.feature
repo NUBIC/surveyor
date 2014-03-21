@@ -71,6 +71,9 @@ Feature: Survey with validations
     And I fill in "Age" with "51"
     And I press "Click here to finish"
     Then I should see "Please enter a value between 18 and 50"
+    And I fill in "Age" with "17"
+    And I press "Click here to finish"
+    Then I should see "Please enter a value between 18 and 50"
 
   @javascript
   Scenario: Creating a question with an float answer
