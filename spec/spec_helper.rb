@@ -18,6 +18,7 @@ include Surveyor::Helpers::AssetPipeline
 Dir[Rails.root.join("spec/support/**/*.rb")].each {|f| require f}
 
 RSpec.configure do |config|
+  config.use_transactional_fixtures = false
   config.include JsonSpec::Helpers
 
   config.treat_symbols_as_metadata_keys_with_true_values = true
@@ -32,25 +33,21 @@ RSpec.configure do |config|
   config.mock_with :rspec
 
   ## Database Cleaner
-
-  config.before(:suite) do
-    DatabaseCleaner.strategy = :transaction
-    DatabaseCleaner.clean_with(:truncation)
-  end
-
-  config.before(:each, :clean_with_truncation) do
-    DatabaseCleaner.strategy = :truncation
-  end
-
-  config.after(:each, :clean_with_truncation) do
+  config.before :suite do
+    DatabaseCleaner.clean_with :truncation
     DatabaseCleaner.strategy = :transaction
   end
 
-  config.before(:each) do
-    DatabaseCleaner.start
+  config.before do
+    if example.metadata[:js] || example.metadata[:type] == :feature
+      DatabaseCleaner.strategy = :truncation
+    else
+      DatabaseCleaner.strategy = :transaction
+      DatabaseCleaner.start
+    end
   end
 
-  config.after(:each) do
+  config.after do
     DatabaseCleaner.clean
   end
 end

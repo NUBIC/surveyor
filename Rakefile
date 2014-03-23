@@ -2,7 +2,6 @@ $LOAD_PATH << File.expand_path('../lib', __FILE__)
 
 require 'bundler/gem_tasks'
 require 'rspec/core/rake_task'
-require 'cucumber/rake/task'
 require 'ci/reporter/rake/rspec'
 
 ###### RSPEC
@@ -14,23 +13,6 @@ RSpec::Core::RakeTask.new(:rcov) do |spec|
 end
 
 task :default => :spec
-
-###### CUCUMBER
-
-namespace :cucumber do
-  Cucumber::Rake::Task.new(:ok, 'Run features that should pass') do |t|
-    t.profile = 'default'
-  end
-
-  Cucumber::Rake::Task.new(:wip, 'Run features that are being worked on') do |t|
-    t.profile = 'wip'
-  end
-
-  desc 'Run all features'
-  task :all => [:ok, :wip]
-end
-desc 'Alias for cucumber:ok'
-task :cucumber => 'cucumber:ok'
 
 ###### TESTBED
 
@@ -87,19 +69,11 @@ end
 ###### CI
 
 namespace :ci do
-  task :all => ['rake:testbed', :spec, :cucumber, 'cucumber:wip']
+  task :all => ['rake:testbed', :spec]
 
   task :env do
     ENV['CI_REPORTS'] = 'reports/spec-xml'
     ENV['SPEC_OPTS'] = "#{ENV['SPEC_OPTS']} --format nested"
-  end
-
-  Cucumber::Rake::Task.new(:cucumber, 'Run features using the CI profile') do |t|
-    t.profile = 'ci'
-  end
-
-  Cucumber::Rake::Task.new('cucumber:wip', 'Run WIP features using the CI profile') do |t|
-    t.profile = 'ci_wip'
   end
 
   task :spec => [:env, 'ci:setup:rspecbase', 'rake:spec']
