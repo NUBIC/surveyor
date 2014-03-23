@@ -6,4 +6,5 @@ env:
   - "RAILS_VERSION=3.2.0"
   - "RAILS_VERSION=4.0.0"
 script:
-  - bundle exec rake ci:all
+  - bundle exec rake testbed
+  - bundle exec rake spec
