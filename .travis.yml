@@ -2,8 +2,10 @@ language: ruby
 rvm:
   - 2.1.1
 env:
-  - DB=postgresql
+  - "RAILS_VERSION=3.2.0"
+  - "RAILS_VERSION=4.0.0"
 script:
   - bundle exec rake db:migrate
   - bundle exec rake db:test:prepare
   - bundle exec rake spec
+  - bundle exec rake cucumber
