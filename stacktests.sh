@@ -6,11 +6,11 @@ echo ""
 PS3="Choose a stack or 'q' to quit: "
 export CUCUMBER_OPTS="--format CucumberSpinner::ProgressBarFormatter"
 export SPEC_OPTS="--format Fuubar --color spec"
-export BUNDLER_VERSION=1.3.1
+export BUNDLER_VERSION=1.3.6
 
 options=""
 rubies=(1.9.3)
-rails_versions=(rails_3.1 rails_3.2)
+rails_versions=(rails_3.2 rails_4.0)
 
 for i in "${rubies[@]}"
 do

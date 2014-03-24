@@ -127,7 +127,7 @@ Feature: Survey parser
           q "What is your address?", :custom_class => 'address'
           a :text, :custom_class => 'mapper'
           validation :rule => "AC"
-          vcondition_AC "=~", :regexp => /[0-9a-zA-z\. #]/
+          vcondition_AC "=~", :regexp => /[0-9a-zA-z\. #]/.to_s
 
           q_2 "Which colors do you loathe?", :pick => :any
           a_1 "red"

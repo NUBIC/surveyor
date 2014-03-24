@@ -1,31 +1,19 @@
 require 'surveyor/common'
-
 module Surveyor
   module Models
     module AnswerMethods
-      def self.included(base)
+      extend ActiveSupport::Concern
+      include ActiveModel::Validations
+      include MustacheContext
+
+      included do
         # Associations
-        base.send :belongs_to, :question
-        base.send :has_many, :responses
-        base.send :has_many, :validations, :dependent => :destroy
+        belongs_to :question
+        has_many :responses
+        has_many :validations, :dependent => :destroy
 
-        # Scopes
-        base.send :default_scope, :order => "#{base.quoted_table_name}.display_order ASC"
-
-        # Mustache
-        base.send :include, MustacheContext
-
-        @@validations_already_included ||= nil
-        unless @@validations_already_included
-          # Validations
-          base.send :validates_presence_of, :text
-          # this causes issues with building and saving
-          # base.send :validates_numericality_of, :question_id, :allow_nil => false, :only_integer => true
-          @@validations_already_included = true
-        end
-
-        # Whitelisting attributes
-        base.send :attr_accessible, :question, :question_id, :text, :short_text, :help_text, :weight, :response_class, :reference_identifier, :data_export_identifier, :common_namespace, :common_identifier, :display_order, :is_exclusive, :display_length, :custom_class, :custom_renderer, :default_value, :display_type, :input_mask, :input_mask_placeholder
+        # Validations
+        validates_presence_of :text
       end
 
       # Instance Methods

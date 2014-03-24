@@ -4,9 +4,14 @@ module Surveyor
       ##
       # Returns whether or not the asset pipeline is present and enabled.
       #
-      # The detection scheme used here was ripped from jquery-rails.
+      # With Rails4 it appears that assets.enabled is false if
+      # --skip-sprockets is specified when creating the application,
+      # but the assets.enabled option is nil in the default case
+      # (i.e., pipeline enabled).
       def asset_pipeline_enabled?
-        ::Rails.version >= "3.1" && ::Rails.application.config.assets.enabled
+        return false unless Rails.configuration.respond_to?('assets')
+        assets = Rails.configuration.assets
+        assets.enabled.nil? || assets.enabled
       end
     end
   end

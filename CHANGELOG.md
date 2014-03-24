@@ -1,6 +1,14 @@
 History for Surveyor
 ====================
 
+1.5.0
+-----
+
+### Dependencies
+
+- Removing support for Rails 3.1. Applications requiring Rails 3.1 should use Surveyor v1.4.1
+
+
 1.4.1
 -----
 

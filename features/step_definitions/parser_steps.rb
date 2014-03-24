@@ -27,28 +27,28 @@ end
 Then /^there should be (\d+) survey(?:s?) with:$/ do |x, table|
   Survey.count.should == x.to_i
   table.hashes.each do |hash|
-    Survey.find(:first, :conditions => hash).should_not be_nil
+    Survey.where(hash).first.should_not be_nil
   end
 end
 
 Then /^there should be (\d+) translations with$/ do |x, table|
   SurveyTranslation.count.should == x.to_i
   table.hashes.each do |hash|
-    SurveyTranslation.find(:first, :conditions => hash).should_not be_nil
+    SurveyTranslation.where(hash).first.should_not be_nil
   end
 end
 
 Then /^there should be (\d+) section(?:s?) with:$/ do |x, table|
   SurveySection.count.should == x.to_i
   table.hashes.each do |hash|
-    SurveySection.find(:first, :conditions => hash).should_not be_nil
+    SurveySection.where(hash).first.should_not be_nil
   end
 end
 
 Then /^there should be (\d+) question groups with:$/ do |x, table|
   QuestionGroup.count.should == x.to_i
   table.hashes.each do |hash|
-    QuestionGroup.find(:first, :conditions => hash).should_not be_nil
+    QuestionGroup.where(hash).first.should_not be_nil
   end
 end
 
@@ -60,7 +60,7 @@ Then /^there should be (\d+) question(?:s?) with:$/ do |x, table|
     if hash.has_key?("is_mandatory")
       hash["is_mandatory"] = (hash["is_mandatory"] == "true" ? true : (hash["is_mandatory"] == "false" ? false : hash["is_mandatory"]))
     end
-    result = Question.find(:first, :conditions => hash)
+    result = Question.where(hash).first
     puts hash if result.nil?
     result.should_not be_nil
   end
@@ -68,43 +68,43 @@ end
 
 Then /^there should be (\d+) question(?:s?) with a correct answer$/ do |x|
   Question.count(:conditions => "correct_answer_id NOT NULL").should == x.to_i
-  Question.all(:conditions => "correct_answer_id NOT NULL").compact.map(&:correct_answer).compact.size.should == x.to_i
+  Question.where("correct_answer_id NOT NULL").compact.map(&:correct_answer).compact.size.should == x.to_i
 end
 
 Then /^there should be (\d+) answer(?:s?) with:$/ do |x, table|
   Answer.count.should == x.to_i
   table.hashes.each do |hash|
     hash["reference_identifier"] = nil if hash["reference_identifier"] == "nil"
-    Answer.find(:first, :conditions => hash).should_not be_nil
+    Answer.where(hash).first.should_not be_nil
   end
 end
 
 Then /^there should be (\d+) dependenc(?:y|ies) with:$/ do |x, table|
   Dependency.count.should == x.to_i
   table.hashes.each do |hash|
-    Dependency.find(:first, :conditions => hash).should_not be_nil
+    Dependency.where(hash).first.should_not be_nil
   end
 end
 
 Then /^there should be (\d+) resolved dependency_condition(?:s?) with:$/ do |x, table|
   DependencyCondition.count.should == x.to_i
-  
+
   table.hashes.each do |hash|
     if hash.has_key?("question_reference")
       question = Question.find_by_reference_identifier(hash.delete("question_reference"))
       question.should_not be_nil
-      
+
       hash.merge!({ :question_id => question.id })
-      
+
       if hash.has_key?("answer_reference")
-        answer = Answer.find(:first, :conditions => { :question_id => question.id, :reference_identifier => hash.delete("answer_reference") })
+        answer = Answer.where(:question_id => question.id, :reference_identifier => hash.delete("answer_reference")).first
         answer.should_not be_nil
-        
+
         hash.merge!({ :answer_id => answer.id })
       end
     end
-   
-    d = DependencyCondition.find(:first, :conditions => hash)
+
+    d = DependencyCondition.where(hash).first
     d.should_not be_nil
     d.question.should_not be_nil
     d.answer.should_not be_nil unless d.operator.match(/^count[<>=!]{1,2}\d+/)
@@ -115,7 +115,7 @@ end
 Then /^there should be (\d+) validation(?:s?) with:$/ do |x, table|
   Validation.count.should == x.to_i
   table.hashes.each do |hash|
-    Validation.find(:first, :conditions => hash).should_not be_nil
+    Validation.where(hash).first.should_not be_nil
   end
 end
 
@@ -123,7 +123,7 @@ Then /^there should be (\d+) validation_condition(?:s?) with:$/ do |x, table|
   ValidationCondition.count.should == x.to_i
   table.hashes.each do |hash|
     hash["integer_value"] = nil if hash["integer_value"] == "nil"
-    ValidationCondition.find(:first, :conditions => hash).should_not be_nil
+    ValidationCondition.where(hash).first.should_not be_nil
   end
 end
 
@@ -133,13 +133,13 @@ Then /^question "([^"]*)" should have correct answer "([^"]*)"$/ do |qr, ar|
 end
 
 Then /^(\d+) dependencies should depend on questions$/ do |x|
-  arr = Dependency.find_all_by_question_group_id(nil)
-  arr.size.should == 2
+  arr = Dependency.where(:question_group_id => nil)
+  arr.count.should == 2
   arr.each{|d| d.question.should_not be_nil}
 end
 
 Then /^(\d+) dependencies should depend on question groups$/ do |x|
-  arr = Dependency.find_all_by_question_id(nil)
-  arr.size.should == 2
+  arr = Dependency.where(:question_id => nil)
+  arr.count.should == 2
   arr.each{|d| d.question_group.should_not be_nil}
 end

@@ -1,5 +1,7 @@
 module Surveyor
   module MustacheContext
+    extend ActiveSupport::Concern
+    
     def in_context(text, context=nil)
       case context
       when NilClass then text

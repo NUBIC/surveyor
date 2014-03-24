@@ -2,20 +2,19 @@ require File.expand_path(File.dirname(__FILE__) + '/../spec_helper')
 
 describe SurveyorHelper do
   context "numbering" do
-    let(:asset_directory){ asset_pipeline_enabled? ? "assets" : "images" }
     before do
       ActionController::Base.helpers.config.assets_dir = "public" unless asset_pipeline_enabled?
     end
     it "should return the question text with number, except for labels, dependencies, images, and grouped questions" do
-      q1 = Factory(:question)
-      q2 = Factory(:question, :display_type => "label")
-      q3 = Factory(:question, :dependency => Factory(:dependency))
-      q4 = Factory(:question, :display_type => "image", :text => "something.jpg")
-      q5 = Factory(:question, :question_group => Factory(:question_group))
+      q1 = FactoryGirl.create(:question)
+      q2 = FactoryGirl.create(:question, :display_type => "label")
+      q3 = FactoryGirl.create(:question, :dependency => FactoryGirl.create(:dependency))
+      q4 = FactoryGirl.create(:question, :display_type => "image", :text => "something.jpg")
+      q5 = FactoryGirl.create(:question, :question_group => FactoryGirl.create(:question_group))
       helper.q_text(q1).should == "<span class='qnum'>1) </span>#{q1.text}"
       helper.q_text(q2).should == q2.text
       helper.q_text(q3).should == q3.text
-      helper.q_text(q4).should == %Q(<img alt="Something" src="/#{asset_directory}/something.jpg" />)
+      helper.q_text(q4).should == %Q(<img alt="Something" src="/images/something.jpg" />)
       helper.q_text(q5).should == q5.text
     end
   end
@@ -24,8 +23,8 @@ describe SurveyorHelper do
     require 'mustache'
     let(:mustache_context){ Class.new(::Mustache){ def site; "Northwestern"; end; def somethingElse; "something new"; end; def group; "NUBIC"; end } }
     it "substitues values into Question#text" do
-      q1 = Factory(:question, :text => "You are in {{site}}")
-      label = Factory(:question, :display_type => "label", :text => "Testing {{somethingElse}}")
+      q1 = FactoryGirl.create(:question, :text => "You are in {{site}}")
+      label = FactoryGirl.create(:question, :display_type => "label", :text => "Testing {{somethingElse}}")
       helper.q_text(q1, mustache_context).should == "<span class='qnum'>1) </span>You are in Northwestern"
       helper.q_text(label, mustache_context).should == "Testing something new"
     end
@@ -33,10 +32,10 @@ describe SurveyorHelper do
 
   context "response methods" do
     it "should find or create responses, with index" do
-      q1 = Factory(:question, :answers => [a = Factory(:answer, :text => "different")])
-      q2 = Factory(:question, :answers => [b = Factory(:answer, :text => "strokes")])
-      q3 = Factory(:question, :answers => [c = Factory(:answer, :text => "folks")])
-      rs = Factory(:response_set, :responses => [r1 = Factory(:response, :question => q1, :answer => a), r3 = Factory(:response, :question => q3, :answer => c, :response_group => 1)])
+      q1 = FactoryGirl.create(:question, :answers => [a = FactoryGirl.create(:answer, :text => "different")])
+      q2 = FactoryGirl.create(:question, :answers => [b = FactoryGirl.create(:answer, :text => "strokes")])
+      q3 = FactoryGirl.create(:question, :answers => [c = FactoryGirl.create(:answer, :text => "folks")])
+      rs = FactoryGirl.create(:response_set, :responses => [r1 = FactoryGirl.create(:response, :question => q1, :answer => a), r3 = FactoryGirl.create(:response, :question => q3, :answer => c, :response_group => 1)])
 
       helper.response_for(rs, nil).should == nil
       helper.response_for(nil, q1).should == nil

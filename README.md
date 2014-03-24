@@ -17,18 +17,17 @@ without maintaining a fork.
 
 ## Requirements
 
-Surveyor works with:
+Please note: this fork of surveyor works with:
 
-* Ruby 1.9.2, and 1.9.3
-* Rails 3.1-3.2
-
-In keeping with the Rails team maintenance [policy] we no longer support Rails 3.0 (stick with v1.3.0 if you need Rails 3.0) or Ruby 1.8.7 (stick with v1.4.0 if you need Ruby 1.8.7).
+* Ruby 2.0.0 (may work on 1.9 but not tested) 
+* Rails 4.0
 
 Some key dependencies are:
 
 * HAML
 * Sass
 * Formtastic
+* Protected Attributes (NB: will be removed in future version)
 
 A more exhaustive list can be found in the [gemspec][].
 
@@ -39,8 +38,16 @@ A more exhaustive list can be found in the [gemspec][].
 
 Add surveyor to your Gemfile:
 
-    gem "surveyor"
+    gem 'surveyor', :git => 'git://github.com/ferrisoxide/surveyor.git'
+    gem 'protected_attributes'
+    
+Add the following to your application.rb config section
 
+    config.active_record.mass_assignment_sanitizer = :strict
+    config.active_record.whitelist_attributes = true
+    
+Please note, the protected_attributes gem will be removed in a future version. These config settings will also be deprecated in favour of Rails 4's Strong Parameters.
+         
 Bundle, install, and migrate:
 
     bundle install
@@ -148,6 +155,7 @@ Take a look at our [screencast][] (a bit dated now).
 To work on the code, fork this github project. Install [bundler][] if
 you don't have it, then bundle, generate the app in `testbed`, and run the specs and features
 
+    $ export RAILS_VERSION=4.0
     $ bundle update
     $ bundle exec rake testbed
     $ bundle exec rake spec

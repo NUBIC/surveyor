@@ -1,19 +1,24 @@
 # For testing against different releases of Rails.  This is in a
 # separate fragment so that it can be sourced from the test
 # application's Gemfile in addition to the main development Gemfile.
-if ENV['RAILS_VERSION']
-  case ENV['RAILS_VERSION']
-  when /3.0$/
-    gem 'rails', '~> 3.0.15'
-  when /3.1$/
-    gem 'rails', '~> 3.1.0'
-    # A JS runtime is required for Rails 3.1+
-    gem 'therubyracer', '~> 0.10.2'
-  when /3.2$/
-    gem 'rails', '~> 3.2.0'
-    # A JS runtime is required for Rails 3.1+
-    gem 'therubyracer', '~> 0.10.2'
-  else
-    fail "Unknown Rails version #{ENV['RAILS_VERSION']}"
-  end
+
+env_rails_version = ENV["RAILS_VERSION"] || "default"
+
+case env_rails_version
+when "master"
+  {github: "rails/rails"}
+when "default"
+  gem "rails", "~> 4.0.0"
+  # A JS runtime is required for Rails 4.0+
+  gem 'therubyracer', platforms: :ruby
+when /^3.2/
+  gem "rails", "~> #{env_rails_version}"
+  # A JS runtime is required for Rails 3.1+
+  gem 'therubyracer', '~> 0.10.2'
+when /^4.0/
+  gem "rails", "~> #{env_rails_version}"
+  # A JS runtime is required for Rails 4.0+
+  gem 'therubyracer', platforms: :ruby
+else
+  fail "Unsupported Rails version #{ENV['RAILS_VERSION']}"
 end
