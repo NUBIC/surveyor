@@ -9,7 +9,7 @@ module Surveyor
         # Associations
         has_many :questions, :dependent => :destroy
         belongs_to :survey
-        attr_accessible *PermittedParams.new.survey_section_attributes if ::Rails.application.config.active_record.whitelist_attributes
+        attr_accessible *PermittedParams.new.survey_section_attributes if defined? ActiveModel::MassAssignmentSecurity
 
         # Validations
         validates_presence_of :title, :display_order

@@ -8,7 +8,7 @@ module Surveyor
       included do
         # Associations
         belongs_to :survey
-        attr_accessible *PermittedParams.new.survey_translation_attributes if ::Rails.application.config.active_record.whitelist_attributes
+        attr_accessible *PermittedParams.new.survey_translation_attributes if defined? ActiveModel::MassAssignmentSecurity
 
         # Validations
         validates_presence_of :locale, :translation

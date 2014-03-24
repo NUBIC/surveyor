@@ -11,7 +11,7 @@ module Surveyor
         belongs_to :response_set
         belongs_to :question
         belongs_to :answer
-        attr_accessible *PermittedParams.new.response_attributes if ::Rails.application.config.active_record.whitelist_attributes
+        attr_accessible *PermittedParams.new.response_attributes if defined? ActiveModel::MassAssignmentSecurity
 
         # Validations
         validates_presence_of :question_id, :answer_id
