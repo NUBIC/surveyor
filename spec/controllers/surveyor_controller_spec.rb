@@ -90,6 +90,12 @@ describe SurveyorController do
       response.should be_success
       response.should render_template('show')
     end
+    it "finds ResponseSet with includes" do
+      ResponseSet.should_receive(:includes).with(:responses => [:question, :answer]).and_return(response_set)
+      response_set.should_receive(:where).with(:access_code => "pdq").and_return(response_set)
+      response_set.should_receive(:first).and_return(response_set)
+      do_get
+    end
     it "redirects for missing response set" do
       do_get :response_set_code => "DIFFERENT"
       response.should redirect_to(available_surveys_path)

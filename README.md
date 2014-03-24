@@ -32,6 +32,7 @@ Some key dependencies are:
 * HAML
 * Sass
 * Formtastic
+* Protected Attributes (NB: will be removed in future version)
 
 A more exhaustive list can be found in the [gemspec][].
 
@@ -42,7 +43,15 @@ A more exhaustive list can be found in the [gemspec][].
 
 Add surveyor to your Gemfile:
 
-    gem "surveyor"
+    gem 'surveyor', :git => 'git://github.com/ferrisoxide/surveyor.git'
+    gem 'protected_attributes'
+
+Add the following to your application.rb config section
+
+    config.active_record.mass_assignment_sanitizer = :strict
+    config.active_record.whitelist_attributes = true
+
+Please note, the protected_attributes gem will be removed in a future version. These config settings will also be deprecated in favour of Rails 4's Strong Parameters.
 
 Bundle, install, and migrate:
 
@@ -151,6 +160,7 @@ Take a look at our [screencast][] (a bit dated now).
 To work on the code, fork this github project. Install [bundler][] if
 you don't have it, then bundle, generate the app in `testbed`, and run the specs and features
 
+    $ export RAILS_VERSION=4.0
     $ bundle update
     $ bundle exec rake testbed
     $ bundle exec rake spec

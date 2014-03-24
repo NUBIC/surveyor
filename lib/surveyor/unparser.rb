@@ -6,6 +6,11 @@ module Surveyor
       survey.unparse(dsl = "")
       dsl
     end
+
+    # cribbed from rails source: http://apidock.com/rails/v3.2.13/Hash/diff
+    def self.hash_diff(h1, h2)
+      h1.dup.delete_if { |k, v| h2[k] == v }.merge!(h2.dup.delete_if { |k, v| h1.has_key?(k) })
+    end
   end
 end
 
