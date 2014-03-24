@@ -1,26 +1,19 @@
 module Surveyor
   module Models
     module ValidationMethods
-      def self.included(base)
-        # Associations
-        base.send :belongs_to, :answer
-        base.send :has_many, :validation_conditions, :dependent => :destroy
+      extend ActiveSupport::Concern
+      include ActiveModel::Validations
+      include ActiveModel::ForbiddenAttributesProtection
 
-        # Scopes
-        
-        @@validations_already_included ||= nil
-        unless @@validations_already_included
-          # Validations
-          base.send :validates_presence_of, :rule
-          base.send :validates_format_of, :rule, :with => /^(?:and|or|\)|\(|[A-Z]|\s)+$/
-          # this causes issues with building and saving
-          # base.send :validates_numericality_of, :answer_id
-          
-          @@validations_already_included = true
-        end
-        
-        # Whitelisting attributes
-        base.send :attr_accessible, :answer, :answer_id, :rule, :message
+      included do
+        # Associations
+        belongs_to :answer
+        has_many :validation_conditions, :dependent => :destroy
+        attr_accessible *PermittedParams.new.validation_attributes if defined? ActiveModel::MassAssignmentSecurity
+
+        # Validations
+        validates_presence_of :rule
+        validates_format_of :rule, :with => /\A(?:and|or|\)|\(|[A-Z]|\s)+\Z/
       end
 
       # Instance Methods

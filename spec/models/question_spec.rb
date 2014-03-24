@@ -2,7 +2,7 @@
 require File.expand_path(File.dirname(__FILE__) + '/../spec_helper')
 
 describe Question do
-  let(:question){ Factory(:question) }
+  let(:question){ FactoryGirl.create(:question) }
 
   context "when creating" do
     it "is invalid without #text" do
@@ -27,7 +27,7 @@ describe Question do
       question.api_id.length.should == 36
     end
     it "#part_of_group? and #solo? are aware of question groups" do
-      question.question_group = Factory(:question_group)
+      question.question_group = FactoryGirl.create(:question_group)
       question.solo?.should be_false
       question.part_of_group?.should be_true
 
@@ -35,46 +35,19 @@ describe Question do
       question.solo?.should be_true
       question.part_of_group?.should be_false
     end
-    it "protects #api_id" do
-      saved_attrs = question.attributes
-      if defined? ActiveModel::MassAssignmentSecurity::Error
-        expect { question.update_attributes(:api_id => "NEW") }.to raise_error(ActiveModel::MassAssignmentSecurity::Error)
-      else
-        question.attributes = {:api_id => "NEW"} # Rails doesn't return false, but this will be checked in the comparison to saved_attrs
-      end
-      question.attributes.should == saved_attrs
-    end
-    it "protects #created_at" do
-      saved_attrs = question.attributes
-      if defined? ActiveModel::MassAssignmentSecurity::Error
-        expect { question.update_attributes(:created_at => 3.days.ago) }.to raise_error(ActiveModel::MassAssignmentSecurity::Error)
-      else
-        question.attributes = {:created_at => 3.days.ago} # Rails doesn't return false, but this will be checked in the comparison to saved_attrs
-      end
-      question.attributes.should == saved_attrs
-    end
-    it "protects #updated_at" do
-      saved_attrs = question.attributes
-      if defined? ActiveModel::MassAssignmentSecurity::Error
-        expect { question.update_attributes(:updated_at => 3.hours.ago) }.to raise_error(ActiveModel::MassAssignmentSecurity::Error)
-      else
-        question.attributes = {:updated_at => 3.hours.ago} # Rails doesn't return false, but this will be checked in the comparison to saved_attrs
-      end
-      question.attributes.should == saved_attrs
-    end
   end
 
   context "with answers" do
-    let(:answer_1){ Factory(:answer, :question => question, :display_order => 3, :text => "blue")}
-    let(:answer_2){ Factory(:answer, :question => question, :display_order => 1, :text => "red")}
-    let(:answer_3){ Factory(:answer, :question => question, :display_order => 2, :text => "green")}
+    let(:answer_1){ FactoryGirl.create(:answer, :question => question, :display_order => 3, :text => "blue")}
+    let(:answer_2){ FactoryGirl.create(:answer, :question => question, :display_order => 1, :text => "red")}
+    let(:answer_3){ FactoryGirl.create(:answer, :question => question, :display_order => 2, :text => "green")}
     before do
       [answer_1, answer_2, answer_3].each{|a| question.answers << a }
     end
     it{ question.should have(3).answers}
     it "gets answers in order" do
-      question.answers.should == [answer_2, answer_3, answer_1]
-      question.answers.map(&:display_order).should == [1,2,3]
+      question.answers.order("display_order asc").should == [answer_2, answer_3, answer_1]
+      question.answers.order("display_order asc").map(&:display_order).should == [1,2,3]
     end
     it "deletes child answers when deleted" do
       answer_ids = question.answers.map(&:id)
@@ -84,11 +57,11 @@ describe Question do
   end
 
   context "with dependencies" do
-    let(:response_set){ Factory(:response_set) }
-    let(:dependency){ Factory(:dependency) }
+    let(:response_set){ FactoryGirl.create(:response_set) }
+    let(:dependency){ FactoryGirl.create(:dependency) }
     before do
       question.dependency = dependency
-      dependency.stub!(:is_met?).with(response_set).and_return true
+      dependency.stub(:is_met?).with(response_set).and_return true
     end
     it "checks its dependency" do
       question.triggered?(response_set).should be_true
@@ -115,10 +88,10 @@ describe Question do
 
   context "with translations" do
     require 'yaml'
-    let(:survey){ Factory(:survey) }
-    let(:survey_section){ Factory(:survey_section) }
+    let(:survey){ FactoryGirl.create(:survey) }
+    let(:survey_section){ FactoryGirl.create(:survey_section) }
     let(:survey_translation){
-      Factory(:survey_translation, :locale => :es, :translation => {
+      FactoryGirl.create(:survey_translation, :locale => :es, :translation => {
         :questions => {
           :hello => {
             :text => "¡Hola!"

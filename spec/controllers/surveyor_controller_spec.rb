@@ -6,11 +6,11 @@ describe SurveyorController do
     @routes = Surveyor::Engine.routes
   end
 
-  let!(:survey)           { Factory(:survey, :title => "Alphabet", :access_code => "alpha", :survey_version => 0)}
-  let!(:survey_beta)      { Factory(:survey, :title => "Alphabet", :access_code => "alpha", :survey_version => 1)}
-  let!(:response_set)      { Factory(:response_set, :survey => survey, :access_code => "pdq")}
-  let!(:response_set_beta) { Factory(:response_set, :survey => survey_beta, :access_code => "rst")}
-  before { ResponseSet.stub!(:create).and_return(response_set) }
+  let!(:survey)           { FactoryGirl.create(:survey, :title => "Alphabet", :access_code => "alpha", :survey_version => 0)}
+  let!(:survey_beta)      { FactoryGirl.create(:survey, :title => "Alphabet", :access_code => "alpha", :survey_version => 1)}
+  let!(:response_set)      { FactoryGirl.create(:response_set, :survey => survey, :access_code => "pdq")}
+  let!(:response_set_beta) { FactoryGirl.create(:response_set, :survey => survey_beta, :access_code => "rst")}
+  before { ResponseSet.stub(:create).and_return(response_set) }
 
   # match '/', :to                                     => 'surveyor#new', :as    => 'available_surveys', :via => :get
   # match '/:survey_code', :to                         => 'surveyor#create', :as => 'take_survey', :via       => :post
@@ -90,10 +90,6 @@ describe SurveyorController do
       response.should be_success
       response.should render_template('show')
     end
-    it "finds ResponseSet with includes" do
-      ResponseSet.should_receive(:find_by_access_code).with("pdq",{:include=>{:responses=>[:question, :answer]}})
-      do_get
-    end
     it "redirects for missing response set" do
       do_get :response_set_code => "DIFFERENT"
       response.should redirect_to(available_surveys_path)
@@ -114,7 +110,7 @@ describe SurveyorController do
 
   context "#edit" do
     def do_get(params = {})
-      survey.sections = [Factory(:survey_section, :survey => survey)]
+      survey.sections = [FactoryGirl.create(:survey_section, :survey => survey)]
       get :edit, {:survey_code => "alpha", :response_set_code => "pdq"}.merge(params)
     end
     it "renders edit" do
@@ -132,13 +128,13 @@ describe SurveyorController do
       response.should redirect_to(available_surveys_path)
     end
     it "assigns dependents if javascript not enabled" do
-      controller.stub!(:get_unanswered_dependencies_minus_section_questions).and_return([Factory(:question)])
+      controller.stub(:get_unanswered_dependencies_minus_section_questions).and_return([FactoryGirl.create(:question)])
       session[:surveyor_javascript].should be_nil
       do_get
       assigns[:dependents].should_not be_empty
     end
     it "does not assign dependents if javascript is enabled" do
-      controller.stub!(:get_unanswered_dependencies_minus_section_questions).and_return([Factory(:question)])
+      controller.stub(:get_unanswered_dependencies_minus_section_questions).and_return([FactoryGirl.create(:question)])
       session[:surveyor_javascript] = "enabled"
       do_get
       assigns[:dependents].should be_empty
@@ -149,7 +145,7 @@ describe SurveyorController do
       assigns[:survey].should == survey
     end
     it "assigns later survey_version" do
-      survey_beta.sections = [Factory(:survey_section, :survey => survey_beta)]
+      survey_beta.sections = [FactoryGirl.create(:survey_section, :survey => survey_beta)]
       do_get :response_set_code => "rst"
       assigns[:survey].should == survey_beta
       assigns[:response_set].should == response_set_beta
@@ -167,16 +163,11 @@ describe SurveyorController do
     }
     shared_examples "#update action" do
       before do
-        ResponseSet.stub!(:find_by_access_code).and_return(response_set)
+        ResponseSet.stub_chain(:includes, :where, :first).and_return(response_set)
         responses_ui_hash['11'] = {'api_id' => 'something', 'answer_id' => '56', 'question_id' => '9'}
-      end
-      it "finds a response set" do
-        ResponseSet.should_receive(:find_by_access_code).and_return(response_set)
-        do_put
       end
       it "saves responses" do
         response_set.should_receive(:update_from_ui_hash).with(responses_ui_hash)
-
         do_put(:r => responses_ui_hash)
       end
       it "does not fail when there are no responses" do
@@ -184,14 +175,14 @@ describe SurveyorController do
       end
       context "with update exceptions" do
         it 'retries the update on a constraint violation' do
-          response_set.should_receive(:update_from_ui_hash).ordered.with(responses_ui_hash).and_raise(ActiveRecord::StatementInvalid)
+          response_set.should_receive(:update_from_ui_hash).ordered.with(responses_ui_hash).and_raise(ActiveRecord::StatementInvalid.new('statement invalid'))
           response_set.should_receive(:update_from_ui_hash).ordered.with(responses_ui_hash)
 
           expect { do_put(:r => responses_ui_hash) }.to_not raise_error
         end
 
         it 'only retries three times' do
-          response_set.should_receive(:update_from_ui_hash).exactly(3).times.with(responses_ui_hash).and_raise(ActiveRecord::StatementInvalid)
+          response_set.should_receive(:update_from_ui_hash).exactly(3).times.with(responses_ui_hash).and_raise(ActiveRecord::StatementInvalid.new('statement invalid'))
 
           expect { do_put(:r => responses_ui_hash) }.to raise_error(ActiveRecord::StatementInvalid)
         end
@@ -236,7 +227,7 @@ describe SurveyorController do
 
       it_behaves_like "#update action"
       it "returns dependencies" do
-        ResponseSet.stub!(:find_by_access_code).and_return(response_set)
+        ResponseSet.stub_chain(:includes, :where, :first).and_return(response_set)
         response_set.should_receive(:all_dependencies).and_return({"show" => ['q_1'], "hide" => ['q_2']})
 
         do_put
