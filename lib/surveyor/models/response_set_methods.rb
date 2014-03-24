@@ -11,7 +11,7 @@ module Surveyor
         belongs_to :user
         has_many :responses, :dependent => :destroy
         accepts_nested_attributes_for :responses, :allow_destroy => true
-        attr_accessible *PermittedParams.new.response_set_attributes if ::Rails.application.config.active_record.whitelist_attributes
+        attr_accessible *PermittedParams.new.response_set_attributes if defined? ActiveModel::MassAssignmentSecurity
 
         # Validations
         validates_presence_of :survey_id
