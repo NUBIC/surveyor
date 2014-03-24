@@ -92,7 +92,8 @@ describe SurveyorController do
     end
     it "finds ResponseSet with includes" do
       ResponseSet.should_receive(:includes).with(:responses => [:question, :answer]).and_return(response_set)
-      response_set.should_receive(:find_by).with(:access_code => "pdq").and_return(response_set)
+      response_set.should_receive(:where).with(:access_code => "pdq").and_return(response_set)
+      response_set.should_receive(:first).and_return(response_set)
       do_get
     end
     it "redirects for missing response set" do
