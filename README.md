@@ -1,3 +1,6 @@
+### Status
+[![Build Status](https://travis-ci.org/NUBIC/surveyor.svg)](https://travis-ci.org/NUBIC/surveyor)
+
 ## Why surveyor?
 
 Surveyor is a developer tool to deliver surveys in Rails applications.
@@ -17,10 +20,10 @@ without maintaining a fork.
 
 ## Requirements
 
-Please note: this fork of surveyor works with:
+* Ruby 2.0.0 and 2.1.1
+* Rails 3.2 and 4.0
 
-* Ruby 2.0.0 (may work on 1.9 but not tested) 
-* Rails 4.0
+In keeping with the Rails team maintenance [policy] we no longer support Rails 3.1 (stick with v1.4.0 if you need Rails 3.1) or Ruby 1.9.3 (stick with v1.4.0 if you need Ruby 1.8.7 or 1.9.3).
 
 Some key dependencies are:
 
@@ -40,14 +43,14 @@ Add surveyor to your Gemfile:
 
     gem 'surveyor', :git => 'git://github.com/ferrisoxide/surveyor.git'
     gem 'protected_attributes'
-    
+
 Add the following to your application.rb config section
 
     config.active_record.mass_assignment_sanitizer = :strict
     config.active_record.whitelist_attributes = true
-    
+
 Please note, the protected_attributes gem will be removed in a future version. These config settings will also be deprecated in favour of Rails 4's Strong Parameters.
-         
+
 Bundle, install, and migrate:
 
     bundle install

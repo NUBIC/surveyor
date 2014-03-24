@@ -6,10 +6,10 @@ echo ""
 PS3="Choose a stack or 'q' to quit: "
 export CUCUMBER_OPTS="--format CucumberSpinner::ProgressBarFormatter"
 export SPEC_OPTS="--format Fuubar --color spec"
-export BUNDLER_VERSION=1.3.6
+export BUNDLER_VERSION=1.5.3
 
 options=""
-rubies=(1.9.3)
+rubies=(2.0.0 2.1.1)
 rails_versions=(rails_3.2 rails_4.0)
 
 for i in "${rubies[@]}"
@@ -58,7 +58,7 @@ select combo in $options; do
       gem install bundler -v $BUNDLER_VERSION
     fi
     bundle _${BUNDLER_VERSION}_ update
-    bundle _${BUNDLER_VERSION}_ exec rake testbed spec cucumber cucumber:wip
+    bundle _${BUNDLER_VERSION}_ exec rake testbed spec
     ;;
   esac
   break
