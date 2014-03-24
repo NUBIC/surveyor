@@ -12,6 +12,7 @@ module Surveyor
         belongs_to :question
         has_many :responses
         has_many :validations, :dependent => :destroy
+        attr_accessible *PermittedParams.new.answer_attributes if ::Rails.application.config.active_record.whitelist_attributes
 
         # Validations
         validates_presence_of :text
