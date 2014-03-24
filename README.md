@@ -143,7 +143,7 @@ Take a look at our [screencast][] (a bit dated now).
 
 [surveyor-dev]: https://groups.google.com/group/surveyor-dev
 [issues]: https://github.com/NUBIC/surveyor/issues
-[ci]:https://public-ci.nubic.northwestern.edu/job/surveyor/
+[ci]:https://travis-ci.org/NUBIC/surveyor
 [screencast]:http://vimeo.com/7051279
 
 ## Contribute, test
