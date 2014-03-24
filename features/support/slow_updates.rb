@@ -11,10 +11,10 @@ class SurveyorController < ApplicationController
   end
 end
 
-Before('@slow_updates') do
-  $delay_updates = true
-end
+# Before('@slow_updates') do
+#   $delay_updates = true
+# end
 
-After('@slow_updates') do
-  $delay_updates = false
-end
+# After('@slow_updates') do
+#   $delay_updates = false
+# end

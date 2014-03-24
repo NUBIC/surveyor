@@ -4,12 +4,14 @@ Rabl.configure {|config| config.include_child_root = false }
 Rabl.configure {|config| config.include_json_root = false }
 module Surveyor
   module SurveyorControllerMethods
-    def self.included(base)
-      base.send :before_filter, :get_current_user, :only => [:new, :create]
-      base.send :before_filter, :determine_if_javascript_is_enabled, :only => [:create, :update]
-      base.send :before_filter, :set_response_set_and_render_context, :only => [:edit, :show]
-      base.send :layout, 'surveyor_default'
-      base.send :before_filter, :set_locale
+    extend ActiveSupport::Concern
+    included do
+      before_filter :get_current_user, :only => [:new, :create]
+      before_filter :determine_if_javascript_is_enabled, :only => [:create, :update]
+      before_filter :set_response_set_and_render_context, :only => [:edit, :show]
+
+      layout 'surveyor_default'
+      before_filter :set_locale
     end
 
     # Actions
@@ -58,9 +60,9 @@ module Surveyor
     def edit
       # @response_set is set in before_filter - set_response_set_and_render_context
       if @response_set
-        @survey = Survey.with_sections.find_by_id(@response_set.survey_id)
-        @sections = @survey.sections
-        @section = section_id_from(params) ? @sections.with_includes.find(section_id_from(params)) : @sections.with_includes.first
+        @sections = SurveySection.where(survey_id: @response_set.survey_id).includes([:survey, {questions: [{answers: :question}, {question_group: :dependency}, :dependency]}])
+        @section = (section_id_from(params) ? @sections.where(id: section_id_from(params)).first : @sections.first) || @sections.first
+        @survey = @section.survey
         set_dependents
       else
         flash[:notice] = t('surveyor.unable_to_find_your_responses')
@@ -108,7 +110,7 @@ module Surveyor
 
     def load_and_update_response_set
       ResponseSet.transaction do
-        @response_set = ResponseSet.includes(:responses => :answer).find_by(:access_code => params[:response_set_code])
+        @response_set = ResponseSet.includes({:responses => :answer}).where(:access_code => params[:response_set_code]).first
         if @response_set
           saved = true
           if params[:r]
@@ -155,8 +157,7 @@ module Surveyor
     end
 
     def set_response_set_and_render_context
-      @response_set = ResponseSet.includes(:responses => [:question, :answer])
-        .find_by(:access_code => params[:response_set_code])
+      @response_set = ResponseSet.includes({:responses => [:question, :answer]}).where(:access_code => params[:response_set_code]).first
       @render_context = render_context
     end
 

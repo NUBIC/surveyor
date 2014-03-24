@@ -3,16 +3,15 @@ require 'surveyor/common'
 module Surveyor
   module Models
     module QuestionGroupMethods
-      def self.included(base)
-        # Associations
-        base.send :has_many, :questions
-        base.send :has_one, :dependency
-
-        # Whitelisting attributes
-        base.send :attr_accessible, :text, :help_text, :reference_identifier, :data_export_identifier, :common_namespace, :common_identifier, :display_type, :custom_class, :custom_renderer
-      end
-
+      extend ActiveSupport::Concern
+      include ActiveModel::Validations
       include MustacheContext
+
+      included do
+        # Associations
+        has_many :questions
+        has_one :dependency
+      end
 
       # Instance Methods
       def initialize(*args)

@@ -4,11 +4,11 @@ describe Validation do
   before(:each) do
     @validation = FactoryGirl.create(:validation)
   end
-  
+
   it "should be valid" do
     @validation.should be_valid
   end
-  
+
   it "should be invalid without a rule" do
     @validation.rule = nil
     @validation.should have(2).errors_on(:rule)
@@ -29,16 +29,6 @@ describe Validation do
     @validation.should have(1).error_on(:rule)
     @validation.rule = "a and b"
     @validation.should have(1).error_on(:rule)
-  end
-  it "should protect timestamps" do
-    saved_attrs = @validation.attributes
-    if defined? ActiveModel::MassAssignmentSecurity::Error
-      lambda {@validation.update_attributes(:created_at => 3.days.ago, :updated_at => 3.hours.ago)}#.should raise_error(ActiveModel::MassAssignmentSecurity::Error)
-    else
-      @validation.attributes = {:created_at => 3.days.ago, :updated_at => 3.hours.ago} # automatically protected by Rails
-      @validation.attributes = {:created_at => 3.days.ago, :updated_at => 3.hours.ago} # automatically protected by Rails
-    end
-    @validation.attributes.should == saved_attrs
   end
 end
 describe Validation, "reporting its status" do

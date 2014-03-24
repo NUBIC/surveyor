@@ -1,16 +1,10 @@
 require File.expand_path(File.dirname(__FILE__) + '/../spec_helper')
 
-describe ValidationCondition, "Class methods" do
-  it "should have a list of operators" do
-    %w(== != < > <= >= =~).each{|operator| ValidationCondition.operators.include?(operator).should be_true }
-  end
-end
-
 describe ValidationCondition do
   before(:each) do
     @validation_condition = FactoryGirl.create(:validation_condition)
   end
-  
+
   it "should be valid" do
      @validation_condition.should be_valid
   end
@@ -24,7 +18,7 @@ describe ValidationCondition do
     @validation_condition.operator = nil
     @validation_condition.should have(2).errors_on(:operator)
   end
-  
+
   it "should be invalid without a rule_key" do
     @validation_condition.should be_valid
     @validation_condition.rule_key = nil
@@ -41,22 +35,13 @@ describe ValidationCondition do
    @validation_condition.should have(1).errors_on(:rule_key)
   end
 
-  it "should have an operator in ValidationCondition.operators" do
-    ValidationCondition.operators.each do |o|
+  it "should have an operator in Surveyor::Common::OPERATORS" do
+    Surveyor::Common::OPERATORS.each do |o|
       @validation_condition.operator = o
       @validation_condition.should have(0).errors_on(:operator)
     end
     @validation_condition.operator = "#"
     @validation_condition.should have(1).error_on(:operator)
-  end
-  it "should protect timestamps" do
-    saved_attrs = @validation_condition.attributes
-    if defined? ActiveModel::MassAssignmentSecurity::Error
-      lambda {@validation_condition.update_attributes(:created_at => 3.days.ago, :updated_at => 3.hours.ago)}.should raise_error(ActiveModel::MassAssignmentSecurity::Error)
-    else
-      @validation_condition.attributes = {:created_at => 3.days.ago, :updated_at => 3.hours.ago} # automatically protected by Rails
-    end
-    @validation_condition.attributes.should == saved_attrs
   end
 end
 
@@ -67,10 +52,10 @@ describe ValidationCondition, "validating responses" do
     r = FactoryGirl.create(:response, {:answer => a, :question => a.question}.merge(rhash))
     return v.is_valid?(r)
   end
-  
+
   it "should validate a response by regexp" do
-    test_var({:operator => "=~", :regexp => '/^[a-z]{1,6}$/'}, {:response_class => "string"}, {:string_value => "clear"}).should be_true
-    test_var({:operator => "=~", :regexp => '/^[a-z]{1,6}$/'}, {:response_class => "string"}, {:string_value => "foobarbaz"}).should be_false
+    test_var({:operator => "=~", :regexp => /^[a-z]{1,6}$/.to_s}, {:response_class => "string"}, {:string_value => "clear"}).should be_true
+    test_var({:operator => "=~", :regexp => /^[a-z]{1,6}$/.to_s}, {:response_class => "string"}, {:string_value => "foobarbaz"}).should be_false
   end
   it "should validate a response by integer comparison" do
     test_var({:operator => ">", :integer_value => 3}, {:response_class => "integer"}, {:integer_value => 4}).should be_true

@@ -11,33 +11,6 @@ describe Answer do
       answer.destroy
       Validation.find_by_id(v_id).should be_nil
     end
-    it "protects #api_id" do
-      saved_attrs = answer.attributes
-      if defined? ActiveModel::MassAssignmentSecurity::Error 
-        expect { answer.update_attributes(:api_id => "NEW") }.to raise_error(ActiveModel::MassAssignmentSecurity::Error)
-      else
-        answer.attributes = {:api_id => "NEW"} # Rails doesn't return false, but this will be checked in the comparison to saved_attrs
-      end
-      answer.attributes.should == saved_attrs
-    end
-    it "protects #created_at" do
-      saved_attrs = answer.attributes
-      if defined? ActiveModel::MassAssignmentSecurity::Error
-        expect { answer.update_attributes(:created_at => 3.days.ago) }.to raise_error(ActiveModel::MassAssignmentSecurity::Error)
-      else
-        answer.attributes = {:created_at => 3.days.ago} # Rails doesn't return false, but this will be checked in the comparison to saved_attrs
-      end
-      answer.attributes.should == saved_attrs
-    end
-    it "protects #updated_at" do
-      saved_attrs = answer.attributes
-      if defined? ActiveModel::MassAssignmentSecurity::Error
-        expect { answer.update_attributes(:updated_at => 3.hours.ago) }.to raise_error(ActiveModel::MassAssignmentSecurity::Error)
-      else
-        answer.attributes = {:updated_at => 3.hours.ago} # Rails doesn't return false, but this will be checked in the comparison to saved_attrs
-      end
-      answer.attributes.should == saved_attrs
-    end
   end
 
   context "with mustache text substitution" do

@@ -35,33 +35,6 @@ describe Question do
       question.solo?.should be_true
       question.part_of_group?.should be_false
     end
-    it "protects #api_id" do
-      saved_attrs = question.attributes
-      if defined? ActiveModel::MassAssignmentSecurity::Error
-        expect { question.update_attributes(:api_id => "NEW") }.to raise_error(ActiveModel::MassAssignmentSecurity::Error)
-      else
-        question.attributes = {:api_id => "NEW"} # Rails doesn't return false, but this will be checked in the comparison to saved_attrs
-      end
-      question.attributes.should == saved_attrs
-    end
-    it "protects #created_at" do
-      saved_attrs = question.attributes
-      if defined? ActiveModel::MassAssignmentSecurity::Error
-        expect { question.update_attributes(:created_at => 3.days.ago) }.to raise_error(ActiveModel::MassAssignmentSecurity::Error)
-      else
-        question.attributes = {:created_at => 3.days.ago} # Rails doesn't return false, but this will be checked in the comparison to saved_attrs
-      end
-      question.attributes.should == saved_attrs
-    end
-    it "protects #updated_at" do
-      saved_attrs = question.attributes
-      if defined? ActiveModel::MassAssignmentSecurity::Error
-        expect { question.update_attributes(:updated_at => 3.hours.ago) }.to raise_error(ActiveModel::MassAssignmentSecurity::Error)
-      else
-        question.attributes = {:updated_at => 3.hours.ago} # Rails doesn't return false, but this will be checked in the comparison to saved_attrs
-      end
-      question.attributes.should == saved_attrs
-    end
   end
 
   context "with answers" do
@@ -73,8 +46,8 @@ describe Question do
     end
     it{ question.should have(3).answers}
     it "gets answers in order" do
-      question.answers.should == [answer_2, answer_3, answer_1]
-      question.answers.map(&:display_order).should == [1,2,3]
+      question.answers.order(display_order: :asc).should == [answer_2, answer_3, answer_1]
+      question.answers.order(display_order: :asc).map(&:display_order).should == [1,2,3]
     end
     it "deletes child answers when deleted" do
       answer_ids = question.answers.map(&:id)

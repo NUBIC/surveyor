@@ -40,19 +40,6 @@ describe Response, "when saving a response" do
     Response.all.should == [@response, response2]
   end
   
-  it "should protect api_id, timestamps" do
-    saved_attrs = @response.attributes
-    if defined? ActiveModel::MassAssignmentSecurity::Error
-      lambda {@response.update_attributes(:created_at => 3.days.ago, :updated_at => 3.hours.ago)}.should raise_error(ActiveModel::MassAssignmentSecurity::Error)
-      lambda {@response.update_attributes(:api_id => "NEW")}.should raise_error(ActiveModel::MassAssignmentSecurity::Error)
-    else
-      @response.attributes = {:created_at => 3.days.ago, :updated_at => 3.hours.ago} # automatically protected by Rails
-      @response.attributes = {:api_id => "NEW"} # Rails doesn't return false, but this will be checked in the comparison to saved_attrs
-    end
-    @response.attributes.should == saved_attrs
-  end
-  
-
   describe "returns the response as the type requested" do
     it "returns 'string'" do
       @response.string_value = "blah"

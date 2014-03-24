@@ -68,9 +68,11 @@ Surveyor's controller, helper, models, and views may be overridden by classes in
 
     script/rails generate surveyor:custom
 
-and read `surveys/EXTENDING\_SURVEYOR`
+and read the instructions generated in [`surveys/EXTENDING_SURVEYOR.MD`][extending]
 
-## Upgrade
+[extending]: https://github.com/NUBIC/surveyor/blob/master/lib/generators/surveyor/templates/surveys/EXTENDING_SURVEYOR.md
+
+## Upgrade surveyor
 
 To get the latest version of surveyor, bundle, install and migrate:
 
@@ -81,6 +83,27 @@ To get the latest version of surveyor, bundle, install and migrate:
 and review the [changelog][] for changes that may affect your customizations.
 
 [changelog]: https://github.com/NUBIC/surveyor/blob/master/CHANGELOG.md
+
+## What surveyor does and doesn't do
+
+### Does do
+* use a DSL to parse large surveys without hours of copy/paste into a gui builder
+* support complex, rule-based dependencies (skip-logic)
+* JSON export of both surveys and response sets
+* allow customization of all models, views, and controller, as well as helpers and routes
+* follow semantic versioning
+* exclusive checkboxes - a checkbox that when checked, unchecks all the others
+
+### Doesn't do
+* Enforce mandatory questions... yet (although it does have some[1] methods[2] on ResponseSet to support that)
+* Dependencies within repeaters... yet [#235](http://github.com/NUBIC/surveyor/issues/235)
+* Validations within the UI... yet [#34](http://github.com/NUBIC/surveyor/issues/34), although it does have model support and database representations
+* GUI creating, editing, deleting and administration of surveys... yet [#414](http://github.com/NUBIC/surveyor/issues/414)
+* Consistently support HTML tags in title, text, help_text attributes. We intend to move to markdown support [#413](http://github.com/NUBIC/surveyor/issues/413) so that same survey definition can be used with [nu_surveyor](http://github.com/NUBIC/nu_surveyor).
+
+[1]: http://github.com/NUBIC/surveyor/blob/master/lib/surveyor/models/response_set_methods.rb#L94
+[2]: http://github.com/NUBIC/surveyor/blob/master/lib/surveyor/models/response_set_methods.rb#L97
+
 
 ## Users of spork
 

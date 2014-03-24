@@ -168,18 +168,11 @@ describe SurveyorController do
     }
     shared_examples "#update action" do
       before do
-        ResponseSet.stub(:includes).and_return(response_set)
-        response_set.stub(:find_by).and_return(response_set)
+        ResponseSet.stub_chain(:includes, :where, :first).and_return(response_set)
         responses_ui_hash['11'] = {'api_id' => 'something', 'answer_id' => '56', 'question_id' => '9'}
-      end
-      it "finds a response set" do
-        ResponseSet.should_receive(:includes).and_return(response_set)
-        response_set.should_receive(:find_by).and_return(response_set)
-        do_put
       end
       it "saves responses" do
         response_set.should_receive(:update_from_ui_hash).with(responses_ui_hash)
-
         do_put(:r => responses_ui_hash)
       end
       it "does not fail when there are no responses" do
@@ -187,7 +180,7 @@ describe SurveyorController do
       end
       context "with update exceptions" do
         it 'retries the update on a constraint violation' do
- response_set.should_receive(:update_from_ui_hash).ordered.with(responses_ui_hash).and_raise(ActiveRecord::StatementInvalid.new('statement invalid'))
+          response_set.should_receive(:update_from_ui_hash).ordered.with(responses_ui_hash).and_raise(ActiveRecord::StatementInvalid.new('statement invalid'))
           response_set.should_receive(:update_from_ui_hash).ordered.with(responses_ui_hash)
 
           expect { do_put(:r => responses_ui_hash) }.to_not raise_error
@@ -239,8 +232,7 @@ describe SurveyorController do
 
       it_behaves_like "#update action"
       it "returns dependencies" do
-        ResponseSet.should_receive(:includes).and_return(response_set)
-        response_set.should_receive(:find_by).and_return(response_set)
+        ResponseSet.stub_chain(:includes, :where, :first).and_return(response_set)
         response_set.should_receive(:all_dependencies).and_return({"show" => ['q_1'], "hide" => ['q_2']})
 
         do_put

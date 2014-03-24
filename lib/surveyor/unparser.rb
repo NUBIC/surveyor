@@ -19,7 +19,8 @@ class Survey < ActiveRecord::Base
   # block
 
   def unparse(dsl)
-    attrs = Surveyor::Unparser.hash_diff(self.attributes, Survey.new(:title => title).attributes).delete_if{|k,v| %w(created_at updated_at inactive_at id title access_code api_id).include? k}.symbolize_keys!
+    with_defaults = Survey.new(:title => title)
+    attrs = self.attributes.delete_if{|k,v| with_defaults[k] == v or %w(created_at updated_at inactive_at id title access_code api_id).include? k}.symbolize_keys!
     dsl << "survey \"#{title}\""
     dsl << (attrs.blank? ? " do\n" : ", #{attrs.inspect.gsub(/\{|\}/, "")} do\n")
     sections.each{|section| section.unparse(dsl)}
@@ -30,7 +31,8 @@ class SurveySection < ActiveRecord::Base
   # block
 
   def unparse(dsl)
-    attrs = Surveyor::Unparser.hash_diff(self.attributes, SurveySection.new(:title => title).attributes).delete_if{|k,v| %w(created_at updated_at id survey_id).include? k}.symbolize_keys!
+    with_defaults = SurveySection.new(:title => title)
+    attrs = self.attributes.delete_if{|k,v| with_defaults[k] == v or %w(created_at updated_at id survey_id).include? k}.symbolize_keys!
     group_questions = []
     dsl << "  section \"#{title}\""
     dsl << (attrs.blank? ? " do\n" : ", #{attrs.inspect.gsub(/\{|\}/, "")} do\n")
@@ -53,7 +55,8 @@ class QuestionGroup < ActiveRecord::Base
   # block
 
   def unparse(dsl)
-    attrs = Surveyor::Unparser.hash_diff(self.attributes, QuestionGroup.new(:text => text).attributes).delete_if{|k,v| %w(created_at updated_at id api_id).include?(k) or (k == "display_type" && %w(grid repeater default).include?(v))}.symbolize_keys!
+    with_defaults = QuestionGroup.new(:text => text)
+    attrs = self.attributes.delete_if{|k,v| with_defaults[k] == v or %w(created_at updated_at id api_id).include?(k) or (k == "display_type" && %w(grid repeater default).include?(v))}.symbolize_keys!
     method = (%w(grid repeater).include?(display_type) ? display_type : "group")
     dsl << "\n"
     dsl << "    #{method} \"#{text}\""
@@ -67,7 +70,8 @@ class Question < ActiveRecord::Base
   # nonblock
 
   def unparse(dsl)
-    attrs = Surveyor::Unparser.hash_diff(self.attributes, Question.new(:text => text).attributes).delete_if{|k,v| %w(created_at updated_at reference_identifier id survey_section_id question_group_id api_id).include?(k) or (k == "display_type" && v == "label")}.symbolize_keys!
+    with_defaults = Question.new(:text => text)
+    attrs = self.attributes.delete_if{|k,v| with_defaults[k] == v or %w(created_at updated_at reference_identifier id survey_section_id question_group_id api_id).include?(k) or (k == "display_type" && v == "label")}.symbolize_keys!
     dsl << (solo? ? "\n" : "  ")
     if display_type == "label"
       dsl << "    label"
@@ -87,7 +91,8 @@ class Dependency < ActiveRecord::Base
   # nonblock
 
   def unparse(dsl)
-    attrs = Surveyor::Unparser.hash_diff(self.attributes, Dependency.new.attributes).delete_if{|k,v| %w(created_at updated_at id question_id).include?(k) }.symbolize_keys!
+    with_defaults = Dependency.new
+    attrs = self.attributes.delete_if{|k,v| with_defaults[k] == v or %w(created_at updated_at id question_id).include?(k) }.symbolize_keys!
     dsl << "  " if question.part_of_group?
     dsl << "    dependency"
     dsl << (attrs.blank? ? "\n" : " #{attrs.inspect.gsub(/\{|\}/, "")}\n")
@@ -98,7 +103,8 @@ class DependencyCondition < ActiveRecord::Base
   # nonblock
 
   def unparse(dsl)
-    attrs = Surveyor::Unparser.hash_diff(self.attributes, Dependency.new.attributes).delete_if{|k,v| %w(created_at updated_at question_id question_group_id rule_key rule operator id dependency_id answer_id).include? k}.symbolize_keys!
+    with_defaults = DependencyCondition.new
+    attrs = self.attributes.delete_if{|k,v| with_defaults[k] == v or %w(created_at updated_at question_id question_group_id rule_key rule operator id dependency_id answer_id).include? k}.symbolize_keys!
     dsl << "  " if dependency.question.part_of_group?
     dsl << "    condition"
     dsl << "_#{rule_key}" unless rule_key.blank?
@@ -110,7 +116,8 @@ class Answer < ActiveRecord::Base
   # nonblock
 
   def unparse(dsl)
-    attrs = Surveyor::Unparser.hash_diff(self.attributes, Answer.new(:text => text).attributes).delete_if{|k,v| %w(created_at updated_at reference_identifier response_class id question_id api_id).include? k}.symbolize_keys!
+    with_defaults = Answer.new(:text => text)
+    attrs = self.attributes.delete_if{|k,v| with_defaults[k] == v or %w(created_at updated_at reference_identifier response_class id question_id api_id).include? k}.symbolize_keys!
     attrs.delete(:is_exclusive) if text == "Omit" && is_exclusive == true
     attrs.merge!({:is_exclusive => false}) if text == "Omit" && is_exclusive == false
     dsl << "  " if question.part_of_group?
@@ -131,7 +138,8 @@ class Validation < ActiveRecord::Base
   # nonblock
 
   def unparse(dsl)
-    attrs = Surveyor::Unparser.hash_diff(self.attributes, Validation.new.attributes).delete_if{|k,v| %w(created_at updated_at id answer_id).include?(k) }.symbolize_keys!
+    with_defaults = Validation.new
+    attrs = self.attributes.delete_if{|k,v| with_defaults[k] == v or %w(created_at updated_at id answer_id).include?(k) }.symbolize_keys!
     dsl << "  " if answer.question.part_of_group?
     dsl << "    validation"
     dsl << (attrs.blank? ? "\n" : " #{attrs.inspect.gsub(/\{|\}/, "")}\n")
@@ -142,7 +150,8 @@ class ValidationCondition < ActiveRecord::Base
   # nonblock
 
   def unparse(dsl)
-    attrs = Surveyor::Unparser.hash_diff(self.attributes, ValidationCondition.new.attributes).delete_if{|k,v| %w(created_at updated_at operator rule_key id validation_id).include? k}.symbolize_keys!
+    with_defaults = ValidationCondition.new
+    attrs = self.attributes.delete_if{|k,v| with_defaults[k] == v or %w(created_at updated_at operator rule_key id validation_id).include? k}.symbolize_keys!
     dsl << "  " if validation.answer.question.part_of_group?
     dsl << "    condition"
     dsl << "_#{rule_key}" unless rule_key.blank?
