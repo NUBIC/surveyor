@@ -1,3 +1,6 @@
+### Status
+[![Build Status](https://travis-ci.org/NUBIC/surveyor.svg)](https://travis-ci.org/NUBIC/surveyor)
+
 ## Why surveyor?
 
 Surveyor is a developer tool to deliver surveys in Rails applications.
@@ -19,10 +22,10 @@ without maintaining a fork.
 
 Surveyor works with:
 
-* Ruby 1.9.2, and 1.9.3
-* Rails 3.1-3.2
+* Ruby 2.0.0 and 2.1.1
+* Rails 3.2 and 4.0
 
-In keeping with the Rails team maintenance [policy] we no longer support Rails 3.0 (stick with v1.3.0 if you need Rails 3.0) or Ruby 1.8.7 (stick with v1.4.0 if you need Ruby 1.8.7).
+In keeping with the Rails team maintenance [policy] we no longer support Rails 3.1 (stick with v1.4.0 if you need Rails 3.1) or Ruby 1.9.3 (stick with v1.4.0 if you need Ruby 1.8.7 or 1.9.3).
 
 Some key dependencies are:
 
