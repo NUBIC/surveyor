@@ -10,6 +10,7 @@ module Surveyor
         belongs_to :question
         belongs_to :question_group
         has_many :dependency_conditions, :dependent => :destroy
+        attr_accessible *PermittedParams.new.dependency_attributes if ::Rails.application.config.active_record.whitelist_attributes
 
         # Validations
         validates_presence_of :rule

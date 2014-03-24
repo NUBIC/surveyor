@@ -12,6 +12,7 @@ module Surveyor
         belongs_to :dependency
         belongs_to :dependent_question, :foreign_key => :question_id, :class_name => :question
         belongs_to :question
+        attr_accessible *PermittedParams.new.dependency_condition_attributes if ::Rails.application.config.active_record.whitelist_attributes
 
         # Validations
         validates_presence_of :operator, :rule_key
