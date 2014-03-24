@@ -46,8 +46,8 @@ describe Question do
     end
     it{ question.should have(3).answers}
     it "gets answers in order" do
-      question.answers.order(display_order: :asc).should == [answer_2, answer_3, answer_1]
-      question.answers.order(display_order: :asc).map(&:display_order).should == [1,2,3]
+      question.answers.order("display_order asc").should == [answer_2, answer_3, answer_1]
+      question.answers.order("display_order asc").map(&:display_order).should == [1,2,3]
     end
     it "deletes child answers when deleted" do
       answer_ids = question.answers.map(&:id)

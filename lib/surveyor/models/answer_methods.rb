@@ -5,6 +5,7 @@ module Surveyor
       extend ActiveSupport::Concern
       include ActiveModel::Validations
       include MustacheContext
+      include ActiveModel::ForbiddenAttributesProtection
 
       included do
         # Associations

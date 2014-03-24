@@ -6,6 +6,7 @@ module Surveyor
       extend ActiveSupport::Concern
       include ActiveModel::Validations
       include MustacheContext
+      include ActiveModel::ForbiddenAttributesProtection
 
       included do
         # Associations
@@ -14,7 +15,7 @@ module Surveyor
         has_many :answers, :dependent => :destroy # it might not always have answers
         has_one :dependency, :dependent => :destroy
         belongs_to :correct_answer, :class_name => "Answer", :dependent => :destroy
-        
+
         # Validations
         validates_presence_of :text, :display_order
         validates_inclusion_of :is_mandatory, :in => [true, false]

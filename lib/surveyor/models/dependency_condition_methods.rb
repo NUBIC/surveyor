@@ -4,6 +4,7 @@ module Surveyor
       extend ActiveSupport::Concern
       include ActiveModel::Validations
       include Surveyor::ActsAsResponse # includes "as" instance method
+      include ActiveModel::ForbiddenAttributesProtection
 
       included do
         # Associations
@@ -35,7 +36,7 @@ module Surveyor
         elsif operator == "!=" and (responses.blank? or responses.none?{|r| r.answer.id == self.answer.id})
           # logger.warn( {rule_key.to_sym => true})
           return {rule_key.to_sym => true}
-        elsif response = responses.load.detect{|r| r.answer.id == self.answer.id}
+        elsif response = responses.to_a.detect{|r| r.answer.id == self.answer.id}
           klass = response.answer.response_class
           klass = "answer" if self.as(klass).nil? # it should compare answer ids when the dependency condition *_value is nil
           case self.operator

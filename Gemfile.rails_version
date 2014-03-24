@@ -14,7 +14,8 @@ when "default"
 when /^3.2/
   gem "rails", "~> #{env_rails_version}"
   # A JS runtime is required for Rails 3.1+
-  gem 'therubyracer', '~> 0.10.2'
+  gem 'therubyracer', '~> 0.12.1'
+  gem 'strong_parameters'
 when /^4.0/
   gem "rails", "~> #{env_rails_version}"
   # A JS runtime is required for Rails 4.0+
