@@ -55,7 +55,7 @@ RSpec.configure do |config|
   end
 
   config.before do
-    if example.metadata[:js] || example.metadata[:type] == :feature
+    if example.metadata[:clean_with_truncation] || example.metadata[:js] || example.metadata[:type] == :feature
       DatabaseCleaner.strategy = :truncation
     else
       DatabaseCleaner.strategy = :transaction
