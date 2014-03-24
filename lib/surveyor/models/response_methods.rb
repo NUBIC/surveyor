@@ -4,6 +4,7 @@ module Surveyor
       extend ActiveSupport::Concern
       include ActiveModel::Validations
       include Surveyor::ActsAsResponse # includes "as" instance method
+      include ActiveModel::ForbiddenAttributesProtection
 
       included do
         # Associations

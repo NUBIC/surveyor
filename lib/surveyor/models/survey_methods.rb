@@ -6,6 +6,7 @@ module Surveyor
     module SurveyMethods
       extend ActiveSupport::Concern
       include ActiveModel::Validations
+      include ActiveModel::ForbiddenAttributesProtection
 
       included do
         # Associations
@@ -16,7 +17,7 @@ module Surveyor
         # Validations
         validates_presence_of :title
         validates_uniqueness_of :survey_version, :scope => :access_code, :message => "survey with matching access code and version already exists"
-        
+
         # Derived attributes
         before_save :generate_access_code
         before_save :increment_version

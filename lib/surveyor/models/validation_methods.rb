@@ -3,6 +3,7 @@ module Surveyor
     module ValidationMethods
       extend ActiveSupport::Concern
       include ActiveModel::Validations
+      include ActiveModel::ForbiddenAttributesProtection
 
       included do
         # Associations

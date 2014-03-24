@@ -9,16 +9,20 @@ require 'rspec/rails'
 require 'factories'
 require 'json_spec'
 require 'database_cleaner'
+require 'capybara/rspec'
 
 # for asset_pipeline_enabled? in models
 include Surveyor::Helpers::AssetPipeline
 
 # Requires supporting ruby files with custom matchers and macros, etc,
 # in spec/support/ and its subdirectories.
-Dir[Rails.root.join("spec/support/**/*.rb")].each {|f| require f}
+Dir["./spec/support/**/*.rb"].sort.each {|f| require f}
+
+# Checks for pending migrations before tests are run.
+# If you are not using ActiveRecord, you can remove this line.
+ActiveRecord::Migration.check_pending! if ::Rails.version >= "4.0" && defined?(ActiveRecord::Migration)
 
 RSpec.configure do |config|
-  config.use_transactional_fixtures = false
   config.include JsonSpec::Helpers
 
   config.treat_symbols_as_metadata_keys_with_true_values = true
@@ -31,6 +35,18 @@ RSpec.configure do |config|
   # config.mock_with :flexmock
   # config.mock_with :rr
   config.mock_with :rspec
+
+  # config.expect_with :rspec do |c|
+  #   c.syntax = :expect
+  # end
+
+  # Remove this line if you're not using ActiveRecord or ActiveRecord fixtures
+  config.fixture_path = "#{::Rails.root}/spec/fixtures"
+
+  # If you're not using ActiveRecord, or you'd prefer not to run each of your
+  # examples within a transaction, remove the following line or assign false
+  # instead of true.
+  config.use_transactional_fixtures = false
 
   ## Database Cleaner
   config.before :suite do
