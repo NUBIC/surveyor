@@ -6,20 +6,20 @@ survey "Feelings" do
       a "0"
       a "1"
       a "2"
-      q "anxious|calm" , :pick => :one
-      q "sad|happy", :pick => :one
-      q "tired|energetic", :pick => :one
+      q "anxious|calm" , pick: :one
+      q "sad|happy", pick: :one
+      q "tired|energetic", pick: :one
     end
     grid_events "How interested are you in the following?" do
       a "indifferent"
       a "neutral"
       a "interested"
-      q "births" , :pick => :one
-      q "weddings", :pick => :one
-      q "funerals", :pick => :one
+      q "births" , pick: :one
+      q "weddings", pick: :one
+      q "funerals", pick: :one
     end
-    repeater_family "Tell us about your family" do
-      q "Relation", :pick => :one, :display_type => :dropdown
+    repeater_family "Tell us about your family"  do
+      q "Relation", pick: :one, display_type: :dropdown
       a "Parent"
       a "Sibling"
       a "Child"
@@ -28,7 +28,7 @@ survey "Feelings" do
       q "Quality of your relationship"
       a :string
     end
-    q_description "Tell us which of the following describe you, and why", :pick => :any
+    q_description "Tell us which of the following describe you, and why", pick: :any
     a "joyful", :string
     a "content", :string
     a "anxious", :string

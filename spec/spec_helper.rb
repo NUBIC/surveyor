@@ -27,6 +27,7 @@ ActiveRecord::Migration.check_pending! if ::Rails.version >= "4.0" && defined?(A
 RSpec.configure do |config|
   config.include JsonSpec::Helpers
   config.include SurveyorFormMatchers
+  config.include SurveyorApiMatchers
 
   config.treat_symbols_as_metadata_keys_with_true_values = true
 
@@ -80,4 +81,7 @@ RSpec.configure do |config|
   config.after do
     DatabaseCleaner.clean
   end
+end
+JsonSpec.configure do
+  exclude_keys "id", "created_at", "updated_at", "uuid", "modified_at", "completed_at"
 end

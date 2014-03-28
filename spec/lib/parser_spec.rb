@@ -11,17 +11,18 @@ describe Surveyor::Parser do
     it "parses" do
       expect(Survey.count).to eq(1)
       expect(SurveySection.count).to eq(2)
-      expect(Question.count).to eq(3)
-      expect(Answer.count).to eq(8)
-      surveys =   [{title: "Favories", display_order: 0}]
+      expect(Question.count).to eq(4)
+      expect(Answer.count).to eq(9)
+      surveys =   [{title: "Favorites", display_order: 0}]
       sections =  [{title: "Colors", reference_identifier: "colors", display_order: 0},
                    {title: "Numbers", reference_identifier: "numbers", display_order: 1}]
       questions = [{reference_identifier: nil, text: "These questions are examples of the basic supported input types", pick: "none", display_type: "label", display_order: 0},
                    {reference_identifier: "1", text: "What is your favorite color?", pick: "one", display_type: "default", display_order: 1},
-                   {reference_identifier: "2b", text: "Choose the colors you don't like", pick: "any", display_type: "default", display_order: 2}]
-      answers_1 = [{reference_identifier: "r", text: "red", response_class: "answer", display_order: 0},
-                   {reference_identifier: "b", text: "blue", response_class: "answer", display_order: 1},
-                   {reference_identifier: "g", text: "green", response_class: "answer", display_order: 2},
+                   {reference_identifier: "2b", text: "Choose the colors you don't like", pick: "any", display_type: "default", display_order: 2},
+                   {reference_identifier: "fire_engine", text: "What is the best color for a fire engine?",display_type: "default", display_order: 3}]
+      answers_1 = [{reference_identifier: "r", data_export_identifier: "1", text: "red", response_class: "answer", display_order: 0},
+                   {reference_identifier: "b", data_export_identifier: "2", text: "blue", response_class: "answer", display_order: 1},
+                   {reference_identifier: "g", data_export_identifier: "3", text: "green", response_class: "answer", display_order: 2},
                    {reference_identifier: nil, text: "Other", response_class: "answer", display_order: 3}]
       answers_2 = [{reference_identifier: "1", text: "orange", response_class: "answer", display_order: 1},
                    {reference_identifier: "2", text: "purple", response_class: "answer", display_order: 2},
