@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe "using" do
+describe "Surveyor UI interactions" do
   context "creation" do
     it "basic questions" do
     end
@@ -72,5 +72,43 @@ describe "using" do
   it "numeric input mask with alphanumeric input" do
   end
   it "alpha input mask with alphanumeric input" do
+  end
+  context "show" do
+    include_context "favorites"
+    include_context "feelings"
+    it "takes a survey, then shows it" do
+      visit('/surveys')
+      within "form[action='/surveys/favorites']" do
+        click_button "Take it"
+      end
+      expect(page).to have_content("What is your favorite color?")
+      choose "red"
+      choose "blue"
+      check "orange"
+      check "brown"
+      click_button "Next section"
+      click_button "Click here to finish"
+      response_set = ResponseSet.last
+      visit("/surveys/favorites/#{response_set.access_code}/")
+      expect(page).to have_disabled_selected_radio("blue")
+      expect(page).to have_disabled_selected_checkbox("orange")
+      expect(page).to have_disabled_selected_checkbox("brown")
+    end
+    it "takes a survey with grid questions, then shows it" do
+      visit('/surveys')
+      within "form[action='/surveys/feelings']" do
+        click_button "Take it"
+      end
+      expect(page).to have_content("Tell us how you feel today")
+      within grid_row "anxious|calm" do
+        choose "-1"
+      end
+      click_button "Click here to finish"
+      response_set = ResponseSet.last
+      visit("/surveys/favorites/#{response_set.access_code}/")
+      within grid_row "anxious|calm" do
+        expect(page).to have_disabled_selected_radio("-1")
+      end
+    end
   end
 end

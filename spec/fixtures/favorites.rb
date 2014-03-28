@@ -1,4 +1,4 @@
-survey "Favories" do
+survey "Favorites" do
   section_colors "Colors" do
     label "These questions are examples of the basic supported input types"
 
