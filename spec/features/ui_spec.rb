@@ -129,10 +129,7 @@ describe "ui interactions" do
     include_context "favorites"
     include_context "feelings"
     it "takes a survey, then shows it" do
-      visit('/surveys')
-      within "form[action='/surveys/favorites']" do
-        click_button "Take it"
-      end
+      start_survey('favorites')
       expect(page).to have_content("What is your favorite color?")
       choose "red"
       choose "blue"
@@ -147,10 +144,7 @@ describe "ui interactions" do
       expect(page).to have_disabled_selected_checkbox("brown")
     end
     it "takes a survey with grid questions, then shows it" do
-      visit('/surveys')
-      within "form[action='/surveys/feelings']" do
-        click_button "Take it"
-      end
+      start_survey('feelings')
       expect(page).to have_content("Tell us how you feel today")
       within grid_row "anxious|calm" do
         choose "-1"

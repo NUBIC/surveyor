@@ -24,6 +24,13 @@ Dir["./spec/support/**/*.rb"].sort.each {|f| require f}
 # If you are not using ActiveRecord, you can remove this line.
 ActiveRecord::Migration.check_pending! if ::Rails.version >= "4.0" && defined?(ActiveRecord::Migration)
 
+
+# Wait for AJAX requests to complete in selenium
+# http://groups.google.com/group/ruby-capybara/browse_thread/thread/6d955173ce413b0a/d0682d47a915dfbd
+Capybara.register_driver :selenium do |app|
+  Capybara::Selenium::Driver.new(app, :browser => :chrome)
+end
+
 RSpec.configure do |config|
   config.include JsonSpec::Helpers
   config.include SurveyorFormMatchers

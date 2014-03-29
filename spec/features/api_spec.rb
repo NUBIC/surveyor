@@ -95,10 +95,7 @@ describe "surveyor API" do
   context "response sets" do
     include_context "favorites"
     it "exports response sets" do
-      visit('/surveys')
-      within "form[action='/surveys/favorites']" do
-        click_button "Take it"
-      end
+      start_survey('favorites')
       choose "red"
       choose "blue"
       fill_in "Color", with: "red"
@@ -121,10 +118,7 @@ describe "surveyor API" do
         end
       )
       Surveyor::Parser.parse survey_text
-      visit('/surveys')
-      within "form[action='/surveys/health']" do
-        click_button "Take it"
-      end
+      start_survey('health')
       choose "Date"
       click_button "Click here to finish"
       response_set = ResponseSet.last
@@ -133,10 +127,7 @@ describe "surveyor API" do
     end
     it "exports response sets without responses" do
       # Issue #294 - ResponseSet#to_json generates unexpected results with zero Responses
-      visit('/surveys')
-      within "form[action='/surveys/favorites']" do
-        click_button "Take it"
-      end
+      start_survey('favorites')
       click_button "Next section"
       click_button "Click here to finish"
       response_set = ResponseSet.last
@@ -148,10 +139,7 @@ describe "surveyor API" do
     include_context "favorites"
     include_context "favorites-ish"
     it "exports response sets of the current version" do
-      visit('/surveys')
-      within "form[action='/surveys/favorites']" do
-        click_button "Take it"
-      end
+      start_survey('favorites')
       choose "redish"
       choose "blueish"
       click_button "Next section"
