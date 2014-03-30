@@ -10,7 +10,7 @@ module Surveyor
     desc "Generate surveyor README, migrations, assets and sample survey"
     class_option :skip_migrations, :type => :boolean, :desc => "skip migrations, but generate everything else"
 
-    MIGRATION_ORDER = %w(
+    SURVEYOR_MIGRATIONS = %w(
       create_surveys
       create_survey_sections
       create_questions
@@ -47,24 +47,14 @@ module Surveyor
     end
     def migrations
       unless options[:skip_migrations]
-        migration_files = Dir[File.join(self.class.source_root, 'db/migrate/*.rb')]
-        migrations_not_in_order =
-          migration_files.collect { |f| File.basename(f).sub(/\.rb$/, '') } - MIGRATION_ORDER
-        unless migrations_not_in_order.empty?
-          fail "%s migration%s not added to MIGRATION_ORDER: %s" % [
-            migrations_not_in_order.size,
-            migrations_not_in_order.size == 1 ? '' : 's',
-            migrations_not_in_order.join(', ')
-          ]
-        end
+        check_for_orphaned_migration_files
 
-        # because all migration timestamps end up the same, causing a collision when running rake db:migrate
-        # copied functionality from RAILS_GEM_PATH/lib/rails_generator/commands.rb
-        MIGRATION_ORDER.each_with_index do |model, i|
-          unless (prev_migrations = Dir.glob("db/migrate/[0-9]*_*.rb").grep(/[0-9]+_#{model}.rb$/)).empty?
-            prev_migration_timestamp = prev_migrations[0].match(/([0-9]+)_#{model}.rb$/)[1]
+        # increment migration timestamps to prevent collisions. copied functionality from RAILS_GEM_PATH/lib/rails_generator/commands.rb
+        SURVEYOR_MIGRATIONS.each_with_index do |name, i|
+          unless (prev_migrations = check_for_existing_migrations(name)).empty?
+            prev_migration_timestamp = prev_migrations[0].match(/([0-9]+)_#{name}.rb$/)[1]
           end
-          copy_file("db/migrate/#{model}.rb", "db/migrate/#{(prev_migration_timestamp || Time.now.utc.strftime("%Y%m%d%H%M%S").to_i + i).to_s}_#{model}.rb")
+          copy_file("db/migrate/#{name}.rb", "db/migrate/#{(prev_migration_timestamp || Time.now.utc.strftime("%Y%m%d%H%M%S").to_i + i).to_s}_#{name}.rb")
         end
       end
     end
@@ -96,6 +86,23 @@ module Surveyor
 
     def locales
       directory "config/locales"
+    end
+
+    private
+
+    def check_for_existing_migrations(name)
+      Dir.glob("db/migrate/[0-9]*_*.rb").grep(/[0-9]+_#{name}.rb$/)
+    end
+    def check_for_orphaned_migration_files
+      migration_files = Dir[File.join(self.class.source_root, 'db/migrate/*.rb')]
+      orphans = migration_files.collect { |f| File.basename(f).sub(/\.rb$/, '') } - SURVEYOR_MIGRATIONS
+      unless orphans.empty?
+        fail "%s migration%s not added to SURVEYOR_MIGRATIONS: %s" % [
+          orphans.size,
+          orphans.size == 1 ? '' : 's',
+          orphans.join(', ')
+        ]
+      end
     end
   end
 end
