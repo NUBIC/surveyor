@@ -1,5 +1,6 @@
 ### Status
 [![Build Status](https://travis-ci.org/NUBIC/surveyor.svg)](https://travis-ci.org/NUBIC/surveyor)
+[![Code Climate](https://codeclimate.com/github/NUBIC/surveyor.png)](https://codeclimate.com/github/NUBIC/surveyor)
 
 ## Why surveyor?
 

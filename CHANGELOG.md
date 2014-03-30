@@ -4,10 +4,57 @@ History for Surveyor
 1.5.0
 -----
 
+### Features
+
+* Putting social contract up front
+* Support strong parameters in Rails 4.0, whitelisted attributes in Rails 3.2
+* allow full version specifications in ENV, e.g. RAILS_VERSION=3.2.0
+
+### Testing
+
+* moving CI to Travis
+* moving integration tests to RSpec from cucumber
+* using PhantomJS and Poltergeist for headless JS testing
+
 ### Dependencies
 
-- Removing support for Rails 3.1. Applications requiring Rails 3.1 should use Surveyor v1.4.1
+* Adding support for Rails 4.0 and removing support for Rails 3.1. Applications requiring Rails 3.1 should use Surveyor v1.4.1
+* Removing support for Ruby 1.8.7 and Ruby 1.9.3. Applications requiring Ruby 1.x shoudl use Survyeor v1.4.1
 
+### Fixes
+
+* updating README and stacktests
+* moving redcap feature to redcap spec
+* removing surveyor_parser.feature (integrated into parser_spec)
+* moving parser cucumber feature to parser spec. moving fixture surveys to fixture directory
+* respect :clean_with_truncation
+* remove benchmark spec
+* default rails version (#472)
+* fix deprecation warnings about Hash#diff
+* fix deprecation warnings about find_all_by_ dynamic finder
+* fix deprecation warnings about the :value option
+* fix deprecation warnings about #find(:first)
+* fix regexp serialization
+* kludge: load formtastic enhancements explicitly
+* fix slow_updates monkey patch
+* Hash#diff is deprecated
+* use surveyor common operators instead of aliasing them through a class method in ValidationCondition
+* refactoring classes with ActiveSupport::Concern
+* fixing next section button
+* remove already disabled section caching
+* fix code that figures out if the asset pipeline is enabled
+* move images to where sprockets expects them to be
+* removed "unloadable" declarations
+* fix deprecation warnings relating to has_many declarations
+* fix deprecation warnings about calling scope() with a hash
+* fix deprecation warnings about calling find_by with options
+* refactor call to find(:first) to quiet deprecation warnings
+* replace Relation#all with other methods to quiet deprecation warnings
+* replace rspec stub!() with stub() to quiet deprecation warnings
+* Make #to_formatted_s handle nils in datetime_value (#459)
+* Update kitchen_sink_survey.r (#458)
+* Fix migration (#454)
+* Allow date_value= and time_value= to handle nils (#450)
 
 1.4.1
 -----
