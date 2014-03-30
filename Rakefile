@@ -2,7 +2,6 @@ $LOAD_PATH << File.expand_path('../lib', __FILE__)
 
 require 'bundler/gem_tasks'
 require 'rspec/core/rake_task'
-require 'ci/reporter/rake/rspec'
 
 ###### RSPEC
 
@@ -64,17 +63,4 @@ namespace :testbed do
       end
     end
   end
-end
-
-###### CI
-
-namespace :ci do
-  task :all => ['rake:testbed', :spec]
-
-  task :env do
-    ENV['CI_REPORTS'] = 'reports/spec-xml'
-    ENV['SPEC_OPTS'] = "#{ENV['SPEC_OPTS']} --format nested"
-  end
-
-  task :spec => [:env, 'ci:setup:rspecbase', 'rake:spec']
 end

@@ -1,3 +1,5 @@
+# encoding: UTF-8
+
 require 'spec_helper'
 
 describe "translations" do
@@ -21,7 +23,7 @@ describe "translations" do
     locales = %w(en es he ko)
     locales.each{|locale| expect(SurveyTranslation.where(locale: locale).count).to eq(1)}
 
-    start_survey("one-language-is-never-enough")
+    start_survey("One language is never enough")
     expect(page).to have_content("One language is never enough")
     locales.each{|locale| expect(page).to have_css("select#locale option[value=#{locale}]")}
     expect(page).to have_content("One")
@@ -29,7 +31,7 @@ describe "translations" do
     expect(page).to have_content("What is your name?")
     expect(page).to have_content("My name is...")
 
-    start_translated_survey("one-language-is-never-enough", "en")
+    start_translated_survey("One language is never enough", "en")
     expect(page).to have_content("One language is never enough")
     locales.each{|locale| expect(page).to have_css("select#locale option[value=#{locale}]")}
     expect(page).to have_content("One")
@@ -37,7 +39,7 @@ describe "translations" do
     expect(page).to have_content("What is your name?")
     expect(page).to have_content("My name is...")
 
-    start_translated_survey("one-language-is-never-enough", "es")
+    start_translated_survey("Un idioma nunca es suficiente", "es")
     expect(page).to have_content("Un idioma nunca es suficiente")
     locales.each{|locale| expect(page).to have_css("select#locale option[value=#{locale}]")}
     expect(page).to have_content("Uno")
@@ -45,7 +47,7 @@ describe "translations" do
     expect(page).to have_content("¿Cómo se llama Usted?")
     expect(page).to have_content("Mi nombre es...")
 
-    start_translated_survey("one-language-is-never-enough", "he")
+    start_translated_survey("ידיעת שפה אחת אינה מספיקה", "he")
     expect(page).to have_content("ידיעת שפה אחת אינה מספיקה")
     locales.each{|locale| expect(page).to have_css("select#locale option[value=#{locale}]")}
     expect(page).to have_content("אחת")
@@ -53,7 +55,7 @@ describe "translations" do
     expect(page).to have_content("מה שמך?")
     expect(page).to have_content("שמי...")
 
-    start_translated_survey("one-language-is-never-enough", "ko")
+    start_translated_survey("한가지 언어로는 충분치 않습니다.", "ko")
     expect(page).to have_content("한가지 언어로는 충분치 않습니다.")
     locales.each{|locale| expect(page).to have_css("select#locale option[value=#{locale}]")}
     expect(page).to have_content("하나")
@@ -61,7 +63,7 @@ describe "translations" do
     expect(page).to have_content("성함이 어떻게 되십니까?")
     expect(page).to have_content("제 이름은 ... 입니다")
 
-    start_survey("one-language-is-never-enough")
+    start_survey("One language is never enough")
     expect(page).to have_content("One language is never enough")
     locales.each{|locale| expect(page).to have_css("select#locale option[value=#{locale}]")}
     expect(page).to have_content("One")
@@ -91,23 +93,25 @@ describe "translations" do
     )
     Surveyor::Parser.parse(survey_text)
     locales = %w(en es he)
-    start_translated_survey("one-language-is-never-enough", "en")
+    start_translated_survey("One language is never enough", "en")
     expect(page).to have_content("One language is never enough")
     expect(page).to have_content("What is your name?")
     expect(page).to have_content("Language")
     locales.each{|locale| expect(page).to have_css("select#locale option[value=#{locale}]")}
     select("es", from: "locale")
+    wait_for_ajax
     expect(page).to have_content("Un idioma nunca es suficiente")
     expect(page).to have_content("¿Cómo se llama Usted?")
     click_button "Dos"
     expect(page).to have_content("¿Cuál es tu color favorito?")
     select("he", from: "locale")
+    wait_for_ajax
     expect(page).to have_content("מהו הצבע האהוב עליך?")
   end
   context "without translations" do
     include_context "favorites"
     it "hides the locale menu" do
-      start_survey("favorites")
+      start_survey("Favorites")
       expect('page').to_not have_css("select#locale")
     end
   end

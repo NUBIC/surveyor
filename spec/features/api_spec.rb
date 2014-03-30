@@ -95,7 +95,7 @@ describe "surveyor API" do
   context "response sets" do
     include_context "favorites"
     it "exports response sets" do
-      start_survey('favorites')
+      start_survey('Favorites')
       choose "red"
       choose "blue"
       fill_in "Color", with: "red"
@@ -118,7 +118,7 @@ describe "surveyor API" do
         end
       )
       Surveyor::Parser.parse survey_text
-      start_survey('health')
+      start_survey('Health')
       choose "Date"
       click_button "Click here to finish"
       response_set = ResponseSet.last
@@ -127,7 +127,7 @@ describe "surveyor API" do
     end
     it "exports response sets without responses" do
       # Issue #294 - ResponseSet#to_json generates unexpected results with zero Responses
-      start_survey('favorites')
+      start_survey('Favorites')
       click_button "Next section"
       click_button "Click here to finish"
       response_set = ResponseSet.last
@@ -139,7 +139,7 @@ describe "surveyor API" do
     include_context "favorites"
     include_context "favorites-ish"
     it "exports response sets of the current version" do
-      start_survey('favorites')
+      start_survey('Favorites')
       choose "redish"
       choose "blueish"
       click_button "Next section"
