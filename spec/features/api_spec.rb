@@ -95,13 +95,12 @@ describe "surveyor API" do
   context "response sets" do
     include_context "favorites"
     it "exports response sets" do
-      start_survey('Favorites')
+      response_set = start_survey('Favorites')
       choose "red"
       choose "blue"
       fill_in "Color", with: "red"
       click_button "Next section"
       click_button "Click here to finish"
-      response_set = ResponseSet.last
       visit("/surveys/favorites/#{response_set.access_code}.json")
       expect(json_response).to be_json_eql(%("#{Answer.where(text: "blue").first.api_id}")).at_path("responses/0/answer_id")
       expect(json_response).to be_json_eql(%("red")).at_path("responses/1/value")
@@ -118,19 +117,17 @@ describe "surveyor API" do
         end
       )
       Surveyor::Parser.parse survey_text
-      start_survey('Health')
+      response_set = start_survey('Health')
       choose "Date"
       click_button "Click here to finish"
-      response_set = ResponseSet.last
       visit("/surveys/health/#{response_set.access_code}.json")
       expect(json_response).to be_json_eql(%(null)).at_path("responses/0/value")
     end
     it "exports response sets without responses" do
       # Issue #294 - ResponseSet#to_json generates unexpected results with zero Responses
-      start_survey('Favorites')
+      response_set = start_survey('Favorites')
       click_button "Next section"
       click_button "Click here to finish"
-      response_set = ResponseSet.last
       visit("/surveys/favorites/#{response_set.access_code}.json")
       expect(json_response).to have_json_size(0).at_path("responses")
     end
@@ -139,26 +136,20 @@ describe "surveyor API" do
     include_context "favorites"
     include_context "favorites-ish"
     it "exports response sets of the current version" do
-      start_survey('Favorites')
+      response_set = start_survey('Favorites')
       choose "redish"
       choose "blueish"
       click_button "Next section"
       click_button "Click here to finish"
-      response_set = ResponseSet.last
       visit("/surveys/favorites/#{response_set.access_code}.json")
       expect(json_response).to be_json_eql(%("#{Answer.where(text: "blueish").first.api_id}")).at_path("responses/0/answer_id")
     end
     it "exports response sets of the previous version" do
-      visit('/surveys')
-      within "form[action='/surveys/favorites']" do
-        select "0", from: "version"
-        click_button "Take it"
-      end
+      response_set = start_versioned_survey('Favorites', '0')
       choose "blue"
       choose "red"
       click_button "Next section"
       click_button "Click here to finish"
-      response_set = ResponseSet.last
       visit("/surveys/favorites/#{response_set.access_code}.json")
       expect(json_response).to be_json_eql(%("#{Answer.where(text: "red").first.api_id}")).at_path("responses/0/answer_id")
     end

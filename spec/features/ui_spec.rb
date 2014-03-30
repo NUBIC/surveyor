@@ -2,15 +2,29 @@ require 'spec_helper'
 
 describe "ui interactions" do
   context "saves responses" do
+    include_context "favorites"
     it "radio button" do
+      response_set = start_survey('Favorites')
+      expect(page).to have_content("What is your favorite color?")
+      choose "red"
+      choose "blue"
+      click_button "Next section"
+      expect(response_set.responses.count).to eq(1)
     end
     it "dropdown" do
       # select something, change sections, select something else
     end
-    it "checkbox" do
-    end
-    it "removes unchecked checkboxes" do
-      # check, 1 response, uncheck, 0 responses
+    it "check and uncheck checkboxes" do
+      response_set = start_survey('Favorites')
+      expect(page).to have_content("What is your favorite color?")
+      check "orange"
+      click_button "Next section"
+      expect(response_set.responses.count).to eq(1)
+      click_button "Previous section"
+      uncheck "orange"
+      click_button "Next section"
+      expect(response_set.responses.count).to eq(0)
+      click_button "Click here to finish"
     end
     it "string" do
       # fill in other string
@@ -89,7 +103,6 @@ describe "ui interactions" do
     it "help text" do
       # add help text to a survey
     end
-
     it "images" do
       # see images
     end
@@ -122,14 +135,34 @@ describe "ui interactions" do
     end
   end
   context "versioning" do
-    it "survey versions" do
+    include_context "favorites"
+    include_context "favorites-ish"
+    it "takes current survey" do
+      response_set = start_survey('Favorites')
+      expect(page).to have_content("What is your favorite color?")
+      expect(page).to have_content("redish")
+      choose "blueish"
+      choose "redish"
+      click_button "Next section"
+      click_button "Click here to finish"
+      expect(response_set.responses.count).to eq(1)
+    end
+    it "takes previous survey" do
+      response_set = start_versioned_survey('Favorites', '0')
+      expect(page).to have_content("What is your favorite color?")
+      expect(page).to have_content("red")
+      choose "red"
+      choose "blue"
+      click_button "Next section"
+      click_button "Click here to finish"
+      expect(response_set.responses.count).to eq(1)
     end
   end
   context "shows responses" do
     include_context "favorites"
     include_context "feelings"
     it "takes a survey, then shows it" do
-      start_survey('Favorites')
+      response_set = start_survey('Favorites')
       expect(page).to have_content("What is your favorite color?")
       choose "red"
       choose "blue"
@@ -137,20 +170,18 @@ describe "ui interactions" do
       check "brown"
       click_button "Next section"
       click_button "Click here to finish"
-      response_set = ResponseSet.last
       visit("/surveys/favorites/#{response_set.access_code}/")
       expect(page).to have_disabled_selected_radio("blue")
       expect(page).to have_disabled_selected_checkbox("orange")
       expect(page).to have_disabled_selected_checkbox("brown")
     end
     it "takes a survey with grid questions, then shows it" do
-      start_survey('Feelings')
+      response_set = start_survey('Feelings')
       expect(page).to have_content("Tell us how you feel today")
       within grid_row "anxious|calm" do
         choose "-1"
       end
       click_button "Click here to finish"
-      response_set = ResponseSet.last
       visit("/surveys/favorites/#{response_set.access_code}/")
       within grid_row "anxious|calm" do
         expect(page).to have_disabled_selected_radio("-1")
