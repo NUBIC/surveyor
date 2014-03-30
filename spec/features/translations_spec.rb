@@ -99,13 +99,11 @@ describe "translations" do
     expect(page).to have_content("Language")
     locales.each{|locale| expect(page).to have_css("select#locale option[value=#{locale}]")}
     select("es", from: "locale")
-    wait_for_ajax
     expect(page).to have_content("Un idioma nunca es suficiente")
     expect(page).to have_content("¿Cómo se llama Usted?")
     click_button "Dos"
     expect(page).to have_content("¿Cuál es tu color favorito?")
     select("he", from: "locale")
-    wait_for_ajax
     expect(page).to have_content("מהו הצבע האהוב עליך?")
   end
   context "without translations" do
