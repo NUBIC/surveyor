@@ -217,14 +217,16 @@ module SurveyorRedcapParserAnswerMethods
     case r[:field_type]
     when "text"
       self.attributes = {
-        :response_class => r[:text_validation_type],
-        :text => "Text",
+        :response_class => r[:text_validation_type].blank? ? "string" : r[:text_validation_type],
+        :text => "String",
+        :display_type => "hidden_label",
         :display_order => context[:question].answers.size }
       context[:question].answers << context[:answer] = self
     when "notes"
       self.attributes = {
         :response_class => "text",
         :text => "Notes",
+        :display_type => "hidden_label",
         :display_order => context[:question].answers.size }
       context[:question].answers << context[:answer] = self
     when "file"
