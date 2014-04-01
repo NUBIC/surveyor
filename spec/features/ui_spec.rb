@@ -2,29 +2,44 @@ require 'spec_helper'
 
 describe "ui interactions" do
   context "saves responses" do
-    include_context "favorites"
+    include_context "everything"
     it "radio button" do
-      response_set = start_survey('Favorites')
+      response_set = start_survey('Everything')
       expect(page).to have_content("What is your favorite color?")
-      choose "red"
-      choose "blue"
+      within question("1") do
+        choose "red"
+        choose "blue"
+      end
       click_button "Next section"
-      expect(response_set.responses.count).to eq(1)
+      expect(response_set.count).to eq(1)
     end
     it "dropdown" do
-      # select something, change sections, select something else
+      response_set = start_survey('Everything')
+      expect(page).to have_content("What color is the sky right now?")
+      within question("3") do
+        select "sunset red", from: "What color is the sky right now?"
+      end
+      click_button "Next section"
+      expect(response_set.count).to eq(1)
+      expect(response_set.for("3", "sr").count).to eq(1)
+      click_button "Previous section"
+      within question("3") do
+        select "night black", from: "What color is the sky right now?"
+      end
+      click_button "Next section"
+      expect(response_set.count).to eq(1)
+      expect(response_set.for("3", "nb").count).to eq(1)
     end
     it "check and uncheck checkboxes" do
-      response_set = start_survey('Favorites')
-      expect(page).to have_content("What is your favorite color?")
+      response_set = start_survey('Everything')
+      expect(page).to have_content("What color is the sky right now?")
       check "orange"
       click_button "Next section"
-      expect(response_set.responses.count).to eq(1)
+      expect(response_set.count).to eq(1)
       click_button "Previous section"
       uncheck "orange"
       click_button "Next section"
-      expect(response_set.responses.count).to eq(0)
-      click_button "Click here to finish"
+      expect(response_set.count).to eq(0)
     end
     it "string" do
       # fill in other string
@@ -145,17 +160,17 @@ describe "ui interactions" do
       choose "redish"
       click_button "Next section"
       click_button "Click here to finish"
-      expect(response_set.responses.count).to eq(1)
+      expect(response_set.count).to eq(1)
     end
     it "takes previous survey" do
-      response_set = start_versioned_survey('Favorites', '0')
+      response_set = start_survey('Favorites', version: '0')
       expect(page).to have_content("What is your favorite color?")
       expect(page).to have_content("red")
       choose "red"
       choose "blue"
       click_button "Next section"
       click_button "Click here to finish"
-      expect(response_set.responses.count).to eq(1)
+      expect(response_set.count).to eq(1)
     end
   end
   context "shows responses" do

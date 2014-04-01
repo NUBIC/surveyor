@@ -31,7 +31,7 @@ describe "translations" do
     expect(page).to have_content("What is your name?")
     expect(page).to have_content("My name is...")
 
-    start_translated_survey("One language is never enough", "en")
+    start_survey("One language is never enough", locale: "en")
     expect(page).to have_content("One language is never enough")
     locales.each{|locale| expect(page).to have_css("select#locale option[value=#{locale}]")}
     expect(page).to have_content("One")
@@ -39,7 +39,7 @@ describe "translations" do
     expect(page).to have_content("What is your name?")
     expect(page).to have_content("My name is...")
 
-    start_translated_survey("Un idioma nunca es suficiente", "es")
+    start_survey("Un idioma nunca es suficiente", locale: "es")
     expect(page).to have_content("Un idioma nunca es suficiente")
     locales.each{|locale| expect(page).to have_css("select#locale option[value=#{locale}]")}
     expect(page).to have_content("Uno")
@@ -47,7 +47,7 @@ describe "translations" do
     expect(page).to have_content("¿Cómo se llama Usted?")
     expect(page).to have_content("Mi nombre es...")
 
-    start_translated_survey("ידיעת שפה אחת אינה מספיקה", "he")
+    start_survey("ידיעת שפה אחת אינה מספיקה", locale: "he")
     expect(page).to have_content("ידיעת שפה אחת אינה מספיקה")
     locales.each{|locale| expect(page).to have_css("select#locale option[value=#{locale}]")}
     expect(page).to have_content("אחת")
@@ -55,7 +55,7 @@ describe "translations" do
     expect(page).to have_content("מה שמך?")
     expect(page).to have_content("שמי...")
 
-    start_translated_survey("한가지 언어로는 충분치 않습니다.", "ko")
+    start_survey("한가지 언어로는 충분치 않습니다.", locale: "ko")
     expect(page).to have_content("한가지 언어로는 충분치 않습니다.")
     locales.each{|locale| expect(page).to have_css("select#locale option[value=#{locale}]")}
     expect(page).to have_content("하나")
@@ -93,7 +93,7 @@ describe "translations" do
     )
     Surveyor::Parser.parse(survey_text)
     locales = %w(en es he)
-    start_translated_survey("One language is never enough", "en")
+    start_survey("One language is never enough", locale: "en")
     expect(page).to have_content("One language is never enough")
     expect(page).to have_content("What is your name?")
     expect(page).to have_content("Language")

@@ -145,7 +145,7 @@ describe "surveyor API" do
       expect(json_response).to be_json_eql(%("#{Answer.where(text: "blueish").first.api_id}")).at_path("responses/0/answer_id")
     end
     it "exports response sets of the previous version" do
-      response_set = start_versioned_survey('Favorites', '0')
+      response_set = start_survey('Favorites', version: '0')
       choose "blue"
       choose "red"
       click_button "Next section"

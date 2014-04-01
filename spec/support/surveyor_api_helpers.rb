@@ -1,4 +1,4 @@
-module SurveyorApiMatchers
+module SurveyorAPIHelpers
   def json_response
     page.source
   end
