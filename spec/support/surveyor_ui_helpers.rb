@@ -13,8 +13,15 @@ module SurveyorUIHelpers
   def grid_row(text)
     find("fieldset.g_grid tr#q_#{Question.where(text: text).first.id}")
   end
-  def question(reference_identifier)
-    find("fieldset#q_#{Question.where(reference_identifier: reference_identifier).first.id}")
+  def question(reference_identifier, entry = nil)
+    if entry
+      find("fieldset#q_#{Question.where(reference_identifier: reference_identifier).first.id}_#{entry}")
+    else
+      find("fieldset#q_#{Question.where(reference_identifier: reference_identifier).first.id}")
+    end
+  end
+  def group(reference_identifier)
+    find("fieldset#g_#{QuestionGroup.where(reference_identifier: reference_identifier).first.id}")
   end
   def start_survey(name, opts = {})
     visit(opts[:locale] ? "/surveys?locale=#{opts[:locale]}" : '/surveys')
@@ -23,6 +30,9 @@ module SurveyorUIHelpers
       click_button I18n.t('surveyor.take_it')
     end
     return ResponseSet.where(access_code: current_path.split('/')[3]).first.extend ResponseSetTestingMethods
+  end
+  def the_15th
+    Date.current.beginning_of_month + 14
   end
 end
 module ResponseSetTestingMethods
