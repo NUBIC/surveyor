@@ -1,6 +1,5 @@
 # encoding: UTF-8
 require 'rails/generators'
-require 'surveyor/helpers/asset_pipeline'
 
 module Surveyor
   class InstallGenerator < Rails::Generators::Base
@@ -64,16 +63,8 @@ module Surveyor
     end
 
     def assets
-      if asset_pipeline_enabled?
-        directory "app/assets"
-        copy_file "vendor/assets/stylesheets/custom.sass"
-      else
-        directory "../../../assets/javascripts", "public/javascripts"
-        directory "../../../assets/images", "public/images"
-        directory "../../../assets/stylesheets/surveyor", "public/stylesheets/surveyor"
-        copy_file "../../../assets/stylesheets/surveyor.sass", "public/stylesheets/sass/surveyor.sass"
-        copy_file "vendor/assets/stylesheets/custom.sass", "public/stylesheets/sass/custom.sass"
-      end
+      directory "app/assets"
+      copy_file "vendor/assets/stylesheets/custom.sass"
     end
 
     def surveys

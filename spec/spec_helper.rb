@@ -15,9 +15,6 @@ require 'factories'
 require 'json_spec'
 require 'database_cleaner'
 
-# for asset_pipeline_enabled? in models
-include Surveyor::Helpers::AssetPipeline
-
 # Requires supporting ruby files with custom matchers and macros, etc,
 # in spec/support/ and its subdirectories.
 Dir["./spec/support/**/*.rb"].sort.each {|f| require f}

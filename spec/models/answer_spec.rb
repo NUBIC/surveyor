@@ -97,9 +97,6 @@ describe Answer do
   end
 
   context "for views" do
-    before do
-      ActionController::Base.helpers.config.assets_dir = "public" unless asset_pipeline_enabled?
-    end
     it "#text_for with #display_type == image" do
       answer.text = "rails.png"
       answer.display_type = :image

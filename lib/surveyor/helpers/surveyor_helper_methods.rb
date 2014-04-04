@@ -1,29 +1,10 @@
-require 'surveyor/helpers/asset_pipeline'
-
 module Surveyor
   module Helpers
     module SurveyorHelperMethods
-      include AssetPipeline
 
       # Layout: stylsheets and javascripts
       def surveyor_includes
-        if asset_pipeline_enabled?
-          stylesheet_link_tag('surveyor_all') + javascript_include_tag('surveyor_all')
-        else
-          stylesheet_link_tag('surveyor/reset',
-                              'surveyor/jquery-ui-1.10.0.custom',
-                              'surveyor/jquery-ui-timepicker-addon',
-                              'surveyor/ui.slider.extras',
-                              'surveyor/results',
-                              'surveyor',
-                              'custom') +
-          javascript_include_tag('surveyor/jquery-1.9.0',
-                                  'surveyor/jquery-ui-1.10.0.custom',
-                                  'surveyor/jquery-ui-timepicker-addon',
-                                  'surveyor/jquery.selectToUISlider',
-                                  'surveyor/jquery.surveyor',
-                                  'surveyor/jquery.maskedinput')
-        end
+        stylesheet_link_tag('surveyor_all') + javascript_include_tag('surveyor_all')
       end
       # Helper for displaying warning/notice/error flash messages
       def flash_messages(types)

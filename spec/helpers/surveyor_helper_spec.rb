@@ -2,9 +2,6 @@ require File.expand_path(File.dirname(__FILE__) + '/../spec_helper')
 
 describe SurveyorHelper do
   context "numbering" do
-    before do
-      ActionController::Base.helpers.config.assets_dir = "public" unless asset_pipeline_enabled?
-    end
     it "should return the question text with number, except for labels, dependencies, images, and grouped questions" do
       q1 = FactoryGirl.create(:question)
       q2 = FactoryGirl.create(:question, :display_type => "label")
