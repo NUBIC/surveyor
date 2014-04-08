@@ -51,7 +51,7 @@ Feature: Survey with validations
     When I start the "Integer Question" survey
     And I fill in "Number" with "Eight"
     And I press "Click here to finish"
-    Then I should see "A positive or negative non-decimal number please"
+    Then I should see "Please enter a whole number"
 
   @javascript
   Scenario: Creating a question with an range rule
