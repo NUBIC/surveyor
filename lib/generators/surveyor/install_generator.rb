@@ -3,7 +3,6 @@ require 'rails/generators'
 
 module Surveyor
   class InstallGenerator < Rails::Generators::Base
-    include Surveyor::Helpers::AssetPipeline
 
     source_root File.expand_path("../templates", __FILE__)
     desc "Generate surveyor README, migrations, assets and sample survey"

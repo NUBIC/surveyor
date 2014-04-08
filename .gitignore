@@ -20,6 +20,8 @@ pkg
 Gemfile.lock
 reports
 chromedriver.log
+.ruby-version
+.ruby-gemset
 
 ## PROJECT::SPECIFIC
 testbed
