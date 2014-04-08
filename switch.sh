@@ -37,6 +37,16 @@ select combo in $options; do
     fi
     bundle _${BUNDLER_VERSION}_ update
     bundle _${BUNDLER_VERSION}_ exec rake testbed
+    echo 'if [ -f "$rvm_path/scripts/rvm" ] && [ -f ".ruby-version" ]; then
+  source "$rvm_path/scripts/rvm"
+  if [ -f ".ruby-gemset" ]; then
+    rvm use `cat .ruby-version`@`cat .ruby-gemset`
+  else
+    rvm use `cat .ruby-version`
+  fi
+fi' > testbed/.powrc
+    echo "$RUBY_VERSION" > testbed/.ruby-version
+    echo "surveyor-rails_$RAILS_VERSION" > testbed/.ruby-gemset
     ;;
   esac
   break

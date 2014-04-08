@@ -30,16 +30,6 @@ namespace :testbed do
       gem_file_contents = File.read('Gemfile')
       gem_file_contents.sub!(/^(gem 'rails'.*)$/, %Q{# \\1\nplugin_root = File.expand_path('../..', __FILE__)\neval(File.read File.join(plugin_root, 'Gemfile.rails_version'))\ngem 'surveyor', :path => plugin_root})
       File.open('Gemfile', 'w'){|f| f.write(gem_file_contents) }
-      File.open('.powrc', 'w'){|f| f.write %(if [ -f "$rvm_path/scripts/rvm" ] && [ -f ".ruby-version" ]; then
-  source "$rvm_path/scripts/rvm"
-  if [ -f ".ruby-gemset" ]; then
-    rvm use `cat .ruby-version`@`cat .ruby-gemset`
-  else
-    rvm use `cat .ruby-version`
-  fi
-fi)}
-      FileUtils.copy('../.ruby-version', '.ruby-version')
-      FileUtils.copy('../.ruby-gemset', '.ruby-gemset')
       Bundler.with_clean_env do
         sh 'bundle install' # run bundle install after Gemfile modifications
       end
