@@ -11,7 +11,8 @@
   - when "one"
     = ff.input :answer_id, :as => :surveyor_radio, :collection => [[a.text_for(nil, @render_context, I18n.locale), a.id]], :label => false, :input_html => {:class => a.css_class, :disabled => disabled}, :response_class => a.response_class, :required => q.mandatory?
   - when "any"
-    = ff.input :answer_id, :as => :surveyor_check_boxes, :collection => [[a.text_for(nil, @render_context, I18n.locale), a.id]], :label => false, :input_html => {:class => a.css_class, :disabled => disabled}, :response_class => a.response_class
+    - css_class = "#{a.css_class} surveyor_checkboxes_answer at_least_one"
+    = ff.input :answer_id, :as => :surveyor_check_boxes, :collection => [[a.text_for(nil, @render_context, I18n.locale), a.id]], :label => false, :input_html => {:class => css_class, :disabled => disabled}, :response_class => a.response_class
   - when "none"
     - if %w(date datetime time float integer string text).include? a.response_class
       - css_class = "#{a.css_class} surveyor_#{a.response_class}_answer"

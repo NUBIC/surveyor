@@ -50,9 +50,46 @@ Feature: Survey with validations
         end
       end
     """
+
     When I start the "Mandatory Question" survey
     And I press "Click here to finish"
     Then I should see "This field is required."
+
+  @javascript
+  Scenario: Creating a mandatory pick-any question
+    Given I parse
+    """
+      survey "Mandatory Question" do
+        section "Required" do
+          q "What do you prefer? select at least one", :pick => :any, :is_mandatory => true
+
+          a "enchiladas"
+          a "tamales"
+          a "tacos"
+        end
+      end
+    """
+    When I start the "Mandatory Question" survey
+    And I press "Click here to finish"
+    Then I should see "Please fill at least 1 of these fields."
+
+  @javascript
+  Scenario: Creating a mandatory pick-any question selecting one
+    Given I parse
+    """
+      survey "Mandatory Question" do
+        section "Required" do
+          q "What do you prefer? select at least one", :pick => :any, :is_mandatory => true
+          a "enchiladas"
+          a "tamales"
+          a "tacos"
+        end
+      end
+    """
+    When I start the "Mandatory Question" survey
+    And check "tacos"
+    And I press "Click here to finish"
+    Then I should not see "Please fill at least 1 of these fields."
 
   @javascript
   Scenario: Creating a question with an integer answer
