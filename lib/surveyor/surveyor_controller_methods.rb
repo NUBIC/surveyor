@@ -117,7 +117,7 @@ module Surveyor
           end
           if params[:finish]
             @response_set.complete!
-            saved &= @response_set.save
+            saved &&= @response_set.save
           end
           saved
         else
