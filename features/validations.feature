@@ -17,7 +17,7 @@ Feature: Survey with validations
     """
     When I start the "Mandatory Question" survey
     And I press "Click here to finish"
-    Then I should see "This field is required."
+    Then I should see "This question is required."
 
 
   @javascript
@@ -35,7 +35,7 @@ Feature: Survey with validations
     """
     When I start the "Mandatory Question" survey
     And I press "Click here to finish"
-    Then I should see "This field is required."
+    Then I should see "This question is required."
 
   @javascript
   Scenario: Creating a mandatory dropdown question
@@ -53,7 +53,7 @@ Feature: Survey with validations
 
     When I start the "Mandatory Question" survey
     And I press "Click here to finish"
-    Then I should see "This field is required."
+    Then I should see "This question is required."
 
   @javascript
   Scenario: Creating a mandatory pick-any question
@@ -71,7 +71,7 @@ Feature: Survey with validations
     """
     When I start the "Mandatory Question" survey
     And I press "Click here to finish"
-    Then I should see "Please fill at least 1 of these fields."
+    Then I should see "This question is required"
 
   @javascript
   Scenario: Creating a mandatory pick-any question selecting one
@@ -89,7 +89,7 @@ Feature: Survey with validations
     When I start the "Mandatory Question" survey
     And check "tacos"
     And I press "Click here to finish"
-    Then I should not see "Please fill at least 1 of these fields."
+    Then I should not see "This question is required"
 
   @javascript
   Scenario: Creating a question with an integer answer
@@ -124,10 +124,10 @@ Feature: Survey with validations
     When I start the "Integer Question" survey
     And I fill in "Age" with "51"
     And I press "Click here to finish"
-    Then I should see "Please enter a value between 18 and 50"
+    Then I should see "Please enter a number between 18 and 50"
     And I fill in "Age" with "17"
     And I press "Click here to finish"
-    Then I should see "Please enter a value between 18 and 50"
+    Then I should see "Please enter a number between 18 and 50"
 
   @javascript
   Scenario: Creating a question with an float answer
@@ -143,7 +143,7 @@ Feature: Survey with validations
     When I start the "Float Question" survey
     And I fill in "Quantity" with "A lot"
     And I press "Click here to finish"
-    Then I should see "Please enter a valid number."
+    Then I should see "Please enter a number."
 
   @javascript
   Scenario: Creating a question with a time answer
@@ -178,4 +178,4 @@ Feature: Survey with validations
     When I start the "String Question" survey
     And I fill in "email" with "foo@bar"
     When I press "Click here to finish"
-    Then I should see "Invalid format"
+    Then I should see "Please use the correct format."
