@@ -41,24 +41,26 @@ module Surveyor
       end
 
       def to_csv(access_code = false, print_header = true)
-        qcols = Question.content_columns.map(&:name) - %w(created_at updated_at)
-        acols = Answer.content_columns.map(&:name) - %w(created_at updated_at)
-        rcols = Response.content_columns.map(&:name)
         result = Surveyor::Common.csv_impl.generate do |csv|
           if print_header
             csv << (access_code ? ["response set access code"] : []) +
-              qcols.map{|qcol| "question.#{qcol}"} +
-              acols.map{|acol| "answer.#{acol}"} +
-              rcols.map{|rcol| "response.#{rcol}"}
+              csv_question_columns.map{|qcol| "question.#{qcol}"} +
+              csv_answer_columns.map{|acol| "answer.#{acol}"} +
+              csv_response_columns.map{|rcol| "response.#{rcol}"}
           end
           responses.each do |response|
             csv << (access_code ? [self.access_code] : []) +
-              qcols.map{|qcol| response.question.send(qcol)} +
-              acols.map{|acol| response.answer.send(acol)} +
-              rcols.map{|rcol| response.send(rcol)}
+              csv_question_columns.map{|qcol| response.question.send(qcol)} +
+              csv_answer_columns.map{|acol| response.answer.send(acol)} +
+              csv_response_columns.map{|rcol| response.send(rcol)}
           end
         end
         result
+      end
+      %w(question answer response).each do |model|
+        define_method "csv_#{model}_columns" do
+          model.capitalize.constantize.content_columns.map(&:name) - (model == "response" ? [] : %w(created_at updated_at))
+        end
       end
 
       def as_json(options = nil)
