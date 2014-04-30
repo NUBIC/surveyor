@@ -5,6 +5,7 @@ begin
 rescue LoadError => e
   fail "Could not load the testbed app. Have you generated it?\n#{e.class}: #{e}"
 end
+
 require 'rspec/rails'
 require 'rspec/autorun'
 
@@ -14,6 +15,7 @@ require 'capybara/poltergeist'
 require 'factories'
 require 'json_spec'
 require 'database_cleaner'
+require 'rspec/retry'
 
 # Requires supporting ruby files with custom matchers and macros, etc,
 # in spec/support/ and its subdirectories.
@@ -24,6 +26,7 @@ Dir["./spec/support/**/*.rb"].sort.each {|f| require f}
 ActiveRecord::Migration.check_pending! if ::Rails.version >= "4.0" && defined?(ActiveRecord::Migration)
 
 Capybara.javascript_driver = :poltergeist
+
 
 RSpec.configure do |config|
   config.include JsonSpec::Helpers
@@ -65,6 +68,13 @@ RSpec.configure do |config|
   #     --seed 1234
   config.order = "random"
 
+  # rspec-retry
+  # https://github.com/rspec/rspec-core/issues/456
+  config.verbose_retry       = true # show retry status in spec process
+  retry_count                = ENV['RSPEC_RETRY_COUNT']
+  config.default_retry_count = retry_count.try(:to_i) || 1
+  puts "RSpec retry count is #{config.default_retry_count}"
+
   ## Database Cleaner
   config.before :suite do
     DatabaseCleaner.clean_with :truncation
@@ -72,12 +82,12 @@ RSpec.configure do |config|
   end
 
   config.before do
-    if example.metadata[:clean_with_truncation] || example.metadata[:js] || example.metadata[:type] == :feature
+    if example.metadata[:clean_with_truncation] || example.metadata[:js]
       DatabaseCleaner.strategy = :truncation
     else
       DatabaseCleaner.strategy = :transaction
-      DatabaseCleaner.start
     end
+    DatabaseCleaner.start
   end
 
   config.after do

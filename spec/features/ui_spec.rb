@@ -341,8 +341,8 @@ describe "ui interactions" do
       response_set = start_survey('Everything')
       click_button "Special"
       within question("which_way") do
-        expect(page).to have_css('img[src^="/images/surveyor/next.gif"]')
-        expect(page).to have_css('img[src^="/images/surveyor/prev.gif"]')
+        expect(page).to have_css('img[src^="/assets/surveyor/next.gif"]')
+        expect(page).to have_css('img[src^="/assets/surveyor/prev.gif"]')
       end
     end
     it "custom css class" do
