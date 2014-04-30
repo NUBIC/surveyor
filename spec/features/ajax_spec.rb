@@ -32,6 +32,41 @@ describe "saving with ajax", js: true do
     expect(response_set.count).to eq(1)
     expect(response_set.for("1", "other").first.string_value).to eq("black")
   end
+  it "radio button with string and free text" do
+    # #236 - ":text"- field doesn't show up in the multi-select questions
+    # #234 - It's possible to enter the value without selecting a radiobutton
+    pending "better selectors"
+    response_set = start_survey('Everything')
+    expect(page).to have_content("What was the last room you painted, and what color?")
+    save_and_open_page
+    within question("last_room") do
+      fill_in "kitchen", with: "yellow"
+    end
+    wait_for_ajax
+    expect(response_set.count).to eq(1)
+    expect(response_set.for("last_room", "kitchen").first.string_value).to eq("yellow")
+    within question("last_room") do
+      fill_in "other", with: "living room, white"
+    end
+    expect(response_set.count).to eq(1)
+    expect(response_set.for("last_room", "other").first.text_value).to eq("living room, white")
+  end
+  it "checkbox with string and free text" do
+    # #236 - ":text"- field doesn't show up in the multi-select questions
+    # #234 - It's possible to enter the value without selecting a radiobutton
+    pending "better selectors"
+    response_set = start_survey('Everything')
+    expect(page).to have_content("What rooms have you painted, and what color?")
+    save_and_open_page
+    within question("last_room") do
+      fill_in "kitchen", with: "yellow"
+      fill_in "other", with: "living room, white"
+    end
+    wait_for_ajax
+    expect(response_set.count).to eq(2)
+    expect(response_set.for("last_room", "kitchen").first.string_value).to eq("yellow")
+    expect(response_set.for("last_room", "other").first.text_value).to eq("living room, white")
+  end
   it "saves a string response" do
     response_set = start_survey('Everything')
     expect(page).to have_content("What is the best color for a fire engine?")
@@ -114,6 +149,57 @@ describe "saving with ajax", js: true do
     end
     wait_for_ajax
     expect(response_set.count).to eq(6)
+  end
+  it "input mask and placeholder" do
+    response_set = start_survey('Everything')
+    click_button "Special"
+    expect(page).to have_content("What is your home phone number?")
+    within question("home_phone") do
+      fill_in "phone", with: "1234567890"
+    end
+    wait_for_ajax
+    expect(response_set.count).to eq(1)
+    expect(response_set.for("home_phone", "hm_phone").first.string_value).to eq("(123)456-7890")
+  end
+  it "numeric input mask with alphanumeric input" do
+    response_set = start_survey('Everything')
+    click_button "Special"
+    expect(page).to have_content("What is your cell phone number?")
+    within question("cell_phone") do
+      fill_in "phone", with: "1a2b3c4d5e6f7g8h9i0"
+    end
+    wait_for_ajax
+    expect(response_set.count).to eq(1)
+    expect(response_set.for("cell_phone", "cl_phone").first.string_value).to eq("(123)456-7890")
+  end
+  it "alpha input mask with alphanumeric input" do
+    response_set = start_survey('Everything')
+    click_button "Special"
+    expect(page).to have_content("What is your home phone number?")
+    within question("favorite_letters") do
+      fill_in "letters", with: "1a2b3c4d5e6f7g8h9i0"
+    end
+    wait_for_ajax
+    expect(response_set.count).to eq(1)
+    expect(response_set.for("favorite_letters", "fav_letters").first.string_value).to eq("abcdefghi")
+  end
+  it "multiple exclusive checkboxes" do
+    response_set = start_survey('Everything')
+    click_button "Special"
+
+    check "No other heating source"
+    expect(checkbox("heat2", "neg_1").disabled?).to be_true
+    expect(checkbox("heat2", "neg_2").disabled?).to be_true
+
+    uncheck "No other heating source"
+    expect(checkbox("heat2", "neg_1").disabled?).to be_false
+
+    check "Electric"
+    expect(checkbox("heat2", "neg_1").disabled?).to be_false
+
+    check "Refused"
+    expect(checkbox("heat2", "1").disabled?).to be_true
+    expect(checkbox("heat2", "neg_2").disabled?).to be_true
   end
 end
 

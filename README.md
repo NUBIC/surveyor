@@ -1,4 +1,5 @@
 ### Status
+[![Gem Version](https://badge.fury.io/rb/surveyor.svg)](http://badge.fury.io/rb/surveyor)
 [![Build Status](https://travis-ci.org/NUBIC/surveyor.svg)](https://travis-ci.org/NUBIC/surveyor)
 [![Code Climate](https://codeclimate.com/github/NUBIC/surveyor.png)](https://codeclimate.com/github/NUBIC/surveyor)
 
@@ -155,30 +156,8 @@ you don't have it, then bundle, generate the app in `testbed`, and run the specs
     $ bundle update
     $ bundle exec rake testbed
     $ bundle exec rake spec
-    $ bundle exec rake cucumber
 
 [bundler]: http://gembundler.com/
-
-## Selenium
-
-Some of surveyor's integration tests use Selenium WebDriver and Capybara. The
-WebDriver-based tests default to running in Chrome due to an unfortunate
-[Firefox bug][FF566671]. For them to run, you'll either need:
-
-* Chrome and [chromedriver][] installed, or
-* to switch to use Firefox instead
-
-To use Firefox instead of Chrome, invoke one or more features with
-`SELENIUM_BROWSER` set in the environment:
-
-    $ SELENIUM_BROWSER=firefox bundle exec rake cucumber
-    $ SELENIUM_BROWSER=firefox bundle exec cucumber features/ajax_submissions.feature
-
-Note that when running features in Firefox, you must allow the WebDriver-driven
-Firefox to retain focus, otherwise some tests will fail.
-
-[FF566671]: https://bugzilla.mozilla.org/show_bug.cgi?id=566671
-[chromedriver]: http://code.google.com/p/selenium/wiki/ChromeDriver
 
 Copyright (c) 2008-2013 Brian Chamberlain and Mark Yoon, released under the [MIT license][mit]
 
