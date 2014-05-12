@@ -4,9 +4,9 @@ require 'rubygems'
 require 'factory_girl'
 
 FactoryGirl.define do
-  
+
   sequence(:unique_survey_access_code){|n| "simple survey #{UUIDTools::UUID.random_create.to_s}" }
-  
+
   factory :survey do |s|
     s.title           "Simple survey"
     s.description     "A simple survey for testing"
@@ -82,7 +82,7 @@ FactoryGirl.define do
     a.short_text                "clear"
     a.help_text                 "Clear is the absense of color"
     # a.weight
-    a.response_class            "string"
+    # a.response_class            {}
     # a.reference_identifier      {}
     # a.data_export_identifier    {}
     # a.common_namespace          {}

@@ -1,44 +1,38 @@
-- renderer = g.renderer
-- unless g.display_type == "hidden"
-  = f.inputs "#{next_question_number(g)}#{g.text_for(@render_context, I18n.locale)}", :id => "g_#{g.id}", :class => "g_#{renderer} #{g.css_class(@response_set)}" do
-    %li.help= g.help_text_for(@render_context, I18n.locale)
-    - case renderer
-      - when :grid
-        %li
-          %table
-            %col.pre
-            - qs.first.answers.each do |a|
-              %col{:class => cycle("odd", "even")}
-            %col.post
-            %tbody
-              - qs.each_slice(10) do |ten_questions| # header row every 10
-                %tr
-                  %th &nbsp;
-                  - ten_questions.first.answers.each do |a|
-                    %th
-                      = a.text_for(nil, @render_context, I18n.locale)
-                      %span.help= a.help_text_for(@render_context, I18n.locale)
-                  %th &nbsp;
-                - ten_questions.each_with_index do |q, i|
-                  %tr{:id => "q_#{q.id}", :class => "q_#{renderer} #{q.css_class(@response_set)}"}
-                    %th
-                      = q.text_for(:pre, @render_context, I18n.locale)
-                      = q.help_text_for(@render_context, I18n.locale)
-                      - if q.pick == "one"
-                        - r = response_for(@response_set, q, nil, g)
-                        - i = response_idx  # increment the response index since the answer partial skips for q.pick == one
-                        = f.semantic_fields_for i, r do |ff|
-                          = ff.input :question_id, :as => :quiet
-                          = ff.input :api_id, :as => :quiet
-                      - q.answers.each do |a|
-                        %td= render(a.custom_renderer || '/partials/answer', :g => g, :q => q, :a => a, :f => f) unless q.display_type == "label"
-                      %th= q.text_for(:post, @render_context, I18n.locale)
-      - when :repeater
-        - (@response_set.count_group_responses(qs) + 1).times do |rg|
-          %li
-            - qs.each do |q|
-              = render q.custom_renderer || "/partials/question", :g => g, :rg => rg, :q => q, :f => f
-        = submit_tag("+ add row", :name => "section[#{@section.id}][g_#{g.id}]", :class => "add_row")
-      - else # :inline
-        - qs.each do |q|
-          = render q.custom_renderer || "/partials/question", :g => g, :q => q, :f => f
+= surveyor_tag_for g = q do
+  %h4= g_text(g, @render_context, I18n.locale)
+  %span.help-block= g.help_text_for(@render_context, I18n.locale)
+  - case g.renderer
+    - when :grid
+      %table.table
+        %tbody
+          - g.questions.each_slice(5) do |five_questions| # header row every 10
+            %tr.answers
+              %th &nbsp;
+              - five_questions.first.answers.each do |a|
+                %th.text-center
+                  = a.text_for(nil, @render_context, I18n.locale)
+                  %span.help= a.help_text_for(@render_context, I18n.locale)
+              %th &nbsp;
+            - five_questions.each_with_index do |gq, i|
+              = surveyor_tag_for(gq, :tr) do
+                %th.pre.text-right
+                  %h4= gq.text_for(:pre, @render_context, I18n.locale)
+                  = gq.help_text_for(@render_context, I18n.locale)
+                  - if gq.pick == "one"
+                    - r = r_for(@response_set, gq)
+                    = f.simple_fields_for index, r do |ff|
+                      = ff.input :question_id, :as => :hidden
+                      = ff.input :api_id, :as => :hidden
+                - gq.answers.each do |a|
+                  = render(a.custom_renderer || '/partials/answer', g: g, q: gq, a: a, :f => f, tag: :td) unless gq.display_type == "label"
+                %th.post.text-left
+                  %h4= gq.text_for(:post, @render_context, I18n.locale)
+    - when :repeater
+      - (@response_set.count_group_responses(g.questions) + 1).times do |rg|
+        - g.questions.each do |gq|
+          - gq.response_group = rg
+          = render gq.custom_renderer || "/partials/question", :g => g, :rg => rg, :q => gq, :f => f
+      = submit_tag("+ add row", :name => "section[#{@section.id}][g_#{g.id}]", :class => "add_row btn btn-success")
+    - else # :inline
+      - g.questions.each do |gq|
+        = render gq.custom_renderer || "/partials/question", :g => g, :q => gq, :f => f

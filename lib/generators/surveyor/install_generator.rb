@@ -74,6 +74,10 @@ module Surveyor
       directory "surveys/translations"
     end
 
+    def initializers
+      directory "config/initializers"
+    end
+
     def locales
       directory "config/locales"
     end

@@ -20,6 +20,7 @@ History for Surveyor
 
 * Adding support for Rails 4.0 and removing support for Rails 3.1. Applications requiring Rails 3.1 should use Surveyor v1.4.1
 * Removing support for Ruby 1.8.7 and Ruby 1.9.3. Applications requiring Ruby 1.x shoudl use Survyeor v1.4.1
+* switching from formtastic to simple_form
 
 ### Fixes
 

@@ -428,7 +428,7 @@ end
 describe ResponseSet, "#as_json" do
   let(:rs) {
     FactoryGirl.create(:response_set, :responses => [
-          FactoryGirl.create(:response, :question => FactoryGirl.create(:question), :answer => FactoryGirl.create(:answer), :string_value => '2')])
+          FactoryGirl.create(:response, :question => FactoryGirl.create(:question), :answer => FactoryGirl.create(:answer, :response_class => :string), :string_value => '2')])
   }
 
   let(:js) {rs.as_json}

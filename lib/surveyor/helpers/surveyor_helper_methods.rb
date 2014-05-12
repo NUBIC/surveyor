@@ -6,9 +6,30 @@ module Surveyor
       def surveyor_includes
         stylesheet_link_tag('surveyor_all') + javascript_include_tag('surveyor_all')
       end
-      # Helper for displaying warning/notice/error flash messages
-      def flash_messages(types)
-        types.map{|type| content_tag(:div, "#{flash[type]}".html_safe, :class => type.to_s)}.join.html_safe
+      def bootstrap_class_for flash_type
+        case flash_type
+          when :success
+            "bg-success"
+          when :error
+            "bg-danger"
+          when :alert
+            "bg-warning"
+          when :notice
+            "bg-info"
+          else
+            flash_type.to_s
+        end
+      end
+
+      # this helper references the instance variable @response_class
+      def surveyor_tag_for(record, tag = nil, &block)
+        tag ||= :div
+        return if record.try(:display_type) == "hidden"
+        dom_classes = [ dom_class(record),
+                        record.try(:dom_class, @response_set),
+                        ("row col-md-12" if tag == :div and (record.is_a?(Question) or record.is_a?(QuestionGroup))),
+                      ].delete_if(&:blank?)
+        content_tag(tag, {class: dom_classes.join(" "), id: dom_id(record)}, &block)
       end
       # Section: dependencies, menu, previous and next
       def dependency_explanation_helper(question,response_set)
@@ -20,23 +41,29 @@ module Surveyor
         end
         "&nbsp;&nbsp;You answered &quot;#{trigger_responses.join("&quot; and &quot;")}&quot; to the question &quot;#{dependent_questions.map(&:text).join("&quot;,&quot;")}&quot;"
       end
+
+      # these helpers references the instance variable @section
       def menu_button_for(section)
-        submit_tag(section.translation(I18n.locale)[:title], :name => "section[#{section.id}]")
+        current = section == @section
+        submit_tag(section.translation(I18n.locale)[:title], name: "section[#{section.id}]", class: current ? "btn btn-primary text-left" : "btn btn-default text-left", disabled: current)
       end
       def previous_section
         # use copy in memory instead of making extra db calls
         prev_index = [(@sections.index(@section) || 0) - 1, 0].max
-        submit_tag(t('surveyor.previous_section').html_safe, :name => "section[#{@sections[prev_index].id}]") unless @sections[0] == @section
+        submit_tag(t('surveyor.previous_section').html_safe, name: "section[#{@sections[prev_index].id}]", class: "btn btn-default") unless @sections[0] == @section
       end
       def next_section
         # use copy in memory instead of making extra db calls
         next_index = [(@sections.index(@section) || @sections.count) + 1, @sections.count].min
-        @sections.last == @section ? submit_tag(t('surveyor.click_here_to_finish').html_safe, :name => "finish") : submit_tag(t('surveyor.next_section').html_safe, :name => "section[#{@sections[next_index].id}]")
+        @sections.last == @section ? submit_tag(t('surveyor.click_here_to_finish').html_safe, name: "finish", class: "btn btn-primary") : submit_tag(t('surveyor.next_section').html_safe, name: "section[#{@sections[next_index].id}]", class: "btn btn-primary")
       end
 
-      # Questions
+      # questions and groups
       def q_text(q, context=nil, locale=nil)
-        "#{next_question_number(q) unless (q.dependent? or q.display_type == "label" or q.display_type == "image" or q.part_of_group?)}#{q.text_for(nil, context, locale)}"
+        "#{next_question_number(q) unless (q.dependent? or q.display_type == "label" or q.display_type == "image" or q.part_of_group?)}#{q.text_for(nil, context, locale)}".html_safe
+      end
+      def g_text(g, context=nil, locale=nil)
+        "#{next_question_number(g)}#{g.text_for(@render_context, I18n.locale)}".html_safe
       end
 
       def next_question_number(question)
@@ -70,16 +97,31 @@ module Surveyor
         end
         html
       end
+      def data_attrs(answer)
+        answer.input_mask ? answer.input_mask_placeholder ? {data: {input_mask: answer.input_mask, input_mask_placeholder: answer.input_mask_placeholder}} : {data: {input_mask: answer.input_mask}} : {}
+      end
 
       # Responses
-      def response_for(response_set, question, answer = nil, response_group = nil)
-        return nil unless response_set && question && question.id
-        result = response_set.responses.detect{|r| (r.question_id == question.id) && (answer.blank? ? true : r.answer_id == answer.id) && (r.response_group.blank? ? true : r.response_group.to_i == response_group.to_i)}
-        result.blank? ? response_set.responses.build(:question_id => question.id, :response_group => response_group) : result
-      end
-      def response_idx(increment = true)
+      def index(increment = true)
         @rc ||= 0
         (increment ? @rc += 1 : @rc).to_s
+      end
+      def r_for(response_set, question, answer = nil, response_group = nil)
+        return nil unless response_set && question && question.id
+        result = response_set.responses.detect{|r| (r.question_id == question.id) &&
+                                                   (answer.blank? or r.answer_id == answer.id) &&
+                                                   (response_group.blank? or r.response_group.to_i == response_group.to_i)}
+        return result || response_set.responses.build(:question_id => question.id, :response_group => response_group)
+      end
+      def answer_as(o, group = nil)
+        if o.is_a? Answer
+          case o.response_class.to_s
+          when /(integer|float|date|time|datetime)/ then :string
+          else o.response_class
+          end
+        elsif o.is_a?(Question) && %w(one any).include?(o.try(:pick))
+          [group.try(:display_type) == "grid" ? nil : nil, o.pick == "one" ? "radio_buttons_plus" : "check_boxes_plus"].compact.join.to_sym
+        end
       end
     end
   end

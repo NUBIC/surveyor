@@ -25,6 +25,11 @@ module Surveyor
         self.data_export_identifier ||= Surveyor::Common.normalize(title)
       end
 
+      def dom_class(response_set = nil)
+        [ self.reference_identifier ? "section_#{self.reference_identifier}" : nil,
+          self.custom_class ].compact.join(" ")
+      end
+
       def questions_and_groups
         qs = []
         questions.each_with_index.map do |q,i|

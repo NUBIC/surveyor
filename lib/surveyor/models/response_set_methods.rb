@@ -134,8 +134,8 @@ module Surveyor
       def all_dependencies(question_ids = nil)
         arr = dependencies(question_ids).partition{|d| d.is_met?(self) }
         {
-          :show => arr[0].map{|d| d.question_group_id.nil? ? "q_#{d.question_id}" : "g_#{d.question_group_id}"},
-          :hide => arr[1].map{|d| d.question_group_id.nil? ? "q_#{d.question_id}" : "g_#{d.question_group_id}"}
+          :show => arr[0].map{|d| d.id_for_dom},
+          :hide => arr[1].map{|d| d.id_for_dom}
         }
       end
 

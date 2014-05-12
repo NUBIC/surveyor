@@ -34,20 +34,20 @@ describe SurveyorHelper do
       q3 = FactoryGirl.create(:question, :answers => [c = FactoryGirl.create(:answer, :text => "folks")])
       rs = FactoryGirl.create(:response_set, :responses => [r1 = FactoryGirl.create(:response, :question => q1, :answer => a), r3 = FactoryGirl.create(:response, :question => q3, :answer => c, :response_group => 1)])
 
-      helper.response_for(rs, nil).should == nil
-      helper.response_for(nil, q1).should == nil
-      helper.response_for(rs, q1).should == r1
-      helper.response_for(rs, q1, a).should == r1
-      helper.response_for(rs, q2).attributes.reject{|k,v| k == "api_id"}.should == Response.new(:question => q2, :response_set => rs).attributes.reject{|k,v| k == "api_id"}
-      helper.response_for(rs, q2, b).attributes.reject{|k,v| k == "api_id"}.should == Response.new(:question => q2, :response_set => rs).attributes.reject{|k,v| k == "api_id"}
-      helper.response_for(rs, q3, c, "1").should == r3
+      helper.r_for(rs, nil).should == nil
+      helper.r_for(nil, q1).should == nil
+      helper.r_for(rs, q1).should == r1
+      helper.r_for(rs, q1, a).should == r1
+      helper.r_for(rs, q2).attributes.reject{|k,v| k == "api_id"}.should == Response.new(:question => q2, :response_set => rs).attributes.reject{|k,v| k == "api_id"}
+      helper.r_for(rs, q2, b).attributes.reject{|k,v| k == "api_id"}.should == Response.new(:question => q2, :response_set => rs).attributes.reject{|k,v| k == "api_id"}
+      helper.r_for(rs, q3, c, "1").should == r3
 
     end
     it "should keep an index of responses" do
-      helper.response_idx.should == "1"
-      helper.response_idx.should == "2"
-      helper.response_idx(false).should == "2"
-      helper.response_idx.should == "3"
+      helper.index.should == "1"
+      helper.index.should == "2"
+      helper.index(false).should == "2"
+      helper.index.should == "3"
     end
     it "should translate response class into attribute" do
       helper.rc_to_attr(:string).should == :string_value

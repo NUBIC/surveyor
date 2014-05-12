@@ -1,0 +1,5 @@
+- flash.each do |type, message|
+  .row
+    .alert.span5.offset3.text-center{:class => bootstrap_class_for(type)}
+      %button.close{"data-dismiss"=>"alert"} ×
+      = message

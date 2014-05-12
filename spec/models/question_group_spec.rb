@@ -23,14 +23,14 @@ describe QuestionGroup do
     it "reports DOM ready #css_class based on dependencies" do
       question_group.dependency = dependency
       dependency.should_receive(:is_met?).and_return(true)
-      question_group.css_class(response_set).should == "g_dependent"
+      question_group.css_class(response_set).should == "g_default g_dependent"
 
       dependency.should_receive(:is_met?).and_return(false)
-      question_group.css_class(response_set).should == "g_dependent g_hidden"
+      question_group.css_class(response_set).should == "g_default g_dependent g_hidden"
 
       question_group.custom_class = "foo bar"
       dependency.should_receive(:is_met?).and_return(false)
-      question_group.css_class(response_set).should == "g_dependent g_hidden foo bar"
+      question_group.css_class(response_set).should == "g_default g_dependent g_hidden foo bar"
     end
   end
 

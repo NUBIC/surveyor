@@ -7,12 +7,15 @@ module Surveyor
       include ActiveModel::Validations
       include MustacheContext
       include ActiveModel::ForbiddenAttributesProtection
+      include CustomModelNaming
 
       included do
         # Associations
         has_many :questions
         has_one :dependency
         attr_accessible *PermittedParams.new.question_group_attributes if defined? ActiveModel::MassAssignmentSecurity
+
+        self.param_key = :g
       end
 
       # Instance Methods
@@ -40,10 +43,16 @@ module Surveyor
       def triggered?(response_set)
         dependent? ? self.dependency.is_met?(response_set) : true
       end
-      def css_class(response_set)
-        [(dependent? ? "g_dependent" : nil), (triggered?(response_set) ? nil : "g_hidden"), custom_class].compact.join(" ")
+      def dom_class(response_set = nil)
+        [ "g_#{renderer}",
+          (dependent? ? "g_dependent" : nil),
+          (triggered?(response_set) ? nil : "g_hidden"),
+          custom_class
+        ].compact.join(" ")
       end
-
+      def css_class(response_set)
+        dom_class
+      end
       def text_for(context = nil, locale = nil)
         return "" if display_type == "hidden_label"
         in_context(translation(locale)[:text], context)
