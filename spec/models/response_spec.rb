@@ -3,7 +3,7 @@ require File.expand_path(File.dirname(__FILE__) + '/../spec_helper')
 describe Response, "when saving a response" do
   before(:each) do
     # @response = Response.new(:question_id => 314, :response_set_id => 159, :answer_id => 1)
-    @response = FactoryGirl.create(:response, :question => FactoryGirl.create(:question), :answer => FactoryGirl.create(:answer, :response_class => :string))
+    @response = FactoryGirl.create(:response, :question => FactoryGirl.create(:question), :answer => FactoryGirl.create(:answer))
   end
 
   it "should be valid" do
@@ -33,13 +33,13 @@ describe Response, "when saving a response" do
     @response.answer = FactoryGirl.create(:answer, :response_class => "answer").tap { |a| a.id = 143 }
     @response.correct?.should be_false
   end
-
+  
   it "should be in order by created_at" do
     @response.response_set.should_not be_nil
     response2 = FactoryGirl.create(:response, :question => FactoryGirl.create(:question), :answer => FactoryGirl.create(:answer), :response_set => @response.response_set, :created_at => (@response.created_at + 1))
     Response.all.should == [@response, response2]
   end
-
+  
   describe "returns the response as the type requested" do
     it "returns 'string'" do
       @response.string_value = "blah"

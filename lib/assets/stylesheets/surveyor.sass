@@ -1,0 +1,132 @@
+/* Do not change surveyor.sass or the generated
+ * surveyor.css. They will be overwritten by
+ * the surveyor generator. Instead, add
+ * custom styles to custom.sass, which will be
+ * loaded after the surveyor stylesheets */
+
+$background_color:#EEEEEE
+$surveyor_flash_background_color:#FFF1A8
+$surveyor_color:#FFFFF1
+$surveyor_text_color:#333333
+$surveyor_dependent_color:#FFFFDF
+$surveyor_menus_active_color:#EBEBCC
+$surveyor_menus_border_color:#ccc
+
+body
+  :background-color $background_color
+#surveyor
+  :font-family "Century Gothic"
+  :width 960px
+  :padding 20px
+  :margin 0 auto
+  :text-align left
+  :font-family Helvetica
+  :font-size 100%
+  :background-color $surveyor_color
+  :color $surveyor_text_color
+  .surveyor_flash
+    :background-color $surveyor_flash_background_color
+    :margin 0 auto
+    :padding 5px
+    :width 300px
+    :font-weight bold
+    :text-align center
+  .survey_title
+    :font-size 2em
+    :font-weight bold
+    :padding 5px 0
+  .surveyor_menu
+    :float right
+    ul
+      :background-color $background_color
+      :border 1px solid $surveyor_menus_border_color
+      :border-bottom-width 0
+      :list-style none
+      li
+        :border 0 solid $surveyor_menus_border_color
+        :border-bottom-width 1px
+      li.active, li.active input[type="submit"]
+        :background-color $surveyor_menus_active_color
+  .surveyor_language_selection
+    :display none
+  //.previous_section
+  .next_section
+    :float right
+  .survey_section
+    span.title
+      :display block
+      :padding 5px 0
+      :font-weight bold
+      :font-size 1.5em
+
+  // question groups
+  fieldset.g_inline fieldset, fieldset.g_inline ol li
+    :display inline
+  fieldset.g_grid
+    table
+      :border-collapse collapse
+    li.surveyor_radio label, li.surveyor_check_boxes label
+      :visibility hidden
+      input
+        :visibility visible
+  fieldset.g_repeater
+    ol fieldset
+      :display inline
+    input[type="submit"].add_row
+      :font-size 0.7em
+
+  // question groups and questions
+  .survey_section>fieldset>ol
+    :padding-left 1em
+  fieldset
+    :padding-top 5px
+    :margin-bottom 10px
+    ol
+      fieldset
+        :vertical-align top
+      li
+        label, input
+          :vertical-align top
+        :padding 1px 0
+        p.inline-hints
+          :margin 0
+          :padding 0
+          :display inline
+      li.inline
+        :display inline
+      li.datetime, li.time
+        input, fieldset, fieldset ol li
+          :display inline
+    &.q_inline ol li, &.q_inline_inline ol li
+      :display inline
+    input, textarea, select
+      :margin 0 3px
+    input[type="text"], textarea
+      :font-size 0.8em
+
+  fieldset.q_hidden, fieldset.g_hidden, fieldset.g_grid tr.q_hidden
+    :display none !important
+  fieldset.q_dependent, fieldset.g_dependent
+    :background-color $surveyor_dependent_color
+    legend
+      :background-color $surveyor_dependent_color
+      :padding 3px 3px 3px 0
+  fieldset.q_dropdown, fieldset.q_inline_dropdown, fieldset.q_default_dropdown, fieldset.q_slider, fieldset.q_repeater_dropdown
+    label
+      :display none
+  fieldset.q_slider
+    :margin-bottom 3em
+    li.select
+      :width 50%
+      :font-size .8em
+    .ui-slider span.ui-slider-label-show
+      :position relative
+      :display inline
+
+  // buttons
+  input[type="submit"]
+    :font-size 1em
+    :border 1px
+    :padding 5px
+    :cursor pointer
+    :background-color $background_color

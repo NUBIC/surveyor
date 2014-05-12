@@ -37,12 +37,6 @@ module Surveyor
         default_args
       end
 
-      def dom_class(response_set = nil)
-        [ "survey",
-          ("survey_#{self.reference_identifier}" if self.reference_identifier),
-          self.custom_class ].compact.join(" ")
-      end
-
       def default_args
         self.api_id ||= Surveyor::Common.generate_api_id
         self.display_order ||= Survey.count

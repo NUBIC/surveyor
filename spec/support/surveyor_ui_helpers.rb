@@ -12,44 +12,42 @@ module SurveyorUIHelpers
     end
   end
   def grid_row(text)
-    find(".g_grid tr#q_#{Question.where(text: text).first.id}")
+    find("fieldset.g_grid tr#q_#{Question.where(text: text).first.id}")
   end
   def question(reference_identifier, entry = nil)
     if entry
-      find("div#q_#{Question.where(reference_identifier: reference_identifier).first.id}_#{entry}")
+      find("fieldset#q_#{Question.where(reference_identifier: reference_identifier).first.id}_#{entry}")
     else
-      find("div#q_#{Question.where(reference_identifier: reference_identifier).first.id}")
+      find("fieldset#q_#{Question.where(reference_identifier: reference_identifier).first.id}")
     end
   end
   def have_hidden_question(reference_identifier, entry=nil)
     if entry
-      have_css("div#q_#{Question.where(reference_identifier: reference_identifier).first.id}_#{entry}.q_hidden")
+      have_css("fieldset#q_#{Question.where(reference_identifier: reference_identifier).first.id}_#{entry}.q_hidden")
     else
-      have_css("div#q_#{Question.where(reference_identifier: reference_identifier).first.id}.q_hidden")
+      have_css("fieldset#q_#{Question.where(reference_identifier: reference_identifier).first.id}.q_hidden")
     end
 
   end
   def have_hidden_group(reference_identifier, entry = nil)
     if entry
-      have_css("div#g_#{QuestionGroup.where(reference_identifier: reference_identifier).first.id}_#{entry}.g_hidden")
+      have_css("fieldset#g_#{QuestionGroup.where(reference_identifier: reference_identifier).first.id}_#{entry}.g_hidden")
     else
-      have_css("div#g_#{QuestionGroup.where(reference_identifier: reference_identifier).first.id}.g_hidden")
+      have_css("fieldset#g_#{QuestionGroup.where(reference_identifier: reference_identifier).first.id}.g_hidden")
     end
   end
   def group(reference_identifier)
-    find("div#g_#{QuestionGroup.where(reference_identifier: reference_identifier).first.id}")
+    find("fieldset#g_#{QuestionGroup.where(reference_identifier: reference_identifier).first.id}")
   end
   def checkbox(q_ref_id, a_ref_id)
     find("input[value='#{Question.where(reference_identifier: q_ref_id).first.answers.where(reference_identifier: a_ref_id).first.id}']")
   end
   def start_survey(name, opts = {})
     visit(opts[:locale] ? "/surveys?locale=#{opts[:locale]}" : '/surveys')
-    if opts[:version]
-      within find("button", text: name).find(:xpath, 'ancestor::form') do
-        select(opts[:version], from: "survey_version")
-      end
+    within "form", text: name do
+      select(opts[:version], from: "version") if opts[:version]
+      click_button I18n.t('surveyor.take_it')
     end
-    click_button name
     return ResponseSet.where(access_code: current_path.split('/')[3]).first.extend ResponseSetTestingMethods
   end
   def the_15th

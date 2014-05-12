@@ -1,21 +1,28 @@
-= surveyor_tag_for q do
-  %h4= q_text(q, @render_context, I18n.locale)
-  %span.help-block= q.help_text_for(@render_context, I18n.locale)
-  - case q.renderer
-  - when :image, :label, :default_label, :inline_label, :repeater_label
-    -# no answers
-  - when :dropdown, :inline_dropdown, :default_dropdown, :slider, :repeater_dropdown
-    = f.simple_fields_for index, r_for(@response_set, q, nil, local_assigns[:rg]) do |ff|
-      = ff.input_field :question_id, :as => :hidden
-      = ff.input_field :api_id, :as => :hidden
-      = ff.input_field :response_group, :as => :hidden if local_assigns[:rg]
-      = ff.input :answer_id, :collection => q.answers.map{|a| [a.text, a.id]}, :include_blank => (q.renderer != :slider), :label => q.text, :disabled => local_assigns[:disabled], :input_html => {:class => "form-control"}
-  - else # :default, :inline, :inline_default
-    - if q.pick == "one"
-      = f.simple_fields_for index, r_for(@response_set, q, nil, local_assigns[:rg]) do |ff|
-        = ff.input_field :question_id, :as => :hidden
-        = ff.input_field :api_id, :as => :hidden
-        = ff.input_field :response_group, :as => :hidden if local_assigns[:rg]
-    - q.answers.each do |a|
-      - next if (q.pick == "one" or q.pick == "any") and local_assigns[:disabled] and @response_set.responses.where( :question_id => q.id, :answer_id => a.id).empty?
-      = render a.custom_renderer || '/partials/answer', :q => q, :a => a, :f => f, :rg => local_assigns[:rg], :g => local_assigns[:g], :disabled => local_assigns[:disabled]
+-# TODO: js for slider
+- rg ||= nil
+- renderer = q.renderer(g ||= nil)
+- disabled = defined?(disableFlag) ? disableFlag : false
+- unless q.display_type == "hidden"
+  = f.inputs q_text(q, @render_context, I18n.locale), :id => rg ? "q_#{q.id}_#{rg}" : "q_#{q.id}", :class => "q_#{renderer} #{q.css_class(@response_set)}" do
+    %span.help= q.help_text_for(@render_context, I18n.locale)
+    - case renderer
+    - when  :image, :label, :default_label, :inline_label, :repeater_label
+    - when :dropdown, :inline_dropdown, :default_dropdown, :slider, :repeater_dropdown
+      - r = response_for(@response_set, q, nil, rg)
+      - i = response_idx
+      = f.semantic_fields_for i, r do |ff|
+        = ff.input :question_id, :as => :quiet
+        = ff.input :response_group, :as => :quiet, :input_html => {:value => rg} if g && g.display_type == "repeater"
+        = ff.input :api_id, :as => :quiet
+        = ff.input :answer_id, :as => :select, :collection => q.answers.map{|a| [a.text, a.id]}, :include_blank => (renderer != :slider), :label => q.text, :input_html => { :disabled => disabled }
+    - else # :default, :inline, :inline_default
+      - if q.pick == "one"
+        - r = response_for(@response_set, q, nil, rg)
+        - i = response_idx  # increment the response index since the answer partial skips for q.pick == one
+        = f.semantic_fields_for i, r do |ff|
+          = ff.input :question_id, :as => :quiet
+          = ff.input :response_group, :as => :quiet, :value => rg if g && g.display_type == "repeater"
+          = ff.input :api_id, :as => :quiet
+      - q.answers.each do |a|
+        - next if (q.pick == "one" or q.pick == "any") and disabled and @response_set.responses.where( :question_id => q.id, :answer_id => a.id).empty?
+        = render a.custom_renderer || '/partials/answer', :q => q, :a => a, :f => f, :rg => rg, :g => g, :disableFlag => disabled

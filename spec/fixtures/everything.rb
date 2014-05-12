@@ -55,12 +55,12 @@ survey "Everything" do
   end
   section "Groups" do
     grid_events "How interested are you in the following?" do
-      a_indifferent "indifferent"
-      a_neutral "neutral"
-      a_interested "interested"
-      q_births "births" , pick: :one
-      q_weddings "weddings", pick: :one
-      q_funerals "funerals", pick: :one
+      a "indifferent"
+      a "neutral"
+      a "interested"
+      q "births" , pick: :one
+      q "weddings", pick: :one
+      q "funerals", pick: :one
     end
     repeater_family "Tell us about your family"  do
       q_relation "Relation", pick: :one, display_type: :dropdown

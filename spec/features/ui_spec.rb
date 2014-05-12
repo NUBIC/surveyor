@@ -334,7 +334,7 @@ describe "ui interactions" do
       response_set = start_survey('Everything')
       click_button "Special"
       within question("favorite_food") do
-        expect(page).to have_css("span.help-block", text: "just say beef")
+        expect(page).to have_css("span.help", text: "just say beef")
       end
     end
     it "images" do
@@ -348,7 +348,7 @@ describe "ui interactions" do
     it "custom css class" do
       response_set = start_survey('Everything')
       click_button "Special"
-      expect(page).to have_css("div.q_default.hidden")
+      expect(page).to have_css("fieldset.q_default.hidden")
     end
     it "default answer" do
       response_set = start_survey('Everything')
@@ -458,7 +458,6 @@ describe "ui interactions" do
       end
       click_button "Click here to finish"
       visit("/surveys/favorites/#{response_set.access_code}/")
-      expect(page).to have_content("Tell us how you feel today")
       within grid_row "anxious|calm" do
         expect(page).to have_disabled_selected_radio("-1")
       end

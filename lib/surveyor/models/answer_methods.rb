@@ -6,7 +6,6 @@ module Surveyor
       include ActiveModel::Validations
       include MustacheContext
       include ActiveModel::ForbiddenAttributesProtection
-      include CustomModelNaming
 
       included do
         # Associations
@@ -17,8 +16,6 @@ module Surveyor
 
         # Validations
         validates_presence_of :text
-
-        self.param_key = :a
       end
 
       # Instance Methods
@@ -38,16 +35,14 @@ module Surveyor
       def display_type=(val)
         write_attribute(:display_type, val.nil? ? nil : val.to_s)
       end
-      def dom_class(response_set = nil)
-        [(response_class unless response_class == "answer"), ("exclusive" if is_exclusive), custom_class].compact.join(" ")
-      end
-      def css_class(response_set = nil)
-        dom_class(response_set)
+
+      def css_class
+        [(is_exclusive ? "exclusive" : nil), custom_class].compact.join(" ")
       end
 
       def text_for(position = nil, context = nil, locale = nil)
-        output = imaged(split(in_context(translation(locale)[:text], context), position))
-        (output.blank? or display_type == "hidden_label") ? false : output
+        return "" if display_type == "hidden_label"
+        imaged(split(in_context(translation(locale)[:text], context), position))
       end
       def help_text_for(context = nil, locale = nil)
         in_context(translation(locale)[:help_text], context)

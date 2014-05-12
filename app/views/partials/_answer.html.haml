@@ -1,17 +1,25 @@
-= surveyor_tag_for a, local_assigns[:tag] do
-  - r = r_for(@response_set, q, a, local_assigns[:rg])
-  = f.simple_fields_for index(q.pick != "one"), r do |ff| # index won't increment for radio buttons
-    - unless q.pick == "one" # don't repeat identity fields if we're on radio buttons
-      = ff.input_field :question_id, as: :hidden
-      = ff.input_field :api_id, as: :hidden
-      = ff.input_field :response_group, as: :hidden if local_assigns[:rg]
-    - case q.pick
-    - when "one", "any"
-      = ff.input :answer_id, as: answer_as(q, local_assigns[:g]), collection: [[a.text_for(nil, @render_context, I18n.locale), a.id]], label: false, response_class: a.response_class, input_html: {class: a.css_class, disabled: local_assigns[:disabled]}
-    - when "none"
-      - if %w(date datetime time float integer string text).include? a.response_class
-        = ff.input_field :answer_id, as: :hidden, value: a.id
-        = ff.input rc_to_attr(a.response_class), as: answer_as(a), label: a.text_for(:pre, @render_context, I18n.locale), hint: a.text_for(:post, @render_context, I18n.locale), input_html: {value: r.to_formatted_s.blank? ? a.default_value_for(@render_context, I18n.locale) : r.to_formatted_s, class: "form-control #{a.dom_class}", disabled: local_assigns[:disabled]}.merge(data_attrs(a))
-      - else
-        = a.text_for(nil, @render_context, I18n.locale)
-    %span.help-block= a.help_text_for(@render_context, I18n.locale) unless g && g.display_type == "grid"
+-# TODO: disabled
+- rg ||= nil
+- r = response_for(@response_set, q, a, rg)
+- i = response_idx(q.pick != "one") # argument will be false (don't increment i) if we're on radio buttons
+- disabled = defined?(disableFlag) ? disableFlag : false
+= f.semantic_fields_for i, r do |ff|
+  = ff.input :question_id, :as => :quiet unless q.pick == "one" # don't repeat question_id if we're on radio buttons
+  = ff.input :api_id, :as => :quiet unless q.pick == "one"
+  = ff.input :response_group, :input_html => {:value => rg}, :as => :quiet if q.pick != "one" && g && g.display_type == "repeater"
+  - case q.pick
+  - when "one"
+    = ff.input :answer_id, :as => :surveyor_radio, :collection => [[a.text_for(nil, @render_context, I18n.locale), a.id]], :label => false, :input_html => {:class => a.css_class, :disabled => disabled}, :response_class => a.response_class
+  - when "any"
+    = ff.input :answer_id, :as => :surveyor_check_boxes, :collection => [[a.text_for(nil, @render_context, I18n.locale), a.id]], :label => false, :input_html => {:class => a.css_class, :disabled => disabled}, :response_class => a.response_class
+  - when "none"
+    - if %w(date datetime time float integer string text).include? a.response_class
+      = ff.input :answer_id, :as => :quiet, :input_html => {:class => a.css_class, :value => a.id}
+      = ff.input rc_to_attr(a.response_class),
+                  :as         => rc_to_as(a.response_class),
+                  :label      => a.text_for(:pre, @render_context, I18n.locale).blank? ? false : a.text_for(:pre, @render_context, I18n.locale),
+                  :hint       => a.text_for(:post, @render_context, I18n.locale),
+                  :input_html => generate_pick_none_input_html(r.to_formatted_s, a.default_value_for(@render_context, I18n.locale), a.css_class, a.response_class, disabled, a.input_mask, a.input_mask_placeholder)
+    - else
+      = a.text_for(nil, @render_context, I18n.locale)
+  %span.help= a.help_text_for(@render_context, I18n.locale) unless g && g.display_type == "grid"

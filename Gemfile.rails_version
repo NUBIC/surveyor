@@ -23,5 +23,3 @@ when /^4.0/
 else
   fail "Unsupported Rails version #{ENV['RAILS_VERSION']}"
 end
-
-gem 'simple_form', '3.1.0.rc1'

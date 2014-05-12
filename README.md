@@ -33,6 +33,7 @@ Some key dependencies are:
 
 * HAML
 * Sass
+* Formtastic
 
 A more exhaustive list can be found in the [gemspec][].
 
@@ -100,6 +101,20 @@ and review the [changelog][] for changes that may affect your customizations.
 
 [1]: http://github.com/NUBIC/surveyor/blob/master/lib/surveyor/models/response_set_methods.rb#L94
 [2]: http://github.com/NUBIC/surveyor/blob/master/lib/surveyor/models/response_set_methods.rb#L97
+
+
+## Users of spork
+
+There is [an issue with spork and custom inputs in formatstic (#851)][851]. A workaround (thanks rmm5t!):
+
+    Spork.prefork do
+      # ...
+      surveyor_path = Gem.loaded_specs['surveyor'].full_gem_path
+      Dir["#{surveyor_path}/app/inputs/*_input.rb"].each { |f| require File.basename(f) }
+      # ...
+    end
+
+[851]: https://github.com/justinfrench/formtastic/issues/851
 
 ## Follow master
 

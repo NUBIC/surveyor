@@ -30,11 +30,11 @@ module Surveyor
       @response_set = ResponseSet.
         create(:survey => @survey, :user_id => (@current_user.nil? ? @current_user : @current_user.id))
       if (@survey && @response_set)
-        flash[:success] = t('surveyor.survey_started_success')
+        flash[:notice] = t('surveyor.survey_started_success')
         redirect_to(surveyor.edit_my_survey_path(
           :survey_code => @survey.access_code, :response_set_code  => @response_set.access_code))
       else
-        flash[:error] = t('surveyor.Unable_to_find_that_survey')
+        flash[:notice] = t('surveyor.Unable_to_find_that_survey')
         redirect_to surveyor_index
       end
     end
@@ -52,7 +52,7 @@ module Surveyor
           format.json
         end
       else
-        flash[:error] = t('surveyor.unable_to_find_your_responses')
+        flash[:notice] = t('surveyor.unable_to_find_your_responses')
         redirect_to surveyor_index
       end
     end
@@ -65,7 +65,7 @@ module Surveyor
         @survey = @section.survey
         set_dependents
       else
-        flash[:error] = t('surveyor.unable_to_find_your_responses')
+        flash[:notice] = t('surveyor.unable_to_find_your_responses')
         redirect_to surveyor_index
       end
     end
@@ -74,14 +74,14 @@ module Surveyor
       question_ids_for_dependencies = (params[:r] || []).map{|k,v| v["question_id"] }.compact.uniq
       saved = load_and_update_response_set_with_retries
 
-      return redirect_with_message(surveyor_finish, :success, t('surveyor.completed_survey')) if saved && params[:finish]
+      return redirect_with_message(surveyor_finish, :notice, t('surveyor.completed_survey')) if saved && params[:finish]
 
       respond_to do |format|
         format.html do
           if @response_set.nil?
-            return redirect_with_message(surveyor.available_surveys_path, :error, t('surveyor.unable_to_find_your_responses'))
+            return redirect_with_message(surveyor.available_surveys_path, :notice, t('surveyor.unable_to_find_your_responses'))
           else
-            flash[:error] = t('surveyor.unable_to_update_survey') unless saved
+            flash[:notice] = t('surveyor.unable_to_update_survey') unless saved
             redirect_to surveyor.edit_my_survey_path(:anchor => anchor_from(params[:section]), :section => section_id_from(params))
           end
         end

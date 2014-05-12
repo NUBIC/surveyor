@@ -106,7 +106,7 @@ describe Answer do
       answer.text = "Red"
       answer.text_for.should == "Red"
       answer.display_type = "hidden_label"
-      answer.text_for.should == false
+      answer.text_for.should == ""
     end
     it "#default_value_for"
     it "#help_text_for"
@@ -126,7 +126,7 @@ describe Answer do
       answer.text_for(:pre).should == "My favorite color is clear"
     end
     it "#text_for(:post) preserves strings" do
-      answer.text_for(:post).should == false
+      answer.text_for(:post).should == ""
     end
     it "#text_for splits strings" do
       answer.text = "before|after|extra"

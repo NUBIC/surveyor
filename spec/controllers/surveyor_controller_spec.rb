@@ -217,12 +217,12 @@ describe SurveyorController do
       end
       it 'flashes completion' do
         do_put :finish => 'finish'
-        flash[:success].should == "Completed survey"
+        flash[:notice].should == "Completed survey"
       end
       it "redirects for missing response set" do
         do_put :response_set_code => "DIFFERENT"
         response.should redirect_to(available_surveys_path)
-        flash[:error].should == "Unable to find your responses to the survey"
+        flash[:notice].should == "Unable to find your responses to the survey"
       end
     end
 

@@ -38,6 +38,7 @@ describe "saving with ajax", js: true do
     pending "better selectors"
     response_set = start_survey('Everything')
     expect(page).to have_content("What was the last room you painted, and what color?")
+    save_and_open_page
     within question("last_room") do
       fill_in "kitchen", with: "yellow"
     end
@@ -56,6 +57,7 @@ describe "saving with ajax", js: true do
     pending "better selectors"
     response_set = start_survey('Everything')
     expect(page).to have_content("What rooms have you painted, and what color?")
+    save_and_open_page
     within question("last_room") do
       fill_in "kitchen", with: "yellow"
       fill_in "other", with: "living room, white"

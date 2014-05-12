@@ -33,10 +33,6 @@ module Surveyor
         write_attribute(:question_id, i)
       end
 
-      def id_for_dom
-        question_group_id.nil? ? "#{Question.param_key}_#{question_id}" : "#{QuestionGroup.param_key}_#{question_group_id}"
-      end
-
       # Has this dependency has been met in the context of response_set?
       # Substitutes the conditions hash into the rule and evaluates it
       def is_met?(response_set)

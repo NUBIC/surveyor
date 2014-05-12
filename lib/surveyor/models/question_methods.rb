@@ -7,7 +7,6 @@ module Surveyor
       include ActiveModel::Validations
       include MustacheContext
       include ActiveModel::ForbiddenAttributesProtection
-      include CustomModelNaming
 
       included do
         # Associations
@@ -17,13 +16,10 @@ module Surveyor
         has_one :dependency, :dependent => :destroy
         belongs_to :correct_answer, :class_name => "Answer", :dependent => :destroy
         attr_accessible *PermittedParams.new.question_attributes if defined? ActiveModel::MassAssignmentSecurity
-        attr_accessor :response_group
+
         # Validations
         validates_presence_of :text, :display_order
         validates_inclusion_of :is_mandatory, :in => [true, false]
-        validates_inclusion_of :pick, :in => ["one", "any", "none"]
-
-        self.param_key = :q
       end
 
       # Instance Methods
@@ -31,9 +27,7 @@ module Surveyor
         super(*args)
         default_args
       end
-      def to_key
-        [id, response_group].compact
-      end
+
       def default_args
         self.is_mandatory ||= false
         self.display_type ||= "default"
@@ -60,16 +54,10 @@ module Surveyor
       def triggered?(response_set)
         dependent? ? self.dependency.is_met?(response_set) : true
       end
-      def dom_class(response_set = nil)
-        [ (dependent? ? "q_dependent" : nil),
-          (triggered?(response_set) ? nil : "q_hidden"),
-          custom_class,
-          "q_#{renderer(question_group)}"
-        ].compact.join(" ")
-      end
       def css_class(response_set)
-        dom_class(response_set)
+        [(dependent? ? "q_dependent" : nil), (triggered?(response_set) ? nil : "q_hidden"), custom_class].compact.join(" ")
       end
+
       def part_of_group?
         !self.question_group.nil?
       end
@@ -94,8 +82,8 @@ module Surveyor
           text
         end.to_s
       end
-      def renderer(g = nil)
-        r = [g.try(:renderer), display_type].compact.join("_")
+      def renderer(g = question_group)
+        r = [g ? g.renderer.to_s : nil, display_type].compact.join("_")
         r.blank? ? :default : r.to_sym
       end
       def translation(locale)

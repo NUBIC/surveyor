@@ -1,14 +1,12 @@
-.surveyor_menu.col-md-4
+.surveyor_menu
   - if !@survey.translations.empty?
     = hidden_field_tag "current_section", @section.id
     .surveyor_language_selection
-      %h2= label_tag "locale", t('surveyor.language')
+      = label_tag "locale", t('surveyor.language')
       %select{:id=>"locale", :name=>"new_locale"}
         = options_for_select(@survey.translations.map(&:locale),I18n.locale)
 
-  %h2= t('surveyor.sections')
-  .btn-group-vertical
+  = t('surveyor.sections')
+  %ul
     - @sections.each do |s|
-      = menu_button_for(s)
-
-
+      %li{:class => ("active" if s == @section)}= menu_button_for(s)
