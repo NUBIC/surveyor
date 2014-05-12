@@ -5,7 +5,7 @@ echo ""
 # Set the prompt for the select command
 PS3="Choose a surveyor stack or 'q' to quit: "
 export SPEC_OPTS="--format Fuubar --color spec"
-export BUNDLER_VERSION=1.5.3
+export BUNDLER_VERSION=1.6.1
 
 options=""
 rubies=(2.0.0 2.1.1)
