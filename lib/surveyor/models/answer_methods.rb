@@ -39,7 +39,7 @@ module Surveyor
         write_attribute(:display_type, val.nil? ? nil : val.to_s)
       end
       def dom_class(response_set = nil)
-        [(response_class unless response_class == "answer"), ("exclusive" if is_exclusive), custom_class].compact.join(" ")
+        ['form_group', (response_class unless response_class == "answer"), ("exclusive" if is_exclusive), custom_class].compact.join(" ")
       end
       def css_class(response_set = nil)
         dom_class(response_set)

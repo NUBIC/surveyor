@@ -9,7 +9,7 @@
   label {
     margin-right: .5em;
   }
-  span.hint{
+  span.help-block{
     margin-left: .5em;
   }
 
@@ -42,16 +42,20 @@
       display: inline;
     }
   }
-  div.radio_buttons_plus, div.check_boxes_plus {
+  div.a.form_group {
     span.radio, span.checkbox {
       display: inline-block;
     }
     input.form-control, textarea.form-control {
       width: inherit;
       display: inline-block;
+      width: 50%;
     }
     textarea.form-control {
       vertical-align: top;
+    }
+    span.help-block {
+      display: inline-block;
     }
   }
   div.input.string input.form-control, div.input.text textarea.form-control, div.input.select select.form-control {

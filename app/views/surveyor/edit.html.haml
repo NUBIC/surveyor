@@ -1,6 +1,6 @@
 #surveyor.container
   = render 'partials/surveyor_flash'
-  = simple_form_for(@response_set, as: :r, url: surveyor.update_my_survey_path, html: {method: :put, id: "survey_form", class: @survey.dom_class}) do |f|
+  = simple_form_for(@response_set, wrapper: :surveyor, as: :r, url: surveyor.update_my_survey_path, html: {method: :put, id: "survey_form", class: @survey.dom_class}) do |f|
     .row
       .col-md-8
         %h1.survey_title= @survey.translation(I18n.locale)[:title]

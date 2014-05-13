@@ -27,7 +27,7 @@ module Surveyor
         return if record.try(:display_type) == "hidden"
         dom_classes = [ dom_class(record),
                         record.try(:dom_class, @response_set),
-                        ("row col-md-12" if tag == :div and (record.is_a?(Question) or record.is_a?(QuestionGroup))),
+                        ("row col-md-12" if tag == :div and (record.is_a?(QuestionGroup) or (record.is_a?(Question) and !record.part_of_group?))),
                       ].delete_if(&:blank?)
         content_tag(tag, {class: dom_classes.join(" "), id: dom_id(record)}, &block)
       end
@@ -120,7 +120,7 @@ module Surveyor
           else o.response_class
           end
         elsif o.is_a?(Question) && %w(one any).include?(o.try(:pick))
-          [group.try(:display_type) == "grid" ? nil : nil, o.pick == "one" ? "radio_buttons_plus" : "check_boxes_plus"].compact.join.to_sym
+          o.pick == "one" ? :radio_buttons_plus : :check_boxes_plus
         end
       end
     end
