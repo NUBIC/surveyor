@@ -112,12 +112,12 @@ describe Answer do
     it "#help_text_for"
     it "reports DOM ready #css_class from #custom_class" do
       answer.custom_class = "foo bar"
-      answer.css_class.should == "foo bar"
+      answer.css_class.should == "form_group foo bar"
     end
     it "reports DOM ready #css_class from #custom_class and #is_exclusive" do
       answer.custom_class = "foo bar"
       answer.is_exclusive = true
-      answer.css_class.should == "exclusive foo bar"
+      answer.css_class.should == "form_group exclusive foo bar"
     end
     it "#text_for preserves strings" do
       answer.text_for.should == "My favorite color is clear"
