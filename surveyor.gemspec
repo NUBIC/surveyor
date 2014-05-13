@@ -19,7 +19,8 @@ Gem::Specification.new do |s|
 
   s.add_dependency('rails', '>= 3.2')
   s.add_dependency('haml', '~> 4.0')
-  s.add_dependency('sass')
+  s.add_dependency('sass-rails', '~> 4.0.0')
+  s.add_dependency('bootstrap-sass', '~> 3.1.1')
   s.add_dependency('simple_form', '3.1.0.rc1')
   s.add_dependency('uuidtools', '~> 2.1')
   s.add_dependency('mustache', '~> 0.99')
@@ -38,4 +39,3 @@ Gem::Specification.new do |s|
   s.add_development_dependency('database_cleaner', '~> 1.2.0')
   s.add_development_dependency('rspec-retry')
 end
-
