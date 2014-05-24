@@ -2,10 +2,13 @@
 - rg ||= nil
 - renderer = q.renderer(g ||= nil)
 - disabled = defined?(disableFlag) ? disableFlag : false
+- slider_classes = [:inline_slider, :default_slider, :repeater_slider]
+- html_class = slider_classes.include?(renderer) ? :slider : renderer
+
 - unless q.display_type == "hidden"
-  = f.inputs q_text(q, @render_context, I18n.locale), :id => rg ? "q_#{q.id}_#{rg}" : "q_#{q.id}", :class => "q_#{renderer} #{q.css_class(@response_set)}" do
+  = f.inputs q_text(q, @render_context, I18n.locale), :id => rg ? "q_#{q.id}_#{rg}" : "q_#{q.id}", :class => "q_#{html_class} #{q.css_class(@response_set)}" do
     %span.help= q.help_text_for(@render_context, I18n.locale)
-    - case renderer
+    - case html_class
     - when  :image, :label, :default_label, :inline_label, :repeater_label
     - when :dropdown, :inline_dropdown, :default_dropdown, :slider, :repeater_dropdown
       - r = response_for(@response_set, q, nil, rg)
@@ -14,7 +17,7 @@
         = ff.input :question_id, :as => :quiet
         = ff.input :response_group, :as => :quiet, :input_html => {:value => rg} if g && g.display_type == "repeater"
         = ff.input :api_id, :as => :quiet
-        = ff.input :answer_id, :as => :select, :collection => q.answers.map{|a| [a.text, a.id]}, :include_blank => (renderer != :slider), :label => q.text, :input_html => { :disabled => disabled }
+        = ff.input :answer_id, :as => :select, :collection => q.answers.map{|a| [a.text, a.id]}, :include_blank => (html_class != :slider), :label => q.text, :input_html => { :disabled => disabled }
     - else # :default, :inline, :inline_default
       - if q.pick == "one"
         - r = response_for(@response_set, q, nil, rg)
