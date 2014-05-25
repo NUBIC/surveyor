@@ -1,0 +1,5 @@
+/*! Ben's jQuery UI Extensions - v1.1.1 - 2014-03-30
+* https://github.com/bseth99/jquery-ui-extensions
+* Copyright 2014 Ben Olson; Licensed MIT */
+
+.ui-slider-wrapper{position:relative}.ui-slider-wrapper .ui-slider-horizontal{width:100%}.ui-slider-labels{position:absolute;border:1px solid transparent}.ui-slider-label-ticks{border:1px solid transparent;position:absolute;white-space:nowrap}.ui-slider-label-ticks span{font-size:.9em;min-width:1.2em}.ui-slider-wrapper.horizontal{height:4.5em}.horizontal .ui-slider-labels{left:0;right:0;top:.7em}.horizontal .ui-slider-label-ticks{width:1.2em;height:.8em;text-align:center;border-left:1px solid #999}.horizontal .ui-slider-label-ticks span{position:relative;display:inline-block;margin-left:-1.2em;top:.8em}.ui-slider-wrapper.vertical{width:4.5em}.vertical .ui-slider-labels{top:1px;bottom:0;left:.7em}.vertical .ui-slider-label-ticks{height:1.2em;width:.8em;border-bottom:1px solid #999}.vertical .ui-slider-label-ticks span{position:relative;display:inline-block;margin-left:1em;top:.6em}
