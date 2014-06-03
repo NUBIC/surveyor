@@ -5,4 +5,5 @@ Surveyor::Engine.routes.draw do
   match '/:survey_code/:response_set_code', :to      => 'surveyor#show', :as   => 'view_my_survey', :via    => :get
   match '/:survey_code/:response_set_code/take', :to => 'surveyor#edit', :as   => 'edit_my_survey', :via    => :get
   match '/:survey_code/:response_set_code', :to      => 'surveyor#update', :as => 'update_my_survey', :via  => :put
+  match '/:survey_code/:response_set_code/:question_id', :to => 'surveyor#delete_response', :as => 'delete_response', :via  => :delete
 end

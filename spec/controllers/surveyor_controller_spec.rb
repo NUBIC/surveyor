@@ -249,6 +249,48 @@ describe SurveyorController do
     end
   end
 
+  context "#delete_response" do
+    let(:survey_section) { FactoryGirl.create :survey_section, :survey => survey }
+    let(:question)       { FactoryGirl.create :question, :survey_section => survey_section }
+    let(:answer)         { FactoryGirl.create :answer }
+
+
+    it "should set response_set" do
+      delete :delete_response, :survey_code => survey.access_code, :response_set_code => "pdq", :question_id => question.id
+      assigns(:response_set).should eql response_set
+    end
+
+    context "with reponses" do
+      before :each do
+        response_set.responses.create :question_id => question.id, :answer_id => answer.id
+      end
+
+      it "should delete responses only for this response_set" do
+        expect do
+          delete :delete_response, :survey_code => survey.access_code, :response_set_code => "pdq", :question_id => question.id, :format => :js
+        end.to change{ response_set.responses.reload.length }.by(-1)
+      end
+
+      it "should return json" do
+        delete :delete_response, :survey_code => survey.access_code, :response_set_code => "pdq", :question_id => question.id, :format => :js
+        result = JSON.parse(response.body)
+        puts result.inspect
+        result["question_id"].should eql question.id.to_s
+        result["text"].should be_present
+      end
+    end
+
+    context "without responses" do
+      it "should not delete any response when the question has no responses" do
+        another_question = FactoryGirl.create :question, :survey_section => survey_section
+        FactoryGirl.create :response, :response_set => response_set, :question_id => another_question.id, :answer_id => answer.id
+        expect do
+          delete :delete_response, :survey_code => survey.access_code, :response_set_code => "pdq", :question_id => question.id, :format => :js
+        end.to change{ Response.count }.by(0)
+      end
+    end
+  end
+
   context "#export" do
     render_views
 
