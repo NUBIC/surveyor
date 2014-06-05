@@ -7,7 +7,7 @@ module Surveyor
     def self.included(base)
       base.send :before_filter, :get_current_user, :only => [:new, :create]
       base.send :before_filter, :determine_if_javascript_is_enabled, :only => [:create, :update]
-      base.send :before_filter, :set_response_set_and_render_context, :only => [:edit, :show]
+      base.send :before_filter, :set_response_set_and_render_context, :only => [:edit, :show, :delete_response]
       base.send :layout, 'surveyor_default'
       base.send :before_filter, :set_locale
     end
@@ -89,6 +89,20 @@ module Surveyor
           else
             render :text => "No response set #{params[:response_set_code]}",
               :status => 404
+          end
+        end
+      end
+    end
+
+    def delete_response
+      question_id = params[:question_id]
+      response = @response_set.responses.where(:question_id => question_id)
+      respond_to do |format|
+        format.js do
+          if response.present? && response.destroy_all
+            render :json => { :question_id => question_id, :text => "#{response.count} response deleted" }
+          else
+            render :json => { :question_id => question_id, :text => "this question didn't have any answer" }
           end
         end
       end
