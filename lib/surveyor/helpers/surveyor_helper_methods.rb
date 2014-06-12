@@ -70,8 +70,10 @@ module Surveyor
       end
 
       def rc_to_as(type_sym)
+        #See: issue https://github.com/justinfrench/formtastic/issues/728
         case type_sym.to_s
-        when /(integer|float|date|time|datetime)/ then :string
+        when /(float|date|time|datetime)/ then :string
+        when "integer"                    then :number
         else type_sym
         end
       end
