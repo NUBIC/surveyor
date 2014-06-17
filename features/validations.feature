@@ -179,3 +179,26 @@ Feature: Survey with validations
     And I fill in "email" with "foo@bar"
     When I press "Click here to finish"
     Then I should see "Please use the correct format."
+
+  @javascript @stop
+  Scenario: Validate textbox with dependent question
+    Given I parse
+    """
+      survey "String question" do
+        section "Profile" do
+          q_name "What's your name", :is_mandatory=>true
+          a_1 "name", :string
+
+          #dependency check is equality
+          q_age "What is your age todd?", :is_mandatory=>true
+          a_1 :integer
+          dependency :rule => "A"
+          condition_A :q_name, "==", {:string_value => "todd", :answer_reference => "1"}
+        end
+      end
+    """
+    When I start the "String Question" survey
+    And I fill in "name" with "todd"
+    When I press "Click here to finish"
+    Then I should see "This question is required"
+
