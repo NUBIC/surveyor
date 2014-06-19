@@ -1,3 +1,3 @@
 module Surveyor
-  VERSION = '1.4.1.n'
+  VERSION = '1.4.1.o'
 end
