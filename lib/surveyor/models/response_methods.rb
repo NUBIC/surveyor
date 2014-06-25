@@ -81,11 +81,12 @@ module Surveyor
       end
 
       def date_format
-        '%Y-%m-%d'
+        #'%Y-%m-%d'
+        '%m-%d-%Y'
       end
 
       def datetime_format
-        '%Y-%m-%d %H:%M:%S'
+        '%m-%d-%Y %H:%M:%S'
       end
 
       def to_formatted_s
@@ -116,8 +117,8 @@ module Surveyor
         return nil if answer.response_class == "answer"
 
         formats = {
-          'datetime' => '%Y-%m-%dT%H:%M%:z',
-          'date' => '%Y-%m-%d',
+          'datetime' => '%m-%d-%YT%H:%M%:z',
+          'date' => '%m-%d-%Y',
           'time' => '%H:%M'
         }
 

@@ -163,7 +163,7 @@ describe Response, '#json_value' do
   end
 
   context "when datetime" do
-    let(:r) {Response.new(:datetime_value => DateTime.strptime('2010-04-08T10:30+00:00', '%Y-%m-%dT%H:%M%z'), :answer => Answer.new(:response_class => 'datetime'))}
+    let(:r) {Response.new(:datetime_value => DateTime.strptime('04-08-2010T10:30+00:00', '%m-%d-%YT%H:%M%z'), :answer => Answer.new(:response_class => 'datetime'))}
     it "should be '2010-04-08T10:30+00:00'" do
       r.json_value.should == '2010-04-08T10:30+00:00'
       r.json_value.to_json.should == '"2010-04-08T10:30+00:00"'
@@ -171,7 +171,7 @@ describe Response, '#json_value' do
   end
 
   context "when date" do
-    let(:r) {Response.new(:datetime_value => DateTime.strptime('2010-04-08', '%Y-%m-%d'), :answer => Answer.new(:response_class => 'date'))}
+    let(:r) {Response.new(:datetime_value => DateTime.strptime('04-08-2010', '%m-%d-%Y'), :answer => Answer.new(:response_class => 'date'))}
     it "should be '2010-04-08'" do
       r.json_value.should == '2010-04-08'
       r.json_value.to_json.should == '"2010-04-08"'
