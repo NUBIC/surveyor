@@ -45,7 +45,7 @@ module Surveyor
           format.html #{render :action => :show}
           format.csv {
             send_data(@response_set.to_csv, :type => 'text/csv; charset=utf-8; header=present',
-              :filename => "#{@response_set.updated_at.strftime('%Y-%m-%d')}_#{@response_set.access_code}.csv")
+              :filename => "#{@response_set.updated_at.strftime('%m-%d-%Y')}_#{@response_set.access_code}.csv")
           }
           format.json
         end
