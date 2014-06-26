@@ -192,8 +192,8 @@ describe Response, 'value methods' do
 
   describe '#date_value=' do
     it 'accepts a parseable date string' do
-      response.date_value = '2010-01-15'
-      response.datetime_value.strftime('%Y %m %d').should == '2010 01 15'
+      response.date_value = '01-15-2010'
+      response.datetime_value.strftime('%m %d %Y').should == '01 15 2010'
     end
 
     it 'clears when given nil' do

@@ -69,8 +69,8 @@ module Surveyor
 
       def date_value=(val)
         self.datetime_value =
-          if val && time = Time.zone.parse(val)
-            time.to_datetime
+          if val && date = Date.strptime(val, '%m/%d/%Y') # Time.zone.parse(val)
+            date
           else
             nil
           end
