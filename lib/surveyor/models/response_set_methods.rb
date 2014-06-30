@@ -102,7 +102,11 @@ module Surveyor
         %w(label image).include?(question.display_type) or !is_unanswered?(question)
       end
       def is_unanswered?(question)
-        self.responses.detect{|r| r.question_id == question.id}.nil?
+        if question.display_type == 'label'
+          false
+        else
+          self.responses.detect{|r| r.question_id == question.id}.nil?
+        end
       end
       def is_group_unanswered?(group)
         group.questions.any?{|question| is_unanswered?(question)}
