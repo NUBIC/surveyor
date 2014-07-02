@@ -96,13 +96,16 @@ module Surveyor
 
     def delete_response
       question_id = params[:question_id]
-      response = @response_set.responses.where(:question_id => question_id)
+      responses = @response_set.responses.where(:question_id => question_id) if @response_set.present?
       respond_to do |format|
         format.js do
-          if response.present? && response.destroy_all
-            render :json => { :question_id => question_id, :text => "#{response.count} response deleted" }
+          if @response_set && responses
+            responses.destroy_all
+            dependencies = @response_set.reload.all_dependencies([question_id])
+            render :json => dependencies
           else
-            render :json => { :question_id => question_id, :text => "this question didn't have any answer" }
+            render :text => "No response set #{params[:response_set_code]}",
+              :status => 404
           end
         end
       end
