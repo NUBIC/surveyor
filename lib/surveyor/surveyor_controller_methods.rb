@@ -101,8 +101,7 @@ module Surveyor
         format.js do
           if @response_set && responses
             responses.destroy_all
-            dependencies = @response_set.reload.all_dependencies([question_id])
-            render :json => dependencies
+            render :json => @response_set.reload.all_dependencies([question_id])
           else
             render :text => "No response set #{params[:response_set_code]}",
               :status => 404
