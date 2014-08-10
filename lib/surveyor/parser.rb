@@ -133,14 +133,15 @@ module Surveyor
       Surveyor::Parser.raise_error("Duplicate references: #{self.context[:duplicate_references].join("; ")}", true) unless self.context[:duplicate_references].empty?
     end
     def resolve_question_correct_answers
-      self.context[:questions_with_correct_answers].each do |question_reference_idenitifer, correct_answer_reference|
+      self.context[:questions_with_correct_answers].each do |question_reference_identifier, correct_answer_reference|
         # Looking up references for quiz answers
-        if self.context[:answer_references][question_reference_idenitifer] &&
-             (a = self.context[:answer_references][question_reference_idenitifer][correct_answer_reference]) &&
+        if self.context[:answer_references][question_reference_identifier] &&
+             (a = self.context[:answer_references][question_reference_identifier][correct_answer_reference]) &&
              a.save
-          self.context[:question_references][question_reference_idenitifer].correct_answer_id = a.id
+          self.context[:question_references][question_reference_identifier].correct_answer_id = a.id
+          self.context[:question_references][question_reference_identifier].save
         else
-          self.context[:bad_references].push "q_#{question_reference_idenitifer}.correct => a_#{correct_answer_reference}"
+          self.context[:bad_references].push "q_#{question_reference_identifier}.correct => a_#{correct_answer_reference}"
         end
       end
     end
