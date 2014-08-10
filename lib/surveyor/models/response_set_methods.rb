@@ -81,7 +81,7 @@ module Surveyor
       end
       def correctness_hash
         { :questions => Survey.where(id: self.survey_id).includes(sections: :questions).first.sections.map(&:questions).flatten.compact.size,
-          :responses => responses.compact.size,
+          :responses => responses.to_a.compact.size,
           :correct => responses.find_all(&:correct?).compact.size
         }
       end
