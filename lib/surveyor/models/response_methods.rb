@@ -77,7 +77,6 @@ module Surveyor
             end
         rescue ArgumentError
           # Invalid Date
-          self.datetime_value = nil
         end
       end
 
