@@ -55,12 +55,14 @@ module Surveyor
       end
 
       def time_value=(val)
-        self.datetime_value =
-          if val && time = Time.zone.parse(val, Date.today)
-            time.to_datetime
-          else
-            nil
-          end
+        begin
+          self.datetime_value =
+            if val && time = Time.zone.parse(val, Date.today)
+              time.to_datetime
+            end
+        rescue ArgumentError
+          # Format Error
+        end
       end
 
       def date_value
