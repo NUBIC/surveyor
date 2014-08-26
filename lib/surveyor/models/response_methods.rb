@@ -68,13 +68,26 @@ module Surveyor
       end
 
       def date_value=(val)
-        self.datetime_value =
-          if val && date = Date.strptime(val, '%m/%d/%Y') # Time.zone.parse(val)
-            date
-          else
-            nil
-          end
+        str = (val =~ /\d{2}\/\d{2}\/\d{4}/) ? '%m/%d/%Y' : '%m-%d-%Y'
+
+        begin
+          self.datetime_value =
+            if val && date = Date.strptime(val, str)
+              date
+            end
+        rescue ArgumentError
+          # Invalid Date
+        end
       end
+
+      #def date_value=(val)
+      #  self.datetime_value =
+      #    if val && date = Time.zone.parse(val)
+      #      date
+      #    else
+      #      nil
+      #    end
+      #end
 
       def time_format
         '%H:%M'
@@ -82,11 +95,11 @@ module Surveyor
 
       def date_format
         #'%Y-%m-%d'
-        '%m-%d-%Y'
+        '%m/%d/%Y'
       end
 
       def datetime_format
-        '%m-%d-%Y %H:%M:%S'
+        '%m/%d/%Y %H:%M:%S'
       end
 
       def to_formatted_s
