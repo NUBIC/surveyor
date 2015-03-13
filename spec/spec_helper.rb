@@ -72,7 +72,7 @@ RSpec.configure do |config|
   # https://github.com/rspec/rspec-core/issues/456
   config.verbose_retry       = true # show retry status in spec process
   retry_count                = ENV['RSPEC_RETRY_COUNT']
-  config.default_retry_count = retry_count.try(:to_i) || 1
+  config.default_retry_count = retry_count.try(:to_i) || 5
   puts "RSpec retry count is #{config.default_retry_count}"
 
   ## Database Cleaner

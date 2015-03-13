@@ -24,7 +24,7 @@ namespace :testbed do
     Tempfile.open('surveyor_Rakefile') do |f|
       f.write("application \"config.time_zone='Rome'\"\n")
       f.flush
-      sh "bundle exec rails new testbed --skip-bundle -m #{f.path}" # don't run bundle install until the Gemfile modifications
+      sh "bundle exec rails new testbed -d mysql --skip-bundle -m #{f.path}" # don't run bundle install until the Gemfile modifications
     end
     chdir('testbed') do
       gem_file_contents = File.read('Gemfile')
@@ -41,7 +41,7 @@ namespace :testbed do
     chdir('testbed') do
       Bundler.with_clean_env do
         sh 'bundle exec rails generate surveyor:install'
-        sh 'bundle exec rake db:migrate db:test:prepare'
+        sh 'bundle exec rake db:migrate:reset db:test:prepare'
       end
     end
   end
