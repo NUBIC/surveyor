@@ -9,7 +9,7 @@ module Surveyor
 
       included do
         # Associations
-        belongs_to :question
+        belongs_to :question, autosave: false
         has_many :responses
         has_many :validations, :dependent => :destroy
         attr_accessible *PermittedParams.new.answer_attributes if defined? ActiveModel::MassAssignmentSecurity
