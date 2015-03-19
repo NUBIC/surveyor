@@ -10,8 +10,7 @@ require 'rspec/rails'
 require 'rspec/autorun'
 
 require 'capybara/rails'
-require 'capybara/rspec'
-require 'capybara/poltergeist'
+
 require 'factories'
 require 'json_spec'
 require 'database_cleaner'
@@ -24,8 +23,6 @@ Dir["./spec/support/**/*.rb"].sort.each {|f| require f}
 # Checks for pending migrations before tests are run.
 # If you are not using ActiveRecord, you can remove this line.
 ActiveRecord::Migration.check_pending! if ::Rails.version >= "4.0" && defined?(ActiveRecord::Migration)
-
-Capybara.javascript_driver = :poltergeist
 
 
 RSpec.configure do |config|
@@ -97,3 +94,8 @@ end
 JsonSpec.configure do
   exclude_keys "id", "created_at", "updated_at", "uuid", "modified_at", "completed_at"
 end
+
+require 'capybara/rspec'
+require 'capybara/poltergeist'
+
+Capybara.javascript_driver = :poltergeist
