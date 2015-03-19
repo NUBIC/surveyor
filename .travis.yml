@@ -5,6 +5,7 @@ rvm:
 env:
   - "RAILS_VERSION=3.2.0"
   - "RAILS_VERSION=4.0.0"
+  - "RAILS_VERSION=4.1.0"
 script:
   - bundle exec rake testbed
   - bundle exec rake spec
