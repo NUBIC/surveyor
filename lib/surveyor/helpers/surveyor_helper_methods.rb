@@ -24,14 +24,10 @@ module Surveyor
         submit_tag(section.translation(I18n.locale)[:title], :name => "section[#{section.id}]")
       end
       def previous_section
-        # use copy in memory instead of making extra db calls
-        prev_index = [(@sections.index(@section) || 0) - 1, 0].max
-        submit_tag(t('surveyor.previous_section').html_safe, :name => "section[#{@sections[prev_index].id}]") unless @sections[0] == @section
+        submit_tag(t('surveyor.previous_section').html_safe, :name => "previous") if @section.previous
       end
       def next_section
-        # use copy in memory instead of making extra db calls
-        next_index = [(@sections.index(@section) || @sections.count) + 1, @sections.count].min
-        @sections.last == @section ? submit_tag(t('surveyor.click_here_to_finish').html_safe, :name => "finish") : submit_tag(t('surveyor.next_section').html_safe, :name => "section[#{@sections[next_index].id}]")
+        @section.next ? submit_tag(t('surveyor.next_section').html_safe, :name => "next") : submit_tag(t('surveyor.click_here_to_finish').html_safe, :name => "finish")
       end
 
       # Questions

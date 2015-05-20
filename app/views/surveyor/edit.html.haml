@@ -6,6 +6,7 @@
   = semantic_form_for(@response_set, :as => :r, :url => surveyor.update_my_survey_path, :html => {:method => :put, :id => "survey_form", :class => @survey.custom_class}) do |f|
 
     = hidden_field_tag :surveyor_javascript_enabled, false
+    = hidden_field_tag :section, @section.id
 
     = render 'partials/section_menu' # unless @sections.size < 3
     .survey_title= @survey.translation(I18n.locale)[:title]
