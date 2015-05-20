@@ -88,6 +88,12 @@ module Surveyor
       def mandatory_questions_complete?
         progress_hash[:triggered_mandatory] == progress_hash[:triggered_mandatory_completed]
       end
+      def mandatory_questions_complete_in_section?(section)
+        qs = Survey.where(id: self.survey_id).includes(sections: :questions).first.sections.find(section).questions
+        ds = dependencies(qs.map(&:id))
+        triggered = qs - ds.select{|d| !d.is_met?(self)}.map(&:question)
+        triggered.select{|q| q.mandatory? and !is_answered?(q)}.compact.empty?
+      end
       def progress_hash
         qs = Survey.where(id: self.survey_id).includes(sections: :questions).first.sections.map(&:questions).flatten
         ds = dependencies(qs.map(&:id))
@@ -102,7 +108,7 @@ module Surveyor
         %w(label image).include?(question.display_type) or !is_unanswered?(question)
       end
       def is_unanswered?(question)
-        self.responses.detect{|r| r.question_id == question.id}.nil?
+        self.responses.where(question_id: question.id).empty?
       end
       def is_group_unanswered?(group)
         group.questions.any?{|question| is_unanswered?(question)}
