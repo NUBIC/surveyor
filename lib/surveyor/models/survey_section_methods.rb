@@ -5,6 +5,8 @@ module Surveyor
       include ActiveModel::Validations
       include ActiveModel::ForbiddenAttributesProtection
 
+      default_scope order('display_order ASC')
+
       included do
         # Associations
         has_many :questions, :dependent => :destroy
@@ -43,6 +45,15 @@ module Surveyor
           (self.survey.translation(locale)[:survey_sections] || {})[self.reference_identifier] || {}
         )
       end
+
+      def next
+        SurveySection.where("survey_id = (?) AND display_order > (?)", survey_id, display_order).first
+      end
+    
+      def previous
+        SurveySection.where("survey_id = (?) AND display_order < (?)", survey_id, display_order).last
+      end
+
     end
   end
 end
