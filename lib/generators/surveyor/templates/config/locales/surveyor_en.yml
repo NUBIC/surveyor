@@ -10,6 +10,7 @@ en:
     unable_to_find_your_responses: "Unable to find your responses to the survey"
     unable_to_update_survey: "Unable to update survey"
     unable_to_find_that_survey: "Unable to find that survey"
+    incomplete_mandatory_questions: "Please complete all mandatory questions"
     survey_started_success: "Survey started successfully"
     click_here_to_finish: "Click here to finish"
     previous_section: "&laquo; Previous section"

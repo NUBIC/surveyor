@@ -71,18 +71,40 @@ module Surveyor
     end
 
     def update
+      enforce_mandatory_questions = true
       question_ids_for_dependencies = (params[:r] || []).map{|k,v| v["question_id"] }.compact.uniq
       saved = load_and_update_response_set_with_retries
+      
+      sections = Survey.find(@response_set.survey_id).sections
+      current_section = section_id_from(params)
+      if current_section
+        target_section = current_section = sections.find(current_section)
+        target_section = current_section.previous || target_section if params[:previous]
+        target_section = current_section.next || target_section if params[:next]
+      elsif params[:finish]
+        target_section = current_section = sections.last
+      else
+        target_section = current_section = sections.first
+      end
 
-      return redirect_with_message(surveyor_finish, :notice, t('surveyor.completed_survey')) if saved && params[:finish]
+      if enforce_mandatory_questions
+        completed = saved && @response_set.mandatory_questions_complete_in_section?(current_section.id)
+        section_id = completed || target_section == current_section.previous ? target_section.id : current_section.id
+      else
+        completed = saved
+        section_id = target_section.id
+      end
+
+      return redirect_with_message(surveyor_finish, :notice, t('surveyor.completed_survey')) if completed && params[:finish]
 
       respond_to do |format|
         format.html do
           if @response_set.nil?
             return redirect_with_message(surveyor.available_surveys_path, :notice, t('surveyor.unable_to_find_your_responses'))
           else
+            flash[:notice] = t('surveyor.incomplete_mandatory_questions') unless completed
             flash[:notice] = t('surveyor.unable_to_update_survey') unless saved
-            redirect_to surveyor.edit_my_survey_path(:anchor => anchor_from(params[:section]), :section => section_id_from(params))
+            redirect_to surveyor.edit_my_survey_path(:anchor => anchor_from(params[:section]), :section => section_id)
           end
         end
         format.js do
