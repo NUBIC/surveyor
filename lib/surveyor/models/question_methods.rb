@@ -3,34 +3,23 @@ require 'surveyor/common'
 module Surveyor
   module Models
     module QuestionMethods
-      def self.included(base)
+      extend ActiveSupport::Concern
+      include ActiveModel::Validations
+      include MustacheContext
+      include ActiveModel::ForbiddenAttributesProtection
+
+      included do
         # Associations
-        base.send :belongs_to, :survey_section
-        base.send :belongs_to, :question_group, :dependent => :destroy
-        base.send :has_many, :answers, :dependent => :destroy # it might not always have answers
-        base.send :has_one, :dependency, :dependent => :destroy
-        base.send :belongs_to, :correct_answer, :class_name => "Answer", :dependent => :destroy
+        belongs_to :survey_section
+        belongs_to :question_group, :dependent => :destroy
+        has_many :answers, :dependent => :destroy # it might not always have answers
+        has_one :dependency, :dependent => :destroy
+        belongs_to :correct_answer, :class_name => "Answer", :dependent => :destroy
+        attr_accessible *PermittedParams.new.question_attributes if defined? ActiveModel::MassAssignmentSecurity
 
-        # Scopes
-        base.send :default_scope, :order => "#{base.quoted_table_name}.display_order ASC"
-
-        # Mustache
-        base.send :include, MustacheContext
-
-        @@validations_already_included ||= nil
-        unless @@validations_already_included
-          # Validations
-          base.send :validates_presence_of, :text, :display_order
-          # this causes issues with building and saving
-          #, :survey_section_id
-          base.send :validates_inclusion_of, :is_mandatory, :in => [true, false]
-
-          @@validations_already_included = true
-
-        end
-
-        # Whitelisting attributes
-        base.send :attr_accessible, :survey_section, :question_group, :survey_section_id, :question_group_id, :text, :short_text, :help_text, :pick, :reference_identifier, :data_export_identifier, :common_namespace, :common_identifier, :display_order, :display_type, :is_mandatory, :display_width, :custom_class, :custom_renderer, :correct_answer_id
+        # Validations
+        validates_presence_of :text, :display_order
+        validates_inclusion_of :is_mandatory, :in => [true, false]
       end
 
       # Instance Methods
@@ -104,7 +93,6 @@ module Surveyor
       end
 
       private
-
 
       def imaged(text)
         self.display_type == "image" && !text.blank? ? ActionController::Base.helpers.image_tag(text) : text

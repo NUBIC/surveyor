@@ -1,4 +1,3 @@
 class Survey < ActiveRecord::Base
-  unloadable
-  include Surveyor::Models::SurveyMethods  
+  include Surveyor::Models::SurveyMethods
 end

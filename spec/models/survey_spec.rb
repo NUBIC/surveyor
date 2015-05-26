@@ -2,7 +2,7 @@
 require File.expand_path(File.dirname(__FILE__) + '/../spec_helper')
 
 describe Survey do
-  let(:survey){ Factory(:survey) }
+  let(:survey){ FactoryGirl.create(:survey) }
 
   context "when creating" do
     it "is invalid without #title" do
@@ -32,49 +32,13 @@ describe Survey do
       imposter.should have(1).error_on(:survey_version)
     end
     it "doesn't adjust #title when" do
-      original = Factory(:survey, :title => "Foo")
+      original = FactoryGirl.create(:survey, :title => "Foo")
       original.save.should be_true
       original.update_attributes(:title => "Foo")
       original.title.should == "Foo"
     end
     it "has #api_id with 36 characters by default" do
       survey.api_id.length.should == 36
-    end
-    it "protects #access_code" do
-      saved_attrs = survey.attributes
-      if defined? ActiveModel::MassAssignmentSecurity::Error
-        expect { survey.update_attributes(:access_code => "NEW") }.to raise_error(ActiveModel::MassAssignmentSecurity::Error)
-      else
-        survey.attributes = {:access_code => "NEW"} # Rails doesn't return false, but this will be checked in the comparison to saved_attrs
-      end
-      survey.attributes.should == saved_attrs
-    end
-    it "protects #api_id" do
-      saved_attrs = survey.attributes
-      if defined? ActiveModel::MassAssignmentSecurity::Error
-        expect { survey.update_attributes(:api_id => "NEW") }.to raise_error(ActiveModel::MassAssignmentSecurity::Error)
-      else
-        survey.attributes = {:api_id => "NEW"} # Rails doesn't return false, but this will be checked in the comparison to saved_attrs
-      end
-      survey.attributes.should == saved_attrs
-    end
-    it "protects #created_at" do
-      saved_attrs = survey.attributes
-      if defined? ActiveModel::MassAssignmentSecurity::Error
-        expect { survey.update_attributes(:created_at => 3.days.ago) }.to raise_error(ActiveModel::MassAssignmentSecurity::Error)
-      else
-        survey.attributes = {:created_at => 3.days.ago} # Rails doesn't return false, but this will be checked in the comparison to saved_attrs
-      end
-      survey.attributes.should == saved_attrs
-    end
-    it "protects #updated_at" do
-      saved_attrs = survey.attributes
-      if defined? ActiveModel::MassAssignmentSecurity::Error
-        expect { survey.update_attributes(:updated_at => 3.hours.ago) }.to raise_error(ActiveModel::MassAssignmentSecurity::Error)
-      else
-        survey.attributes = {:updated_at => 3.hours.ago} # Rails doesn't return false, but this will be checked in the comparison to saved_attrs
-      end
-      survey.attributes.should == saved_attrs
     end
   end
 
@@ -117,13 +81,13 @@ describe Survey do
   end
 
   context "with survey_sections" do
-    let(:s1){ Factory(:survey_section, :survey => survey, :title => "wise", :display_order => 2)}
-    let(:s2){ Factory(:survey_section, :survey => survey, :title => "er", :display_order => 3)}
-    let(:s3){ Factory(:survey_section, :survey => survey, :title => "bud", :display_order => 1)}
-    let(:q1){ Factory(:question, :survey_section => s1, :text => "what is wise?", :display_order => 2)}
-    let(:q2){ Factory(:question, :survey_section => s2, :text => "what is er?", :display_order => 4)}
-    let(:q3){ Factory(:question, :survey_section => s2, :text => "what is mill?", :display_order => 3)}
-    let(:q4){ Factory(:question, :survey_section => s3, :text => "what is bud?", :display_order => 1)}
+    let(:s1){ FactoryGirl.create(:survey_section, :survey => survey, :title => "wise", :display_order => 2)}
+    let(:s2){ FactoryGirl.create(:survey_section, :survey => survey, :title => "er", :display_order => 3)}
+    let(:s3){ FactoryGirl.create(:survey_section, :survey => survey, :title => "bud", :display_order => 1)}
+    let(:q1){ FactoryGirl.create(:question, :survey_section => s1, :text => "what is wise?", :display_order => 2)}
+    let(:q2){ FactoryGirl.create(:question, :survey_section => s2, :text => "what is er?", :display_order => 4)}
+    let(:q3){ FactoryGirl.create(:question, :survey_section => s2, :text => "what is mill?", :display_order => 3)}
+    let(:q4){ FactoryGirl.create(:question, :survey_section => s3, :text => "what is bud?", :display_order => 1)}
     before do
       [s1, s2, s3].each{|s| survey.sections << s }
       s1.questions << q1
@@ -134,12 +98,12 @@ describe Survey do
 
     it{ survey.should have(3).sections}
     it "gets survey_sections in order" do
-      survey.sections.should == [s3, s1, s2]
-      survey.sections.map(&:display_order).should == [1,2,3]
+      survey.sections.order("display_order asc").should == [s3, s1, s2]
+      survey.sections.order("display_order asc").map(&:display_order).should == [1,2,3]
     end
     it "gets survey_sections_with_questions in order" do
-      survey.sections_with_questions.map(&:questions).flatten.should have(4).questions
-      survey.sections_with_questions.map(&:questions).flatten.should == [q4,q1,q3,q2]
+      survey.sections.order("display_order asc").map{|ss| ss.questions.order("display_order asc")}.flatten.should have(4).questions
+      survey.sections.order("display_order asc").map{|ss| ss.questions.order("display_order asc")}.flatten.should == [q4,q1,q3,q2]
     end
     it "deletes child survey_sections when deleted" do
       survey_section_ids = survey.sections.map(&:id)
@@ -149,11 +113,11 @@ describe Survey do
   end
 
   context "serialization" do
-    let(:s1){ Factory(:survey_section, :survey => survey, :title => "wise") }
-    let(:s2){ Factory(:survey_section, :survey => survey, :title => "er") }
-    let(:q1){ Factory(:question, :survey_section => s1, :text => "what is wise?") }
-    let(:q2){ Factory(:question, :survey_section => s2, :text => "what is er?") }
-    let(:q3){ Factory(:question, :survey_section => s2, :text => "what is mill?") }
+    let(:s1){ FactoryGirl.create(:survey_section, :survey => survey, :title => "wise") }
+    let(:s2){ FactoryGirl.create(:survey_section, :survey => survey, :title => "er") }
+    let(:q1){ FactoryGirl.create(:question, :survey_section => s1, :text => "what is wise?") }
+    let(:q2){ FactoryGirl.create(:question, :survey_section => s2, :text => "what is er?") }
+    let(:q3){ FactoryGirl.create(:question, :survey_section => s2, :text => "what is mill?") }
     before do
       [s1, s2].each{|s| survey.sections << s }
       s1.questions << q1
@@ -173,7 +137,7 @@ describe Survey do
   context "with translations" do
     require 'yaml'
     let(:survey_translation){
-      Factory(:survey_translation, :locale => :es, :translation => {
+      FactoryGirl.create(:survey_translation, :locale => :es, :translation => {
         :title => "Un idioma nunca es suficiente"
       }.to_yaml)
     }

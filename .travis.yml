@@ -1,0 +1,18 @@
+language: ruby
+rvm:
+  - 2.0.0
+  - 2.1.1
+env:
+  - "RAILS_VERSION=3.2.0"
+  - "RAILS_VERSION=4.0.0"
+script:
+  - bundle exec rake testbed
+  - bundle exec rake spec
+notifications:
+  email:
+    recipients:
+      - yoon@northwestern.edu
+      - j-dzak@northwestern.edu
+      - frank.lockom@northwestern.edu
+    on_success: change # [always|never|change] # default: change
+    on_failure: always # [always|never|change] # default: always

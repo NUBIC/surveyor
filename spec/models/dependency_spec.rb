@@ -2,7 +2,7 @@ require File.expand_path(File.dirname(__FILE__) + '/../spec_helper')
 
 describe Dependency do
   before(:each) do
-    @dependency = Factory(:dependency)
+    @dependency = FactoryGirl.create(:dependency)
   end
 
   it "should be valid" do
@@ -43,17 +43,6 @@ describe Dependency do
     @dependency.rule = "a and b"
     @dependency.should have(1).error_on(:rule)
   end
-  it "should protect timestamps" do
-    saved_attrs = @dependency.attributes
-    if defined? ActiveModel::MassAssignmentSecurity::Error
-      lambda {@dependency.update_attributes(:created_at => 3.days.ago, :updated_at => 3.hours.ago)}.should raise_error(ActiveModel::MassAssignmentSecurity::Error)
-    else
-      @dependency.attributes = {:created_at => 3.days.ago, :updated_at => 3.hours.ago} # automatically protected by Rails
-    end
-    @dependency.attributes.should == saved_attrs
-  end
-
-  
 end
 
 describe Dependency, "when evaluating dependency conditions of a question in a response set" do
@@ -68,10 +57,10 @@ describe Dependency, "when evaluating dependency conditions of a question in a r
     @dep_c2 = mock_model(DependencyCondition, :id => 2, :rule_key => "B", :to_hash => {:B => false})
     @dep_c3 = mock_model(DependencyCondition, :id => 3, :rule_key => "C", :to_hash => {:C => true})
 
-    @dep.stub!(:dependency_conditions).and_return([@dep_c])
-    @dep2.stub!(:dependency_conditions).and_return([@dep_c, @dep_c2])
-    @dep3.stub!(:dependency_conditions).and_return([@dep_c, @dep_c2])
-    @dep4.stub!(:dependency_conditions).and_return([@dep_c, @dep_c2, @dep_c3])
+    @dep.stub(:dependency_conditions).and_return([@dep_c])
+    @dep2.stub(:dependency_conditions).and_return([@dep_c, @dep_c2])
+    @dep3.stub(:dependency_conditions).and_return([@dep_c, @dep_c2])
+    @dep4.stub(:dependency_conditions).and_return([@dep_c, @dep_c2, @dep_c3])
   end
 
   it "knows if the dependencies are met" do
@@ -91,9 +80,9 @@ end
 describe Dependency, "with conditions" do
   it "should destroy conditions when destroyed" do
     @dependency = Dependency.new(:rule => "A and B and C", :question_id => 1)
-    Factory(:dependency_condition, :dependency => @dependency, :rule_key => "A")
-    Factory(:dependency_condition, :dependency => @dependency, :rule_key => "B")
-    Factory(:dependency_condition, :dependency => @dependency, :rule_key => "C")
+    FactoryGirl.create(:dependency_condition, :dependency => @dependency, :rule_key => "A")
+    FactoryGirl.create(:dependency_condition, :dependency => @dependency, :rule_key => "B")
+    FactoryGirl.create(:dependency_condition, :dependency => @dependency, :rule_key => "C")
     dc_ids = @dependency.dependency_conditions.map(&:id)
     @dependency.destroy
     dc_ids.each{|id| DependencyCondition.find_by_id(id).should == nil}

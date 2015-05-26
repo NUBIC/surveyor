@@ -1,26 +1,18 @@
 module Surveyor
   module Models
     module SurveySectionMethods
-      def self.included(base)
+      extend ActiveSupport::Concern
+      include ActiveModel::Validations
+      include ActiveModel::ForbiddenAttributesProtection
+
+      included do
         # Associations
-        base.send :has_many, :questions, :dependent => :destroy
-        base.send :belongs_to, :survey
+        has_many :questions, :dependent => :destroy
+        belongs_to :survey
+        attr_accessible *PermittedParams.new.survey_section_attributes if defined? ActiveModel::MassAssignmentSecurity
 
-        # Scopes
-        base.send :scope, :with_includes, { :include => {:questions => [:answers, :question_group, {:dependency => :dependency_conditions}]}}
-
-        @@validations_already_included ||= nil
-        unless @@validations_already_included
-          # Validations
-          base.send :validates_presence_of, :title, :display_order
-          # this causes issues with building and saving
-          #, :survey
-
-          @@validations_already_included = true
-        end
-
-        # Whitelisting attributes
-        base.send :attr_accessible, :survey, :survey_id, :title, :description, :reference_identifier, :data_export_identifier, :common_namespace, :common_identifier, :display_order, :custom_class
+        # Validations
+        validates_presence_of :title, :display_order
       end
 
       # Instance Methods

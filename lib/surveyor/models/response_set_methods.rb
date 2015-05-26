@@ -1,41 +1,33 @@
-require 'rabl'
-
 module Surveyor
   module Models
     module ResponseSetMethods
-      def self.included(base)
+      extend ActiveSupport::Concern
+      include ActiveModel::Validations
+      include ActiveModel::ForbiddenAttributesProtection
+
+      included do
         # Associations
-        base.send :belongs_to, :survey
-        base.send :belongs_to, :user
-        base.send :has_many, :responses, :order => "#{Response.quoted_table_name}.created_at ASC", :dependent => :destroy
-        base.send :accepts_nested_attributes_for, :responses, :allow_destroy => true
+        belongs_to :survey
+        belongs_to :user
+        has_many :responses, :dependent => :destroy
+        accepts_nested_attributes_for :responses, :allow_destroy => true
+        attr_accessible *PermittedParams.new.response_set_attributes if defined? ActiveModel::MassAssignmentSecurity
 
-        @@validations_already_included ||= nil
-        unless @@validations_already_included
-          # Validations
-          base.send :validates_presence_of, :survey_id
-          base.send :validates_associated, :responses
-          base.send :validates_uniqueness_of, :access_code
+        # Validations
+        validates_presence_of :survey_id
+        validates_associated :responses
+        validates_uniqueness_of :access_code
 
-          @@validations_already_included = true
-        end
+        # Derived attributes
+        before_create :ensure_start_timestamp
+        before_create :ensure_identifiers
+      end
 
-        # Attributes
-        base.send :attr_protected, :completed_at
-
-        # Whitelisting attributes
-        base.send :attr_accessible, :survey, :responses_attributes, :user_id, :survey_id
-
-        base.send :before_create, :ensure_start_timestamp
-        base.send :before_create, :ensure_identifiers
-
-        # Class methods
-        base.instance_eval do
-          def has_blank_value?(hash)
-            return true if hash["answer_id"].blank?
-            return false if (q = Question.find_by_id(hash["question_id"])) and q.pick == "one"
-            hash.any?{|k,v| v.is_a?(Array) ? v.all?{|x| x.to_s.blank?} : v.to_s.blank?}
-          end
+      module ClassMethods
+        def has_blank_value?(hash)
+          return true if hash["answer_id"].blank?
+          return false if (q = Question.find_by_id(hash["question_id"])) and q.pick == "one"
+          hash.any?{|k,v| v.is_a?(Array) ? v.all?{|x| x.to_s.blank?} : v.to_s.blank?}
         end
       end
 
@@ -49,24 +41,26 @@ module Surveyor
       end
 
       def to_csv(access_code = false, print_header = true)
-        qcols = Question.content_columns.map(&:name) - %w(created_at updated_at)
-        acols = Answer.content_columns.map(&:name) - %w(created_at updated_at)
-        rcols = Response.content_columns.map(&:name)
         result = Surveyor::Common.csv_impl.generate do |csv|
           if print_header
             csv << (access_code ? ["response set access code"] : []) +
-              qcols.map{|qcol| "question.#{qcol}"} +
-              acols.map{|acol| "answer.#{acol}"} +
-              rcols.map{|rcol| "response.#{rcol}"}
+              csv_question_columns.map{|qcol| "question.#{qcol}"} +
+              csv_answer_columns.map{|acol| "answer.#{acol}"} +
+              csv_response_columns.map{|rcol| "response.#{rcol}"}
           end
           responses.each do |response|
             csv << (access_code ? [self.access_code] : []) +
-              qcols.map{|qcol| response.question.send(qcol)} +
-              acols.map{|acol| response.answer.send(acol)} +
-              rcols.map{|rcol| response.send(rcol)}
+              csv_question_columns.map{|qcol| response.question.send(qcol)} +
+              csv_answer_columns.map{|acol| response.answer.send(acol)} +
+              csv_response_columns.map{|rcol| response.send(rcol)}
           end
         end
         result
+      end
+      %w(question answer response).each do |model|
+        define_method "csv_#{model}_columns" do
+          model.capitalize.constantize.content_columns.map(&:name) - (model == "response" ? [] : %w(created_at updated_at))
+        end
       end
 
       def as_json(options = nil)
@@ -86,7 +80,7 @@ module Surveyor
         responses.all?(&:correct?)
       end
       def correctness_hash
-        { :questions => survey.sections_with_questions.map(&:questions).flatten.compact.size,
+        { :questions => Survey.where(id: self.survey_id).includes(sections: :questions).first.sections.map(&:questions).flatten.compact.size,
           :responses => responses.compact.size,
           :correct => responses.find_all(&:correct?).compact.size
         }
@@ -95,7 +89,7 @@ module Surveyor
         progress_hash[:triggered_mandatory] == progress_hash[:triggered_mandatory_completed]
       end
       def progress_hash
-        qs = survey.sections_with_questions.map(&:questions).flatten
+        qs = Survey.where(id: self.survey_id).includes(sections: :questions).first.sections.map(&:questions).flatten
         ds = dependencies(qs.map(&:id))
         triggered = qs - ds.select{|d| !d.is_met?(self)}.map(&:question)
         { :questions => qs.compact.size,
@@ -183,8 +177,7 @@ module Surveyor
 
       def dependencies(question_ids = nil)
         question_ids = survey.sections.map(&:questions).flatten.map(&:id) if responses.blank? and question_ids.blank?
-        deps = Dependency.all(:include => :dependency_conditions,
-          :conditions => {:dependency_conditions => {:question_id => question_ids || responses.map(&:question_id)}})
+        deps = Dependency.includes(:dependency_conditions).where({:dependency_conditions => {:question_id => question_ids || responses.map(&:question_id)}})
         # this is a work around for a bug in active_record in rails 2.3 which incorrectly eager-loads associatins when a
         # condition clause includes an association limiter
         deps.each{|d| d.dependency_conditions.reload}

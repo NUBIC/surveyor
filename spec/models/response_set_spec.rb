@@ -1,10 +1,10 @@
 require File.expand_path(File.dirname(__FILE__) + '/../spec_helper')
 
 describe ResponseSet do
-  let(:response_set) { Factory(:response_set) }
+  let(:response_set) { FactoryGirl.create(:response_set) }
 
   before(:each) do
-    @response_set = Factory(:response_set)
+    @response_set = FactoryGirl.create(:response_set)
     @radio_response_attributes = HashWithIndifferentAccess.new({"1"=>{"question_id"=>"1", "answer_id"=>"1", "string_value"=>"XXL"}, "2"=>{"question_id"=>"2", "answer_id"=>"6"}, "3"=>{"question_id"=>"3"}})
     @checkbox_response_attributes = HashWithIndifferentAccess.new({"1"=>{"question_id"=>"9", "answer_id"=>"11"}, "2"=>{"question_id"=>"9", "answer_id"=>"12"}})
     @other_response_attributes = HashWithIndifferentAccess.new({"6"=>{"question_id"=>"6", "answer_id" => "3", "string_value"=>""}, "7"=>{"question_id"=>"7", "answer_id" => "4", "text_value"=>"Brian is tired"}, "5"=>{"question_id"=>"5", "answer_id" => "5", "string_value"=>""}})
@@ -15,27 +15,9 @@ describe ResponseSet do
     @response_set.access_code.length.should == 10
   end
 
-  it "should protect api_id, timestamps, access_code, started_at, completed_at" do
-    saved_attrs = @response_set.attributes
-    if defined? ActiveModel::MassAssignmentSecurity::Error
-      lambda {@response_set.update_attributes(:created_at => 3.days.ago, :updated_at => 3.hours.ago)}.should raise_error(ActiveModel::MassAssignmentSecurity::Error)
-      lambda {@response_set.update_attributes(:api_id => "NEW")}.should raise_error(ActiveModel::MassAssignmentSecurity::Error)
-      lambda {@response_set.update_attributes(:access_code => "AND")}.should raise_error(ActiveModel::MassAssignmentSecurity::Error)
-      lambda {@response_set.update_attributes(:started_at => 10.days.ago)}.should raise_error(ActiveModel::MassAssignmentSecurity::Error)
-      lambda {@response_set.update_attributes(:completed_at => 2.hours.ago)}.should raise_error(ActiveModel::MassAssignmentSecurity::Error)
-    else
-      @response_set.attributes = {:created_at => 3.days.ago, :updated_at => 3.hours.ago} # automatically protected by Rails
-      @response_set.attributes = {:api_id => "NEW"} # Rails doesn't return false, but this will be checked in the comparison to saved_attrs
-      @response_set.attributes = {:access_code => "AND"}
-      @response_set.attributes = {:started_at => 10.days.ago}
-      @response_set.attributes = {:completed_at => 2.hours.ago}
-    end
-    @response_set.attributes.should == saved_attrs
-  end
-
   describe '#access_code' do
-    let!(:rs1) { Factory(:response_set).tap { |rs| rs.update_attribute(:access_code, 'one') } }
-    let!(:rs2) { Factory(:response_set).tap { |rs| rs.update_attribute(:access_code, 'two') } }
+    let!(:rs1) { FactoryGirl.create(:response_set).tap { |rs| rs.update_attribute(:access_code, 'one') } }
+    let!(:rs2) { FactoryGirl.create(:response_set).tap { |rs| rs.update_attribute(:access_code, 'two') } }
 
     # Regression test for #263
     it 'accepts an access code in the constructor' do
@@ -65,20 +47,8 @@ describe ResponseSet do
     @response_set.should be_complete
   end
 
-  it "does not allow completion through mass assignment" do
-    @response_set.completed_at.should be_nil
-    # Rails 3.2 throws an ActiveModel::MassAssignmentSecurity::Error error on response_set.update_attribues
-    # Using begin..rescue..end for Rails 3.1 and 3.0 backwards compatibility
-    # lambda { @response_set.update_attributes(:completed_at => Time.now) }.should raise_error(ActiveModel::MassAssignmentSecurity::Error)
-    begin
-      @response_set.update_attributes(:completed_at => Time.now)
-    rescue
-    end
-    @response_set.completed_at.should be_nil
-  end
-
   it 'saves its responses' do
-    new_set = ResponseSet.new(:survey => Factory(:survey))
+    new_set = ResponseSet.new(:survey => FactoryGirl.create(:survey))
     new_set.responses.build(:question_id => 1, :answer_id => 1, :string_value => 'XXL')
     new_set.save!
 
@@ -237,25 +207,25 @@ end
 
 describe ResponseSet, "with dependencies" do
   before(:each) do
-    @section = Factory(:survey_section)
+    @section = FactoryGirl.create(:survey_section)
     # Questions
-    @do_you_like_pie = Factory(:question, :text => "Do you like pie?", :survey_section => @section)
-    @what_flavor = Factory(:question, :text => "What flavor?", :survey_section => @section)
-    @what_bakery = Factory(:question, :text => "What bakery?", :survey_section => @section)
+    @do_you_like_pie = FactoryGirl.create(:question, :text => "Do you like pie?", :survey_section => @section)
+    @what_flavor = FactoryGirl.create(:question, :text => "What flavor?", :survey_section => @section)
+    @what_bakery = FactoryGirl.create(:question, :text => "What bakery?", :survey_section => @section)
     # Answers
-    @do_you_like_pie.answers << Factory(:answer, :text => "yes", :question_id => @do_you_like_pie.id)
-    @do_you_like_pie.answers << Factory(:answer, :text => "no", :question_id => @do_you_like_pie.id)
-    @what_flavor.answers << Factory(:answer, :response_class => :string, :question_id => @what_flavor.id)
-    @what_bakery.answers << Factory(:answer, :response_class => :string, :question_id => @what_bakery.id)
+    @do_you_like_pie.answers << FactoryGirl.create(:answer, :text => "yes", :question_id => @do_you_like_pie.id)
+    @do_you_like_pie.answers << FactoryGirl.create(:answer, :text => "no", :question_id => @do_you_like_pie.id)
+    @what_flavor.answers << FactoryGirl.create(:answer, :response_class => :string, :question_id => @what_flavor.id)
+    @what_bakery.answers << FactoryGirl.create(:answer, :response_class => :string, :question_id => @what_bakery.id)
     # Dependency
-    @what_flavor_dep = Factory(:dependency, :rule => "A", :question_id => @what_flavor.id)
-    Factory(:dependency_condition, :rule_key => "A", :question_id => @do_you_like_pie.id, :operator => "==", :answer_id => @do_you_like_pie.answers.first.id, :dependency_id => @what_flavor_dep.id)
-    @what_bakery_dep = Factory(:dependency, :rule => "B", :question_id => @what_bakery.id)
-    Factory(:dependency_condition, :rule_key => "B", :question_id => @do_you_like_pie.id, :operator => "==", :answer_id => @do_you_like_pie.answers.first.id, :dependency_id => @what_bakery_dep.id)
+    @what_flavor_dep = FactoryGirl.create(:dependency, :rule => "A", :question_id => @what_flavor.id)
+    FactoryGirl.create(:dependency_condition, :rule_key => "A", :question_id => @do_you_like_pie.id, :operator => "==", :answer_id => @do_you_like_pie.answers.first.id, :dependency_id => @what_flavor_dep.id)
+    @what_bakery_dep = FactoryGirl.create(:dependency, :rule => "B", :question_id => @what_bakery.id)
+    FactoryGirl.create(:dependency_condition, :rule_key => "B", :question_id => @do_you_like_pie.id, :operator => "==", :answer_id => @do_you_like_pie.answers.first.id, :dependency_id => @what_bakery_dep.id)
     # Responses
-    @response_set = Factory(:response_set)
-    @response_set.responses << Factory(:response, :question_id => @do_you_like_pie.id, :answer_id => @do_you_like_pie.answers.first.id, :response_set_id => @response_set.id)
-    @response_set.responses << Factory(:response, :string_value => "pecan pie", :question_id => @what_flavor.id, :answer_id => @what_flavor.answers.first.id, :response_set_id => @response_set.id)
+    @response_set = FactoryGirl.create(:response_set)
+    @response_set.responses << FactoryGirl.create(:response, :question_id => @do_you_like_pie.id, :answer_id => @do_you_like_pie.answers.first.id, :response_set_id => @response_set.id)
+    @response_set.responses << FactoryGirl.create(:response, :string_value => "pecan pie", :question_id => @what_flavor.id, :answer_id => @what_flavor.answers.first.id, :response_set_id => @response_set.id)
   end
 
   it "should list unanswered dependencies to show at the top of the next page (javascript turned off)" do
@@ -266,41 +236,41 @@ describe ResponseSet, "with dependencies" do
   end
   it "should list group as dependency" do
     # Question Group
-    crust_group = Factory(:question_group, :text => "Favorite Crusts")
+    crust_group = FactoryGirl.create(:question_group, :text => "Favorite Crusts")
 
     # Question
-    what_crust = Factory(:question, :text => "What is your favorite curst type?", :survey_section => @section)
+    what_crust = FactoryGirl.create(:question, :text => "What is your favorite curst type?", :survey_section => @section)
     crust_group.questions << what_crust
 
     # Answers
-    what_crust.answers << Factory(:answer, :response_class => :string, :question_id => what_crust.id)
+    what_crust.answers << FactoryGirl.create(:answer, :response_class => :string, :question_id => what_crust.id)
 
     # Dependency
-    crust_group_dep = Factory(:dependency, :rule => "C", :question_group_id => crust_group.id, :question => nil)
-    Factory(:dependency_condition, :rule_key => "C", :question_id => @do_you_like_pie.id, :operator => "==", :answer_id => @do_you_like_pie.answers.first.id, :dependency_id => crust_group_dep.id)
+    crust_group_dep = FactoryGirl.create(:dependency, :rule => "C", :question_group_id => crust_group.id, :question => nil)
+    FactoryGirl.create(:dependency_condition, :rule_key => "C", :question_id => @do_you_like_pie.id, :operator => "==", :answer_id => @do_you_like_pie.answers.first.id, :dependency_id => crust_group_dep.id)
 
     @response_set.unanswered_dependencies.should == [@what_bakery, crust_group]
   end
 end
 describe ResponseSet, "dependency_conditions" do
   before do
-    @section = Factory(:survey_section)
+    @section = FactoryGirl.create(:survey_section)
     # Questions
-    @like_pie = Factory(:question, :text => "Do you like pie?", :survey_section => @section)
-    @like_jam = Factory(:question, :text => "Do you like jam?", :survey_section => @section)
-    @what_is_wrong_with_you = Factory(:question, :text => "What's wrong with you?", :survey_section => @section)
+    @like_pie = FactoryGirl.create(:question, :text => "Do you like pie?", :survey_section => @section)
+    @like_jam = FactoryGirl.create(:question, :text => "Do you like jam?", :survey_section => @section)
+    @what_is_wrong_with_you = FactoryGirl.create(:question, :text => "What's wrong with you?", :survey_section => @section)
     # Answers
-    @like_pie.answers << Factory(:answer, :text => "yes", :question_id => @like_pie.id)
-    @like_pie.answers << Factory(:answer, :text => "no", :question_id => @like_pie.id)
-    @like_jam.answers << Factory(:answer, :text => "yes", :question_id => @like_jam.id)
-    @like_jam.answers << Factory(:answer, :text => "no", :question_id => @like_jam.id)
+    @like_pie.answers << FactoryGirl.create(:answer, :text => "yes", :question_id => @like_pie.id)
+    @like_pie.answers << FactoryGirl.create(:answer, :text => "no", :question_id => @like_pie.id)
+    @like_jam.answers << FactoryGirl.create(:answer, :text => "yes", :question_id => @like_jam.id)
+    @like_jam.answers << FactoryGirl.create(:answer, :text => "no", :question_id => @like_jam.id)
     # Dependency
-    @what_is_wrong_with_you = Factory(:dependency, :rule => "A or B", :question_id => @what_is_wrong_with_you.id)
-    @dep_a = Factory(:dependency_condition, :rule_key => "A", :question_id => @like_pie.id, :operator => "==", :answer_id => @like_pie.answers.first.id, :dependency_id => @what_is_wrong_with_you.id)
-    @dep_b = Factory(:dependency_condition, :rule_key => "B", :question_id => @like_jam.id, :operator => "==", :answer_id => @like_jam.answers.first.id, :dependency_id => @what_is_wrong_with_you.id)
+    @what_is_wrong_with_you = FactoryGirl.create(:dependency, :rule => "A or B", :question_id => @what_is_wrong_with_you.id)
+    @dep_a = FactoryGirl.create(:dependency_condition, :rule_key => "A", :question_id => @like_pie.id, :operator => "==", :answer_id => @like_pie.answers.first.id, :dependency_id => @what_is_wrong_with_you.id)
+    @dep_b = FactoryGirl.create(:dependency_condition, :rule_key => "B", :question_id => @like_jam.id, :operator => "==", :answer_id => @like_jam.answers.first.id, :dependency_id => @what_is_wrong_with_you.id)
     # Responses
-    @response_set = Factory(:response_set)
-    @response_set.responses << Factory(:response, :question_id => @like_pie.id, :answer_id => @like_pie.answers.last.id, :response_set_id => @response_set.id)
+    @response_set = FactoryGirl.create(:response_set)
+    @response_set.responses << FactoryGirl.create(:response, :question_id => @like_pie.id, :answer_id => @like_pie.answers.last.id, :response_set_id => @response_set.id)
   end
   it "should list all dependencies for answered questions" do
     dependency_conditions = @response_set.send(:dependencies).last.dependency_conditions
@@ -311,15 +281,15 @@ describe ResponseSet, "dependency_conditions" do
   end
   it "should list all dependencies for passed question_id" do
     # Questions
-    like_ice_cream = Factory(:question, :text => "Do you like ice_cream?", :survey_section => @section)
-    what_flavor = Factory(:question, :text => "What flavor?", :survey_section => @section)
+    like_ice_cream = FactoryGirl.create(:question, :text => "Do you like ice_cream?", :survey_section => @section)
+    what_flavor = FactoryGirl.create(:question, :text => "What flavor?", :survey_section => @section)
     # Answers
-    like_ice_cream.answers << Factory(:answer, :text => "yes", :question_id => like_ice_cream.id)
-    like_ice_cream.answers << Factory(:answer, :text => "no", :question_id => like_ice_cream.id)
-    what_flavor.answers << Factory(:answer, :response_class => :string, :question_id => what_flavor.id)
+    like_ice_cream.answers << FactoryGirl.create(:answer, :text => "yes", :question_id => like_ice_cream.id)
+    like_ice_cream.answers << FactoryGirl.create(:answer, :text => "no", :question_id => like_ice_cream.id)
+    what_flavor.answers << FactoryGirl.create(:answer, :response_class => :string, :question_id => what_flavor.id)
     # Dependency
-    flavor_dependency = Factory(:dependency, :rule => "C", :question_id => what_flavor.id)
-    flavor_dependency_condition = Factory(:dependency_condition, :rule_key => "A", :question_id => like_ice_cream.id, :operator => "==",
+    flavor_dependency = FactoryGirl.create(:dependency, :rule => "C", :question_id => what_flavor.id)
+    flavor_dependency_condition = FactoryGirl.create(:dependency_condition, :rule_key => "A", :question_id => like_ice_cream.id, :operator => "==",
                                           :answer_id => like_ice_cream.answers.first.id, :dependency_id => flavor_dependency.id)
     # Responses
     dependency_conditions = @response_set.send(:dependencies, like_ice_cream.id).should == [flavor_dependency]
@@ -328,17 +298,17 @@ end
 
 describe ResponseSet, "as a quiz" do
   before(:each) do
-    @survey = Factory(:survey)
-    @section = Factory(:survey_section, :survey => @survey)
-    @response_set = Factory(:response_set, :survey => @survey)
+    @survey = FactoryGirl.create(:survey)
+    @section = FactoryGirl.create(:survey_section, :survey => @survey)
+    @response_set = FactoryGirl.create(:response_set, :survey => @survey)
   end
   def generate_responses(count, quiz = nil, correct = nil)
     count.times do |i|
-      q = Factory(:question, :survey_section => @section)
-      a = Factory(:answer, :question => q, :response_class => "answer")
-      x = Factory(:answer, :question => q, :response_class => "answer")
+      q = FactoryGirl.create(:question, :survey_section => @section)
+      a = FactoryGirl.create(:answer, :question => q, :response_class => "answer")
+      x = FactoryGirl.create(:answer, :question => q, :response_class => "answer")
       q.correct_answer = (quiz == "quiz" ? a : nil)
-      @response_set.responses << Factory(:response, :question => q, :answer => (correct == "correct" ? a : x))
+      @response_set.responses << FactoryGirl.create(:response, :question => q, :answer => (correct == "correct" ? a : x))
     end
   end
 
@@ -360,16 +330,16 @@ describe ResponseSet, "as a quiz" do
 end
 describe ResponseSet, "with mandatory questions" do
   before(:each) do
-    @survey = Factory(:survey)
-    @section = Factory(:survey_section, :survey => @survey)
-    @response_set = Factory(:response_set, :survey => @survey)
+    @survey = FactoryGirl.create(:survey)
+    @section = FactoryGirl.create(:survey_section, :survey => @survey)
+    @response_set = FactoryGirl.create(:response_set, :survey => @survey)
   end
   def generate_responses(count, mandatory = nil, responded = nil)
     count.times do |i|
-      q = Factory(:question, :survey_section => @section, :is_mandatory => (mandatory == "mandatory"))
-      a = Factory(:answer, :question => q, :response_class => "answer")
+      q = FactoryGirl.create(:question, :survey_section => @section, :is_mandatory => (mandatory == "mandatory"))
+      a = FactoryGirl.create(:answer, :question => q, :response_class => "answer")
       if responded == "responded"
-        @response_set.responses << Factory(:response, :question => q, :answer => a)
+        @response_set.responses << FactoryGirl.create(:response, :question => q, :answer => a)
       end
     end
   end
@@ -390,31 +360,31 @@ describe ResponseSet, "with mandatory questions" do
   end
   it "should ignore labels and images" do
     generate_responses(3, "mandatory", "responded")
-    Factory(:question, :survey_section => @section, :display_type => "label", :is_mandatory => true)
-    Factory(:question, :survey_section => @section, :display_type => "image", :is_mandatory => true)
+    FactoryGirl.create(:question, :survey_section => @section, :display_type => "label", :is_mandatory => true)
+    FactoryGirl.create(:question, :survey_section => @section, :display_type => "image", :is_mandatory => true)
     @response_set.mandatory_questions_complete?.should be_true
     @response_set.progress_hash.should == {:questions => 5, :triggered => 5, :triggered_mandatory => 5, :triggered_mandatory_completed => 5}
   end
 end
 describe ResponseSet, "with mandatory, dependent questions" do
   before(:each) do
-    @survey = Factory(:survey)
-    @section = Factory(:survey_section, :survey => @survey)
-    @response_set = Factory(:response_set, :survey => @survey)
+    @survey = FactoryGirl.create(:survey)
+    @section = FactoryGirl.create(:survey_section, :survey => @survey)
+    @response_set = FactoryGirl.create(:response_set, :survey => @survey)
   end
   def generate_responses(count, mandatory = nil, dependent = nil, triggered = nil)
-    dq = Factory(:question, :survey_section => @section, :is_mandatory => (mandatory == "mandatory"))
-    da = Factory(:answer, :question => dq, :response_class => "answer")
-    dx = Factory(:answer, :question => dq, :response_class => "answer")
+    dq = FactoryGirl.create(:question, :survey_section => @section, :is_mandatory => (mandatory == "mandatory"))
+    da = FactoryGirl.create(:answer, :question => dq, :response_class => "answer")
+    dx = FactoryGirl.create(:answer, :question => dq, :response_class => "answer")
     count.times do |i|
-      q = Factory(:question, :survey_section => @section, :is_mandatory => (mandatory == "mandatory"))
-      a = Factory(:answer, :question => q, :response_class => "answer")
+      q = FactoryGirl.create(:question, :survey_section => @section, :is_mandatory => (mandatory == "mandatory"))
+      a = FactoryGirl.create(:answer, :question => q, :response_class => "answer")
       if dependent == "dependent"
-        d = Factory(:dependency, :question => q)
-        dc = Factory(:dependency_condition, :dependency => d, :question_id => dq.id, :answer_id => da.id)
+        d = FactoryGirl.create(:dependency, :question => q)
+        dc = FactoryGirl.create(:dependency_condition, :dependency => d, :question_id => dq.id, :answer_id => da.id)
       end
-      @response_set.responses << Factory(:response, :response_set => @response_set, :question => dq, :answer => (triggered == "triggered" ? da : dx))
-      @response_set.responses << Factory(:response, :response_set => @response_set, :question => q, :answer => a)
+      @response_set.responses << FactoryGirl.create(:response, :response_set => @response_set, :question => dq, :answer => (triggered == "triggered" ? da : dx))
+      @response_set.responses << FactoryGirl.create(:response, :response_set => @response_set, :question => q, :answer => a)
     end
   end
   it "should report progress without mandatory questions" do
@@ -430,20 +400,20 @@ describe ResponseSet, "with mandatory, dependent questions" do
 end
 describe ResponseSet, "exporting csv" do
   before(:each) do
-    @section = Factory(:survey_section)
+    @section = FactoryGirl.create(:survey_section)
     # Questions
-    @do_you_like_pie = Factory(:question, :text => "Do you like pie?", :survey_section => @section)
-    @what_flavor = Factory(:question, :text => "What flavor?", :survey_section => @section)
-    @what_bakery = Factory(:question, :text => "What bakery?", :survey_section => @section)
+    @do_you_like_pie = FactoryGirl.create(:question, :text => "Do you like pie?", :survey_section => @section)
+    @what_flavor = FactoryGirl.create(:question, :text => "What flavor?", :survey_section => @section)
+    @what_bakery = FactoryGirl.create(:question, :text => "What bakery?", :survey_section => @section)
     # Answers
-    @do_you_like_pie.answers << Factory(:answer, :text => "yes", :question_id => @do_you_like_pie.id)
-    @do_you_like_pie.answers << Factory(:answer, :text => "no", :question_id => @do_you_like_pie.id)
-    @what_flavor.answers << Factory(:answer, :response_class => :string, :question_id => @what_flavor.id)
-    @what_bakery.answers << Factory(:answer, :response_class => :string, :question_id => @what_bakery.id)
+    @do_you_like_pie.answers << FactoryGirl.create(:answer, :text => "yes", :question_id => @do_you_like_pie.id)
+    @do_you_like_pie.answers << FactoryGirl.create(:answer, :text => "no", :question_id => @do_you_like_pie.id)
+    @what_flavor.answers << FactoryGirl.create(:answer, :response_class => :string, :question_id => @what_flavor.id)
+    @what_bakery.answers << FactoryGirl.create(:answer, :response_class => :string, :question_id => @what_bakery.id)
     # Responses
-    @response_set = Factory(:response_set)
-    @response_set.responses << Factory(:response, :question_id => @do_you_like_pie.id, :answer_id => @do_you_like_pie.answers.first.id, :response_set_id => @response_set.id)
-    @response_set.responses << Factory(:response, :string_value => "pecan pie", :question_id => @what_flavor.id, :answer_id => @what_flavor.answers.first.id, :response_set_id => @response_set.id)
+    @response_set = FactoryGirl.create(:response_set)
+    @response_set.responses << FactoryGirl.create(:response, :question_id => @do_you_like_pie.id, :answer_id => @do_you_like_pie.answers.first.id, :response_set_id => @response_set.id)
+    @response_set.responses << FactoryGirl.create(:response, :string_value => "pecan pie", :question_id => @what_flavor.id, :answer_id => @what_flavor.answers.first.id, :response_set_id => @response_set.id)
   end
   it "should export a string with responses" do
     @response_set.responses.size.should == 2
@@ -457,8 +427,8 @@ end
 
 describe ResponseSet, "#as_json" do
   let(:rs) {
-    Factory(:response_set, :responses => [
-          Factory(:response, :question => Factory(:question), :answer => Factory(:answer), :string_value => '2')])
+    FactoryGirl.create(:response_set, :responses => [
+          FactoryGirl.create(:response, :question => FactoryGirl.create(:question), :answer => FactoryGirl.create(:answer), :string_value => '2')])
   }
 
   let(:js) {rs.as_json}

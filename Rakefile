@@ -1,9 +1,7 @@
 $LOAD_PATH << File.expand_path('../lib', __FILE__)
-
+require 'fileutils'
 require 'bundler/gem_tasks'
 require 'rspec/core/rake_task'
-require 'cucumber/rake/task'
-require 'ci/reporter/rake/rspec'
 
 ###### RSPEC
 
@@ -15,23 +13,6 @@ end
 
 task :default => :spec
 
-###### CUCUMBER
-
-namespace :cucumber do
-  Cucumber::Rake::Task.new(:ok, 'Run features that should pass') do |t|
-    t.profile = 'default'
-  end
-
-  Cucumber::Rake::Task.new(:wip, 'Run features that are being worked on') do |t|
-    t.profile = 'wip'
-  end
-
-  desc 'Run all features'
-  task :all => [:ok, :wip]
-end
-desc 'Alias for cucumber:ok'
-task :cucumber => 'cucumber:ok'
-
 ###### TESTBED
 
 desc 'Set up the rails app that the specs and features use'
@@ -41,14 +22,14 @@ namespace :testbed do
   desc 'Generate a minimal surveyor-using rails app'
   task :generate do
     Tempfile.open('surveyor_Rakefile') do |f|
-      f.write("application \"config.time_zone='Rome'\"");f.flush
+      f.write("application \"config.time_zone='Rome'\"\n")
+      f.flush
       sh "bundle exec rails new testbed --skip-bundle -m #{f.path}" # don't run bundle install until the Gemfile modifications
     end
     chdir('testbed') do
       gem_file_contents = File.read('Gemfile')
       gem_file_contents.sub!(/^(gem 'rails'.*)$/, %Q{# \\1\nplugin_root = File.expand_path('../..', __FILE__)\neval(File.read File.join(plugin_root, 'Gemfile.rails_version'))\ngem 'surveyor', :path => plugin_root})
       File.open('Gemfile', 'w'){|f| f.write(gem_file_contents) }
-
       Bundler.with_clean_env do
         sh 'bundle install' # run bundle install after Gemfile modifications
       end
@@ -81,25 +62,4 @@ namespace :testbed do
       end
     end
   end
-end
-
-###### CI
-
-namespace :ci do
-  task :all => ['rake:testbed', :spec, :cucumber, 'cucumber:wip']
-
-  task :env do
-    ENV['CI_REPORTS'] = 'reports/spec-xml'
-    ENV['SPEC_OPTS'] = "#{ENV['SPEC_OPTS']} --format nested"
-  end
-
-  Cucumber::Rake::Task.new(:cucumber, 'Run features using the CI profile') do |t|
-    t.profile = 'ci'
-  end
-
-  Cucumber::Rake::Task.new('cucumber:wip', 'Run WIP features using the CI profile') do |t|
-    t.profile = 'ci_wip'
-  end
-
-  task :spec => [:env, 'ci:setup:rspecbase', 'rake:spec']
 end
