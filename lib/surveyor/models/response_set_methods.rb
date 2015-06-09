@@ -79,15 +79,20 @@ module Surveyor
       def correct?
         responses.all?(&:correct?)
       end
+
       def correctness_hash
-        { :questions => Survey.where(id: self.survey_id).includes(sections: :questions).first.sections.map(&:questions).flatten.compact.size,
-          :responses => responses.compact.size,
+        surveys_with_questions_sections = Survey.where(id: self.survey_id).includes(sections: :questions)
+        {
+          :questions => surveys_with_questions_sections.first.sections.map(&:questions).flatten.compact.size,
+          :responses => responses.to_a.compact.size,
           :correct => responses.find_all(&:correct?).compact.size
         }
       end
+
       def mandatory_questions_complete?
         progress_hash[:triggered_mandatory] == progress_hash[:triggered_mandatory_completed]
       end
+
       def progress_hash
         qs = Survey.where(id: self.survey_id).includes(sections: :questions).first.sections.map(&:questions).flatten
         ds = dependencies(qs.map(&:id))
@@ -98,12 +103,15 @@ module Surveyor
           :triggered_mandatory_completed => triggered.select{|q| q.mandatory? and is_answered?(q)}.compact.size
         }
       end
+
       def is_answered?(question)
         %w(label image).include?(question.display_type) or !is_unanswered?(question)
       end
+
       def is_unanswered?(question)
         self.responses.detect{|r| r.question_id == question.id}.nil?
       end
+
       def is_group_unanswered?(group)
         group.questions.any?{|question| is_unanswered?(question)}
       end
