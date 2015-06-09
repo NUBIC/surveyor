@@ -148,7 +148,7 @@ describe Question do
     it "#text_for with #display_type == image" do
       question.text = "rails.png"
       question.display_type = :image
-      question.text_for.should =~ /<img alt="Rails" src="\/(images|assets)\/rails\.png" \/>/
+      question.text_for.should =~ /<img src="\/(images|assets)\/rails\.png" alt="Rails" \/>/
     end
     it "#help_text_for"
     it "#text_for preserves strings" do
