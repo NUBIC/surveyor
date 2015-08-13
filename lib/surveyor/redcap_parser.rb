@@ -207,7 +207,6 @@ end
 module SurveyorRedcapParserDependencyConditionMethods
   DependencyCondition.instance_eval do
     attr_accessor :question_reference, :answer_reference, :main_question
-    attr_accessible :question_reference, :answer_reference, :main_question
   end
 end
 

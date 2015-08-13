@@ -1,29 +1,10 @@
-require 'surveyor/helpers/asset_pipeline'
-
 module Surveyor
   module Helpers
     module SurveyorHelperMethods
-      include AssetPipeline
 
       # Layout: stylsheets and javascripts
       def surveyor_includes
-        if asset_pipeline_enabled?
-          stylesheet_link_tag('surveyor_all') + javascript_include_tag('surveyor_all')
-        else
-          stylesheet_link_tag('surveyor/reset',
-                              'surveyor/jquery-ui-1.10.0.custom',
-                              'surveyor/jquery-ui-timepicker-addon',
-                              'surveyor/ui.slider.extras',
-                              'surveyor/results',
-                              'surveyor',
-                              'custom') +
-          javascript_include_tag('surveyor/jquery-1.9.0',
-                                  'surveyor/jquery-ui-1.10.0.custom',
-                                  'surveyor/jquery-ui-timepicker-addon',
-                                  'surveyor/jquery.selectToUISlider',
-                                  'surveyor/jquery.surveyor',
-                                  'surveyor/jquery.maskedinput')
-        end
+        stylesheet_link_tag('surveyor_all') + javascript_include_tag('surveyor_all')
       end
       # Helper for displaying warning/notice/error flash messages
       def flash_messages(types)
@@ -44,11 +25,13 @@ module Surveyor
       end
       def previous_section
         # use copy in memory instead of making extra db calls
-        submit_tag(t('surveyor.previous_section').html_safe, :name => "section[#{@sections[@sections.index(@section)-1].id}]") unless @sections.first == @section
+        prev_index = [(@sections.index(@section) || 0) - 1, 0].max
+        submit_tag(t('surveyor.previous_section').html_safe, :name => "section[#{@sections[prev_index].id}]") unless @sections[0] == @section
       end
       def next_section
         # use copy in memory instead of making extra db calls
-        @sections.last == @section ? submit_tag(t('surveyor.click_here_to_finish').html_safe, :name => "finish") : submit_tag(t('surveyor.next_section').html_safe, :name => "section[#{@sections[@sections.index(@section)+1].id}]")
+        next_index = [(@sections.index(@section) || @sections.count) + 1, @sections.count].min
+        @sections.last == @section ? submit_tag(t('surveyor.click_here_to_finish').html_safe, :name => "finish") : submit_tag(t('surveyor.next_section').html_safe, :name => "section[#{@sections[next_index].id}]")
       end
 
       # Questions

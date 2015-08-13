@@ -3,7 +3,7 @@ require File.expand_path(File.dirname(__FILE__) + '/../spec_helper')
 describe Response, "when saving a response" do
   before(:each) do
     # @response = Response.new(:question_id => 314, :response_set_id => 159, :answer_id => 1)
-    @response = Factory(:response, :question => Factory(:question), :answer => Factory(:answer))
+    @response = FactoryGirl.create(:response, :question => FactoryGirl.create(:question), :answer => FactoryGirl.create(:answer))
   end
 
   it "should be valid" do
@@ -26,33 +26,20 @@ describe Response, "when saving a response" do
   end
 
   it "should be (in)correct if answer_id is (not) equal to question's correct_answer_id" do
-    @answer = Factory(:answer, :response_class => "answer")
-    @question = Factory(:question, :correct_answer => @answer)
-    @response = Factory(:response, :question => @question, :answer => @answer)
+    @answer = FactoryGirl.create(:answer, :response_class => "answer")
+    @question = FactoryGirl.create(:question, :correct_answer => @answer)
+    @response = FactoryGirl.create(:response, :question => @question, :answer => @answer)
     @response.correct?.should be_true
-    @response.answer = Factory(:answer, :response_class => "answer").tap { |a| a.id = 143 }
+    @response.answer = FactoryGirl.create(:answer, :response_class => "answer").tap { |a| a.id = 143 }
     @response.correct?.should be_false
   end
   
   it "should be in order by created_at" do
     @response.response_set.should_not be_nil
-    response2 = Factory(:response, :question => Factory(:question), :answer => Factory(:answer), :response_set => @response.response_set, :created_at => (@response.created_at + 1))
+    response2 = FactoryGirl.create(:response, :question => FactoryGirl.create(:question), :answer => FactoryGirl.create(:answer), :response_set => @response.response_set, :created_at => (@response.created_at + 1))
     Response.all.should == [@response, response2]
   end
   
-  it "should protect api_id, timestamps" do
-    saved_attrs = @response.attributes
-    if defined? ActiveModel::MassAssignmentSecurity::Error
-      lambda {@response.update_attributes(:created_at => 3.days.ago, :updated_at => 3.hours.ago)}.should raise_error(ActiveModel::MassAssignmentSecurity::Error)
-      lambda {@response.update_attributes(:api_id => "NEW")}.should raise_error(ActiveModel::MassAssignmentSecurity::Error)
-    else
-      @response.attributes = {:created_at => 3.days.ago, :updated_at => 3.hours.ago} # automatically protected by Rails
-      @response.attributes = {:api_id => "NEW"} # Rails doesn't return false, but this will be checked in the comparison to saved_attrs
-    end
-    @response.attributes.should == saved_attrs
-  end
-  
-
   describe "returns the response as the type requested" do
     it "returns 'string'" do
       @response.string_value = "blah"
@@ -93,9 +80,9 @@ end
 
 describe Response, "applicable_attributes" do
   before(:each) do
-    @who = Factory(:question, :text => "Who rules?")
-    @odoyle = Factory(:answer, :text => "Odoyle", :response_class => "answer")
-    @other = Factory(:answer, :text => "Other", :response_class => "string")
+    @who = FactoryGirl.create(:question, :text => "Who rules?")
+    @odoyle = FactoryGirl.create(:answer, :text => "Odoyle", :response_class => "answer")
+    @other = FactoryGirl.create(:answer, :text => "Other", :response_class => "string")
   end
 
   it "should have string_value if response_type is string" do

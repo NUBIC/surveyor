@@ -12,7 +12,7 @@
       - i = response_idx
       = f.semantic_fields_for i, r do |ff|
         = ff.input :question_id, :as => :quiet
-        = ff.input :response_group, :as => :quiet, :value => rg if g && g.display_type == "repeater"
+        = ff.input :response_group, :as => :quiet, :input_html => {:value => rg} if g && g.display_type == "repeater"
         = ff.input :api_id, :as => :quiet
         = ff.input :answer_id, :as => :select, :collection => q.answers.map{|a| [a.text, a.id]}, :include_blank => (renderer != :slider), :label => q.text, :input_html => { :disabled => disabled, :required => q.mandatory? }
     - else # :default, :inline, :inline_default

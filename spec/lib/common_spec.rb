@@ -18,6 +18,9 @@ describe Surveyor::Common, "" do
       "In general, you would say your health is:" => "you_would_say_your_health"
     }.each{|k, v| Surveyor::Common.to_normalized_string(k).should == v}
   end
+  it "should have a list of operators" do
+    %w(== != < > <= >= =~).each{|operator| Surveyor::Common::OPERATORS.include?(operator).should be_true }
+  end
   describe '#generate_api_id' do
     def generate
       Surveyor::Common.generate_api_id

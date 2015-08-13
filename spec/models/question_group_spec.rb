@@ -2,9 +2,9 @@
 require File.expand_path(File.dirname(__FILE__) + '/../spec_helper')
 
 describe QuestionGroup do
-  let(:question_group){ Factory(:question_group) }
-  let(:dependency){ Factory(:dependency) }
-  let(:response_set){ Factory(:response_set) }
+  let(:question_group){ FactoryGirl.create(:question_group) }
+  let(:dependency){ FactoryGirl.create(:dependency) }
+  let(:response_set){ FactoryGirl.create(:response_set) }
 
   context "when creating" do
     it { question_group.should be_valid }
@@ -32,41 +32,14 @@ describe QuestionGroup do
       dependency.should_receive(:is_met?).and_return(false)
       question_group.css_class(response_set).should == "g_dependent g_hidden foo bar"
     end
-    it "protects #api_id" do
-      saved_attrs = question_group.attributes
-      if defined? ActiveModel::MassAssignmentSecurity::Error
-        expect { question_group.update_attributes(:api_id => "NEW") }.to raise_error(ActiveModel::MassAssignmentSecurity::Error)
-      else
-        question_group.attributes = {:api_id => "NEW"} # Rails doesn't return false, but this will be checked in the comparison to saved_attrs
-      end
-      question_group.attributes.should == saved_attrs
-    end
-    it "protects #created_at" do
-      saved_attrs = question_group.attributes
-      if defined? ActiveModel::MassAssignmentSecurity::Error
-        expect { question_group.update_attributes(:created_at => 3.days.ago) }.to raise_error(ActiveModel::MassAssignmentSecurity::Error)
-      else
-        question_group.attributes = {:created_at => 3.days.ago} # Rails doesn't return false, but this will be checked in the comparison to saved_attrs
-      end
-      question_group.attributes.should == saved_attrs
-    end
-    it "protects #updated_at" do
-      saved_attrs = question_group.attributes
-      if defined? ActiveModel::MassAssignmentSecurity::Error
-        expect { question_group.update_attributes(:updated_at => 3.hours.ago) }.to raise_error(ActiveModel::MassAssignmentSecurity::Error)
-      else
-        question_group.attributes = {:updated_at => 3.hours.ago} # Rails doesn't return false, but this will be checked in the comparison to saved_attrs
-      end
-      question_group.attributes.should == saved_attrs
-    end
   end
 
   context "with translations" do
     require 'yaml'
-    let(:survey){ Factory(:survey) }
-    let(:survey_section){ Factory(:survey_section) }
+    let(:survey){ FactoryGirl.create(:survey) }
+    let(:survey_section){ FactoryGirl.create(:survey_section) }
     let(:survey_translation){
-      Factory(:survey_translation, :locale => :es, :translation => {
+      FactoryGirl.create(:survey_translation, :locale => :es, :translation => {
         :question_groups => {
           :goodbye => {
             :text => "¡Adios!"
@@ -74,7 +47,7 @@ describe QuestionGroup do
         }
       }.to_yaml)
     }
-    let(:question){ Factory(:question) }
+    let(:question){ FactoryGirl.create(:question) }
     before do
       question_group.text = "Goodbye"
       question_group.reference_identifier = "goodbye"

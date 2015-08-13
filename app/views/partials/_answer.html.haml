@@ -6,7 +6,7 @@
 = f.semantic_fields_for i, r do |ff|
   = ff.input :question_id, :as => :quiet unless q.pick == "one" # don't repeat question_id if we're on radio buttons
   = ff.input :api_id, :as => :quiet unless q.pick == "one"
-  = ff.input :response_group, :value => rg, :as => :quiet if q.pick != "one" && g && g.display_type == "repeater"
+  = ff.input :response_group, :input_html => {:value => rg}, :as => :quiet if q.pick != "one" && g && g.display_type == "repeater"
   - case q.pick
   - when "one"
     = ff.input :answer_id, :as => :surveyor_radio, :collection => [[a.text_for(nil, @render_context, I18n.locale), a.id]], :label => false, :input_html => {:class => a.css_class, :disabled => disabled}, :response_class => a.response_class, :required => q.mandatory?
