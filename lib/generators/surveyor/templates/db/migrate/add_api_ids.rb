@@ -1,5 +1,5 @@
 # encoding: UTF-8
-class AddApiIds < ActiveRecord::Migration
+class AddAPIIds < ActiveRecord::Migration
   def self.up
     add_column :surveys, :api_id, :string
     add_column :questions, :api_id, :string
