@@ -9,7 +9,7 @@ module Surveyor
       included do
         # Associations
         belongs_to :validation
-        attr_accessible *PermittedParams.new.validation_condition_attributes if defined? ActiveModel::MassAssignmentSecurity
+        attr_accessible *PermittedParams.new.validation_condition_attributes unless defined? ActiveModel::ForbiddenAttributesProtection
 
         # Validations
         validates_presence_of :operator, :rule_key
