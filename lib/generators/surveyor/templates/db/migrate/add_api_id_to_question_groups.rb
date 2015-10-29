@@ -1,5 +1,5 @@
 # encoding: UTF-8
-class AddAPIIdToQuestionGroups < ActiveRecord::Migration
+class AddApiIdToQuestionGroups < ActiveRecord::Migration
   def self.up
     add_column :question_groups, :api_id, :string
   end
