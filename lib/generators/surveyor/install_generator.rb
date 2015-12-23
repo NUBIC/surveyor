@@ -38,6 +38,7 @@ module Surveyor
       api_ids_must_be_unique
       create_survey_translations
       add_input_mask_attributes_to_answer
+      add_redirect_url_to_surveys
     )
 
     def readme
