@@ -1,0 +1,6 @@
+label.error {
+  color: crimson;
+  background-color: pink;
+  border: 1px solid crimson;
+  padding: .125em .5em .25em .5em
+}

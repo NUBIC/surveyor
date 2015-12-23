@@ -8,7 +8,7 @@ module Surveyor
     included do
       before_filter :get_current_user, :only => [:new, :create]
       before_filter :determine_if_javascript_is_enabled, :only => [:create, :update]
-      before_filter :set_response_set_and_render_context, :only => [:edit, :show]
+      before_filter :set_response_set_and_render_context, :only => [:edit, :show, :delete_response]
 
       layout 'surveyor_default'
       before_filter :set_locale
@@ -47,7 +47,7 @@ module Surveyor
           format.html #{render :action => :show}
           format.csv {
             send_data(@response_set.to_csv, :type => 'text/csv; charset=utf-8; header=present',
-              :filename => "#{@response_set.updated_at.strftime('%Y-%m-%d')}_#{@response_set.access_code}.csv")
+              :filename => "#{@response_set.updated_at.strftime('%m-%d-%Y')}_#{@response_set.access_code}.csv")
           }
           format.json
         end
@@ -96,6 +96,22 @@ module Surveyor
       end
     end
 
+    def delete_response
+      question_id = params[:question_id]
+      responses = @response_set.responses.where(:question_id => question_id) if @response_set.present?
+      respond_to do |format|
+        format.js do
+          if @response_set && responses
+            responses.destroy_all
+            render :json => @response_set.reload.all_dependencies([question_id])
+          else
+            render :text => "No response set #{params[:response_set_code]}",
+              :status => 404
+          end
+        end
+      end
+    end
+
     def load_and_update_response_set_with_retries(remaining=2)
       begin
         load_and_update_response_set
@@ -114,11 +130,11 @@ module Surveyor
         if @response_set
           saved = true
           if params[:r]
-            @response_set.update_from_ui_hash(params[:r])
+            saved = @response_set.update_from_ui_hash(params.require(:r).permit!)
           end
           if params[:finish]
             @response_set.complete!
-            saved &= @response_set.save
+            saved &&= @response_set.save
           end
           saved
         else

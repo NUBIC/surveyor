@@ -7,6 +7,10 @@ survey "Kitchen Sink survey", :default_mandatory => false do
     # A label is a question that accepts no answers
     label "These questions are examples of the basic supported input types"
 
+    # Example of a mandatory question
+    question "Please enter something. This is required.", :is_mandatory => true
+    answer :string
+
     # A basic question with radio buttons
     question "What is your favorite color?", :pick => :one
     answer "red"
@@ -179,7 +183,7 @@ survey "Kitchen Sink survey", :default_mandatory => false do
     # Questions may also have input masks with fancy placeholders
     q "What is your phone number?"
     a :string, :input_mask => '(999)999-9999', :input_mask_placeholder => '#'
-    
+
   end
 
   section "Complicated questions" do

@@ -8,7 +8,7 @@ class PermittedParams < Struct.new(:params)
     strong_parameters.permit(*survey_attributes)
   end
   def survey_attributes
-    [:title, :description, :reference_identifier, :data_export_identifier, :common_namespace, :common_identifier, :css_url, :custom_class, :display_order]
+    [:title, :description, :reference_identifier, :data_export_identifier, :common_namespace, :common_identifier, :css_url, :custom_class, :display_order, :redirect_url]
   end
 
   # survey_translation

@@ -103,8 +103,8 @@ describe ResponseSet do
 
       [
         ['string_value',   'foo',              '', 'foo'],
-        ['datetime_value', '2010-10-01 17:15', '', Time.zone.parse('2010-10-1 17:15')],
-        ['date_value',     '2010-10-01',       '', '2010-10-01'],
+        ['datetime_value', '10-01-2010 17:15', '', Time.zone.parse('10-01-2010 17:15')],
+        ['date_value',     '10-01-2010',       '', '10-01-2010'],
         ['time_value',     '17:15',            '', '17:15'],
         ['integer_value',  '9',                '', 9],
         ['float_value',    '4.0',              '', 4.0],

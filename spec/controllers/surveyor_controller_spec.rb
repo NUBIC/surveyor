@@ -246,6 +246,83 @@ describe SurveyorController do
     end
   end
 
+  context "#delete_response" do
+    let(:survey_section) { FactoryGirl.create :survey_section, :survey => survey }
+    let(:question)       { FactoryGirl.create :question, :survey_section => survey_section }
+    let(:answer)         { FactoryGirl.create :answer }
+
+
+    it "should set response_set" do
+      delete :delete_response, :survey_code => survey.access_code, :response_set_code => "pdq", :question_id => question.id
+      assigns(:response_set).should eql response_set
+    end
+
+    context "with reponses" do
+      before :each do
+        response_set.responses.create :question_id => question.id, :answer_id => answer.id
+      end
+
+      it "should delete responses only for this response_set" do
+        expect do
+          delete :delete_response, :survey_code => survey.access_code, :response_set_code => "pdq", :question_id => question.id, :format => :js
+        end.to change{ response_set.responses.reload.length }.by(-1)
+      end
+
+      context "without dependencies" do
+        it "should return show & hide empty" do
+          delete :delete_response, :survey_code => survey.access_code, :response_set_code => "pdq", :question_id => question.id, :format => :js
+          result = JSON.parse(response.body)
+          result["show"].should be_empty
+          result["hide"].should be_empty
+        end
+      end
+
+      context "with dependencies" do
+        before(:each) do
+          @section = Factory(:survey_section)
+          # Questions
+          @do_you_like_pie = Factory(:question, :text => "Do you like pie?", :survey_section => @section)
+          @what_flavor = Factory(:question, :text => "What flavor?", :survey_section => @section)
+          @what_bakery = Factory(:question, :text => "What bakery?", :survey_section => @section)
+          # Answers
+          @do_you_like_pie.answers << Factory(:answer, :text => "yes", :question_id => @do_you_like_pie.id)
+          @do_you_like_pie.answers << Factory(:answer, :text => "no", :question_id => @do_you_like_pie.id)
+          @what_flavor.answers << Factory(:answer, :response_class => :string, :question_id => @what_flavor.id)
+          @what_bakery.answers << Factory(:answer, :response_class => :string, :question_id => @what_bakery.id)
+          # Dependency
+          @what_flavor_dep = Factory(:dependency, :rule => "A", :question_id => @what_flavor.id)
+          Factory(:dependency_condition, :rule_key => "A", :question_id => @do_you_like_pie.id, :operator => "==", :answer_id => @do_you_like_pie.answers.first.id, :dependency_id => @what_flavor_dep.id)
+          @what_bakery_dep = Factory(:dependency, :rule => "B", :question_id => @what_bakery.id)
+          Factory(:dependency_condition, :rule_key => "B", :question_id => @do_you_like_pie.id, :operator => "==", :answer_id => @do_you_like_pie.answers.first.id, :dependency_id => @what_bakery_dep.id)
+          # Responses
+          @response_set = Factory(:response_set)
+          @response_set.responses << Factory(:response, :question_id => @do_you_like_pie.id, :answer_id => @do_you_like_pie.answers.first.id, :response_set_id => @response_set.id)
+          @response_set.responses << Factory(:response, :string_value => "pecan pie", :question_id => @what_flavor.id, :answer_id => @what_flavor.answers.first.id, :response_set_id => @response_set.id)
+        end
+
+        it "should return hide with dependecies" do
+          delete :delete_response, :survey_code => survey.access_code, :response_set_code => "pdq", :question_id => @do_you_like_pie.id, :format => :js
+          result = JSON.parse(response.body)
+          result["show"].should be_empty
+          result["hide"].should be_present
+          result["hide"].length.should eql 2
+          result["hide"].should include "q_#{@what_flavor.id}"
+          result["hide"].should include "q_#{@what_bakery.id}"
+        end
+      end
+    end
+
+    context "without responses" do
+      it "should not delete any response when the question has no responses" do
+        another_question = FactoryGirl.create :question, :survey_section => survey_section
+        FactoryGirl.create :response, :response_set => response_set, :question_id => another_question.id, :answer_id => answer.id
+        expect do
+          delete :delete_response, :survey_code => survey.access_code, :response_set_code => "pdq", :question_id => question.id, :format => :js
+        end.to change{ Response.count }.by(0)
+      end
+    end
+  end
+
   context "#export" do
     render_views
 

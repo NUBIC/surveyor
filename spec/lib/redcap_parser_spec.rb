@@ -6,6 +6,7 @@ describe Surveyor::RedcapParser do
     x = %("Variable / Field Name","Form Name","Field Units","Section Header","Field Type","Field Label","Choices OR Calculations","Field Note","Text Validation Type","Text Validation Min","Text Validation Max",Identifier?,"Branching Logic (Show field only if...)","Required Field?"\nstudy_id,demographics,,,text,"Study ID",,,,,,,,)
     parser.parse(x, "redcaptest").is_a?(Survey).should be_true
   end
+
   context "parses" do
     it "basic questions from REDCap" do
       file = "REDCapDemoDatabase_DataDictionary.csv"

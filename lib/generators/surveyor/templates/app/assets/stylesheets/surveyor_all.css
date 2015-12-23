@@ -4,6 +4,7 @@
 *= require surveyor/jquery-ui-timepicker-addon
 *= require surveyor/ui.slider.extras
 *= require surveyor/results
+*= require surveyor/validations
 *= require surveyor
 *= require custom
 */
