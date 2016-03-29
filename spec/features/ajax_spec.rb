@@ -26,6 +26,7 @@ describe "saving with ajax", js: true do
     response_set = start_survey('Everything')
     expect(page).to have_content("What is your favorite color?")
     within question("1") do
+      choose "Other"
       find("input[id$='string_value']").set("black")
     end
     wait_for_ajax
