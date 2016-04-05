@@ -26,6 +26,7 @@ describe "saving with ajax", js: true do
     response_set = start_survey('Everything')
     expect(page).to have_content("What is your favorite color?")
     within question("1") do
+      choose "Other"
       find("input[id$='string_value']").set("black")
     end
     wait_for_ajax
@@ -186,16 +187,20 @@ describe "saving with ajax", js: true do
     click_button "Special"
 
     check "No other heating source"
+    wait_for_ajax
     expect(checkbox("heat2", "neg_1").disabled?).to be_true
     expect(checkbox("heat2", "neg_2").disabled?).to be_true
 
     uncheck "No other heating source"
+    wait_for_ajax
     expect(checkbox("heat2", "neg_1").disabled?).to be_false
 
     check "Electric"
+    wait_for_ajax
     expect(checkbox("heat2", "neg_1").disabled?).to be_false
 
     check "Refused"
+    wait_for_ajax
     expect(checkbox("heat2", "1").disabled?).to be_true
     expect(checkbox("heat2", "neg_2").disabled?).to be_true
   end
