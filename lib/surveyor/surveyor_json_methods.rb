@@ -6,7 +6,7 @@ module Surveyor
     extend ActiveSupport::Concern
 
     def take
-      all_surveys = Survey.where(:access_code => params[:survey_code]).order("survey_version DESC")
+      all_surveys = Survey.where(:access_code => params[:survey_access_code]).order("survey_version DESC")
       survey = if params[:survey_version].blank?
         all_surveys.first
       else
