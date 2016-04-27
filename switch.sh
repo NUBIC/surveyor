@@ -5,11 +5,11 @@ echo ""
 # Set the prompt for the select command
 PS3="Choose a surveyor stack or 'q' to quit: "
 export SPEC_OPTS="--format Fuubar --color spec"
-export BUNDLER_VERSION=1.6.1
+export BUNDLER_VERSION=1.11.2
 
 options=""
-rubies=(2.0.0 2.1.1)
-rails_versions=(3.2.17 4.0.0)
+rubies=(2.0.0 2.1.1 2.2.1)
+rails_versions=(3.2.17 4.0.0 4.2.0 4.2.5)
 
 for i in "${rubies[@]}"
 do

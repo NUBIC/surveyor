@@ -8,7 +8,7 @@ case env_rails_version
 when "master"
   {github: "rails/rails"}
 when "default"
-  gem "rails", "~> 4.0.0"
+  gem "rails", "~> 4.2"
   # A JS runtime is required for Rails 4.0+
   gem 'therubyracer', platforms: :ruby
 when /^3.2/

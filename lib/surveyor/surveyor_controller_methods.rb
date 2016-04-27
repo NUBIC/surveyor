@@ -15,13 +15,19 @@ module Surveyor
     end
 
     # Actions
-    def new
+    def index
       @surveys_by_access_code = Survey.order("created_at DESC, survey_version DESC").to_a.group_by(&:access_code)
       redirect_to surveyor_index unless surveyor_index == surveyor.available_surveys_path
     end
 
+    def new
+      redirect_to index
+      # @surveys_by_access_code = Survey.order("created_at DESC, survey_version DESC").to_a.group_by(&:access_code)
+      # redirect_to surveyor_index unless surveyor_index == surveyor.available_surveys_path
+    end
+
     def create
-      surveys = Survey.where(:access_code => params[:survey_code]).order("survey_version DESC")
+      surveys = Survey.where(:access_code => params[:survey_access_code]).order("survey_version DESC")
       if params[:survey_version].blank?
         @survey = surveys.first
       else
@@ -32,7 +38,27 @@ module Surveyor
       if (@survey && @response_set)
         flash[:notice] = t('surveyor.survey_started_success')
         redirect_to(surveyor.edit_my_survey_path(
-          :survey_code => @survey.access_code, :response_set_code  => @response_set.access_code))
+          :survey_access_code => @survey.access_code, :response_set_code  => @response_set.access_code))
+      else
+        flash[:notice] = t('surveyor.Unable_to_find_that_survey')
+        redirect_to surveyor_index
+      end
+    end
+
+    def sample
+      surveys = Survey.where(:access_code => params[:survey_access_code]).order("survey_version DESC")
+      if params[:survey_version].blank?
+        @survey = surveys.first
+      else
+        @survey = surveys.where(:survey_version => params[:survey_version]).first
+      end
+      @response_set = ResponseSet.create(:survey => @survey, :user_id => (@current_user.nil? ? @current_user : @current_user.id))
+      if (@survey && @response_set)
+        flash[:notice] = t('surveyor.survey_started_success')
+        @sections = SurveySection.where(survey_id: @response_set.survey_id).includes([:survey, {questions: [{answers: :question}, {question_group: :dependency}, :dependency]}])
+        @section = (section_id_from(params) ? @sections.where(id: section_id_from(params)).first : @sections.first) || @sections.first
+        @survey = @section.survey
+        set_dependents
       else
         flash[:notice] = t('surveyor.Unable_to_find_that_survey')
         redirect_to surveyor_index
@@ -82,14 +108,14 @@ module Surveyor
             return redirect_with_message(surveyor.available_surveys_path, :notice, t('surveyor.unable_to_find_your_responses'))
           else
             flash[:notice] = t('surveyor.unable_to_update_survey') unless saved
-            redirect_to surveyor.edit_my_survey_path(:anchor => anchor_from(params[:section]), :section => section_id_from(params))
+            redirect_to surveyor.sample_survey_path(:survey_access_code => params[:survey_access_code], :anchor => anchor_from(params[:section]), :section => section_id_from(params))
           end
         end
         format.js do
           if @response_set
             render :json => @response_set.reload.all_dependencies(question_ids_for_dependencies)
           else
-            render :text => "No response set #{params[:response_set_code]}",
+            render :text => "No response set #{params[:response_access_code]}",
               :status => 404
           end
         end
@@ -110,7 +136,7 @@ module Surveyor
 
     def load_and_update_response_set
       ResponseSet.transaction do
-        @response_set = ResponseSet.includes({:responses => :answer}).where(:access_code => params[:response_set_code]).first
+        @response_set = ResponseSet.includes({:responses => :answer}).where(:access_code => params[:response_access_code]).first
         if @response_set
           saved = true
           if params[:r]
@@ -129,7 +155,7 @@ module Surveyor
     private :load_and_update_response_set
 
     def export
-      surveys = Survey.where(:access_code => params[:survey_code]).order("survey_version DESC")
+      surveys = Survey.where(:access_code => params[:survey_access_code]).order("survey_version DESC")
       s = params[:survey_version].blank? ? surveys.first : surveys.where(:survey_version => params[:survey_version]).first
       render_404 and return if s.blank?
       @survey = s.filtered_for_json
@@ -157,7 +183,7 @@ module Surveyor
     end
 
     def set_response_set_and_render_context
-      @response_set = ResponseSet.includes({:responses => [:question, :answer]}).where(:access_code => params[:response_set_code]).first
+      @response_set = ResponseSet.includes({:responses => [:question, :answer]}).where(:access_code => params[:response_access_code]).first
       @render_context = render_context
     end
 

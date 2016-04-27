@@ -1,0 +1,24 @@
+#surveyor
+  - unless (types = flash.keys.select{|k| [:notice, :error, :warning].include?(k)}).blank?
+    .surveyor_flash
+      = flash_messages(types)
+      .close
+  = semantic_form_for(@response_set, :as => :r, :url => surveyor.update_my_survey_path(survey_access_code: @survey.access_code, response_access_code: @response_set.access_code), :html => {:method => :put, :id => "survey_form", :class => @survey.custom_class}) do |f|
+
+    = hidden_field_tag :surveyor_javascript_enabled, false
+
+    = render 'partials/section_menu' # unless @sections.size < 3
+    .survey_title #{@survey.translation(I18n.locale)[:title]}
+    %h3{style:'text-transform:uppercase;'} NOTE: THIS IS ONLY FOR SHOW
+    %br
+    
+    .previous_section= previous_section
+    = render 'partials/dependents' unless @dependents.empty?
+    = render "/partials/section", :f => f
+    .next_section= next_section
+  %br
+
+:javascript
+  $(document).ready(function() {
+    $("input#surveyor_javascript_enabled").val(true);
+  });

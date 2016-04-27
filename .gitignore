@@ -28,3 +28,4 @@ testbed
 surveys/fixtures/*.yml
 .rvmrc
 .sass-cache/**/*.sassc
+surveyor*.gem

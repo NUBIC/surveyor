@@ -1,0 +1,18 @@
+#surveyor
+  - unless (types = flash.keys.select{|k| [:notice, :error, :warning].include?(k)}).blank?
+    .surveyor_flash
+      = flash_messages(types)
+      .close
+  .survey_title Available Surveys
+  %br
+  #survey_list
+    %ul
+      - @surveys_by_access_code.each do |access_code, surveys|
+        %li{style:'margin-bottom:10px;'}
+          =link_to surveys.first.title, surveyor.sample_survey_path(:survey_access_code => access_code)
+          %p &mdash; currently on version #{surveys.count}
+
+:javascript
+  $(document).ready(function() {
+    $("input#surveyoone dar_javascript_enabled").val(true);
+  });

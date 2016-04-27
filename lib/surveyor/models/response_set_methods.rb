@@ -153,6 +153,8 @@ module Surveyor
             existing = Response.where(:api_id => api_id).first
             updateable_attributes = response_hash.reject { |k, v| k == 'api_id' }
 
+            updateable_attributes.permit!
+
             if self.class.has_blank_value?(response_hash)
               existing.destroy if existing
             elsif existing
