@@ -15,11 +15,3 @@ child :survey do
     end
   end
 end
-
-child @response_set.responses do |response|
-  attributes :question_id, :datetime_value, :integer_value, :float_value, :unit, :text_value, :string_value, :response_other, :pick
-  child :answer do
-    attributes :text
-  end
-end
-

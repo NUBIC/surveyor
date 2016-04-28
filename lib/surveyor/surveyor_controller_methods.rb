@@ -69,6 +69,7 @@ module Surveyor
       # @response_set is set in before_filter - set_response_set_and_render_context
       if @response_set
         @survey = @response_set.survey
+        @sections = @survey.sections
         respond_to do |format|
           format.html #{render :action => :show}
           format.csv {
@@ -99,6 +100,18 @@ module Surveyor
     def update
       question_ids_for_dependencies = (params[:r] || []).map{|k,v| v["question_id"] }.compact.uniq
       saved = load_and_update_response_set_with_retries
+
+      p "////////////////////////"
+      p "////////////////////////"
+      p "////////////////////////"
+      p params[:r]
+      p "////////////////////////"
+      p "////////////////////////"
+      p "////////////////////////"
+      p @response_set.to_json
+      p "////////////////////////"
+      p "////////////////////////"
+      p "////////////////////////"
 
       return redirect_with_message(surveyor_finish, :notice, t('surveyor.completed_survey')) if saved && params[:finish]
 
