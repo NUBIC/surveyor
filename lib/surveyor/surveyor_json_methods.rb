@@ -4,7 +4,6 @@ Rabl.register!
 module Surveyor
   module SurveyorJsonMethods
     extend ActiveSupport::Concern
-    skip_before_filter :verify_authenticity_token
 
     def survey
       # see questions.json.rabl

@@ -3,4 +3,5 @@
 class SurveyorController < ApplicationController
   include Surveyor::SurveyorControllerMethods
   include Surveyor::SurveyorJsonMethods
+  skip_before_filter :verify_authenticity_token
 end
