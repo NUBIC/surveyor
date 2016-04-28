@@ -3,7 +3,7 @@ $:.push File.expand_path("../lib", __FILE__)
 require "surveyor/version"
 
 Gem::Specification.new do |s|
-  s.name = "blueboard-surveyor"
+  s.name = %q{surveyor}
   s.version = Surveyor::VERSION
 
   s.authors = ["Brian Chamberlain", "Mark Yoon", "Bojan Percevic"]
