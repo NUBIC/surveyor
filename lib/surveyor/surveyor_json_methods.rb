@@ -5,8 +5,8 @@ module Surveyor
   module SurveyorJsonMethods
     extend ActiveSupport::Concern
 
-    def survey_as_json
-      # see survey_as_json.json.rabl
+    def survey
+      # see questions.json.rabl
       all_surveys = Survey.where(:access_code => params[:survey_access_code]).order("survey_version DESC")
       survey = if params[:survey_version].blank?
         all_surveys.first
@@ -15,14 +15,6 @@ module Surveyor
       end
       params[:employee_id] ||= nil
       @response_set = ResponseSet.create(:survey => survey, :user_id => params[:employee_id])
-      respond_to do |format|
-        format.json
-      end
-    end
-
-    def result_as_json
-      # see result_as_json.json.rabl
-      @response_set = ResponseSet.find_by_access_code(params[:response_access_code])
       respond_to do |format|
         format.json
       end
@@ -46,6 +38,14 @@ module Surveyor
           }, status: :not_found
           false
         end
+      end
+    end
+
+    def results
+      # see result_as_json.json.rabl
+      @response_set = ResponseSet.find_by_access_code(params[:response_access_code])
+      respond_to do |format|
+        format.json
       end
     end
 

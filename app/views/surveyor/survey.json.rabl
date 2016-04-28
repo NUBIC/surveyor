@@ -10,7 +10,7 @@ child :survey do
     child :questions do
       attributes :text, :id, :api_id
       child :answers do
-        attributes :id, :text
+        attributes :text, :id, :api_id
       end
     end
   end
