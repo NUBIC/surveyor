@@ -3,14 +3,14 @@
     .surveyor_flash
       = flash_messages(types)
       .close
-  .survey_title Available Surveys (Surveyor version #{Surveyor::VERSION})
+  .survey_title Available Surveys <a href='https://www.github.com/blueboard/surveyor'><span style='text-align:right;float:right;'>Version #{Surveyor::VERSION}</span></a>
   %br
   #survey_list
     %ul
       - @surveys_by_access_code.each do |access_code, surveys|
         %li{style:'margin-bottom:10px;'}
           =link_to surveys.first.title, surveyor.sample_survey_path(:survey_access_code => access_code)
-          %p &mdash; currently on version #{surveys.count}
+          %p &mdash; v#{surveys.count} &mdash; #{surveys.first.updated_at.strftime('%B %d, %Y')}
 
 :javascript
   $(document).ready(function() {

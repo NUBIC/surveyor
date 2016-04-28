@@ -12,9 +12,9 @@ pre {
   font-size: 11px;
 }
 
-a { color: #000; }
-a:visited { color: #666; }
-a:hover { color: #fff; background-color:#000; }
+a { color: #3EADC5; }
+a:visited { color: #3EADC5; }
+a:hover { color: #000; background-color:#fff; }
 
 .fieldWithErrors {
   padding: 2px;
