@@ -8,7 +8,7 @@ child :survey do
   child :sections do
     attribute :title
     child :questions do
-      attributes :text, :id, :api_id
+      attributes :text, :id, :api_id, :pick
       child :answers do
         attributes :text, :id, :api_id
       end
