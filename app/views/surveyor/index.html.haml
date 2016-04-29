@@ -14,9 +14,10 @@
           - surveys.each do |survey|
             %p Number of responses #{survey.response_sets.count}
             - survey.response_sets.each do |response_set|
-              %p= response_set.access_code
-              - response_set.responses.each do |response|
-                %p= response.to_formatted_s
+              - if response_set.responses.present?
+                %p= response_set.access_code
+                - response_set.responses.each do |response|
+                  %p= response.to_formatted_s
 
 
 
