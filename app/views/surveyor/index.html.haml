@@ -7,17 +7,24 @@
   %br
   #survey_list
     %ul
-      - @surveys_by_access_code.each do |access_code, surveys|
+      - @surveys.each do |survey|
         %li{style:'margin-bottom:10px;'}
-          =link_to surveys.first.title, surveyor.sample_survey_path(:survey_access_code => access_code)
-          %p &mdash; v#{surveys.count} &mdash; #{surveys.first.updated_at.strftime('%B %d, %Y')}
-          - surveys.each do |survey|
-            %p Number of responses #{survey.response_sets.count}
-            - survey.response_sets.each do |response_set|
-              - if response_set.responses.present?
-                %p= response_set.access_code
-                - response_set.responses.each do |response|
-                  %p= response.to_formatted_s
+          =link_to survey.title, surveyor.sample_survey_path(:survey_access_code => survey.access_code)
+          - survey.response_sets.each do |response_set|
+            - response_set.responses.each do |response|
+              %p{style:'margin-bottom:20px;'}= response.to_formatted_s
+
+      / - @surveys_by_access_code.each do |access_code, surveys|
+      /   %li{style:'margin-bottom:10px;'}
+      /     =link_to surveys.first.title, surveyor.sample_survey_path(:survey_access_code => access_code)
+      /     %p &mdash; v#{surveys.count} &mdash; #{surveys.first.updated_at.strftime('%B %d, %Y')}
+      /     - surveys.each do |survey|
+      /       %p Number of responses #{survey.response_sets.count}
+      /       - survey.response_sets.each do |response_set|
+      /         - if response_set.responses.present?
+      /           %p= response_set.access_code
+      /           - response_set.responses.each do |response|
+      /             %p= response.to_formatted_s
 
 
 
