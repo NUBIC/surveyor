@@ -18,7 +18,7 @@ module Surveyor
     def index
       # @surveys_by_access_code = Survey.order("created_at DESC, survey_version DESC").to_a.group_by(&:access_code)
       @surveys = Survey.all
-      @surveys.filter! {|s| s.response_sets.present? }
+      @surveys.select! {|s| s.response_sets.count > 0 }
       redirect_to surveyor_index unless surveyor_index == surveyor.available_surveys_path
     end
 
