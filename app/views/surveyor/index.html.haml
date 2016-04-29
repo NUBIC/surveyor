@@ -13,6 +13,7 @@
           %p &mdash; v#{surveys.count} &mdash; #{surveys.first.updated_at.strftime('%B %d, %Y')}
           - surveys.each do |survey|
             - survey.response_sets.each do |response_set|
+              %p= response_set.access_code
               - response_set.responses.each do |response|
                 %p= response.to_formatted_s
 
