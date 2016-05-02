@@ -25,13 +25,13 @@ module Surveyor
         message: 'Missing "r" key.'
       }, status: :bad_request unless params[:r].present?
 
-      p "submit.params", params
+      p "submit.params", params.to_json
 
       ResponseSet.transaction do
         response_set = ResponseSet.includes({:responses => :answer}).where(:access_code => params[:response_access_code]).first
-        p "submit.response_set", response_set
         if response_set
           response_set.update_from_ui_hash(params[:r])
+          response_set.complete!
           render json: {
             message: 'Survey submitted!'
           }, status: :ok
