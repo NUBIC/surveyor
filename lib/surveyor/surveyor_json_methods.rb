@@ -36,18 +36,12 @@ module Surveyor
             response_hash = val.except :api_id, :id
             response = Response.new(response_set: response_set)
             begin
-              response.merge(response_hash)
-            rescue Exception => e
-              p "merge error", e.message
-            end
-
-            begin
               response.update(response_hash)
             rescue Exception => e
               p "update error", e.message
             end
-            # p "response_hash", response_hash
-            # p "response", response
+            p "response_hash", response_hash
+            p "response", response
           end
 
           # create new responses from params[:r]:
