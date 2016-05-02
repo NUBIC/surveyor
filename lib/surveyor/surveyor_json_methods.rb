@@ -17,6 +17,8 @@ module Surveyor
         all_surveys.where(:survey_version => params[:survey_version]).first
       end
 
+      params[:employee_id] ||= nil
+
       # must be @var because of rabl (see questions.json.rabl)
       @response_set = ResponseSet.create(:survey => survey, :user_id => params[:employee_id])
       respond_to do |format|
