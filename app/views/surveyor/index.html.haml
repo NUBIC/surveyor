@@ -11,11 +11,12 @@
         %li{style:'margin-bottom:10px;'}
           =link_to survey.title, surveyor.sample_survey_path(:survey_access_code => survey.access_code)
           - survey.response_sets.each do |response_set|
-            %p RESPONSE #{response_set.access_code}
-            - response_set.responses.each do |response|
-              %p= response.question.text  
-              %p= response.to_formatted_s
-              %hr{style:'margin-bottom:20px;'}
+            - if response_set.responses.count > 0
+              %p <b>#{response_set.access_code}:</b>
+              - response_set.responses.each do |response|
+                %p= response.question.text  
+                %p= response.to_formatted_s
+                %hr{style:'margin-bottom:20px;'}
 
       / - @surveys_by_access_code.each do |access_code, surveys|
       /   %li{style:'margin-bottom:10px;'}
