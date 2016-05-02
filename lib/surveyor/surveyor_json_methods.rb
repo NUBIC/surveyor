@@ -30,7 +30,29 @@ module Surveyor
       ResponseSet.transaction do
         response_set = ResponseSet.includes({:responses => :answer}).where(:access_code => params[:response_access_code]).first
         if response_set
-          response_set.update_from_ui_hash(params[:r])
+          # response_set.update_from_ui_hash(params[:r])
+
+          params[:r].each do |key, val|
+            response_hash = val.except :api_id, :id
+            response = Response.new
+            response.merge(response_hash)
+            p "response", response
+          end
+
+          # create new responses from params[:r]:
+          # "{
+          #   \"1\": {
+          #     \"question_id\": \"1\",
+          #     \"api_id\": \"5eceee3c-bc73-4f6b-9bf1-3bbebc4addf0\",
+          #     \"answer_id\": \"2\"
+          #   },
+          #   \"2\": {
+          #     \"question_id\": \"2\",
+          #     \"api_id\": \"6bf1dc2d-49eb-46d2-9a38-65dd533ea486\",
+          #     \"answer_id\": \"6\"
+          #   }
+          # }"
+
           response_set.complete!
           render json: {
             message: 'Survey submitted!'
