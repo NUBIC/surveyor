@@ -1,6 +1,6 @@
 Surveyor::Engine.routes.draw do
-  
-  get '/dashboard' => `surveyor#index`, as: :available_surveys
+
+  get '/dashboard' => 'surveyor#index', as: :available_surveys
 
   get  '/:survey_access_code.json' => 'surveyor#survey', :defaults => { :format => 'json' }
   post '/:survey_access_code.json' => 'surveyor#submit', :defaults => { :format => 'json' }
