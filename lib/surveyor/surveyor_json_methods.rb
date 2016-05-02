@@ -35,7 +35,7 @@ module Surveyor
           params[:r].each do |key, val|
             response_hash = val.except :api_id, :id
             response = Response.new
-            response.merge(response_hash)
+            p "response_hash", response_hash
             p "response", response
           end
 
