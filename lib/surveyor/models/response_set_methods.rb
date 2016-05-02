@@ -146,6 +146,7 @@ module Surveyor
 
       def update_from_ui_hash(ui_hash)
         transaction do
+          p "ui_hash", ui_hash.to_json
           ui_hash.each do |ord, response_hash|
             api_id = response_hash['api_id']
             fail "api_id missing from response #{ord}" unless api_id
