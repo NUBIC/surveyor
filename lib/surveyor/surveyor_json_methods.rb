@@ -5,10 +5,10 @@ module Surveyor
   module SurveyorJsonMethods
     extend ActiveSupport::Concern
 
-    def survey
+    def survey_as_json
       all_surveys = Survey.where(access_code: params[:survey_access_code]).order('survey_version DESC')
 
-      # must be @var for rabl (see survey.json.rabl)
+      # must be @var for rabl (see survey_as_json.json.rabl)
       @survey = if params[:survey_version].blank?
         all_surveys.first
       else
@@ -19,45 +19,6 @@ module Surveyor
         format.json
       end
     end
-
-    # def submit
-    #   render json: {
-    #     message: 'Missing "r" key (Required to generate survey responses.)'
-    #   }, status: :bad_request unless params[:r].present?
-
-    #   response_set = ResponseSet.includes({:responses => :answer}).where(:access_code => params[:response_access_code]).first
-    #   if response_set
-    #     # iterate through each question/answer and create a Response
-    #     params[:r].each do |key, val|
-    #       response_hash = val.except :api_id, :id
-    #       response = Response.new(response_set: response_set)
-    #       response.update(response_hash)
-    #       response.save
-    #     end
-
-    #     # this just sets the completed_at field
-    #     response_set.complete!
-
-    #     render json: {
-    #       message: 'Survey successfully submitted.',
-    #       data: {
-    #         survey: response_set.survey
-    #       }
-    #     }, status: :ok
-    #   else
-    #     render json: {
-    #       message: 'ResponseSet not found.'
-    #     }, status: :not_found
-    #   end
-    # end
-
-    # def results
-    #   # see result_as_json.json.rabl
-    #   @response_set = ResponseSet.find_by_access_code(params[:response_access_code])
-    #   respond_to do |format|
-    #     format.json
-    #   end
-    # end
 
   end
 end

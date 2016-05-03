@@ -16,7 +16,6 @@ module Surveyor
 
     # Actions
     def index
-      # @surveys_by_access_code = Survey.order("created_at DESC, survey_version DESC").to_a.group_by(&:access_code)
       @surveys = Survey.all
       @surveys = @surveys.select {|s| s.response_sets.count > 0 }
       redirect_to surveyor_index unless surveyor_index == surveyor.available_surveys_path
@@ -24,8 +23,6 @@ module Surveyor
 
     def new
       redirect_to index
-      # @surveys_by_access_code = Survey.order("created_at DESC, survey_version DESC").to_a.group_by(&:access_code)
-      # redirect_to surveyor_index unless surveyor_index == surveyor.available_surveys_path
     end
 
     def create
@@ -47,7 +44,7 @@ module Surveyor
       end
     end
 
-    def sample
+    def survey_as_view
       surveys = Survey.where(:access_code => params[:survey_access_code]).order("survey_version DESC")
       if params[:survey_version].blank?
         @survey = surveys.first
@@ -103,18 +100,6 @@ module Surveyor
       question_ids_for_dependencies = (params[:r] || []).map{|k,v| v["question_id"] }.compact.uniq
       saved = load_and_update_response_set_with_retries
 
-      p "////////////////////////"
-      p "////////////////////////"
-      p "////////////////////////"
-      p params.to_json
-      p "////////////////////////"
-      p "////////////////////////"
-      p "////////////////////////"
-      p @response_set.access_code
-      p "////////////////////////"
-      p "////////////////////////"
-      p "////////////////////////"
-
       return redirect_with_message(surveyor_finish, :notice, t('surveyor.completed_survey')) if saved && params[:finish]
 
       respond_to do |format|
@@ -123,7 +108,7 @@ module Surveyor
             return redirect_with_message(surveyor.available_surveys_path, :notice, t('surveyor.unable_to_find_your_responses'))
           else
             flash[:notice] = t('surveyor.unable_to_update_survey') unless saved
-            redirect_to surveyor.sample_survey_path(:survey_access_code => params[:survey_access_code], :anchor => anchor_from(params[:section]), :section => section_id_from(params))
+            redirect_to surveyor.view_survey_path(:survey_access_code => params[:survey_access_code], :anchor => anchor_from(params[:section]), :section => section_id_from(params))
           end
         end
         format.js do

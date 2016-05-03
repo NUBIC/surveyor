@@ -8,28 +8,16 @@
   #survey_list
     %ul
       - @surveys.each do |survey|
-        %li{style:'margin-bottom:10px;'}
-          =link_to survey.title, surveyor.sample_survey_path(:survey_access_code => survey.access_code)
+        %li{style:'margin-bottom:15px;border-bottom:1px solid gray;'}
+          =link_to survey.title, surveyor.view_survey_path(survey_access_code: survey.access_code)
+          %small version #{survey.survey_version}
           - survey.response_sets.each do |response_set|
-            %p <b>#{response_set.access_code}:</b>
-            - response_set.responses.each do |response|
-              %p= response.question.text  
-              %p= response.to_formatted_s
-              %hr{style:'margin-bottom:20px;'}
-
-      / - @surveys_by_access_code.each do |access_code, surveys|
-      /   %li{style:'margin-bottom:10px;'}
-      /     =link_to surveys.first.title, surveyor.sample_survey_path(:survey_access_code => access_code)
-      /     %p &mdash; v#{surveys.count} &mdash; #{surveys.first.updated_at.strftime('%B %d, %Y')}
-      /     - surveys.each do |survey|
-      /       %p Number of responses #{survey.response_sets.count}
-      /       - survey.response_sets.each do |response_set|
-      /         - if response_set.responses.present?
-      /           %p= response_set.access_code
-      /           - response_set.responses.each do |response|
-      /             %p= response.to_formatted_s
-
-
+            - if response_set.responses.present?
+              %div{style:'margin-bottom:5px;border-bottom:1px solid white'}
+                %p <b>#{response_set.access_code}:</b>
+                - response_set.responses.each do |response|
+                  %p <b>#{response.question.text}</b>
+                  %p{style:'border-bottom:1px solid #eee'} <i>#{response.to_formatted_s}</i>
 
 :javascript
   $(document).ready(function() {
