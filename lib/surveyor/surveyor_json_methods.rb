@@ -6,21 +6,15 @@ module Surveyor
     extend ActiveSupport::Concern
 
     def survey
-      render json: {
-        message: 'Missing "employee_id" key. We need to be able to associate the employee with the survey taken.'
-      }, status: :bad_request unless params[:employee_id].present?
-
       all_surveys = Survey.where(:access_code => params[:survey_access_code]).order("survey_version DESC")
-      survey = if params[:survey_version].blank?
+      @survey = if params[:survey_version].blank?
         all_surveys.first
       else
         all_surveys.where(:survey_version => params[:survey_version]).first
       end
 
-      params[:employee_id] ||= nil
-    
-      # must be @var because of rabl (see questions.json.rabl)
-      @response_set = ResponseSet.create(:survey => survey, :user_id => params[:employee_id])
+      # must be @var because of rabl (see survey.json.rabl)
+      # @response_set = ResponseSet.create(:survey => survey)
       respond_to do |format|
         format.json
       end
