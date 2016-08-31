@@ -17,9 +17,9 @@ Gem::Specification.new do |s|
   s.executables   = `git ls-files -- bin/*`.split("\n").map{ |f| File.basename(f) }
   s.require_paths = ["lib"]
 
-  s.add_dependency('rails', '>= 3.2')
+  s.add_dependency('rails', '>= 4.2')
   s.add_dependency('haml', '~> 4.0')
-  s.add_dependency('sass-rails', '~> 4.0.0')
+  s.add_dependency('sass-rails', '~> 5.0.0')
   s.add_dependency('bootstrap-sass', '~> 3.1.1')
   s.add_dependency('simple_form', '3.1.0.rc1')
   s.add_dependency('uuidtools', '~> 2.1')
@@ -29,13 +29,13 @@ Gem::Specification.new do |s|
   s.add_development_dependency('yard')
   s.add_development_dependency('rake')
   s.add_development_dependency('sqlite3')
-  s.add_development_dependency('bundler', '~> 1.6.1')
+  s.add_development_dependency('bundler', '~> 1.12.5')
   s.add_development_dependency('rspec-rails', '~> 2.14.2')
   s.add_development_dependency('capybara', '~> 2.2.1')
   s.add_development_dependency('launchy', '~> 2.4.2')
-  s.add_development_dependency('poltergeist', '~>1.5.0')
+  s.add_development_dependency('poltergeist', '~>1.6.0')
   s.add_development_dependency('json_spec', '~> 1.1.1')
   s.add_development_dependency('factory_girl', '~> 4.4.0')
   s.add_development_dependency('database_cleaner', '~> 1.2.0')
-  s.add_development_dependency('rspec-retry')
+  s.add_development_dependency('rspec-retry', '0.4.0')
 end
