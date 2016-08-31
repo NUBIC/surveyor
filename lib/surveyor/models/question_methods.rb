@@ -13,7 +13,7 @@ module Surveyor
         # Associations
         belongs_to :survey_section
         belongs_to :question_group, :dependent => :destroy
-        has_many :answers, :dependent => :destroy # it might not always have answers
+        has_many :answers, :dependent => :destroy, :autosave => true # it might not always have answers
         has_one :dependency, :dependent => :destroy
         belongs_to :correct_answer, :class_name => "Answer", :dependent => :destroy
         attr_accessible *PermittedParams.new.question_attributes if defined? ActiveModel::MassAssignmentSecurity
