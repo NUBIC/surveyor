@@ -114,7 +114,7 @@ module Surveyor
         if @response_set
           saved = true
           if params[:r]
-            @response_set.update_from_ui_hash(params[:r])
+            @response_set.update_from_ui_hash(params[:r].permit!)
           end
           if params[:finish]
             @response_set.complete!

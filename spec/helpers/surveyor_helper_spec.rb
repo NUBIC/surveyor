@@ -11,7 +11,7 @@ describe SurveyorHelper do
       helper.q_text(q1).should == "<span class='qnum'>1) </span>#{q1.text}"
       helper.q_text(q2).should == q2.text
       helper.q_text(q3).should == q3.text
-      helper.q_text(q4).should =~ /<img alt="Something" src="\/(images|assets)\/something\.jpg" \/>/
+      helper.q_text(q4).should =~ /<img src="\/(images|assets)\/something\.jpg" alt="Something" \/>/
       helper.q_text(q5).should == q5.text
     end
   end
