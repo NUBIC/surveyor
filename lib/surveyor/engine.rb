@@ -11,5 +11,6 @@ module Surveyor
         require_dependency(c)
       end
     end
+    config.assets.precompile += %w( surveyor_all.css surveyor_all.js )
   end
 end
