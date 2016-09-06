@@ -47,15 +47,17 @@ module Surveyor
         current = section == @section
         submit_tag(section.translation(I18n.locale)[:title], name: "section[#{section.id}]", class: current ? "btn btn-primary text-left" : "btn btn-default text-left", disabled: current)
       end
-      def previous_section
+      def previous_section( html_options = {} )
         # use copy in memory instead of making extra db calls
         prev_index = [(@sections.index(@section) || 0) - 1, 0].max
-        submit_tag(t('surveyor.previous_section').html_safe, name: "section[#{@sections[prev_index].id}]", class: "btn btn-default") unless @sections[0] == @section
+        html_options = {:class => "btn btn-default"}.merge( html_options ).merge( :name => "section[#{@sections[prev_index].id}]" )
+        submit_tag(t('surveyor.previous_section').html_safe, html_options) unless @sections[0] == @section
       end
-      def next_section
+      def next_section( html_options = {} )
         # use copy in memory instead of making extra db calls
         next_index = [(@sections.index(@section) || @sections.count) + 1, @sections.count].min
-        @sections.last == @section ? submit_tag(t('surveyor.click_here_to_finish').html_safe, name: "finish", class: "btn btn-primary") : submit_tag(t('surveyor.next_section').html_safe, name: "section[#{@sections[next_index].id}]", class: "btn btn-primary")
+        html_options = { :class => "btn btn-primary" }.merge( html_options )
+        @sections.last == @section ? submit_tag(t('surveyor.click_here_to_finish').html_safe, html_options.merge( :name => "finish" )) : submit_tag(t('surveyor.next_section').html_safe, html_options.merge( :name => "section[#{@sections[next_index].id}]" ))
       end
 
       # questions and groups
