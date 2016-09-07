@@ -48,6 +48,20 @@ module Surveyor
           (self.survey.translation(locale)[:survey_sections] || {})[self.reference_identifier] || {}
         )
       end
+
+      def completed?( response_set )
+        self.questions_and_groups.each do |qg|
+          if qg.is_a?( Question )
+            q = qg
+            return false if q.triggered?( response_set ) && q.mandatory? && response_set.responses.detect{ |r| r.question_id == q.id && !r.to_formatted_s.blank? }.nil?
+          else
+            g = qg
+            return false if g.triggered?( response_set ) && g.questions.detect{ |q| q.triggered?( response_set ) && q.mandatory? && response_set.responses.detect{ |r| r.question_id == q.id && !r.to_formatted_s.blank? }.nil? }.nil?
+          end
+        end
+
+        return true
+      end
     end
   end
 end
