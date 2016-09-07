@@ -53,10 +53,10 @@ module Surveyor
         self.questions_and_groups.each do |qg|
           if qg.is_a?( Question )
             q = qg
-            return false if q.triggered?( response_set ) && q.mandatory? && response_set.responses.detect{ |r| r.question_id == q.id && !r.to_formatted_s.blank? }.nil?
+            return false if q.triggered?( response_set ) && q.mandatory? && !q.answered?( response_set )
           else
             g = qg
-            return false if g.triggered?( response_set ) && g.questions.detect{ |q| q.triggered?( response_set ) && q.mandatory? && response_set.responses.detect{ |r| r.question_id == q.id && !r.to_formatted_s.blank? }.nil? }.nil?
+            return false if g.triggered?( response_set ) && g.questions.detect{ |q| q.triggered?( response_set ) && q.mandatory? && !q.answered?( response_set ) }.nil?
           end
         end
 

@@ -60,6 +60,9 @@ module Surveyor
       def triggered?(response_set)
         dependent? ? self.dependency.is_met?(response_set) : true
       end
+      def answered?(response_set)
+        response_set && response_set.responses.detect{ |r| r.question_id == self.id && !r.to_formatted_s.blank? }
+      end
       def dom_class(response_set = nil)
         [ (dependent? ? "q_dependent" : nil),
           (triggered?(response_set) ? nil : "q_hidden"),
