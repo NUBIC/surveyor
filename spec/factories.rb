@@ -163,4 +163,24 @@ FactoryGirl.define do
     v.regexp            {}
   end
 
+  factory :skip_logic do |d|
+    d.association       :survey_section
+    d.association       :target_survey_section, factory: :survey_section
+    d.rule              {"A"}
+  end
+
+  factory :skip_logic_condition do |d|
+    d.association       :skip_logic
+    d.association       :question
+    d.rule_key          {"A"}
+    d.operator          {"=="}
+    d.answer_id         {}
+    d.datetime_value    {}
+    d.integer_value     {}
+    d.float_value       {}
+    d.unit              {}
+    d.text_value        {}
+    d.string_value      {}
+    d.response_other    {}
+  end
 end

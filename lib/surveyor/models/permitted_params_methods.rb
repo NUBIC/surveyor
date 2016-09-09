@@ -106,6 +106,22 @@ module Surveyor
       def response_set_attributes
         [:survey, :responses_attributes, :user_id, :survey_id]
       end
+
+      # skip_logic
+      def skip_logic
+        strong_parameters.permit(*skip_logic_attributes)
+      end
+      def skip_logic_attributes
+        [:survey_section, :target_survey_section, :survey_section_id, :target_survey_section_id, :rule, :execute_order, :target_survey_section_reference]
+      end
+
+      #skip logic conditions
+      def skip_logic_condition
+        strong_parameters.permit(*skip_logic_condition_attributes)
+      end
+      def skip_logic_condition_attributes
+        [:skip_logic, :question, :answer, :skip_logic_id, :rule_key, :question_id, :operator, :answer_id, :datetime_value, :integer_value, :float_value, :unit, :text_value, :string_value, :response_other, :question_reference, :answer_reference]
+      end
     end
   end
 end

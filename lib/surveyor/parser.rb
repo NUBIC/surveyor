@@ -1,4 +1,4 @@
-%w(survey survey_translation survey_section question_group question dependency dependency_condition answer validation validation_condition).each {|model| require model }
+%w(survey survey_translation survey_section question_group question dependency dependency_condition answer validation validation_condition skip_logic skip_logic_condition).each {|model| require model }
 
 require 'yaml'
 
@@ -69,7 +69,7 @@ module Surveyor
     def method_missing(missing_method, *args, &block)
       method_name, reference_identifier = missing_method.to_s.split("_", 2)
       type = full(method_name)
-      Surveyor::Parser.raise_error( "\"#{type}\" is not a surveyor method." )if !%w(survey survey_translation survey_section question_group question dependency dependency_condition answer validation validation_condition).include?(type)
+      Surveyor::Parser.raise_error( "\"#{type}\" is not a surveyor method." )if !%w(survey survey_translation survey_section question_group question dependency dependency_condition answer validation validation_condition skip_logic skip_logic_condition).include?(type)
 
       Surveyor::Parser.rake_trace(reference_identifier.blank? ? "#{type} #{args.map(&:inspect).join ', '}" : "#{type}_#{reference_identifier} #{args.map(&:inspect).join ', '}",
                                   block_models.include?(type) ? 2 : 0)
@@ -86,6 +86,7 @@ module Surveyor
         self.instance_eval(&block)
         if type == 'survey'
           resolve_dependency_condition_references
+          resolve_skip_logic_references
           resolve_question_correct_answers
           report_lost_and_duplicate_references
           report_missing_default_locale
@@ -113,10 +114,12 @@ module Surveyor
       when /^q$|^label$|^image$/; "question"
       when /^a$/; "answer"
       when /^d$/; "dependency"
-      when /^c(ondition)?$/; context[:validation] ? "validation_condition" : "dependency_condition"
+      when /^c(ondition)?$/; context[:validation] ? "validation_condition" : (context[:skip_logic] ? "skip_logic_condition" : "dependency_condition")
       when /^v$/; "validation"
+      when /^sl$/; "skip_logic"
       when /^dc(ondition)?$/; "dependency_condition"
       when /^vc(ondition)?$/; "validation_condition"
+      when /^slc(ondition)?$/; "skip_logic_condition"
       else method_name
       end
     end
@@ -152,6 +155,18 @@ module Surveyor
         self.context[:bad_references].push "q_#{dc.question_reference}, a_#{dc.answer_reference}" if !dc.answer_reference.blank? and (dc.answer = self.context[:answer_references][dc.question_reference][dc.answer_reference]).nil?
       end
     end
+    def resolve_skip_logic_references
+      self.context[:skip_logics].each do |sl|
+        # Looking up references to sections for linking the skip logics target
+        self.context[:bad_references].push "s_#{sl.target_survey_section_reference}" unless (sl.target_survey_section = self.context[:survey].sections.detect{|s| s.reference_identifier == sl.target_survey_section_reference})
+      end
+      self.context[:skip_logic_conditions].each do |slc|
+        # Looking up references to questions and answers for linking the condition objects
+        self.context[:bad_references].push "q_#{slc.question_reference}" unless (slc.question = self.context[:question_references][slc.question_reference])
+        self.context[:answer_references][slc.question_reference] ||= {}
+        self.context[:bad_references].push "q_#{slc.question_reference}, a_#{slc.answer_reference}" if !slc.answer_reference.blank? and (slc.answer = self.context[:answer_references][slc.question_reference][slc.answer_reference]).nil?
+      end
+    end
   end
 end
 
@@ -180,6 +195,8 @@ module SurveyorParserSurveyMethods
       :bad_references => [],
       :duplicate_references => [],
       :dependency_conditions => [],
+      :skip_logics => [],
+      :skip_logic_conditions => [],
       :questions_with_correct_answers => {},
       :default_mandatory => false
     })
@@ -228,7 +245,9 @@ module SurveyorParserSurveySectionMethods
       :dependency_condition,
       :answer,
       :validation,
-      :validation_condition ].each{|k| context.delete k}
+      :validation_condition,
+      :skip_logic,
+      :skip_logic_condition ].each{|k| context.delete k}
   end
 end
 
@@ -306,8 +325,12 @@ end
 module SurveyorParserDependencyMethods
   def parse_and_build(context, args, original_method, reference_identifier)
     # clear context
-    [ :dependency,
-      :dependency_condition ].each{|k| context.delete k}
+    [ :validation,
+      :validation_condition,
+      :dependency,
+      :dependency_condition,
+      :skip_logic,
+      :skip_logic_condition ].each{|k| context.delete k}
 
     # build and set context
     self.attributes = PermittedParams.new(args[0] || {}).dependency
@@ -401,9 +424,11 @@ module SurveyorParserValidationMethods
   def parse_and_build(context, args, original_method, reference_identifier)
     # clear context
     [ :validation,
-      :validation_condition ].each{|k| context.delete k}
-
-    context.delete_if{|k,v| %w(validation validation_condition).map(&:to_sym).include? k}
+      :validation_condition,
+      :dependency,
+      :dependency_condition,
+      :skip_logic,
+      :skip_logic_condition ].each{|k| context.delete k}
 
     # build and set context
     self.attributes = PermittedParams.new({:rule => "A"}.merge(args[0] || {})).validation
@@ -423,5 +448,55 @@ module SurveyorParserValidationConditionMethods
       :operator => a0 || "==",
       :rule_key => reference_identifier}.merge(a1 || {})).validation_condition
     context[:validation].validation_conditions << context[:validation_condition] = self
+  end
+end
+
+# SkipLogic model
+module SurveyorParserSkipLogicMethods
+  SkipLogic.instance_eval do
+    attr_accessor :target_survey_section_reference
+  end
+  def parse_and_build(context, args, original_method, reference_identifier)
+    # clear context
+    [ :validation,
+      :validation_condition,
+      :dependency,
+      :dependency_condition,
+      :skip_logic,
+      :skip_logic_condition ].each{|k| context.delete k}
+
+    # build and set context
+    a0, a1 = args
+    self.attributes = PermittedParams.new(
+      {
+        :target_survey_section_reference => a0.to_s.gsub(/^s_|^section_|^survey_section_/, ""),
+        :execute_order => context[:survey_section].skip_logics.size
+      }.merge(
+        a1 || {}
+      )
+    ).skip_logic
+    context[:survey_section].skip_logics << context[:skip_logic] =  self
+    context[:skip_logics] << self
+  end
+end
+
+# SkipLogicCondition model
+module SurveyorParserSkipLogicConditionMethods
+  SkipLogicCondition.instance_eval do
+    attr_accessor :question_reference, :answer_reference
+  end
+  def parse_and_build(context, args, original_method, reference_identifier)
+    # clear context
+    context.delete :skip_logic_condition
+
+    # build and set context
+    a0, a1, a2 = args
+    self.attributes = PermittedParams.new({
+      :operator => a1 || "==",
+      :question_reference => a0.to_s.gsub(/^q_|^question_/, ""),
+      :rule_key => reference_identifier
+    }.merge( a2.is_a?(Hash) ? a2 : { :answer_reference => a2.to_s.gsub(/^a_|^answer_/, "") })).skip_logic_condition
+    context[:skip_logic].skip_logic_conditions << context[:skip_logic_condition] = self
+    context[:skip_logic_conditions] << self
   end
 end
