@@ -60,6 +60,29 @@ module Surveyor
       def triggered?(response_set)
         dependent? ? self.dependency.is_met?(response_set) : true
       end
+      def qualified?(response_set)
+        responses = response_set.responses.select{ |r| r.question_id == self.id }
+        case self.pick
+        when "one"
+          if responses.empty?
+            return !self.mandatory?
+          else
+            return self.answers.find{ |a| a.id == responses.first.answer_id }.qualify_logic != "reject"
+          end
+        when "any"
+          if responses.empty? && !self.mandatory?
+            return true
+          else
+            num_must = self.answers.select{ |a| a.qualify_logic == "must" }.size
+            chosen_answers = responses.map{ |r| self.answers.find{ |a| a.id == r.answer_id } }
+
+            return chosen_answers.find{ |a| a.qualify_logic == "reject" }.nil? &&
+              chosen_answers.select{ |a| a.qualify_logic == "must" }.size == num_must
+          end
+        when "none"
+          return true
+        end
+      end
       def dom_class(response_set = nil)
         [ (dependent? ? "q_dependent" : nil),
           (triggered?(response_set) ? nil : "q_hidden"),

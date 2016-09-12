@@ -17,6 +17,7 @@ module Surveyor
 
         # Validations
         validates_presence_of :text
+        validates_inclusion_of :qualify_logic, :in => ["must", "may", "reject"]
 
         self.param_key = :a
       end
@@ -34,6 +35,7 @@ module Surveyor
         self.short_text ||= text
         self.data_export_identifier ||= Surveyor::Common.normalize(text)
         self.api_id ||= Surveyor::Common.generate_api_id
+        self.qualify_logic ||= "may"
       end
       def display_type=(val)
         write_attribute(:display_type, val.nil? ? nil : val.to_s)

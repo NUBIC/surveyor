@@ -11,6 +11,25 @@ describe Answer do
       answer.destroy
       Validation.find_by_id(v_id).should be_nil
     end
+
+    it 'should check qualifying logic' do
+      ['must', 'may', 'reject'].each do |ql|
+        answer.qualify_logic = ql
+        answer.save.should be true
+      end
+
+      answer.qualify_logic = nil
+      answer.save.should be false
+      answer.should have(1).error_on :qualify_logic
+
+      answer.qualify_logic = ''
+      answer.save.should be false
+      answer.should have(1).error_on :qualify_logic
+
+      answer.qualify_logic = 'accept'
+      answer.save.should be false
+      answer.should have(1).error_on :qualify_logic
+    end
   end
 
   context "with mustache text substitution" do

@@ -40,6 +40,7 @@ module Surveyor
       add_input_mask_attributes_to_answer
       create_skip_logics
       create_skip_logic_conditions
+      add_qualify_logic_to_answers
     )
 
     def readme

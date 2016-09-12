@@ -243,6 +243,86 @@ describe ResponseSet do
       r_set.is_unanswered?( question ).should be true
     end
   end
+
+  describe 'is qualified', :focus => true do
+    let!( :survey ) { response_set.survey }
+    let!( :section ) { FactoryGirl.create( :survey_section, :survey => survey ) }
+
+    it 'should be qualified if there are no questions in the survey' do
+      response_set.is_qualified?.should be true
+    end
+
+    it 'should be qualified if an answered question is qualified' do
+      question = FactoryGirl.create( :question, :survey_section => section, :pick => "one" )
+      answer = FactoryGirl.create( :answer, :question => question, :qualify_logic => "may" )
+      question.reload
+
+      response_set.responses.build(
+        :question_id => question.id,
+        :answer_id => answer.id
+      )
+      response_set.save.should be true
+
+      question.qualified?( response_set ).should be true
+      response_set.is_qualified?.should be true
+    end
+
+    it 'should be not qualified if an answered question is not qualified' do
+      question = FactoryGirl.create( :question, :survey_section => section, :pick => "one" )
+      answer = FactoryGirl.create( :answer, :question => question, :qualify_logic => "reject" )
+      question.reload
+
+      response_set.responses.build(
+        :question_id => question.id,
+        :answer_id => answer.id
+      )
+      response_set.save.should be true
+
+      question.qualified?( response_set ).should be false
+      response_set.is_qualified?.should be false
+    end
+
+    it 'should be qualified if an unanswered question is not qualified' do
+      question = FactoryGirl.create( :question, :survey_section => section, :pick => "one", :is_mandatory => true )
+      answer = FactoryGirl.create( :answer, :question => question, :qualify_logic => "reject" )
+      question.reload
+
+      question.qualified?( response_set ).should be false
+      response_set.is_qualified?.should be true
+    end
+
+    it 'should be qualified if an untriggered question is not qualified' do
+      first_question = FactoryGirl.create( :question, :survey_section => section, :pick => "one" )
+      first_question_answer = FactoryGirl.create( :answer, :question => first_question, :qualify_logic => "may" )
+
+      second_question = FactoryGirl.create( :question, :survey_section => section, :pick => "one" )
+      second_question_answer = FactoryGirl.create( :answer, :question => second_question, :qualify_logic => "reject" )
+
+      dependency = FactoryGirl.create( :dependency, :question => second_question )
+      dependency_condition = FactoryGirl.create( :dependency_condition, :dependency => dependency, :question => first_question, :answer => first_question_answer )
+
+      first_question.reload
+      second_question.reload
+
+      response_set.responses.build(
+        :question_id => second_question.id,
+        :answer_id => second_question_answer.id
+      )
+
+      second_question.triggered?( response_set ).should be false
+      second_question.qualified?( response_set ).should be false
+      response_set.is_qualified?.should be true
+
+      response_set.responses.build(
+        :question_id => first_question.id,
+        :answer_id => first_question_answer.id
+      )
+      response_set.save.should be true
+      second_question.triggered?( response_set ).should be true
+      second_question.qualified?( response_set ).should be false
+      response_set.is_qualified?.should be false
+    end
+  end
 end
 
 describe ResponseSet, "with dependencies" do

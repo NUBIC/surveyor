@@ -173,4 +173,182 @@ describe Question do
       question.text_for(:post).should == "after|extra"
     end
   end
+
+  describe "qualified" do
+    let!( :r_set ) { FactoryGirl.create( :response_set, :survey => question.survey_section.survey ) }
+
+    describe "with pick none" do
+      before :each do
+        question.update_attribute( :pick, "none" ).should be true
+      end
+
+      it 'should always be qualified if the pick is "none"' do
+        question.qualified?( r_set ).should be true
+      end
+    end
+
+    describe "with pick one" do
+      before :each do
+        question.update_attribute( :pick, "one" ).should be true
+      end
+
+      it 'should be qualified if the question is unanswered but not mandatory' do
+        question.update_attribute( :is_mandatory, false ).should be true
+        question.qualified?( r_set ).should be true
+      end
+
+      it 'should not be qualified if the question is unanswered but mandatory' do
+        question.update_attribute( :is_mandatory, true ).should be true
+        question.qualified?( r_set ).should be false
+      end
+
+      it 'should be qualified if a "may" answer is selected' do
+        may_answer = FactoryGirl.create( :answer, :question => question, :qualify_logic => "may" )
+
+        question.reload
+        question.update_attribute( :is_mandatory, true ).should be true
+        question.qualified?( r_set ).should be false
+
+        r_set.responses.build(
+          :question_id => question.id,
+          :answer_id => may_answer.id,
+        )
+        r_set.save.should be true
+        question.qualified?( r_set ).should be true
+      end
+
+      it 'should not be qualified if a "reject" answer is selected' do
+        reject_answer = FactoryGirl.create( :answer, :question => question, :qualify_logic => "reject" )
+        question.reload
+
+        question.qualified?( r_set ).should be true
+
+        r_set.responses.build(
+          :question_id => question.id,
+          :answer_id => reject_answer.id,
+        )
+        r_set.save.should be true
+        question.qualified?( r_set ).should be false
+      end
+    end
+
+    describe "with pick any" do
+      before :each do
+        question.update_attribute( :pick, "any" ).should be true
+      end
+
+      it 'should be qualified if there are no answers available' do
+        question.qualified?( r_set ).should be true
+      end
+
+      it 'should be qualified if there are no answers available even if the question is mandatory' do
+        question.update_attribute( :is_mandatory, true ).should be true
+        question.qualified?( r_set ).should be true
+      end
+
+      it 'should not be qualified if a "reject" choice was made' do
+        reject_answer = FactoryGirl.create( :answer, :question => question, :qualify_logic => "reject" )
+        question.reload
+
+        r_set.responses.build(
+          :question_id => question.id,
+          :answer_id => reject_answer.id,
+        )
+        r_set.save.should be true
+        question.qualified?( r_set ).should be false
+      end
+
+      it 'should be qualified if a "may" choice was made' do
+        may_answer = FactoryGirl.create( :answer, :question => question, :qualify_logic => "may" )
+        question.reload
+
+        r_set.responses.build(
+          :question_id => question.id,
+          :answer_id => may_answer.id,
+        )
+        r_set.save.should be true
+        question.qualified?( r_set ).should be true
+      end
+
+      it 'should be qualified if a "must" choice was made' do
+        must_answer = FactoryGirl.create( :answer, :question => question, :qualify_logic => "must" )
+        question.reload
+
+        r_set.responses.build(
+          :question_id => question.id,
+          :answer_id => must_answer.id,
+        )
+        r_set.save.should be true
+        question.qualified?( r_set ).should be true
+      end
+
+      it 'should be qualified if no selections where made and there is a a must selection and the question is not mandatory' do
+        question.update_attribute( :is_mandatory, false ).should be true
+        must_answer = FactoryGirl.create( :answer, :question => question, :qualify_logic => "must" )
+        question.reload
+        question.qualified?( r_set ).should be true
+      end
+
+      it 'should not be qualified if no selections where made and there is a a must selection and the question is mandatory' do
+        question.update_attribute( :is_mandatory, true ).should be true
+        must_answer = FactoryGirl.create( :answer, :question => question, :qualify_logic => "must" )
+        question.reload
+        question.qualified?( r_set ).should be false
+      end
+
+      it 'should not be qualified if some selections were made and there is a a must selection and the question is not mandatory' do
+        question.update_attribute( :is_mandatory, false ).should be true
+        must_answer = FactoryGirl.create( :answer, :question => question, :qualify_logic => "must" )
+        may_answer = FactoryGirl.create( :answer, :question => question, :qualify_logic => "may" )
+
+        r_set.responses.build(
+          :question_id => question.id,
+          :answer_id => may_answer.id,
+        )
+
+        question.reload
+        question.qualified?( r_set ).should be false
+      end
+
+      it 'should not be qualified if only some must answers were selected' do
+        first_must_answer = FactoryGirl.create( :answer, :question => question, :qualify_logic => "must" )
+        second_must_answer = FactoryGirl.create( :answer, :question => question, :qualify_logic => "must" )
+        question.reload
+
+        r_set.responses.build(
+          :question_id => question.id,
+          :answer_id => first_must_answer.id,
+        )
+        r_set.save.should be true
+        question.qualified?( r_set ).should be false
+
+        r_set.responses.build(
+          :question_id => question.id,
+          :answer_id => second_must_answer.id,
+        )
+        r_set.save.should be true
+        question.qualified?( r_set ).should be true
+      end
+
+      it 'should not be qualified if some may and some reject answers were selected' do
+        reject_answer = FactoryGirl.create( :answer, :question => question, :qualify_logic => "reject" )
+        may_answer = FactoryGirl.create( :answer, :question => question, :qualify_logic => "may" )
+        question.reload
+
+        r_set.responses.build(
+          :question_id => question.id,
+          :answer_id => may_answer.id,
+        )
+        r_set.save.should be true
+        question.qualified?( r_set ).should be true
+
+        r_set.responses.build(
+          :question_id => question.id,
+          :answer_id => reject_answer.id,
+        )
+        r_set.save.should be true
+        question.qualified?( r_set ).should be false
+      end
+    end
+  end
 end

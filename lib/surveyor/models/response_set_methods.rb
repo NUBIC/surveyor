@@ -172,6 +172,14 @@ module Surveyor
         end
       end
 
+      def is_qualified?
+        survey.sections.map(&:questions).flatten.each do |question|
+          return false if is_answered?( question ) && question.triggered?( self ) && !question.qualified?( self )
+        end
+
+        return true
+      end
+
       protected
 
       def dependencies(question_ids = nil)

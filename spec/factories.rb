@@ -93,6 +93,7 @@ FactoryGirl.define do
     # a.display_length            {}
     # a.custom_class              {}
     # a.custom_renderer           {}
+    # a.qualify_logic             nil
   end
 
   factory :dependency do |d|
