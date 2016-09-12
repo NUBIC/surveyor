@@ -3,16 +3,9 @@ require File.expand_path(File.dirname(__FILE__) + '/../spec_helper')
 describe ResponseSet do
   let(:response_set) { FactoryGirl.create(:response_set) }
 
-  before(:each) do
-    @response_set = FactoryGirl.create(:response_set)
-    @radio_response_attributes = HashWithIndifferentAccess.new({"1"=>{"question_id"=>"1", "answer_id"=>"1", "string_value"=>"XXL"}, "2"=>{"question_id"=>"2", "answer_id"=>"6"}, "3"=>{"question_id"=>"3"}})
-    @checkbox_response_attributes = HashWithIndifferentAccess.new({"1"=>{"question_id"=>"9", "answer_id"=>"11"}, "2"=>{"question_id"=>"9", "answer_id"=>"12"}})
-    @other_response_attributes = HashWithIndifferentAccess.new({"6"=>{"question_id"=>"6", "answer_id" => "3", "string_value"=>""}, "7"=>{"question_id"=>"7", "answer_id" => "4", "text_value"=>"Brian is tired"}, "5"=>{"question_id"=>"5", "answer_id" => "5", "string_value"=>""}})
-  end
-
   it "should have a unique code with length 10 that identifies the survey" do
-    @response_set.access_code.should_not be_nil
-    @response_set.access_code.length.should == 10
+    response_set.access_code.should_not be_nil
+    response_set.access_code.length.should == 10
   end
 
   describe '#access_code' do
@@ -40,11 +33,11 @@ describe ResponseSet do
   end
 
   it "is completable" do
-    @response_set.completed_at.should be_nil
-    @response_set.complete!
-    @response_set.completed_at.should_not be_nil
-    @response_set.completed_at.is_a?(Time).should be_true
-    @response_set.should be_complete
+    response_set.completed_at.should be_nil
+    response_set.complete!
+    response_set.completed_at.should_not be_nil
+    response_set.completed_at.is_a?(Time).should be_true
+    response_set.should be_complete
   end
 
   it 'saves its responses' do
@@ -201,6 +194,53 @@ describe ResponseSet do
       end
 
       response_set.reload.responses.should be_empty
+    end
+  end
+
+  describe 'is answered' do
+    let!( :survey ) { FactoryGirl.create( :survey ) }
+    let!( :section ) { FactoryGirl.create( :survey_section, :survey => survey ) }
+    let!( :question ) { FactoryGirl.create( :question, :survey_section => section ) }
+    let!( :answer ) { FactoryGirl.create( :answer, :question => question ) }
+    let!( :r_set ) { FactoryGirl.create( :response_set, :survey => survey ) }
+
+    it "should always consider the question answered if the question is a label or image" do
+      question.update_attribute( :display_type, 'label' ).should be true
+      r_set.is_answered?( question ).should be true
+
+      question.update_attribute( :display_type, 'image' ).should be true
+      r_set.is_answered?( question ).should be true
+    end
+
+    it "should return false if there is no answer in the response set" do
+      r_set.is_answered?( question ).should be false
+      r_set.is_unanswered?( question ).should be true
+
+      r_set.responses.build(
+        :question_id => question.id,
+        :answer_id => answer.id,
+        :string_value => "answer"
+      )
+      r_set.save
+      r_set.is_answered?( question ).should be true
+      r_set.is_unanswered?( question ).should be false
+    end
+
+    it "should return false if there is an empty answer in the response set" do
+      answer.update_attribute( :response_class, :string_value ).should be true
+      question.reload
+
+      r_set.is_answered?( question ).should be false
+      r_set.is_unanswered?( question ).should be true
+
+      r_set.responses.build(
+        :question_id => question.id,
+        :answer_id => answer.id,
+        :string_value => ""
+      )
+      r_set.save
+      r_set.is_answered?( question ).should be false
+      r_set.is_unanswered?( question ).should be true
     end
   end
 end

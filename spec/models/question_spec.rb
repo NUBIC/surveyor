@@ -173,29 +173,4 @@ describe Question do
       question.text_for(:post).should == "after|extra"
     end
   end
-
-  context "answered" do
-    let!( :survey ) { FactoryGirl.create( :survey ) }
-    let!( :section ) { FactoryGirl.create( :survey_section, :survey => survey ) }
-    let!( :question ) { FactoryGirl.create( :question, :survey_section => section ) }
-    let!( :answer ) { FactoryGirl.create( :answer, :question => question ) }
-    let!( :r_set ) { FactoryGirl.create( :response_set, :survey => survey ) }
-
-    it "should return true if there are no answers" do
-      question.answers.destroy_all
-      question.answered?( r_set ).should be true
-    end
-
-    it "should return false if there is no answer in the response set" do
-      question.answered?( r_set ).should be false
-
-      r_set.responses.build(
-        :question_id => question.id,
-        :answer_id => answer.id,
-        :string_value => "answer"
-      )
-      r_set.save
-      question.answered?( r_set ).should be true
-    end
-  end
 end
