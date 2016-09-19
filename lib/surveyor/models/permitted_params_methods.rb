@@ -104,7 +104,7 @@ module Surveyor
         strong_parameters.permit(*response_set_attributes)
       end
       def response_set_attributes
-        [:survey, :responses_attributes, :user_id, :survey_id]
+        [:survey, :responses_attributes, :user_id, :survey_id, :current_section_id]
       end
 
       # skip_logic

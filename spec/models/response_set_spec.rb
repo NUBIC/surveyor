@@ -244,7 +244,7 @@ describe ResponseSet do
     end
   end
 
-  describe 'is qualified', :focus => true do
+  describe 'is qualified' do
     let!( :survey ) { response_set.survey }
     let!( :section ) { FactoryGirl.create( :survey_section, :survey => survey ) }
 
@@ -321,6 +321,13 @@ describe ResponseSet do
       second_question.triggered?( response_set ).should be true
       second_question.qualified?( response_set ).should be false
       response_set.is_qualified?.should be false
+    end
+  end
+
+  describe 'current section' do
+    it 'should save without a current section' do
+      response_set.current_section_id = nil
+      response_set.save.should be true
     end
   end
 end
