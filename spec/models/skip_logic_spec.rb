@@ -23,14 +23,6 @@ describe SkipLogic do
     skip_logic.should be_valid
   end
 
-  it "should be invalid without a target_survey_section" do
-    skip_logic.target_survey_section_id = nil
-    skip_logic.should have(1).error_on(:target_survey_section)
-
-    skip_logic.target_survey_section_id = 1
-    skip_logic.should be_valid
-  end
-
   it "should be invalid unless rule composed of only references and operators" do
     skip_logic.rule = "foo"
     skip_logic.should have(1).error_on(:rule)

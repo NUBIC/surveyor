@@ -158,7 +158,7 @@ module Surveyor
     def resolve_skip_logic_references
       self.context[:skip_logics].each do |sl|
         # Looking up references to sections for linking the skip logics target
-        self.context[:bad_references].push "s_#{sl.target_survey_section_reference}" unless (sl.target_survey_section = self.context[:survey].sections.detect{|s| s.reference_identifier == sl.target_survey_section_reference})
+        self.context[:bad_references].push "s_#{sl.target_survey_section_reference}" if !sl.target_survey_section_reference.blank? && (sl.target_survey_section = self.context[:survey].sections.detect{|s| s.reference_identifier == sl.target_survey_section_reference}).nil?
       end
       self.context[:skip_logic_conditions].each do |slc|
         # Looking up references to questions and answers for linking the condition objects
@@ -467,9 +467,16 @@ module SurveyorParserSkipLogicMethods
 
     # build and set context
     a0, a1 = args
+
+    target_survey_section_reference = if a0.to_s.match( /^finish|^end/ )
+      nil
+    else
+      a0.to_s.gsub( /^s_|^section_|^survey_section_/, "" )
+    end
+
     self.attributes = PermittedParams.new(
       {
-        :target_survey_section_reference => a0.to_s.gsub(/^s_|^section_|^survey_section_/, ""),
+        :target_survey_section_reference => target_survey_section_reference,
         :execute_order => context[:survey_section].skip_logics.size
       }.merge(
         a1 || {}

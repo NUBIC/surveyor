@@ -395,8 +395,8 @@ describe Surveyor::Parser do
     it "parses" do
       expect(Survey.count).to eq(1)
       expect(SurveySection.count).to eql (4)
-      expect(SkipLogic.count).to eql (4)
-      expect(SkipLogicCondition.count).to eql (5)
+      expect(SkipLogic.count).to eql (5)
+      expect(SkipLogicCondition.count).to eql (6)
       expect(Validation.count).to eql (1)
       expect(ValidationCondition.count).to eql (1)
       expect(Dependency.count).to eql (3)
@@ -404,19 +404,23 @@ describe Surveyor::Parser do
 
       skip_logics = [
         {rule: "A or B", section_reference_identifier: "first", target_section_reference_identifier: "easy" },
-        {rule: "C", section_reference_identifier:"easy", target_section_reference_identifier: "end" },
+        {rule: "C", section_reference_identifier: "first", target_section_reference_identifier: "hard" },
         {rule: "D", section_reference_identifier: "hard", target_section_reference_identifier: "end" },
         {rule: "E", section_reference_identifier: "hard", target_section_reference_identifier: "end" },
       ]
       skip_logics.each{|attrs| expect(SkipLogic.where(rule: attrs[:rule]).first.survey_section.reference_identifier).to eql attrs[:section_reference_identifier]}
       skip_logics.each{|attrs| expect(SkipLogic.where(rule: attrs[:rule]).first.target_survey_section.reference_identifier).to eql attrs[:target_section_reference_identifier]}
 
+      # special case checking the one with no target survey section
+      expect( SkipLogic.where( rule: "F" ).first.target_survey_section ).to be nil
+
       skip_logic_conditions = [
         {rule_key: "A", question_reference_identifier: "name", answer_reference_identifier: "name"},
         {rule_key: "B", question_reference_identifier: "name", answer_reference_identifier: "name"},
-        {rule_key: "C", question_reference_identifier: "color", answer_reference_identifier: "color"},
+        {rule_key: "C", question_reference_identifier: "name", answer_reference_identifier: "name"},
         {rule_key: "D", question_reference_identifier: "swallow", answer_reference_identifier: "question"},
-        {rule_key: "E", question_reference_identifier: "swallow", answer_reference_identifier: "dont_know"}
+        {rule_key: "E", question_reference_identifier: "swallow", answer_reference_identifier: "dont_know"},
+        {rule_key: "F", question_reference_identifier: "color", answer_reference_identifier: "color"}
       ]
       skip_logic_conditions.each{|attrs| expect(SkipLogicCondition.where(rule_key: attrs[:rule_key]).first.question.reference_identifier).to eql attrs[:question_reference_identifier]}
       skip_logic_conditions.each{|attrs| expect(SkipLogicCondition.where(rule_key: attrs[:rule_key]).first.answer.reference_identifier).to eql attrs[:answer_reference_identifier]}

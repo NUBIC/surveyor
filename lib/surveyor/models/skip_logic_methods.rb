@@ -18,7 +18,6 @@ module Surveyor
         validates_presence_of :rule
         validates_format_of :rule, :with => /\A(?:and|or|\)|\(|[A-Z]|\s)+\Z/ #TODO properly formed parenthesis etc.
         validates_presence_of :survey_section
-        validates_presence_of :target_survey_section
       end
 
       # Has this skip_logic has been met in the context of response_set?

@@ -5,9 +5,14 @@ survey "Skip logic" do
     validation :rule => "A"
     condition_A "!=", :string_value => ""
 
+    # check complex rules
     sl :section_easy, :rule => "A or B"
     condition_A :q_name, "==", { :answer_reference => "name", :string_value => "King Arthur" }
     condition_B :q_name, "==", { :answer_reference => "name", :string_value => "Lancelot" }
+
+    # check target section with no prefix
+    sl :hard, :rule => "C"
+    condition_C :q_name, "==", { :answer_reference => "name", :string_value => "Sir Robin" }
   end
 
   section_easy "Easy" do
@@ -16,8 +21,9 @@ survey "Skip logic" do
     dependency :rule => "A"
     condition_A :q_name, "!=", { :answer_reference => "name", :string_value => "" }
 
-    sl :section_end, :rule => "C"
-    condition_C :q_color, "!=", { :answer_reference => "color", :string_value => "" }
+    # check short circuit finishing (with a potential name conflict)
+    sl :end, :rule => "F"
+    condition_F :q_color, "!=", { :answer_reference => "color", :string_value => "" }
   end
 
   section_hard "Hard" do
@@ -25,9 +31,11 @@ survey "Skip logic" do
     a_question "African or European?"
     a_dont_know "I don't know that..."
 
+    # check s_ prefix on target section
     sl :s_end, :rule => "D", :execute_order => 2
     slcondition_D :q_swallow, "==", :a_question
 
+    # check full prefix on target section
     sl :survey_section_end, :rule => "E", :execute_order => 1
     slc_E :q_swallow, "==", :a_dont_know
   end
