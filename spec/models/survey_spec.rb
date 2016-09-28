@@ -22,14 +22,14 @@ describe Survey do
       bandwagoneer.title.should == "Foo"
       bandwagoneer.survey_version.should == 2
     end
-    it "prevents duplicate #survey_version" do
+    it "update #survey_version on save" do
       original = Survey.new(:title => "Foo")
       original.save.should be_true
       imposter = Survey.new(:title => "Foo")
       imposter.save.should be_true
       imposter.survey_version = 0
-      imposter.save.should be_false
-      imposter.should have(1).error_on(:survey_version)
+      imposter.save.should be_true
+      imposter.survey_version.should_not eql original.survey_version
     end
     it "doesn't adjust #title when" do
       original = FactoryGirl.create(:survey, :title => "Foo")

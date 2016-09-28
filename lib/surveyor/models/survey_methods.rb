@@ -20,8 +20,8 @@ module Surveyor
         validates_uniqueness_of :survey_version, :scope => :access_code, :message => "survey with matching access code and version already exists"
 
         # Derived attributes
-        before_save :generate_access_code
-        before_save :increment_version
+        before_validation :generate_access_code
+        before_validation :increment_version
       end
 
       module ClassMethods
