@@ -26,7 +26,7 @@
                 - unless label.blank?
                   = render q.custom_renderer || "/partials/question", :q => label, :f => f, :disableFlag => true
                   - label = nil
-                = f.inputs g.text_for(@render_context, I18n.locale), :id => "g_#{g.id}", :class => "g_#{renderer} #{g.css_class(@response_set)}" do
+                = f.inputs "#{next_question_number(g)}#{g.text_for(@render_context, I18n.locale)}", :id => "g_#{g.id}", :class => "g_#{renderer} #{g.css_class(@response_set)}" do
                   %li.help= g.help_text
                   - case renderer
                     - when :grid
