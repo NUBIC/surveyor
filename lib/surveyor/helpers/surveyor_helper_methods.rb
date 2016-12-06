@@ -44,6 +44,11 @@ module Surveyor
         "<span class='qnum'>#{@n += 1}) </span>"
       end
 
+      # Answers
+      def a_text(a, context=nil, locale=nil)
+        a.text_for(context, locale)
+      end
+
       # Responses
       def rc_to_attr(type_sym)
         case type_sym.to_s
