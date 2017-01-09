@@ -28,7 +28,7 @@ Gem::Specification.new do |s|
   s.add_dependency('sprockets', '2.11.0')
 
   s.add_development_dependency('yard')
-  s.add_development_dependency('rake')
+  s.add_development_dependency('rake', '~> 11.0')
   s.add_development_dependency('sqlite3')
   s.add_development_dependency('bundler', '~> 1.12.5')
   s.add_development_dependency('rspec-rails', '~> 2.14.2')
