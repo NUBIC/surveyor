@@ -34,6 +34,16 @@ child :sections => :sections do
       node(:data_export_identifier, :if => lambda { |a| !a.data_export_identifier.blank? }){ |a| a.data_export_identifier }
       node(:input_mask, :if => lambda { |a| !a.input_mask.blank? }){ |a| a.input_mask }
       node(:input_mask_placeholder, :if => lambda { |a| !a.input_mask_placeholder.blank? }){ |a| a.input_mask_placeholder }
+
+      child :validations, if: lambda { |q| q.validations.present? } do
+        attributes :rule
+        node( :message, if: lambda{ |q| q.message.present? } ) { |q| q.message }
+        child :validation_conditions, if: lambda{ |q| q.validation_conditions.present? } do
+          attributes :rule_key, :operator
+          node( :values ) { |d| d.datetime_value || d.integer_value || d.float_value || d.text_value || d.string_value }
+          node( :unit, if: lambda{ |d| d.unit.present? }) { |d| d.unit }
+        end
+      end
     end
 
     # both questions and question_groups have dependencies
@@ -68,6 +78,16 @@ child :sections => :sections do
         node(:data_export_identifier, :if => lambda { |a| !a.data_export_identifier.blank? }){ |a| a.data_export_identifier }
         node(:input_mask, :if => lambda { |a| !a.input_mask.blank? }){ |a| a.input_mask }
         node(:input_mask_placeholder, :if => lambda { |a| !a.input_mask_placeholder.blank? }){ |a| a.input_mask_placeholder }
+
+        child :validations, if: lambda { |q| q.validations.present? } do
+          attributes :rule
+          node( :message, if: lambda{ |q| q.message.present? } ) { |q| q.message }
+          child :validation_conditions, if: lambda{ |q| q.validation_conditions.present? } do
+            attributes :rule_key, :operator
+            node( :values ) { |d| d.datetime_value || d.integer_value || d.float_value || d.text_value || d.string_value }
+            node( :unit, if: lambda{ |d| d.unit.present? }) { |d| d.unit }
+          end
+        end
       end
 
       child :dependency, :if => lambda { |q| q.dependency } do
