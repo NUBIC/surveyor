@@ -16,7 +16,7 @@ describe "surveyor API" do
           "questions_and_groups": [
             { "uuid": "*", "type": "label", "text": "These questions are examples of the basic supported input types" },
             { "uuid": "*", "reference_identifier": "1", "pick": "one", "text": "What is your favorite color?", "answers": [{"text": "red", "uuid": "*", "reference_identifier": "r", "data_export_identifier": "1"}, {"text": "blue", "uuid": "*", "reference_identifier": "b", "data_export_identifier": "2"}, {"text": "green", "uuid": "*", "reference_identifier": "g", "data_export_identifier": "3"}, {"text": "Other", "uuid": "*"}]},
-            { "uuid": "*", "reference_identifier": "2b", "pick": "any", "text": "Choose the colors you don't like", "answers": [{"text": "orange", "uuid": "*", "reference_identifier": "1"},{"text": "purple", "uuid": "*", "reference_identifier": "2"},{"text": "brown", "uuid": "*", "reference_identifier": "3"},{"text": "Omit", "exclusive":true, "uuid": "*"}]},
+            { "uuid": "*", "reference_identifier": "2b", "pick": "any", "text": "Choose the colors you don't like", "answers": [{"text": "brown", "uuid": "*", "reference_identifier": "3"},{"text": "orange", "uuid": "*", "reference_identifier": "1"},{"text": "purple", "uuid": "*", "reference_identifier": "2"},{"text": "Omit", "exclusive":true, "uuid": "*"}]},
             { "uuid": "*", "reference_identifier": "fire_engine", "text": "What is the best color for a fire engine?", "answers": [{"reference_identifier": "color","text": "Color","type": "string"}]}
           ]
         },{
@@ -78,7 +78,7 @@ describe "surveyor API" do
       expect(json_response).to be_json_eql(%([
         { "uuid": "*", "type": "label", "text": "These questions are examples of the basic supported input types" },
         { "uuid": "*", "reference_identifier": "1", "pick": "one", "text": "What is your favorite color?", "answers": [{"text": "redish", "uuid": "*", "reference_identifier": "r", "data_export_identifier": "1"}, {"text": "blueish", "uuid": "*", "reference_identifier": "b", "data_export_identifier": "2"}, {"text": "greenish", "uuid": "*", "reference_identifier": "g", "data_export_identifier": "3"}, {"text": "Other", "uuid": "*"}]},
-        { "uuid": "*", "reference_identifier": "2b", "pick": "any", "text": "Choose the colors you don't like", "answers": [{"text": "orangeish", "uuid": "*", "reference_identifier": "1"},{"text": "purpleish", "uuid": "*", "reference_identifier": "2"},{"text": "brownish", "uuid": "*", "reference_identifier": "3"},{"text": "Omit", "exclusive":true, "uuid": "*"}]},
+        { "uuid": "*", "reference_identifier": "2b", "pick": "any", "text": "Choose the colors you don't like", "answers": [{"text": "brownish", "uuid": "*", "reference_identifier": "3"},{"text": "orangeish", "uuid": "*", "reference_identifier": "1"},{"text": "purpleish", "uuid": "*", "reference_identifier": "2"},{"text": "Omit", "exclusive":true, "uuid": "*"}]},
         { "uuid": "*", "reference_identifier": "fire_engine", "text": "What is the best color for a fire engine?", "answers": [{"reference_identifier": "color","text": "Color","type": "string"}]}
       ])).at_path("sections/0/questions_and_groups")
     end
@@ -87,7 +87,7 @@ describe "surveyor API" do
       expect(json_response).to be_json_eql(%([
         { "uuid": "*", "type": "label", "text": "These questions are examples of the basic supported input types" },
         { "uuid": "*", "reference_identifier": "1", "pick": "one", "text": "What is your favorite color?", "answers": [{"text": "red", "uuid": "*", "reference_identifier": "r", "data_export_identifier": "1"}, {"text": "blue", "uuid": "*", "reference_identifier": "b", "data_export_identifier": "2"}, {"text": "green", "uuid": "*", "reference_identifier": "g", "data_export_identifier": "3"}, {"text": "Other", "uuid": "*"}]},
-        { "uuid": "*", "reference_identifier": "2b", "pick": "any", "text": "Choose the colors you don't like", "answers": [{"text": "orange", "uuid": "*", "reference_identifier": "1"},{"text": "purple", "uuid": "*", "reference_identifier": "2"},{"text": "brown", "uuid": "*", "reference_identifier": "3"},{"text": "Omit", "exclusive":true, "uuid": "*"}]},
+        { "uuid": "*", "reference_identifier": "2b", "pick": "any", "text": "Choose the colors you don't like", "answers": [{"text": "brown", "uuid": "*", "reference_identifier": "3"},{"text": "orange", "uuid": "*", "reference_identifier": "1"},{"text": "purple", "uuid": "*", "reference_identifier": "2"},{"text": "Omit", "exclusive":true, "uuid": "*"}]},
         { "uuid": "*", "reference_identifier": "fire_engine", "text": "What is the best color for a fire engine?", "answers": [{"reference_identifier": "color","text": "Color","type": "string"}]}
       ])).at_path("sections/0/questions_and_groups")
     end
