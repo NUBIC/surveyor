@@ -18,6 +18,9 @@ child :sections => :sections do
     node(:reference_identifier,     :if => lambda { |q| !q.reference_identifier.blank? }){ |q| q.reference_identifier }
     node(:data_export_identifier,   :if => lambda { |q| !q.data_export_identifier.blank? }){ |q| q.data_export_identifier }
     node(:type,                     :if => lambda { |q| q.display_type != "default" }){ |q| q.display_type }
+    #needed for the mobile app to parse the question based on its answer response_class
+    #Currently we are not supporting multiple answers when it's not a pick question that's why we are grabbing the first answer type
+    node(:answer_type, :if => lambda { |q| q.is_a?(Question) && q.pick == "none" && q.answers.present? }){ |q| q.answers.first.response_class }
 
     # only questions
     node(:pick,                     :if => lambda { |q| q.is_a?(Question) && q.pick != "none" }){ |q| q.pick }
@@ -64,7 +67,9 @@ child :sections => :sections do
       node(:help_text, :if => lambda { |q| !q.help_text.blank? }){ |q| q.help_text }
       node(:reference_identifier, :if => lambda { |q| !q.reference_identifier.blank? }){ |q| q.reference_identifier }
       node(:data_export_identifier,   :if => lambda { |q| !q.data_export_identifier.blank? }){ |q| q.data_export_identifier }
-      node(:type, :if => lambda { |q| q.display_type != "default" }){ |q| q.display_type }
+      #needed for the mobile app to parse the question based on its answer response_class
+      #Currently we are not supporting multiple answers when it's not a pick question that's why we are grabbing the first answer type
+      node(:answer_type, :if => lambda { |q| q.pick == "none" && q.answers.present? }){ |q| q.answers.first.response_class }
       node(:pick, :if => lambda { |q| q.pick != "none" }){ |q| q.pick }
 
       child :answers, :if => lambda { |q| !q.answers.blank? } do
