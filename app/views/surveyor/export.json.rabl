@@ -57,6 +57,7 @@ child :sections => :sections do
         node(:question){ |d| d.question.api_id }
         node(:answer, :if => lambda { |d| d.answer }){ |d| d.answer.api_id }
         node(:value, :if => lambda { |d| d.answer && d.answer.response_class != "answer" && d.as(d.answer.response_class) }){ |d| d.as(d.answer.response_class)}
+        node( :condition_value ) { |d| d.datetime_value || d.integer_value || d.float_value || d.text_value || d.string_value }
       end
     end
 
@@ -101,6 +102,7 @@ child :sections => :sections do
           attributes :rule_key, :operator
           node(:question){ |d| d.question.api_id }
           node(:answer, :if => lambda { |d| d.answer }){ |d| d.answer.api_id }
+          node( :condition_value ) { |d| d.datetime_value || d.integer_value || d.float_value || d.text_value || d.string_value }
           node(:value, :if => lambda { |d| d.answer && d.answer.response_class != "answer" && d.as(d.answer.response_class) }){ |d| d.as(d.answer.response_class)}
         end
       end
