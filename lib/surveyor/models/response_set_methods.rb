@@ -25,10 +25,9 @@ module Surveyor
 
       module ClassMethods
         def has_blank_value?(hash)
-          hash = hash.transform_values
           return true if hash["answer_id"].blank?
           return false if (q = Question.find_by_id(hash["question_id"])) and q.pick == "one"
-          hash.any?{|k,v| v.is_a?(Array) ? v.all?{|x| x.to_s.blank?} : v.to_s.blank?}
+          hash.to_h.any?{|k,v| v.is_a?(Array) ? v.all?{|x| x.to_s.blank?} : v.to_s.blank?}
         end
       end
 
