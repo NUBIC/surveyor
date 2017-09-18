@@ -105,7 +105,12 @@ module Surveyor
       private
 
       def imaged(text)
-        spanned_text = image_type? ? ActionController::Base.helpers.image_tag(text) : text
+        spanned_text = if image_type?
+          image = ActionController::Base.helpers.image_tag(text)
+          short_text != text ? ( short_text.to_s + image ) : image
+        else
+          text
+        end
         #required by Eureka stylesheets
         "<span>#{spanned_text}</span>"
       end
