@@ -101,7 +101,12 @@ module Surveyor
       private
 
       def imaged(text)
-        self.display_type == "image" && !text.blank? ? ActionController::Base.helpers.image_tag(text) : text
+        spanned_text = if self.display_type == "image" && text.present?
+          ActionController::Base.helpers.image_tag(text)
+        else
+          text
+        end
+        "<span>#{spanned_text}</span>"
       end
     end
   end
