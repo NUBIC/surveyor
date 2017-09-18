@@ -98,14 +98,15 @@ module Surveyor
         rules
       end
 
+      def image_type?
+        self.display_type == "image" && text.present?
+      end
+
       private
 
       def imaged(text)
-        spanned_text = if self.display_type == "image" && text.present?
-          ActionController::Base.helpers.image_tag(text)
-        else
-          text
-        end
+        spanned_text = image_type? ? ActionController::Base.helpers.image_tag(text) : text
+        #required by Eureka stylesheets
         "<span>#{spanned_text}</span>"
       end
     end
