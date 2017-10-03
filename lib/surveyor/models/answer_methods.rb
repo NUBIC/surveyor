@@ -105,17 +105,17 @@ module Surveyor
       private
 
       def imaged(text)
-        spanned_text = if image_type?
+        image_txt = if image_type?
           image = ActionController::Base.helpers.image_tag(text)
           short_text != text ? ( short_text.to_s + image ) : image
         else
           text
         end
-        span_wrapper spanned_text
+        span_wrapper image_txt
       end
 
       def span_wrapper text
-        "<span>#{text}</span>" if %(one any).include?( question.pick )
+        %(one any).include?( question.pick ) ? "<span>#{text}</span>" : text
       end
     end
   end
