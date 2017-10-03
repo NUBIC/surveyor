@@ -111,8 +111,11 @@ module Surveyor
         else
           text
         end
-        #required by Eureka stylesheets
-        "<span>#{spanned_text}</span>"
+        span_wrapper spanned_text
+      end
+
+      def span_wrapper text
+        "<span>#{text}</span>" if %(one any).include?( question.pick )
       end
     end
   end
