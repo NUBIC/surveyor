@@ -99,7 +99,7 @@ module Surveyor
       end
 
       def image_type?
-        self.display_type == "image" && text.present?
+        display_type == "image" && text.present?
       end
 
       private
@@ -115,7 +115,11 @@ module Surveyor
       end
 
       def span_wrapper text
-        %(one any).include?( question.pick ) ? "<span>#{text}</span>" : text
+        ( custom_renderer.blank? && pick_one_or_any_question? ) ? "<span>#{text}</span>" : text
+      end
+
+      def pick_one_or_any_question?
+        %(one any).include?( question.pick )
       end
     end
   end
