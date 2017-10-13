@@ -30,13 +30,17 @@ child :sections => :sections do
       attribute :api_id                 => :uuid
       node(:help_text,              :if => lambda { |a| !a.help_text.blank? }){ |a| a.help_text }
       node(:exclusive,              :if => lambda { |a| a.is_exclusive }){ |a| a.is_exclusive }
-      node(:text){ |a| a.split(a.text, :pre) }
+      node(:text, :if => lambda { |a| a.display_type != "image" }){ |a| a.split(a.text, :pre) }
+      node(:url,  :if => lambda { |a| a.display_type == "image" }){ |a| a.split(a.text, :pre) }
+
       node(:post_text,              :if => lambda { |a| !a.split(a.text, :post).blank? }){ |a| a.split(a.text, :post) }
       node(:type,                   :if => lambda { |a| a.response_class != "answer" }){ |a| a.response_class }
       node(:reference_identifier,   :if => lambda { |a| !a.reference_identifier.blank? }){ |a| a.reference_identifier }
       node(:data_export_identifier, :if => lambda { |a| !a.data_export_identifier.blank? }){ |a| a.data_export_identifier }
       node(:input_mask, :if => lambda { |a| !a.input_mask.blank? }){ |a| a.input_mask }
       node(:input_mask_placeholder, :if => lambda { |a| !a.input_mask_placeholder.blank? }){ |a| a.input_mask_placeholder }
+      node(:display_type, :if => lambda { |a| a.display_type.present? && a.display_type != "default" }){ |a| a.display_type }
+      node(:short_text, :if => lambda { |a| a.short_text.present? }){ |a| a.split( a.short_text, :pre) }
 
       child :validations, if: lambda { |q| q.validations.present? } do
         attributes :rule
