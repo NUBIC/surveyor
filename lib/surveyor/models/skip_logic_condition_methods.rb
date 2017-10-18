@@ -31,7 +31,7 @@ module Surveyor
       # Instance methods
       def to_hash(response_set)
         # all responses to associated question
-        responses = question.blank? ? [] : response_set.responses.where("responses.answer_id in (?)", question.answer_ids)
+        responses = question.blank? ? [] : response_set.responses.select{ |r| r.answer_id.in?( question.answer_ids ) }
         if self.operator.match /^count(>|>=|<|<=|==|!=)\d+$/
           op, i = self.operator.scan(/^count(>|>=|<|<=|==|!=)(\d+)$/).flatten
           # logger.warn({rule_key.to_sym => responses.count.send(op, i.to_i)})
