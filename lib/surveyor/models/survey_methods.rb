@@ -13,7 +13,7 @@ module Surveyor
         has_many :sections, class_name: 'SurveySection', :dependent => :destroy
         has_many :response_sets
         has_many :translations, :class_name => "SurveyTranslation"
-        attr_accessible *PermittedParams.new.survey_attributes if defined? ActiveModel::MassAssignmentSecurity
+        attr_accessible *PermittedParams.new.survey_attributes unless defined? ActiveModel::ForbiddenAttributesProtection
 
         # Validations
         validates_presence_of :title

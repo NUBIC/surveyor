@@ -12,7 +12,7 @@ module Surveyor
         # Associations
         has_many :questions
         has_one :dependency
-        attr_accessible *PermittedParams.new.question_group_attributes if defined? ActiveModel::MassAssignmentSecurity
+        attr_accessible *PermittedParams.new.question_group_attributes unless defined? ActiveModel::ForbiddenAttributesProtection
       end
 
       # Instance Methods

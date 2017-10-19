@@ -15,7 +15,7 @@ module Surveyor
         has_many :answers, :dependent => :destroy # it might not always have answers
         has_one :dependency, :dependent => :destroy
         belongs_to :correct_answer, :class_name => "Answer", :dependent => :destroy
-        attr_accessible *PermittedParams.new.question_attributes if defined? ActiveModel::MassAssignmentSecurity
+        attr_accessible *PermittedParams.new.question_attributes unless defined? ActiveModel::ForbiddenAttributesProtection
 
         # Validations
         validates_presence_of :text, :display_order

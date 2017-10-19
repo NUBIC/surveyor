@@ -9,7 +9,7 @@ module Surveyor
         # Associations
         belongs_to :answer
         has_many :validation_conditions, :dependent => :destroy
-        attr_accessible *PermittedParams.new.validation_attributes if defined? ActiveModel::MassAssignmentSecurity
+        attr_accessible *PermittedParams.new.validation_attributes unless defined? ActiveModel::ForbiddenAttributesProtection
 
         # Validations
         validates_presence_of :rule

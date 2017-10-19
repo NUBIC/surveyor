@@ -11,7 +11,7 @@ module Surveyor
         belongs_to :response_set
         belongs_to :question
         belongs_to :answer
-        attr_accessible *PermittedParams.new.response_attributes if defined? ActiveModel::MassAssignmentSecurity
+        attr_accessible *PermittedParams.new.response_attributes unless defined? ActiveModel::ForbiddenAttributesProtection
 
         # Validations
         validates_presence_of :question_id, :answer_id
