@@ -1,16 +1,16 @@
 # encoding: utf-8
-# http://github.com/thoughtbot/factory_girl/tree/master
+# http://github.com/thoughtbot/factory_bot/tree/master
 require 'rubygems'
-require 'factory_girl'
+require 'factory_bot'
 
-FactoryGirl.define do
+FactoryBot.define do
 
   sequence(:unique_survey_access_code){|n| "simple survey #{UUIDTools::UUID.random_create.to_s}" }
 
   factory :survey do |s|
     s.title           "Simple survey"
     s.description     "A simple survey for testing"
-    s.access_code     { FactoryGirl.generate :unique_survey_access_code }
+    s.access_code     { FactoryBot.generate :unique_survey_access_code }
     s.survey_version  0
   end
 
@@ -37,7 +37,7 @@ FactoryGirl.define do
     s.association               :survey # s.survey_id                 {}
     s.title                     {"Demographics"}
     s.description               {"Asking you about your personal data"}
-    s.display_order             {FactoryGirl.generate :survey_section_display_order}
+    s.display_order             {FactoryBot.generate :survey_section_display_order}
     s.reference_identifier      {"demographics"}
     s.data_export_identifier    {"demographics"}
   end
@@ -55,7 +55,7 @@ FactoryGirl.define do
     # q.data_export_identifier  {}
     # q.common_namespace        {}
     # q.common_identifier       {}
-    q.display_order           FactoryGirl.generate(:question_display_order)
+    q.display_order           FactoryBot.generate(:question_display_order)
     # q.display_type            {} # nil is default
     q.is_mandatory            false
     # q.display_width           {}
@@ -87,7 +87,7 @@ FactoryGirl.define do
     # a.data_export_identifier    {}
     # a.common_namespace          {}
     # a.common_identifier         {}
-    a.display_order             {FactoryGirl.generate :answer_display_order}
+    a.display_order             {FactoryBot.generate :answer_display_order}
     # a.is_exclusive              {}
     a.display_type              "default"
     # a.display_length            {}

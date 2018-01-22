@@ -2,12 +2,12 @@
 require File.expand_path(File.dirname(__FILE__) + '/../spec_helper')
 
 describe Answer do
-  let(:answer){ FactoryGirl.create(:answer) }
+  let(:answer){ FactoryBot.create(:answer) }
 
   context "when creating" do
     it { answer.should be_valid }
     it "deletes validation when deleted" do
-      v_id = FactoryGirl.create(:validation, :answer => answer).id
+      v_id = FactoryBot.create(:validation, :answer => answer).id
       answer.destroy
       Validation.find_by_id(v_id).should be_nil
     end
@@ -52,10 +52,10 @@ describe Answer do
 
   context "with translations" do
     require 'yaml'
-    let(:survey){ FactoryGirl.create(:survey) }
-    let(:survey_section){ FactoryGirl.create(:survey_section) }
+    let(:survey){ FactoryBot.create(:survey) }
+    let(:survey_section){ FactoryBot.create(:survey_section) }
     let(:survey_translation){
-      FactoryGirl.create(:survey_translation, :locale => :es, :translation => {
+      FactoryBot.create(:survey_translation, :locale => :es, :translation => {
         :questions => {
           :name => {
             :answers => {
@@ -67,7 +67,7 @@ describe Answer do
         }
       }.to_yaml)
     }
-    let(:question){ FactoryGirl.create(:question, :reference_identifier => "name") }
+    let(:question){ FactoryBot.create(:question, :reference_identifier => "name") }
     before do
       answer.reference_identifier = "name"
       answer.help_text = "My name is..."

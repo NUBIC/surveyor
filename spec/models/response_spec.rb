@@ -3,7 +3,7 @@ require File.expand_path(File.dirname(__FILE__) + '/../spec_helper')
 describe Response, "when saving a response" do
   before(:each) do
     # @response = Response.new(:question_id => 314, :response_set_id => 159, :answer_id => 1)
-    @response = FactoryGirl.create(:response, :question => FactoryGirl.create(:question), :answer => FactoryGirl.create(:answer, :response_class => :string))
+    @response = FactoryBot.create(:response, :question => FactoryBot.create(:question), :answer => FactoryBot.create(:answer, :response_class => :string))
   end
 
   it "should be valid" do
@@ -26,17 +26,17 @@ describe Response, "when saving a response" do
   end
 
   it "should be (in)correct if answer_id is (not) equal to question's correct_answer_id" do
-    @answer = FactoryGirl.create(:answer, :response_class => "answer")
-    @question = FactoryGirl.create(:question, :correct_answer => @answer)
-    @response = FactoryGirl.create(:response, :question => @question, :answer => @answer)
+    @answer = FactoryBot.create(:answer, :response_class => "answer")
+    @question = FactoryBot.create(:question, :correct_answer => @answer)
+    @response = FactoryBot.create(:response, :question => @question, :answer => @answer)
     @response.correct?.should be_true
-    @response.answer = FactoryGirl.create(:answer, :response_class => "answer").tap { |a| a.id = 143 }
+    @response.answer = FactoryBot.create(:answer, :response_class => "answer").tap { |a| a.id = 143 }
     @response.correct?.should be_false
   end
 
   it "should be in order by created_at" do
     @response.response_set.should_not be_nil
-    response2 = FactoryGirl.create(:response, :question => FactoryGirl.create(:question), :answer => FactoryGirl.create(:answer), :response_set => @response.response_set, :created_at => (@response.created_at + 1))
+    response2 = FactoryBot.create(:response, :question => FactoryBot.create(:question), :answer => FactoryBot.create(:answer), :response_set => @response.response_set, :created_at => (@response.created_at + 1))
     Response.all.should == [@response, response2]
   end
 
@@ -80,9 +80,9 @@ end
 
 describe Response, "applicable_attributes" do
   before(:each) do
-    @who = FactoryGirl.create(:question, :text => "Who rules?")
-    @odoyle = FactoryGirl.create(:answer, :text => "Odoyle", :response_class => "answer")
-    @other = FactoryGirl.create(:answer, :text => "Other", :response_class => "string")
+    @who = FactoryBot.create(:question, :text => "Who rules?")
+    @odoyle = FactoryBot.create(:answer, :text => "Odoyle", :response_class => "answer")
+    @other = FactoryBot.create(:answer, :text => "Other", :response_class => "string")
   end
 
   it "should have string_value if response_type is string" do

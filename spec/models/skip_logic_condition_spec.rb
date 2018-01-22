@@ -11,8 +11,8 @@ describe SkipLogicCondition do
   describe "instance" do
     let!( :skip_logic_condition ) {
       SkipLogicCondition.new(
-        :skip_logic => FactoryGirl.create( :skip_logic ),
-        :question => FactoryGirl.create( :question ),
+        :skip_logic => FactoryBot.create( :skip_logic ),
+        :question => FactoryBot.create( :question ),
         :operator => "==",
         :answer_id => 23,
         :rule_key => "A"
@@ -44,10 +44,10 @@ describe SkipLogicCondition do
 
     it "should have unique rule_key within the context of a skip_logic" do
       skip_logic_condition.should be_valid
-      skip_logic = FactoryGirl.create( :skip_logic )
+      skip_logic = FactoryBot.create( :skip_logic )
       SkipLogicCondition.create(
         :skip_logic => skip_logic,
-        :question => FactoryGirl.create( :question ),
+        :question => FactoryBot.create( :question ),
         :operator => "==",
         :answer_id => 14,
         :rule_key => "B"
@@ -87,9 +87,9 @@ describe SkipLogicCondition do
   end
 
   it "returns true for != with no responses" do
-    question = FactoryGirl.create(:question)
-    skip_logic_condition = FactoryGirl.create(:skip_logic_condition, :rule_key => "C", :question => question)
-    rs = FactoryGirl.create(:response_set)
+    question = FactoryBot.create(:question)
+    skip_logic_condition = FactoryBot.create(:skip_logic_condition, :rule_key => "C", :question => question)
+    rs = FactoryBot.create(:response_set)
     skip_logic_condition.to_hash(rs).should == {:C => false}
   end
 
@@ -105,16 +105,16 @@ describe SkipLogicCondition do
     # condition_A :q_HEIGHT_FT, "<", {:integer_value => "4"}
     # condition_B :q_HEIGHT_FT, ">", {:integer_value => "7"}
 
-    answer = FactoryGirl.create(:answer, :response_class => :integer)
+    answer = FactoryBot.create(:answer, :response_class => :integer)
     skip_logic_condition = SkipLogicCondition.new(
-      :skip_logic => FactoryGirl.create(:skip_logic),
+      :skip_logic => FactoryBot.create(:skip_logic),
       :question => answer.question,
       :answer => answer,
       :operator => ">",
       :integer_value => 4,
       :rule_key => "A")
 
-    response = FactoryGirl.create(:response, :answer => answer, :question => answer.question)
+    response = FactoryBot.create(:response, :answer => answer, :question => answer.question)
     response_set = response.response_set
     response.integer_value.should == nil
 
@@ -123,11 +123,11 @@ describe SkipLogicCondition do
 
   describe "evaluate '==' operator" do
     before(:each) do
-      @a = FactoryGirl.create(:answer, :response_class => "answer")
-      @b = FactoryGirl.create(:answer, :question => @a.question)
-      @r = FactoryGirl.create(:response, :question => @a.question, :answer => @a)
+      @a = FactoryBot.create(:answer, :response_class => "answer")
+      @b = FactoryBot.create(:answer, :question => @a.question)
+      @r = FactoryBot.create(:response, :question => @a.question, :answer => @a)
       @rs = @r.response_set.reload
-      @slc = FactoryGirl.create(:skip_logic_condition, :question => @a.question, :answer => @a, :operator => "==", :rule_key => "D")
+      @slc = FactoryBot.create(:skip_logic_condition, :question => @a.question, :answer => @a, :operator => "==", :rule_key => "D")
       @slc.as(:answer).should == @r.as(:answer)
     end
 
@@ -176,11 +176,11 @@ describe SkipLogicCondition do
 
   describe "evaluate '!=' operator" do
     before(:each) do
-      @a = FactoryGirl.create(:answer)
-      @b = FactoryGirl.create(:answer, :question => @a.question)
-      @r = FactoryGirl.create(:response, :question => @a.question, :answer => @a)
+      @a = FactoryBot.create(:answer)
+      @b = FactoryBot.create(:answer, :question => @a.question)
+      @r = FactoryBot.create(:response, :question => @a.question, :answer => @a)
       @rs = @r.response_set.reload
-      @slc = FactoryGirl.create(:skip_logic_condition, :question => @a.question, :answer => @a, :operator => "!=", :rule_key => "E")
+      @slc = FactoryBot.create(:skip_logic_condition, :question => @a.question, :answer => @a, :operator => "!=", :rule_key => "E")
       @slc.as(:answer).should == @r.as(:answer)
     end
 
@@ -229,11 +229,11 @@ describe SkipLogicCondition do
 
   describe "evaluate the '<' operator" do
     before(:each) do
-      @a = FactoryGirl.create(:answer)
-      @b = FactoryGirl.create(:answer, :question => @a.question)
-      @r = FactoryGirl.create(:response, :question => @a.question, :answer => @a)
+      @a = FactoryBot.create(:answer)
+      @b = FactoryBot.create(:answer, :question => @a.question)
+      @r = FactoryBot.create(:response, :question => @a.question, :answer => @a)
       @rs = @r.response_set
-      @slc = FactoryGirl.create(:skip_logic_condition, :question => @a.question, :answer => @a, :operator => "<", :rule_key => "F")
+      @slc = FactoryBot.create(:skip_logic_condition, :question => @a.question, :answer => @a, :operator => "<", :rule_key => "F")
       @slc.as(:answer).should == @r.as(:answer)
     end
 
@@ -258,11 +258,11 @@ describe SkipLogicCondition do
 
   describe "evaluate the '<=' operator" do
     before(:each) do
-      @a = FactoryGirl.create(:answer)
-      @b = FactoryGirl.create(:answer, :question => @a.question)
-      @r = FactoryGirl.create(:response, :question => @a.question, :answer => @a)
+      @a = FactoryBot.create(:answer)
+      @b = FactoryBot.create(:answer, :question => @a.question)
+      @r = FactoryBot.create(:response, :question => @a.question, :answer => @a)
       @rs = @r.response_set
-      @slc = FactoryGirl.create(:skip_logic_condition, :question => @a.question, :answer => @a, :operator => "<=", :rule_key => "G")
+      @slc = FactoryBot.create(:skip_logic_condition, :question => @a.question, :answer => @a, :operator => "<=", :rule_key => "G")
       @slc.as(:answer).should == @r.as(:answer)
     end
 
@@ -292,11 +292,11 @@ describe SkipLogicCondition do
 
   describe "evaluate the '>' operator" do
     before(:each) do
-      @a = FactoryGirl.create(:answer)
-      @b = FactoryGirl.create(:answer, :question => @a.question)
-      @r = FactoryGirl.create(:response, :question => @a.question, :answer => @a)
+      @a = FactoryBot.create(:answer)
+      @b = FactoryBot.create(:answer, :question => @a.question)
+      @r = FactoryBot.create(:response, :question => @a.question, :answer => @a)
       @rs = @r.response_set
-      @slc = FactoryGirl.create(:skip_logic_condition, :question => @a.question, :answer => @a, :operator => ">", :rule_key => "H")
+      @slc = FactoryBot.create(:skip_logic_condition, :question => @a.question, :answer => @a, :operator => ">", :rule_key => "H")
       @slc.as(:answer).should == @r.as(:answer)
     end
 
@@ -321,15 +321,15 @@ describe SkipLogicCondition do
 
   describe "evaluate the '>=' operator" do
     before(:each) do
-      @a = FactoryGirl.create(:answer)
-      @b = FactoryGirl.create(:answer, :question => @a.question)
-      @r = FactoryGirl.create(:response, :question => @a.question, :answer => @a)
+      @a = FactoryBot.create(:answer)
+      @b = FactoryBot.create(:answer, :question => @a.question)
+      @r = FactoryBot.create(:response, :question => @a.question, :answer => @a)
       @rs = @r.response_set
-      @slc = FactoryGirl.create(:skip_logic_condition, :question => @a.question, :answer => @a, :operator => ">=", :rule_key => "I")
+      @slc = FactoryBot.create(:skip_logic_condition, :question => @a.question, :answer => @a, :operator => ">=", :rule_key => "I")
       @slc.as(:answer).should == @r.as(:answer)
     end
 
-    it "with an integer value response" do
+    it "with an integer value response", focus: true do
       @a.update_attributes(:response_class => "integer")
       update_response(:integer_value => 50)
       @slc.integer_value = 100
@@ -354,20 +354,20 @@ describe SkipLogicCondition do
 
   describe "evaluating with response_class string" do
     it "should compare answer ids when the skip logic condition string_value is nil" do
-      @a = FactoryGirl.create(:answer, :response_class => "string")
-      @b = FactoryGirl.create(:answer, :question => @a.question)
-      @r = FactoryGirl.create(:response, :question => @a.question, :answer => @a, :string_value => "")
+      @a = FactoryBot.create(:answer, :response_class => "string")
+      @b = FactoryBot.create(:answer, :question => @a.question)
+      @r = FactoryBot.create(:response, :question => @a.question, :answer => @a, :string_value => "")
       @rs = @r.response_set.reload
-      @slc = FactoryGirl.create(:skip_logic_condition, :question => @a.question, :answer => @a, :operator => "==", :rule_key => "J")
+      @slc = FactoryBot.create(:skip_logic_condition, :question => @a.question, :answer => @a, :operator => "==", :rule_key => "J")
       @slc.to_hash(@rs).should == {:J => true}
     end
 
-    it "should compare strings when the skip logic condition string_value is not nil, even if it is blank", focus: true do
-      @a = FactoryGirl.create(:answer, :response_class => "string")
-      @b = FactoryGirl.create(:answer, :question => @a.question)
-      @r = FactoryGirl.create(:response, :question => @a.question, :answer => @a, :string_value => "foo")
+    it "should compare strings when the skip logic condition string_value is not nil, even if it is blank" do
+      @a = FactoryBot.create(:answer, :response_class => "string")
+      @b = FactoryBot.create(:answer, :question => @a.question)
+      @r = FactoryBot.create(:response, :question => @a.question, :answer => @a, :string_value => "foo")
       @rs = @r.response_set.reload
-      @slc = FactoryGirl.create(:skip_logic_condition, :question => @a.question, :answer => @a, :operator => "==", :rule_key => "K", :string_value => "foo")
+      @slc = FactoryBot.create(:skip_logic_condition, :question => @a.question, :answer => @a, :operator => "==", :rule_key => "K", :string_value => "foo")
       @slc.to_hash(@rs).should == {:K => true}
 
       update_response(:string_value => "")
@@ -378,15 +378,15 @@ describe SkipLogicCondition do
 
   describe "evaluate 'count' operator" do
     before(:each) do
-      @q = FactoryGirl.create(:question)
+      @q = FactoryBot.create(:question)
       @slc = SkipLogicCondition.new(:operator => "count>2", :rule_key => "M", :question => @q)
       @as = []
       3.times do
-        @as << FactoryGirl.create(:answer, :question => @q, :response_class => "answer")
+        @as << FactoryBot.create(:answer, :question => @q, :response_class => "answer")
       end
-      @rs = FactoryGirl.create(:response_set)
+      @rs = FactoryBot.create(:response_set)
       @as.slice(0,2).each do |a|
-        FactoryGirl.create(:response, :question => @q, :answer => a, :response_set => @rs)
+        FactoryBot.create(:response, :question => @q, :answer => a, :response_set => @rs)
       end
       @rs.save
       @rs.reload
@@ -394,7 +394,7 @@ describe SkipLogicCondition do
 
     it "with operator with >" do
       @slc.to_hash(@rs).should == {:M => false}
-      FactoryGirl.create(:response, :question => @q, :answer => @as.last, :response_set => @rs)
+      FactoryBot.create(:response, :question => @q, :answer => @as.last, :response_set => @rs)
       @rs.reload.responses.count.should == 3
       @slc.to_hash(@rs.reload).should == {:M => true}
     end

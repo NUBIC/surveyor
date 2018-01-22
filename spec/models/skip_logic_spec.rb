@@ -2,7 +2,7 @@ require File.expand_path(File.dirname(__FILE__) + '/../spec_helper')
 
 describe SkipLogic do
 
-  let!( :skip_logic ) { FactoryGirl.create(:skip_logic) }
+  let!( :skip_logic ) { FactoryBot.create(:skip_logic) }
 
   it "should be valid" do
     skip_logic.should be_valid
@@ -68,9 +68,9 @@ end
 describe SkipLogic, "with conditions" do
   it "should destroy conditions when destroyed" do
     skip_logic = SkipLogic.new(:rule => "A and B and C", :survey_section_id => 1)
-    FactoryGirl.create(:skip_logic_condition, :skip_logic => skip_logic, :rule_key => "A")
-    FactoryGirl.create(:skip_logic_condition, :skip_logic => skip_logic, :rule_key => "B")
-    FactoryGirl.create(:skip_logic_condition, :skip_logic => skip_logic, :rule_key => "C")
+    FactoryBot.create(:skip_logic_condition, :skip_logic => skip_logic, :rule_key => "A")
+    FactoryBot.create(:skip_logic_condition, :skip_logic => skip_logic, :rule_key => "B")
+    FactoryBot.create(:skip_logic_condition, :skip_logic => skip_logic, :rule_key => "C")
     slc_ids = skip_logic.skip_logic_conditions.map(&:id)
     skip_logic.destroy
     slc_ids.each{|id| SkipLogicCondition.find_by_id(id).should be nil}
