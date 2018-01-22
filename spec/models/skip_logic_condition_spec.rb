@@ -126,7 +126,7 @@ describe SkipLogicCondition do
       @a = FactoryGirl.create(:answer, :response_class => "answer")
       @b = FactoryGirl.create(:answer, :question => @a.question)
       @r = FactoryGirl.create(:response, :question => @a.question, :answer => @a)
-      @rs = @r.response_set
+      @rs = @r.response_set.reload
       @slc = FactoryGirl.create(:skip_logic_condition, :question => @a.question, :answer => @a, :operator => "==", :rule_key => "D")
       @slc.as(:answer).should == @r.as(:answer)
     end
@@ -139,37 +139,37 @@ describe SkipLogicCondition do
 
     it "with string value response" do
       @a.update_attributes(:response_class => "string")
-      @r.update_attributes(:string_value => "hello123")
+      update_response(:string_value => "hello123")
       @slc.string_value = "hello123"
       @slc.to_hash(@rs).should == {:D => true}
-      @r.update_attributes(:string_value => "foo_abc")
+      update_response(:string_value => "foo_abc")
       @slc.to_hash(@rs).should == {:D => false}
     end
 
     it "with a text value response" do
       @a.update_attributes(:response_class => "text")
-      @r.update_attributes(:text_value => "hello this is some text for comparison")
+      update_response(:text_value => "hello this is some text for comparison")
       @slc.text_value = "hello this is some text for comparison"
       @slc.to_hash(@rs).should == {:D => true}
-      @r.update_attributes(:text_value => "Not the same text")
+      update_response(:text_value => "Not the same text")
       @slc.to_hash(@rs).should == {:D => false}
     end
 
     it "with an integer value response" do
       @a.update_attributes(:response_class => "integer")
-      @r.update_attributes(:integer_value => 10045)
+      update_response(:integer_value => 10045)
       @slc.integer_value = 10045
       @slc.to_hash(@rs).should == {:D => true}
-      @r.update_attributes(:integer_value => 421)
+      update_response(:integer_value => 421)
       @slc.to_hash(@rs).should == {:D => false}
     end
 
     it "with a float value response" do
       @a.update_attributes(:response_class => "float")
-      @r.update_attributes(:float_value => 121.1)
+      update_response(:float_value => 121.1)
       @slc.float_value = 121.1
       @slc.to_hash(@rs).should == {:D => true}
-      @r.update_attributes(:float_value => 130.123)
+      update_response(:float_value => 130.123)
       @slc.to_hash(@rs).should == {:D => false}
     end
   end
@@ -179,7 +179,7 @@ describe SkipLogicCondition do
       @a = FactoryGirl.create(:answer)
       @b = FactoryGirl.create(:answer, :question => @a.question)
       @r = FactoryGirl.create(:response, :question => @a.question, :answer => @a)
-      @rs = @r.response_set
+      @rs = @r.response_set.reload
       @slc = FactoryGirl.create(:skip_logic_condition, :question => @a.question, :answer => @a, :operator => "!=", :rule_key => "E")
       @slc.as(:answer).should == @r.as(:answer)
     end
@@ -192,37 +192,37 @@ describe SkipLogicCondition do
 
     it "with string value response" do
       @a.update_attributes(:response_class => "string")
-      @r.update_attributes(:string_value => "hello123")
+      update_response(:string_value => "hello123")
       @slc.string_value = "hello123"
       @slc.to_hash(@rs).should == {:E => false}
-      @r.update_attributes(:string_value => "foo_abc")
+      update_response(:string_value => "foo_abc")
       @slc.to_hash(@rs).should == {:E => true}
     end
 
     it "with a text value response" do
       @a.update_attributes(:response_class => "text")
-      @r.update_attributes(:text_value => "hello this is some text for comparison")
+      update_response(:text_value => "hello this is some text for comparison")
       @slc.text_value = "hello this is some text for comparison"
       @slc.to_hash(@rs).should == {:E => false}
-      @r.update_attributes(:text_value => "Not the same text")
+      update_response(:text_value => "Not the same text")
       @slc.to_hash(@rs).should == {:E => true}
     end
 
     it "with an integer value response" do
       @a.update_attributes(:response_class => "integer")
-      @r.update_attributes(:integer_value => 10045)
+      update_response(:integer_value => 10045)
       @slc.integer_value = 10045
       @slc.to_hash(@rs).should == {:E => false}
-      @r.update_attributes(:integer_value => 421)
+      update_response(:integer_value => 421)
       @slc.to_hash(@rs).should == {:E => true}
     end
 
     it "with a float value response" do
       @a.update_attributes(:response_class => "float")
-      @r.update_attributes(:float_value => 121.1)
+      update_response(:float_value => 121.1)
       @slc.float_value = 121.1
       @slc.to_hash(@rs).should == {:E => false}
-      @r.update_attributes(:float_value => 130.123)
+      update_response(:float_value => 130.123)
       @slc.to_hash(@rs).should == {:E => true}
     end
   end
@@ -239,19 +239,19 @@ describe SkipLogicCondition do
 
     it "with an integer value response" do
       @a.update_attributes(:response_class => "integer")
-      @r.update_attributes(:integer_value => 50)
+      update_response(:integer_value => 50)
       @slc.integer_value = 100
       @slc.to_hash(@rs).should == {:F => true}
-      @r.update_attributes(:integer_value => 421)
+      update_response(:integer_value => 421)
       @slc.to_hash(@rs).should == {:F => false}
     end
 
     it "with a float value response" do
       @a.update_attributes(:response_class => "float")
-      @r.update_attributes(:float_value => 5.1)
+      update_response(:float_value => 5.1)
       @slc.float_value = 121.1
       @slc.to_hash(@rs).should == {:F => true}
-      @r.update_attributes(:float_value => 130.123)
+      update_response(:float_value => 130.123)
       @slc.to_hash(@rs).should == {:F => false}
     end
   end
@@ -268,23 +268,23 @@ describe SkipLogicCondition do
 
     it "with an integer value response" do
       @a.update_attributes(:response_class => "integer")
-      @r.update_attributes(:integer_value => 50)
+      update_response(:integer_value => 50)
       @slc.integer_value = 100
       @slc.to_hash(@rs).should == {:G => true}
-      @r.update_attributes(:integer_value => 100)
+      update_response(:integer_value => 100)
       @slc.to_hash(@rs).should == {:G => true}
-      @r.update_attributes(:integer_value => 421)
+      update_response(:integer_value => 421)
       @slc.to_hash(@rs).should == {:G => false}
     end
 
     it "with a float value response" do
       @a.update_attributes(:response_class => "float")
-      @r.update_attributes(:float_value => 5.1)
+      update_response(:float_value => 5.1)
       @slc.float_value = 121.1
       @slc.to_hash(@rs).should == {:G => true}
-      @r.update_attributes(:float_value => 121.1)
+      update_response(:float_value => 121.1)
       @slc.to_hash(@rs).should == {:G => true}
-      @r.update_attributes(:float_value => 130.123)
+      update_response(:float_value => 130.123)
       @slc.to_hash(@rs).should == {:G => false}
     end
 
@@ -302,19 +302,19 @@ describe SkipLogicCondition do
 
     it "with an integer value response" do
       @a.update_attributes(:response_class => "integer")
-      @r.update_attributes(:integer_value => 50)
+      update_response(:integer_value => 50)
       @slc.integer_value = 100
       @slc.to_hash(@rs).should == {:H => false}
-      @r.update_attributes(:integer_value => 421)
+      update_response(:integer_value => 421)
       @slc.to_hash(@rs).should == {:H => true}
     end
 
     it "with a float value response" do
       @a.update_attributes(:response_class => "float")
-      @r.update_attributes(:float_value => 5.1)
+      update_response(:float_value => 5.1)
       @slc.float_value = 121.1
       @slc.to_hash(@rs).should == {:H => false}
-      @r.update_attributes(:float_value => 130.123)
+      update_response(:float_value => 130.123)
       @slc.to_hash(@rs).should == {:H => true}
     end
   end
@@ -331,23 +331,23 @@ describe SkipLogicCondition do
 
     it "with an integer value response" do
       @a.update_attributes(:response_class => "integer")
-      @r.update_attributes(:integer_value => 50)
+      update_response(:integer_value => 50)
       @slc.integer_value = 100
       @slc.to_hash(@rs).should == {:I => false}
-      @r.update_attributes(:integer_value => 100)
+      update_response(:integer_value => 100)
       @slc.to_hash(@rs).should == {:I => true}
-      @r.update_attributes(:integer_value => 421)
+      update_response(:integer_value => 421)
       @slc.to_hash(@rs).should == {:I => true}
     end
 
     it "with a float value response" do
       @a.update_attributes(:response_class => "float")
-      @r.update_attributes(:float_value => 5.1)
+      update_response(:float_value => 5.1)
       @slc.float_value = 121.1
       @slc.to_hash(@rs).should == {:I => false}
-      @r.update_attributes(:float_value => 121.1)
+      update_response(:float_value => 121.1)
       @slc.to_hash(@rs).should == {:I => true}
-      @r.update_attributes(:float_value => 130.123)
+      update_response(:float_value => 130.123)
       @slc.to_hash(@rs).should == {:I => true}
     end
   end
@@ -357,20 +357,20 @@ describe SkipLogicCondition do
       @a = FactoryGirl.create(:answer, :response_class => "string")
       @b = FactoryGirl.create(:answer, :question => @a.question)
       @r = FactoryGirl.create(:response, :question => @a.question, :answer => @a, :string_value => "")
-      @rs = @r.response_set
+      @rs = @r.response_set.reload
       @slc = FactoryGirl.create(:skip_logic_condition, :question => @a.question, :answer => @a, :operator => "==", :rule_key => "J")
       @slc.to_hash(@rs).should == {:J => true}
     end
 
-    it "should compare strings when the skip logic condition string_value is not nil, even if it is blank" do
+    it "should compare strings when the skip logic condition string_value is not nil, even if it is blank", focus: true do
       @a = FactoryGirl.create(:answer, :response_class => "string")
       @b = FactoryGirl.create(:answer, :question => @a.question)
       @r = FactoryGirl.create(:response, :question => @a.question, :answer => @a, :string_value => "foo")
-      @rs = @r.response_set
+      @rs = @r.response_set.reload
       @slc = FactoryGirl.create(:skip_logic_condition, :question => @a.question, :answer => @a, :operator => "==", :rule_key => "K", :string_value => "foo")
       @slc.to_hash(@rs).should == {:K => true}
 
-      @r.update_attributes(:string_value => "")
+      update_response(:string_value => "")
       @slc.string_value = ""
       @slc.to_hash(@rs).should == {:K => true}
     end
@@ -389,6 +389,7 @@ describe SkipLogicCondition do
         FactoryGirl.create(:response, :question => @q, :answer => a, :response_set => @rs)
       end
       @rs.save
+      @rs.reload
     end
 
     it "with operator with >" do
@@ -432,4 +433,10 @@ describe SkipLogicCondition do
       @slc.to_hash(@rs).should == {:M => true}
     end
   end
+
+  def update_response(values)
+    @r.update_attributes(values)
+    @rs.reload
+  end
+
 end
