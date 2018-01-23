@@ -10,7 +10,7 @@ case env_rails_version
 when "master"
   {github: "rails/rails"}
 when /^4.2.10/
-  gem 'bootstrap-sass', '~> 3.3.7'
+  gem 'bootstrap-sass', '~> 3.3.6'
   gem 'jquery-rails'
   gem 'simple_form', '~> 3.5.0'
   gem "sprockets-rails", "~> 3.2.1"
