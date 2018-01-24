@@ -10,17 +10,17 @@ case env_rails_version
 when "master"
   {github: "rails/rails"}
 when /^4.2.10/
-  gem 'bootstrap-sass', '~> 3.3.6'
+  gem 'bootstrap-sass', '~> 3.3'
   gem 'jquery-rails'
-  gem 'simple_form', '~> 3.5.0'
-  gem "sprockets-rails", "~> 3.2.1"
+  gem 'simple_form', '~> 3.5'
+  gem "sprockets-rails", "~> 3.2"
 
   # A JS runtime is required for Rails 4.0+
   gem 'therubyracer', platforms: :ruby
 when /^4.2.5/, /^4.1/, /^4.0/
-  gem "sprockets-rails", "2.3.3"
-  gem 'simple_form', '~> 3.1.0'
-  gem 'bootstrap-sass', '3.3.1.0'
+  gem "sprockets-rails", "~> 2.3"
+  gem 'simple_form', '~> 3.1'
+  gem 'bootstrap-sass', '~> 3.3.1'
 
   # A JS runtime is required for Rails 4.0+
   gem 'therubyracer', platforms: :ruby
@@ -29,9 +29,9 @@ when /^3.2/
   # A JS runtime is required for Rails 3.1+
   gem 'therubyracer', '~> 0.12.1'
 
-  gem 'bootstrap-sass', '3.3.1.0'
+  gem 'bootstrap-sass', '~> 3.3.1'
   gem 'simple_form', '~> 3.1.0'
-  gem "sprockets-rails", "2.3.3"
+  gem "sprockets-rails", "~> 2.3.3"
 else
   fail "Unsupported Rails version #{ENV['RAILS_VERSION']}"
 end
