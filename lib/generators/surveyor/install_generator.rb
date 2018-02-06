@@ -39,6 +39,7 @@ module Surveyor
       create_survey_translations
       add_input_mask_attributes_to_answer
       add_redirect_url_to_surveys
+      add_dictionary_fields_to_surveys
     )
 
     def readme

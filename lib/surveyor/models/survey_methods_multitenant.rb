@@ -19,9 +19,9 @@ module Surveyor
         validates_presence_of :title
         #validates_uniqueness_of :survey_version, :scope => :access_code, :message => "survey with matching access code and version already exists"   #this validation (including study_id scope) will be added back in the multitenant project (using acts_as_tenant) implementation of this module.
 
-        # Derived attributes
-        before_save :generate_access_code
-        before_save :increment_version
+        # Generated attributes.  Use before_validation instead of before_save so that generated attributes have values before the validates_uniqueness is applied.
+        before_validation :generate_access_code
+        before_validation :increment_version
       end
 
       module ClassMethods
@@ -80,7 +80,6 @@ module Surveyor
       def increment_version
         surveys = self.class.select(:survey_version).where(:access_code => access_code).order("survey_version DESC")
         next_version = surveys.any? ? surveys.first.survey_version.to_i + 1 : 0
-
         self.survey_version = next_version
       end
 
