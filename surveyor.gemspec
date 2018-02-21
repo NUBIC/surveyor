@@ -19,13 +19,11 @@ Gem::Specification.new do |s|
 
   s.add_dependency('rails', '>= 4.2')
   s.add_dependency('haml', '~> 4.0')
+  s.add_dependency('jquery-rails', '~> 4.3.1')
   s.add_dependency('sass-rails', '~> 5.0.0')
-  s.add_dependency('bootstrap-sass', '3.3.1.0')
-  s.add_dependency('simple_form', '~> 3.1.0')
   s.add_dependency('uuidtools', '~> 2.1')
   s.add_dependency('mustache', '~> 0.99')
   s.add_dependency('rabl', '~> 0.6')
-  s.add_dependency('sprockets', '2.11.0')
 
   s.add_development_dependency('yard')
   s.add_development_dependency('rake', '~> 11.0')
@@ -34,7 +32,7 @@ Gem::Specification.new do |s|
   s.add_development_dependency('rspec-rails', '~> 2.14.2')
   s.add_development_dependency('capybara', '~> 2.2.1')
   s.add_development_dependency('launchy', '~> 2.4.2')
-  s.add_development_dependency('poltergeist', '~>1.6.0')
+  s.add_development_dependency('poltergeist', '~>1.17.0')
   s.add_development_dependency('json_spec', '~> 1.1.1')
   s.add_development_dependency('factory_bot', '~> 4.8.0')
   s.add_development_dependency('database_cleaner', '~> 1.2.0')
