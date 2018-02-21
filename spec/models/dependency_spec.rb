@@ -2,7 +2,7 @@ require File.expand_path(File.dirname(__FILE__) + '/../spec_helper')
 
 describe Dependency do
   before(:each) do
-    @dependency = FactoryGirl.create(:dependency)
+    @dependency = FactoryBot.create(:dependency)
   end
 
   it "should be valid" do
@@ -52,7 +52,7 @@ describe Dependency, "when evaluating dependency conditions of a question in a r
     @dep2 = Dependency.new(:rule => "A and B", :question_id => 1)
     @dep3 = Dependency.new(:rule => "A or B", :question_id => 1)
     @dep4 = Dependency.new(:rule => "!(A and B) and C", :question_id => 1)
-    
+
     @dep_c = mock_model(DependencyCondition, :id => 1, :rule_key => "A", :to_hash => {:A => true})
     @dep_c2 = mock_model(DependencyCondition, :id => 2, :rule_key => "B", :to_hash => {:B => false})
     @dep_c3 = mock_model(DependencyCondition, :id => 3, :rule_key => "C", :to_hash => {:C => true})
@@ -80,9 +80,9 @@ end
 describe Dependency, "with conditions" do
   it "should destroy conditions when destroyed" do
     @dependency = Dependency.new(:rule => "A and B and C", :question_id => 1)
-    FactoryGirl.create(:dependency_condition, :dependency => @dependency, :rule_key => "A")
-    FactoryGirl.create(:dependency_condition, :dependency => @dependency, :rule_key => "B")
-    FactoryGirl.create(:dependency_condition, :dependency => @dependency, :rule_key => "C")
+    FactoryBot.create(:dependency_condition, :dependency => @dependency, :rule_key => "A")
+    FactoryBot.create(:dependency_condition, :dependency => @dependency, :rule_key => "B")
+    FactoryBot.create(:dependency_condition, :dependency => @dependency, :rule_key => "C")
     dc_ids = @dependency.dependency_conditions.map(&:id)
     @dependency.destroy
     dc_ids.each{|id| DependencyCondition.find_by_id(id).should == nil}

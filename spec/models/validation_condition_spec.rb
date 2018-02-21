@@ -2,7 +2,7 @@ require File.expand_path(File.dirname(__FILE__) + '/../spec_helper')
 
 describe ValidationCondition do
   before(:each) do
-    @validation_condition = FactoryGirl.create(:validation_condition)
+    @validation_condition = FactoryBot.create(:validation_condition)
   end
 
   it "should be valid" do
@@ -28,7 +28,7 @@ describe ValidationCondition do
 
   it "should have unique rule_key within the context of a validation" do
    @validation_condition.should be_valid
-   FactoryGirl.create(:validation_condition, :validation_id => 2, :rule_key => "2")
+   FactoryBot.create(:validation_condition, :validation_id => 2, :rule_key => "2")
    @validation_condition.rule_key = "2" #rule key uniquness is scoped by validation_id
    @validation_condition.validation_id = 2
    @validation_condition.should_not be_valid
@@ -47,9 +47,9 @@ end
 
 describe ValidationCondition, "validating responses" do
   def test_var(vhash, ahash, rhash)
-    v = FactoryGirl.create(:validation_condition, vhash)
-    a = FactoryGirl.create(:answer, ahash)
-    r = FactoryGirl.create(:response, {:answer => a, :question => a.question}.merge(rhash))
+    v = FactoryBot.create(:validation_condition, vhash)
+    a = FactoryBot.create(:answer, ahash)
+    r = FactoryBot.create(:response, {:answer => a, :question => a.question}.merge(rhash))
     return v.is_valid?(r)
   end
 
@@ -66,7 +66,7 @@ describe ValidationCondition, "validating responses" do
     test_var({:operator => "==", :string_value => "foo"}, {:response_class => "string"}, {:string_value => "foo"}).should be_true
   end
   it "should represent itself as a hash" do
-    @v = FactoryGirl.create(:validation_condition, :rule_key => "A")
+    @v = FactoryBot.create(:validation_condition, :rule_key => "A")
     @v.stub(:is_valid?).and_return(true)
     @v.to_hash("foo").should == {:A => true}
     @v.stub(:is_valid?).and_return(false)
@@ -76,11 +76,11 @@ end
 
 describe ValidationCondition, "validating responses by other responses" do
   def test_var(v_hash, a_hash, r_hash, ca_hash, cr_hash)
-    ca = FactoryGirl.create(:answer, ca_hash)
-    cr = FactoryGirl.create(:response, cr_hash.merge(:answer => ca, :question => ca.question))
-    v = FactoryGirl.create(:validation_condition, v_hash.merge({:question_id => ca.question.id, :answer_id => ca.id}))
-    a = FactoryGirl.create(:answer, a_hash)
-    r = FactoryGirl.create(:response, r_hash.merge(:answer => a, :question => a.question))
+    ca = FactoryBot.create(:answer, ca_hash)
+    cr = FactoryBot.create(:response, cr_hash.merge(:answer => ca, :question => ca.question))
+    v = FactoryBot.create(:validation_condition, v_hash.merge({:question_id => ca.question.id, :answer_id => ca.id}))
+    a = FactoryBot.create(:answer, a_hash)
+    r = FactoryBot.create(:response, r_hash.merge(:answer => a, :question => a.question))
     return v.is_valid?(r)
   end
   it "should validate a response by integer comparison" do

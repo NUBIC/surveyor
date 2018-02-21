@@ -2,7 +2,7 @@
 require File.expand_path(File.dirname(__FILE__) + '/../spec_helper')
 
 describe Question do
-  let(:question){ FactoryGirl.create(:question) }
+  let(:question){ FactoryBot.create(:question) }
 
   context "when creating" do
     it "is invalid without #text" do
@@ -27,7 +27,7 @@ describe Question do
       question.api_id.length.should == 36
     end
     it "#part_of_group? and #solo? are aware of question groups" do
-      question.question_group = FactoryGirl.create(:question_group)
+      question.question_group = FactoryBot.create(:question_group)
       question.solo?.should be_false
       question.part_of_group?.should be_true
 
@@ -38,9 +38,9 @@ describe Question do
   end
 
   context "with answers" do
-    let(:answer_1){ FactoryGirl.create(:answer, :question => question, :display_order => 3, :text => "blue")}
-    let(:answer_2){ FactoryGirl.create(:answer, :question => question, :display_order => 1, :text => "red")}
-    let(:answer_3){ FactoryGirl.create(:answer, :question => question, :display_order => 2, :text => "green")}
+    let(:answer_1){ FactoryBot.create(:answer, :question => question, :display_order => 3, :text => "blue")}
+    let(:answer_2){ FactoryBot.create(:answer, :question => question, :display_order => 1, :text => "red")}
+    let(:answer_3){ FactoryBot.create(:answer, :question => question, :display_order => 2, :text => "green")}
     before do
       [answer_1, answer_2, answer_3].each{|a| question.answers << a }
     end
@@ -57,8 +57,8 @@ describe Question do
   end
 
   context "with dependencies" do
-    let(:response_set){ FactoryGirl.create(:response_set) }
-    let(:dependency){ FactoryGirl.create(:dependency) }
+    let(:response_set){ FactoryBot.create(:response_set) }
+    let(:dependency){ FactoryBot.create(:dependency) }
     before do
       question.dependency = dependency
       dependency.stub(:is_met?).with(response_set).and_return true
@@ -88,10 +88,10 @@ describe Question do
 
   context "with translations" do
     require 'yaml'
-    let(:survey){ FactoryGirl.create(:survey) }
-    let(:survey_section){ FactoryGirl.create(:survey_section) }
+    let(:survey){ FactoryBot.create(:survey) }
+    let(:survey_section){ FactoryBot.create(:survey_section) }
     let(:survey_translation){
-      FactoryGirl.create(:survey_translation, :locale => :es, :translation => {
+      FactoryBot.create(:survey_translation, :locale => :es, :translation => {
         :questions => {
           :hello => {
             :text => "¡Hola!"
@@ -175,7 +175,7 @@ describe Question do
   end
 
   describe "qualified" do
-    let!( :r_set ) { FactoryGirl.create( :response_set, :survey => question.survey_section.survey ) }
+    let!( :r_set ) { FactoryBot.create( :response_set, :survey => question.survey_section.survey ) }
 
     describe "with pick none" do
       before :each do
@@ -203,7 +203,7 @@ describe Question do
       end
 
       it 'should be qualified if a "may" answer is selected' do
-        may_answer = FactoryGirl.create( :answer, :question => question, :qualify_logic => "may" )
+        may_answer = FactoryBot.create( :answer, :question => question, :qualify_logic => "may" )
 
         question.reload
         question.update_attribute( :is_mandatory, true ).should be true
@@ -218,7 +218,7 @@ describe Question do
       end
 
       it 'should not be qualified if a "reject" answer is selected' do
-        reject_answer = FactoryGirl.create( :answer, :question => question, :qualify_logic => "reject" )
+        reject_answer = FactoryBot.create( :answer, :question => question, :qualify_logic => "reject" )
         question.reload
 
         question.qualified?( r_set ).should be true
@@ -247,7 +247,7 @@ describe Question do
       end
 
       it 'should not be qualified if a "reject" choice was made' do
-        reject_answer = FactoryGirl.create( :answer, :question => question, :qualify_logic => "reject" )
+        reject_answer = FactoryBot.create( :answer, :question => question, :qualify_logic => "reject" )
         question.reload
 
         r_set.responses.build(
@@ -259,7 +259,7 @@ describe Question do
       end
 
       it 'should be qualified if a "may" choice was made' do
-        may_answer = FactoryGirl.create( :answer, :question => question, :qualify_logic => "may" )
+        may_answer = FactoryBot.create( :answer, :question => question, :qualify_logic => "may" )
         question.reload
 
         r_set.responses.build(
@@ -271,7 +271,7 @@ describe Question do
       end
 
       it 'should be qualified if a "must" choice was made' do
-        must_answer = FactoryGirl.create( :answer, :question => question, :qualify_logic => "must" )
+        must_answer = FactoryBot.create( :answer, :question => question, :qualify_logic => "must" )
         question.reload
 
         r_set.responses.build(
@@ -284,22 +284,22 @@ describe Question do
 
       it 'should be qualified if no selections where made and there is a a must selection and the question is not mandatory' do
         question.update_attribute( :is_mandatory, false ).should be true
-        must_answer = FactoryGirl.create( :answer, :question => question, :qualify_logic => "must" )
+        must_answer = FactoryBot.create( :answer, :question => question, :qualify_logic => "must" )
         question.reload
         question.qualified?( r_set ).should be true
       end
 
       it 'should not be qualified if no selections where made and there is a a must selection and the question is mandatory' do
         question.update_attribute( :is_mandatory, true ).should be true
-        must_answer = FactoryGirl.create( :answer, :question => question, :qualify_logic => "must" )
+        must_answer = FactoryBot.create( :answer, :question => question, :qualify_logic => "must" )
         question.reload
         question.qualified?( r_set ).should be false
       end
 
       it 'should not be qualified if some selections were made and there is a a must selection and the question is not mandatory' do
         question.update_attribute( :is_mandatory, false ).should be true
-        must_answer = FactoryGirl.create( :answer, :question => question, :qualify_logic => "must" )
-        may_answer = FactoryGirl.create( :answer, :question => question, :qualify_logic => "may" )
+        must_answer = FactoryBot.create( :answer, :question => question, :qualify_logic => "must" )
+        may_answer = FactoryBot.create( :answer, :question => question, :qualify_logic => "may" )
 
         r_set.responses.build(
           :question_id => question.id,
@@ -311,8 +311,8 @@ describe Question do
       end
 
       it 'should not be qualified if only some must answers were selected' do
-        first_must_answer = FactoryGirl.create( :answer, :question => question, :qualify_logic => "must" )
-        second_must_answer = FactoryGirl.create( :answer, :question => question, :qualify_logic => "must" )
+        first_must_answer = FactoryBot.create( :answer, :question => question, :qualify_logic => "must" )
+        second_must_answer = FactoryBot.create( :answer, :question => question, :qualify_logic => "must" )
         question.reload
 
         r_set.responses.build(
@@ -331,8 +331,8 @@ describe Question do
       end
 
       it 'should not be qualified if some may and some reject answers were selected' do
-        reject_answer = FactoryGirl.create( :answer, :question => question, :qualify_logic => "reject" )
-        may_answer = FactoryGirl.create( :answer, :question => question, :qualify_logic => "may" )
+        reject_answer = FactoryBot.create( :answer, :question => question, :qualify_logic => "reject" )
+        may_answer = FactoryBot.create( :answer, :question => question, :qualify_logic => "may" )
         question.reload
 
         r_set.responses.build(
