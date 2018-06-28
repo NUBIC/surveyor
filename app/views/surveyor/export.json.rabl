@@ -12,6 +12,7 @@ child :sections => :sections do
   child :questions_and_groups => :questions_and_groups do
     # both questions and question_groups have uuid, text, help_text, reference_identifier, and type
     attribute :api_id                   => :uuid
+    attribute :is_mandatory
     node(:text,                     :if => lambda { |q| q.is_a?(Question)}){ |q| q.split(q.text, :pre) }
     node(:text,                     :if => lambda { |q| q.is_a?(QuestionGroup)}){ |q| q.text }
     node(:help_text,                :if => lambda { |q| !q.help_text.blank? }){ |q| q.help_text }
