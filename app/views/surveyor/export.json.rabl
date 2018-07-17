@@ -22,6 +22,7 @@ child :sections => :sections do
     #needed for the mobile app to parse the question based on its answer response_class
     #Currently we are not supporting multiple answers when it's not a pick question that's why we are grabbing the first answer type
     node(:answer_type, :if => lambda { |q| q.is_a?(Question) && q.pick == "none" && q.answers.present? }){ |q| q.answers.first.response_class }
+    node(:answer_type, :if => lambda {|q| q.is_a?(Question) && q.reference_identifier == "email"}) {"email"}
 
     # only questions
     node(:pick,                     :if => lambda { |q| q.is_a?(Question) && q.pick != "none" }){ |q| q.pick }
