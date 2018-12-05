@@ -98,10 +98,28 @@ module Surveyor
         rules
       end
 
+      def image_type?
+        display_type == "image" && text.present?
+      end
+
       private
 
       def imaged(text)
-        self.display_type == "image" && !text.blank? ? ActionController::Base.helpers.image_tag(text) : text
+        image_txt = if image_type?
+          image = ActionController::Base.helpers.image_tag(text)
+          short_text != text ? ( short_text.to_s + image ) : image
+        else
+          text
+        end
+        span_wrapper image_txt
+      end
+
+      def span_wrapper text
+        ( custom_renderer.blank? && pick_one_or_any_question? ) ? "<span>#{text}</span>" : text
+      end
+
+      def pick_one_or_any_question?
+        %(one any).include?( question.pick )
       end
     end
   end
