@@ -6,12 +6,12 @@ module Surveyor
   module SurveyorControllerMethods
     extend ActiveSupport::Concern
     included do
-      before_filter :get_current_user, :only => [:new, :create]
-      before_filter :determine_if_javascript_is_enabled, :only => [:create, :update]
-      before_filter :set_response_set_and_render_context, :only => [:edit, :show]
+      before_action :get_current_user, :only => [:new, :create]
+      before_action :determine_if_javascript_is_enabled, :only => [:create, :update]
+      before_action :set_response_set_and_render_context, :only => [:edit, :show]
 
       layout 'surveyor_default'
-      before_filter :set_locale
+      before_action :set_locale
     end
 
     # Actions
@@ -40,7 +40,7 @@ module Surveyor
     end
 
     def show
-      # @response_set is set in before_filter - set_response_set_and_render_context
+      # @response_set is set in before_action - set_response_set_and_render_context
       if @response_set
         @survey = @response_set.survey
         respond_to do |format|
@@ -58,7 +58,7 @@ module Surveyor
     end
 
     def edit
-      # @response_set is set in before_filter - set_response_set_and_render_context
+      # @response_set is set in before_action - set_response_set_and_render_context
       if @response_set
         @sections = SurveySection.where(survey_id: @response_set.survey_id).includes([:survey, {questions: [{answers: :question}, {question_group: :dependency}, :dependency]}])
         @section = (section_id_from(params) ? @sections.where(id: section_id_from(params)).first : @sections.first) || @sections.first
