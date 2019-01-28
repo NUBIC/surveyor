@@ -18,7 +18,7 @@ Gem::Specification.new do |s|
   s.require_paths = ["lib"]
 
   s.add_dependency 'rails', '~> 5.1.6'
-  s.add_dependency 'haml', '~> 4.0'
+  s.add_dependency 'haml'
   s.add_dependency 'sass'
   s.add_dependency 'formtastic', '~> 3.1.4'
   s.add_dependency 'uuidtools', '~> 2.1'
