@@ -37,6 +37,8 @@ module Surveyor
         default_args
       end
 
+      def finish_button_text; end
+
       def default_args
         self.api_id ||= Surveyor::Common.generate_api_id
         self.display_order ||= Survey.count
