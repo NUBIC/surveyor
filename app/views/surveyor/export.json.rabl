@@ -1,6 +1,7 @@
 object @survey
 attribute :title
 attribute :api_id                       => :uuid
+attribute :finish_button_text
 node(:description,                  :if => lambda {|s| !s.description.blank? }){|s| s.description }
 node(:reference_identifier,         :if => lambda {|s| !s.reference_identifier.blank? }){|s| s.reference_identifier }
 
@@ -13,6 +14,7 @@ child :sections => :sections do
     # both questions and question_groups have uuid, text, help_text, reference_identifier, and type
     attribute :api_id                   => :uuid
     attribute :is_mandatory
+    attribute :question_button_text
     node(:text,                     :if => lambda { |q| q.is_a?(Question)}){ |q| q.split(q.text, :pre) }
     node(:text,                     :if => lambda { |q| q.is_a?(QuestionGroup)}){ |q| q.text }
     node(:help_text,                :if => lambda { |q| !q.help_text.blank? }){ |q| q.help_text }

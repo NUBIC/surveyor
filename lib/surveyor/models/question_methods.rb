@@ -28,6 +28,8 @@ module Surveyor
         default_args
       end
 
+      def question_button_text; end
+
       def default_args
         self.is_mandatory ||= false
         self.display_type ||= "default"
