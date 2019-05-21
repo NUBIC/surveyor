@@ -12,15 +12,15 @@ describe Survey do
     it "adjust #survey_version" do
       original = Survey.new(:title => "Foo")
       original.save.should be_true
-      original.survey_version.should == 0
+      original.survey_version.should == 1
       imposter = Survey.new(:title => "Foo")
       imposter.save.should be_true
       imposter.title.should == "Foo"
-      imposter.survey_version.should == 1
+      imposter.survey_version.should == 2
       bandwagoneer = Survey.new(:title => "Foo")
       bandwagoneer.save.should be_true
       bandwagoneer.title.should == "Foo"
-      bandwagoneer.survey_version.should == 2
+      bandwagoneer.survey_version.should == 3
     end
     it "update #survey_version on save" do
       original = Survey.new(:title => "Foo")

@@ -8,6 +8,8 @@ module Surveyor
       include ActiveModel::Validations
       include ActiveModel::ForbiddenAttributesProtection
 
+      DEFAULT_SURVEY_VERSION = 1
+
       included do
         # Associations
         has_many :sections, ->{ order( display_order: :asc ) }, class_name: 'SurveySection', :dependent => :destroy, :autosave => true
@@ -85,9 +87,12 @@ module Surveyor
 
       def increment_version
         surveys = self.class.select(:survey_version).where(:access_code => access_code).order("survey_version DESC")
-        next_version = surveys.any? ? surveys.first.survey_version.to_i + 1 : 0
-
-        self.survey_version = next_version
+        self.survey_version =
+          if surveys.any?
+            surveys.first.survey_version.to_i + 1
+          else
+            DEFAULT_SURVEY_VERSION
+          end
       end
 
       def translation(locale_symbol)
