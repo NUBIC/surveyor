@@ -42,6 +42,7 @@ module Surveyor
       create_skip_logic_conditions
       add_qualify_logic_to_answers
       add_current_section_id_to_response_sets
+      increment_survey_versions_by_one
     )
 
     def readme
