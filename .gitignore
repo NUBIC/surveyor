@@ -10,6 +10,9 @@ tmtags
 \#*
 .\#*
 
+## RubyMine
+.idea
+
 ## VIM
 *.swp
 
