@@ -85,14 +85,14 @@ module Surveyor
       end
 
       def to_formatted_s
-        return "" if answer.nil? || answer.response_class.nil?
+        return '' if answer.nil? || answer.response_class.nil?
         return case t = answer.response_class.to_sym
                when :string, :text, :integer, :float
                  send("#{t}_value".to_sym).to_s
                when :date
-                 date_value
+                 date_value || ''
                when :time
-                 time_value
+                 time_value || ''
                when :datetime
                  (read_attribute(:datetime_value).strftime( datetime_format ) unless read_attribute(:datetime_value).blank?) || ''
                else
