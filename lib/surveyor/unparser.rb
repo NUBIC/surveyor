@@ -14,6 +14,8 @@ module Surveyor
   end
 end
 
+#
+
 # Surveyor models with extra parsing methods
 Survey.class_eval do
   # block
