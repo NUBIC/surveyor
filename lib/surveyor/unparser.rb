@@ -15,7 +15,7 @@ module Surveyor
 end
 
 # Surveyor models with extra parsing methods
-class Survey < ActiveRecord::Base
+Survey.class_eval do
   # block
 
   def unparse(dsl)
@@ -27,7 +27,7 @@ class Survey < ActiveRecord::Base
     dsl << "end\n"
   end
 end
-class SurveySection < ActiveRecord::Base
+SurveySection.class_eval do
   # block
 
   def unparse(dsl)
@@ -51,7 +51,7 @@ class SurveySection < ActiveRecord::Base
     dsl << "  end\n"
   end
 end
-class QuestionGroup < ActiveRecord::Base
+QuestionGroup.class_eval do
   # block
 
   def unparse(dsl)
@@ -66,7 +66,7 @@ class QuestionGroup < ActiveRecord::Base
     dsl << "    end\n"
   end
 end
-class Question < ActiveRecord::Base
+Question.class_eval do
   # nonblock
 
   def unparse(dsl)
@@ -87,7 +87,7 @@ class Question < ActiveRecord::Base
     dependency.unparse(dsl) if dependency
   end
 end
-class Dependency < ActiveRecord::Base
+Dependency.class_eval do
   # nonblock
 
   def unparse(dsl)
@@ -99,7 +99,7 @@ class Dependency < ActiveRecord::Base
     dependency_conditions.each{|dependency_condition| dependency_condition.unparse(dsl)}
   end
 end
-class DependencyCondition < ActiveRecord::Base
+DependencyCondition.class_eval do
   # nonblock
 
   def unparse(dsl)
@@ -110,9 +110,9 @@ class DependencyCondition < ActiveRecord::Base
     dsl << "_#{rule_key}" unless rule_key.blank?
     dsl << " :q_#{question.reference_identifier}, \"#{operator}\""
     dsl << (attrs.blank? ? ", {:answer_reference=>\"#{answer && answer.reference_identifier}\"}\n" : ", {#{attrs.inspect.gsub(/\{|\}/, "")}, :answer_reference=>\"#{answer && answer.reference_identifier}\"}\n")
-  end  
+  end
 end
-class Answer < ActiveRecord::Base
+Answer.class_eval do
   # nonblock
 
   def unparse(dsl)
@@ -125,7 +125,7 @@ class Answer < ActiveRecord::Base
     dsl << "_#{reference_identifier}" unless reference_identifier.blank?
     if response_class.to_s.titlecase == text && attrs == {:display_type => "hidden_label"}
       dsl << " :#{response_class}"
-    else    
+    else
       dsl << [ text.blank? ? nil : text == "Other" ? " :other" : text == "Omit" ? " :omit" : " \"#{text}\"",
                 (response_class.blank? or response_class == "answer") ? nil : " #{response_class.to_sym.inspect}",
                 attrs.blank? ? nil : " #{attrs.inspect.gsub(/\{|\}/, "")}\n"].compact.join(",")
@@ -134,7 +134,7 @@ class Answer < ActiveRecord::Base
     validations.each{|validation| validation.unparse(dsl)}
   end
 end
-class Validation < ActiveRecord::Base
+Validation.class_eval do
   # nonblock
 
   def unparse(dsl)
@@ -146,7 +146,7 @@ class Validation < ActiveRecord::Base
     validation_conditions.each{|validation_condition| validation_condition.unparse(dsl)}
   end
 end
-class ValidationCondition < ActiveRecord::Base
+ValidationCondition.class_eval do
   # nonblock
 
   def unparse(dsl)
