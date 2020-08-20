@@ -31,7 +31,6 @@ Capybara.javascript_driver = :poltergeist
 RSpec.configure do |config|
   config.include JsonSpec::Helpers
   config.include SurveyorAPIHelpers
-  config.include SurveyorUIHelpers
   config.include WaitForAjax
 
   config.treat_symbols_as_metadata_keys_with_true_values = true
@@ -82,7 +81,7 @@ RSpec.configure do |config|
   end
 
   config.before do
-    if example.metadata[:clean_with_truncation] || example.metadata[:js]
+    if :clean_with_truncation || :js
       DatabaseCleaner.strategy = :truncation
     else
       DatabaseCleaner.strategy = :transaction

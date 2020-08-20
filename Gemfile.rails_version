@@ -2,13 +2,16 @@
 # separate fragment so that it can be sourced from the test
 # application's Gemfile in addition to the main development Gemfile.
 
-env_rails_version = ENV["RAILS_VERSION"] || '4.2.10'
+env_rails_version = '5.1.7'
 
 gem "rails", "~> #{env_rails_version}"
 
 case env_rails_version
 when "master"
   {github: "rails/rails"}
+when /^5.1/
+  gem 'simple_form'
+  gem 'rspec-rails', '~> 3.0'
 when /^5.0/, /^4.2.10/
   gem 'bootstrap-sass', '~> 3.3'
   gem 'jquery-rails'

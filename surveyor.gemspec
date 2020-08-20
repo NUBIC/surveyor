@@ -18,8 +18,6 @@ Gem::Specification.new do |s|
   s.require_paths = ["lib"]
 
   s.add_dependency('rails', '>= 4.2')
-  s.add_dependency('haml', '~> 4.0')
-  s.add_dependency('jquery-rails', '~> 4.3.1')
   s.add_dependency('sass-rails', '~> 5.0.0')
   s.add_dependency('uuidtools', '~> 2.1')
   s.add_dependency('mustache', '~> 0.99')
