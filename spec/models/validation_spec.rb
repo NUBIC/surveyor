@@ -1,19 +1,19 @@
 require File.expand_path(File.dirname(__FILE__) + '/../spec_helper')
 
-describe Validation do
+describe Validation, type: :model do
   before(:each) do
     @validation = FactoryBot.create(:validation)
   end
 
   it "should be valid" do
-    @validation.should be_valid
+    expect(@validation).to be_valid
   end
 
   it "should be invalid without a rule" do
     @validation.rule = nil
-    @validation.should have(2).errors_on(:rule)
+    expect(@validation).to have(2).errors_on(:rule)
     @validation.rule = " "
-    @validation.should have(1).errors_on(:rule)
+    expect(@validation).to have(1).errors_on(:rule)
   end
 
   # this causes issues with building and saving
@@ -24,14 +24,14 @@ describe Validation do
 
   it "should be invalid unless rule composed of only references and operators" do
     @validation.rule = "foo"
-    @validation.should have(1).error_on(:rule)
+    expect(@validation).to have(1).error_on(:rule)
     @validation.rule = "1 to 2"
-    @validation.should have(1).error_on(:rule)
+    expect(@validation).to have(1).error_on(:rule)
     @validation.rule = "a and b"
-    @validation.should have(1).error_on(:rule)
+    expect(@validation).to have(1).error_on(:rule)
   end
 end
-describe Validation, "reporting its status" do
+describe Validation, "reporting its status", type: :model do
   def test_var(vhash, vchashes, ahash, rhash)
     a = FactoryBot.create(:answer, ahash)
     v = FactoryBot.create(:validation, {:answer => a, :rule => "A"}.merge(vhash))
@@ -45,13 +45,13 @@ describe Validation, "reporting its status" do
   end
 
   it "should validate a response by integer comparison" do
-    test_var({:rule => "A and B"}, [{:operator => ">=", :integer_value => 0}, {:rule_key => "B", :operator => "<=", :integer_value => 120}], {:response_class => "integer"}, {:integer_value => 48}).should be_true
+    expect(test_var({:rule => "A and B"}, [{:operator => ">=", :integer_value => 0}, {:rule_key => "B", :operator => "<=", :integer_value => 120}], {:response_class => "integer"}, {:integer_value => 48})).to be(true)
   end
   it "should validate a response by regexp" do
-    test_var({}, [{:operator => "=~", :regexp => '/^[a-z]{1,6}$/'}], {:response_class => "string"}, {:string_value => ""}).should be_false
+    expect(test_var({}, [{:operator => "=~", :regexp => '/^[a-z]{1,6}$/'}], {:response_class => "string"}, {:string_value => ""})).to be(false)
   end
 end
-describe Validation, "with conditions" do
+describe Validation, "with conditions", type: :model do
   it "should destroy conditions when destroyed" do
     @validation = FactoryBot.create(:validation)
     FactoryBot.create(:validation_condition, :validation => @validation, :rule_key => "A")
@@ -59,6 +59,6 @@ describe Validation, "with conditions" do
     FactoryBot.create(:validation_condition, :validation => @validation, :rule_key => "C")
     v_ids = @validation.validation_conditions.map(&:id)
     @validation.destroy
-    v_ids.each{|id| DependencyCondition.find_by_id(id).should == nil}
+    v_ids.each{|id| expect(DependencyCondition.find_by_id(id)).to eq(nil)}
   end
 end

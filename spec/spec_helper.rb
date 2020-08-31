@@ -16,6 +16,7 @@ require 'factories'
 require 'json_spec'
 require 'database_cleaner'
 require 'rspec/retry'
+require 'rspec/collection_matchers'
 
 # Requires supporting ruby files with custom matchers and macros, etc,
 # in spec/support/ and its subdirectories.
@@ -27,11 +28,9 @@ ActiveRecord::Migration.check_pending! if ::Rails.version >= "4.0" && defined?(A
 
 Capybara.javascript_driver = :poltergeist
 
-
 RSpec.configure do |config|
   config.include JsonSpec::Helpers
   config.include SurveyorAPIHelpers
-  config.include SurveyorUIHelpers
   config.include WaitForAjax
 
   config.treat_symbols_as_metadata_keys_with_true_values = true
@@ -82,7 +81,7 @@ RSpec.configure do |config|
   end
 
   config.before do
-    if example.metadata[:clean_with_truncation] || example.metadata[:js]
+    if RSpec.current_example.metadata[:clean_with_truncation] || RSpec.current_example.metadata[:js]
       DatabaseCleaner.strategy = :truncation
     else
       DatabaseCleaner.strategy = :transaction

@@ -1,4 +1,0 @@
-= surveyor_tag_for @section do
-  %h3.row.title.col-md-12= @section.translation(I18n.locale)[:title]
-  - @section.questions_and_groups.each_with_index do |q, i|
-    = render q.custom_renderer || "/partials/#{q.class.name.underscore}", q: q, f: f

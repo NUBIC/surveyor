@@ -1,10 +1,10 @@
 require File.expand_path(File.dirname(__FILE__) + '/../spec_helper')
 
 
-describe DependencyCondition do
+describe DependencyCondition, type: :model do
   it "should have a list of operators" do
     %w(== != < > <= >=).each do |operator|
-      DependencyCondition.operators.include?(operator).should be_true
+      expect(DependencyCondition.operators.include?(operator)).to be(true)
     end
   end
 
@@ -16,7 +16,7 @@ describe DependencyCondition do
     end
 
     it "should be valid" do
-      @dependency_condition.should be_valid
+      expect(@dependency_condition).to be_valid
     end
 
     it "should be invalid without a parent dependency_id, question_id" do
@@ -29,51 +29,51 @@ describe DependencyCondition do
 
     it "should be invalid without an operator" do
       @dependency_condition.operator = nil
-      @dependency_condition.should have(2).errors_on(:operator)
+      expect(@dependency_condition).to have(2).errors_on(:operator)
     end
 
     it "should be invalid without a rule_key" do
-      @dependency_condition.should be_valid
+      expect(@dependency_condition).to be_valid
       @dependency_condition.rule_key = nil
-      @dependency_condition.should_not be_valid
-      @dependency_condition.should have(1).errors_on(:rule_key)
+      expect(@dependency_condition).not_to be_valid
+      expect(@dependency_condition).to have(1).errors_on(:rule_key)
     end
 
     it "should have unique rule_key within the context of a dependency" do
-      @dependency_condition.should be_valid
+      expect(@dependency_condition).to be_valid
       DependencyCondition.create(
         :dependency_id => 2, :question_id => 46, :operator => "==",
         :answer_id => 14, :rule_key => "B")
       @dependency_condition.rule_key = "B" # rule key uniquness is scoped by dependency_id
       @dependency_condition.dependency_id = 2
-      @dependency_condition.should_not be_valid
-      @dependency_condition.should have(1).errors_on(:rule_key)
+      expect(@dependency_condition).not_to be_valid
+      expect(@dependency_condition).to have(1).errors_on(:rule_key)
     end
 
     it "should have an operator in DependencyCondition.operators" do
       DependencyCondition.operators.each do |o|
         @dependency_condition.operator = o
-        @dependency_condition.should have(0).errors_on(:operator)
+        expect(@dependency_condition).to have(0).errors_on(:operator)
       end
       @dependency_condition.operator = "#"
-      @dependency_condition.should have(1).error_on(:operator)
+      expect(@dependency_condition).to have(1).error_on(:operator)
     end
     it "should have a properly formed count operator" do
       %w(count>1 count<1 count>=1 count<=1 count==1 count!=1).each do |o|
         @dependency_condition.operator = o
-        @dependency_condition.should have(0).errors_on(:operator)
+        expect(@dependency_condition).to have(0).errors_on(:operator)
       end
       %w(count> count< count>= count<= count== count!=).each do |o|
         @dependency_condition.operator = o
-        @dependency_condition.should have(1).errors_on(:operator)
+        expect(@dependency_condition).to have(1).errors_on(:operator)
       end
       %w(count=1 count><1 count<>1 count!1 count!!1 count=>1 count=<1).each do |o|
         @dependency_condition.operator = o
-        @dependency_condition.should have(1).errors_on(:operator)
+        expect(@dependency_condition).to have(1).errors_on(:operator)
       end
       %w(count= count>< count<> count! count!! count=> count=< count> count< count>= count<= count== count!=).each do |o|
         @dependency_condition.operator = o
-        @dependency_condition.should have(1).errors_on(:operator)
+        expect(@dependency_condition).to have(1).errors_on(:operator)
       end
     end
   end
@@ -82,7 +82,7 @@ describe DependencyCondition do
     question = FactoryBot.create(:question)
     dependency_condition = FactoryBot.create(:dependency_condition, :rule_key => "C", :question => question)
     rs = FactoryBot.create(:response_set)
-    dependency_condition.to_hash(rs).should == {:C => false}
+    expect(dependency_condition.to_hash(rs)).to eq({:C => false})
   end
 
 
@@ -108,9 +108,9 @@ describe DependencyCondition do
 
     response = FactoryBot.create(:response, :answer => answer, :question => answer.question)
     response_set = response.response_set
-    response.integer_value.should == nil
+    expect(response.integer_value).to eq(nil)
 
-    @dependency_condition.to_hash(response_set).should == {:A => false}
+    expect(@dependency_condition.to_hash(response_set)).to eq({:A => false})
   end
 
   describe "evaluate '==' operator" do
@@ -120,49 +120,49 @@ describe DependencyCondition do
       @r = FactoryBot.create(:response, :question => @a.question, :answer => @a)
       @rs = @r.response_set
       @dc = FactoryBot.create(:dependency_condition, :question => @a.question, :answer => @a, :operator => "==", :rule_key => "D")
-      @dc.as(:answer).should == @r.as(:answer)
+      expect(@dc.as(:answer)).to eq(@r.as(:answer))
     end
 
     it "with checkbox/radio type response" do
-      @dc.to_hash(@rs).should == {:D => true}
+      expect(@dc.to_hash(@rs)).to eq({:D => true})
       @dc.answer = @b
-      @dc.to_hash(@rs).should == {:D => false}
+      expect(@dc.to_hash(@rs)).to eq({:D => false})
     end
 
     it "with string value response" do
       @a.update_attributes(:response_class => "string")
       @r.update_attributes(:string_value => "hello123")
       @dc.string_value = "hello123"
-      @dc.to_hash(@rs).should == {:D => true}
+      expect(@dc.to_hash(@rs)).to eq({:D => true})
       @r.update_attributes(:string_value => "foo_abc")
-      @dc.to_hash(@rs).should == {:D => false}
+      expect(@dc.to_hash(@rs)).to eq({:D => false})
     end
 
     it "with a text value response" do
       @a.update_attributes(:response_class => "text")
       @r.update_attributes(:text_value => "hello this is some text for comparison")
       @dc.text_value = "hello this is some text for comparison"
-      @dc.to_hash(@rs).should == {:D => true}
+      expect(@dc.to_hash(@rs)).to eq({:D => true})
       @r.update_attributes(:text_value => "Not the same text")
-      @dc.to_hash(@rs).should == {:D => false}
+      expect(@dc.to_hash(@rs)).to eq({:D => false})
     end
 
     it "with an integer value response" do
       @a.update_attributes(:response_class => "integer")
       @r.update_attributes(:integer_value => 10045)
       @dc.integer_value = 10045
-      @dc.to_hash(@rs).should == {:D => true}
+      expect(@dc.to_hash(@rs)).to eq({:D => true})
       @r.update_attributes(:integer_value => 421)
-      @dc.to_hash(@rs).should == {:D => false}
+      expect(@dc.to_hash(@rs)).to eq({:D => false})
     end
 
     it "with a float value response" do
       @a.update_attributes(:response_class => "float")
       @r.update_attributes(:float_value => 121.1)
       @dc.float_value = 121.1
-      @dc.to_hash(@rs).should == {:D => true}
+      expect(@dc.to_hash(@rs)).to eq({:D => true})
       @r.update_attributes(:float_value => 130.123)
-      @dc.to_hash(@rs).should == {:D => false}
+      expect(@dc.to_hash(@rs)).to eq({:D => false})
     end
   end
 
@@ -173,49 +173,49 @@ describe DependencyCondition do
       @r = FactoryBot.create(:response, :question => @a.question, :answer => @a)
       @rs = @r.response_set
       @dc = FactoryBot.create(:dependency_condition, :question => @a.question, :answer => @a, :operator => "!=", :rule_key => "E")
-      @dc.as(:answer).should == @r.as(:answer)
+      expect(@dc.as(:answer)).to eq(@r.as(:answer))
     end
 
     it "with checkbox/radio type response" do
-      @dc.to_hash(@rs).should == {:E => false}
+      expect(@dc.to_hash(@rs)).to eq({:E => false})
       @dc.answer_id = @a.id.to_i+1
-      @dc.to_hash(@rs).should == {:E => true}
+      expect(@dc.to_hash(@rs)).to eq({:E => true})
     end
 
     it "with string value response" do
       @a.update_attributes(:response_class => "string")
       @r.update_attributes(:string_value => "hello123")
       @dc.string_value = "hello123"
-      @dc.to_hash(@rs).should == {:E => false}
+      expect(@dc.to_hash(@rs)).to eq({:E => false})
       @r.update_attributes(:string_value => "foo_abc")
-      @dc.to_hash(@rs).should == {:E => true}
+      expect(@dc.to_hash(@rs)).to eq({:E => true})
     end
 
     it "with a text value response" do
       @a.update_attributes(:response_class => "text")
       @r.update_attributes(:text_value => "hello this is some text for comparison")
       @dc.text_value = "hello this is some text for comparison"
-      @dc.to_hash(@rs).should == {:E => false}
+      expect(@dc.to_hash(@rs)).to eq({:E => false})
       @r.update_attributes(:text_value => "Not the same text")
-      @dc.to_hash(@rs).should == {:E => true}
+      expect(@dc.to_hash(@rs)).to eq({:E => true})
     end
 
     it "with an integer value response" do
       @a.update_attributes(:response_class => "integer")
       @r.update_attributes(:integer_value => 10045)
       @dc.integer_value = 10045
-      @dc.to_hash(@rs).should == {:E => false}
+      expect(@dc.to_hash(@rs)).to eq({:E => false})
       @r.update_attributes(:integer_value => 421)
-      @dc.to_hash(@rs).should == {:E => true}
+      expect(@dc.to_hash(@rs)).to eq({:E => true})
     end
 
     it "with a float value response" do
       @a.update_attributes(:response_class => "float")
       @r.update_attributes(:float_value => 121.1)
       @dc.float_value = 121.1
-      @dc.to_hash(@rs).should == {:E => false}
+      expect(@dc.to_hash(@rs)).to eq({:E => false})
       @r.update_attributes(:float_value => 130.123)
-      @dc.to_hash(@rs).should == {:E => true}
+      expect(@dc.to_hash(@rs)).to eq({:E => true})
     end
   end
 
@@ -226,25 +226,25 @@ describe DependencyCondition do
       @r = FactoryBot.create(:response, :question => @a.question, :answer => @a)
       @rs = @r.response_set
       @dc = FactoryBot.create(:dependency_condition, :question => @a.question, :answer => @a, :operator => "<", :rule_key => "F")
-      @dc.as(:answer).should == @r.as(:answer)
+      expect(@dc.as(:answer)).to eq(@r.as(:answer))
     end
 
     it "with an integer value response" do
       @a.update_attributes(:response_class => "integer")
       @r.update_attributes(:integer_value => 50)
       @dc.integer_value = 100
-      @dc.to_hash(@rs).should == {:F => true}
+      expect(@dc.to_hash(@rs)).to eq({:F => true})
       @r.update_attributes(:integer_value => 421)
-      @dc.to_hash(@rs).should == {:F => false}
+      expect(@dc.to_hash(@rs)).to eq({:F => false})
     end
 
     it "with a float value response" do
       @a.update_attributes(:response_class => "float")
       @r.update_attributes(:float_value => 5.1)
       @dc.float_value = 121.1
-      @dc.to_hash(@rs).should == {:F => true}
+      expect(@dc.to_hash(@rs)).to eq({:F => true})
       @r.update_attributes(:float_value => 130.123)
-      @dc.to_hash(@rs).should == {:F => false}
+      expect(@dc.to_hash(@rs)).to eq({:F => false})
     end
   end
 
@@ -255,29 +255,29 @@ describe DependencyCondition do
       @r = FactoryBot.create(:response, :question => @a.question, :answer => @a)
       @rs = @r.response_set
       @dc = FactoryBot.create(:dependency_condition, :question => @a.question, :answer => @a, :operator => "<=", :rule_key => "G")
-      @dc.as(:answer).should == @r.as(:answer)
+      expect(@dc.as(:answer)).to eq(@r.as(:answer))
     end
 
     it "with an integer value response" do
       @a.update_attributes(:response_class => "integer")
       @r.update_attributes(:integer_value => 50)
       @dc.integer_value = 100
-      @dc.to_hash(@rs).should == {:G => true}
+      expect(@dc.to_hash(@rs)).to eq({:G => true})
       @r.update_attributes(:integer_value => 100)
-      @dc.to_hash(@rs).should == {:G => true}
+      expect(@dc.to_hash(@rs)).to eq({:G => true})
       @r.update_attributes(:integer_value => 421)
-      @dc.to_hash(@rs).should == {:G => false}
+      expect(@dc.to_hash(@rs)).to eq({:G => false})
     end
 
     it "with a float value response" do
       @a.update_attributes(:response_class => "float")
       @r.update_attributes(:float_value => 5.1)
       @dc.float_value = 121.1
-      @dc.to_hash(@rs).should == {:G => true}
+      expect(@dc.to_hash(@rs)).to eq({:G => true})
       @r.update_attributes(:float_value => 121.1)
-      @dc.to_hash(@rs).should == {:G => true}
+      expect(@dc.to_hash(@rs)).to eq({:G => true})
       @r.update_attributes(:float_value => 130.123)
-      @dc.to_hash(@rs).should == {:G => false}
+      expect(@dc.to_hash(@rs)).to eq({:G => false})
     end
 
   end
@@ -289,25 +289,25 @@ describe DependencyCondition do
       @r = FactoryBot.create(:response, :question => @a.question, :answer => @a)
       @rs = @r.response_set
       @dc = FactoryBot.create(:dependency_condition, :question => @a.question, :answer => @a, :operator => ">", :rule_key => "H")
-      @dc.as(:answer).should == @r.as(:answer)
+      expect(@dc.as(:answer)).to eq(@r.as(:answer))
     end
 
     it "with an integer value response" do
       @a.update_attributes(:response_class => "integer")
       @r.update_attributes(:integer_value => 50)
       @dc.integer_value = 100
-      @dc.to_hash(@rs).should == {:H => false}
+      expect(@dc.to_hash(@rs)).to eq({:H => false})
       @r.update_attributes(:integer_value => 421)
-      @dc.to_hash(@rs).should == {:H => true}
+      expect(@dc.to_hash(@rs)).to eq({:H => true})
     end
 
     it "with a float value response" do
       @a.update_attributes(:response_class => "float")
       @r.update_attributes(:float_value => 5.1)
       @dc.float_value = 121.1
-      @dc.to_hash(@rs).should == {:H => false}
+      expect(@dc.to_hash(@rs)).to eq({:H => false})
       @r.update_attributes(:float_value => 130.123)
-      @dc.to_hash(@rs).should == {:H => true}
+      expect(@dc.to_hash(@rs)).to eq({:H => true})
     end
   end
 
@@ -318,29 +318,29 @@ describe DependencyCondition do
       @r = FactoryBot.create(:response, :question => @a.question, :answer => @a)
       @rs = @r.response_set
       @dc = FactoryBot.create(:dependency_condition, :question => @a.question, :answer => @a, :operator => ">=", :rule_key => "I")
-      @dc.as(:answer).should == @r.as(:answer)
+      expect(@dc.as(:answer)).to eq(@r.as(:answer))
     end
 
     it "with an integer value response" do
       @a.update_attributes(:response_class => "integer")
       @r.update_attributes(:integer_value => 50)
       @dc.integer_value = 100
-      @dc.to_hash(@rs).should == {:I => false}
+      expect(@dc.to_hash(@rs)).to eq({:I => false})
       @r.update_attributes(:integer_value => 100)
-      @dc.to_hash(@rs).should == {:I => true}
+      expect(@dc.to_hash(@rs)).to eq({:I => true})
       @r.update_attributes(:integer_value => 421)
-      @dc.to_hash(@rs).should == {:I => true}
+      expect(@dc.to_hash(@rs)).to eq({:I => true})
     end
 
     it "with a float value response" do
       @a.update_attributes(:response_class => "float")
       @r.update_attributes(:float_value => 5.1)
       @dc.float_value = 121.1
-      @dc.to_hash(@rs).should == {:I => false}
+      expect(@dc.to_hash(@rs)).to eq({:I => false})
       @r.update_attributes(:float_value => 121.1)
-      @dc.to_hash(@rs).should == {:I => true}
+      expect(@dc.to_hash(@rs)).to eq({:I => true})
       @r.update_attributes(:float_value => 130.123)
-      @dc.to_hash(@rs).should == {:I => true}
+      expect(@dc.to_hash(@rs)).to eq({:I => true})
     end
   end
 
@@ -351,7 +351,7 @@ describe DependencyCondition do
       @r = FactoryBot.create(:response, :question => @a.question, :answer => @a, :string_value => "")
       @rs = @r.response_set
       @dc = FactoryBot.create(:dependency_condition, :question => @a.question, :answer => @a, :operator => "==", :rule_key => "J")
-      @dc.to_hash(@rs).should == {:J => true}
+      expect(@dc.to_hash(@rs)).to eq({:J => true})
     end
 
     it "should compare strings when the dependency condition string_value is not nil, even if it is blank" do
@@ -360,11 +360,11 @@ describe DependencyCondition do
       @r = FactoryBot.create(:response, :question => @a.question, :answer => @a, :string_value => "foo")
       @rs = @r.response_set
       @dc = FactoryBot.create(:dependency_condition, :question => @a.question, :answer => @a, :operator => "==", :rule_key => "K", :string_value => "foo")
-      @dc.to_hash(@rs).should == {:K => true}
+      expect(@dc.to_hash(@rs)).to eq({:K => true})
 
       @r.update_attributes(:string_value => "")
       @dc.string_value = ""
-      @dc.to_hash(@rs).should == {:K => true}
+      expect(@dc.to_hash(@rs)).to eq({:K => true})
     end
   end
 
@@ -384,44 +384,44 @@ describe DependencyCondition do
     end
 
     it "with operator with >" do
-      @dc.to_hash(@rs).should == {:M => false}
+      expect(@dc.to_hash(@rs)).to eq({:M => false})
       FactoryBot.create(:response, :question => @q, :answer => @as.last, :response_set => @rs)
-      @rs.reload.responses.count.should == 3
-      @dc.to_hash(@rs.reload).should == {:M => true}
+      expect(@rs.reload.responses.count).to eq(3)
+      expect(@dc.to_hash(@rs.reload)).to eq({:M => true})
     end
 
     it "with operator with <" do
       @dc.operator = "count<2"
-      @dc.to_hash(@rs).should == {:M => false}
+      expect(@dc.to_hash(@rs)).to eq({:M => false})
       @dc.operator = "count<3"
-      @dc.to_hash(@rs).should == {:M => true}
+      expect(@dc.to_hash(@rs)).to eq({:M => true})
     end
 
     it "with operator with <=" do
       @dc.operator = "count<=1"
-      @dc.to_hash(@rs).should == {:M => false}
+      expect(@dc.to_hash(@rs)).to eq({:M => false})
       @dc.operator = "count<=2"
-      @dc.to_hash(@rs).should == {:M => true}
+      expect(@dc.to_hash(@rs)).to eq({:M => true})
       @dc.operator = "count<=3"
-      @dc.to_hash(@rs).should == {:M => true}
+      expect(@dc.to_hash(@rs)).to eq({:M => true})
     end
 
     it "with operator with >=" do
       @dc.operator = "count>=1"
-      @dc.to_hash(@rs).should == {:M => true}
+      expect(@dc.to_hash(@rs)).to eq({:M => true})
       @dc.operator = "count>=2"
-      @dc.to_hash(@rs).should == {:M => true}
+      expect(@dc.to_hash(@rs)).to eq({:M => true})
       @dc.operator = "count>=3"
-      @dc.to_hash(@rs).should == {:M => false}
+      expect(@dc.to_hash(@rs)).to eq({:M => false})
     end
 
     it "with operator with !=" do
       @dc.operator = "count!=1"
-      @dc.to_hash(@rs).should == {:M => true}
+      expect(@dc.to_hash(@rs)).to eq({:M => true})
       @dc.operator = "count!=2"
-      @dc.to_hash(@rs).should == {:M => false}
+      expect(@dc.to_hash(@rs)).to eq({:M => false})
       @dc.operator = "count!=3"
-      @dc.to_hash(@rs).should == {:M => true}
+      expect(@dc.to_hash(@rs)).to eq({:M => true})
     end
   end
 

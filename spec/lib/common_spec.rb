@@ -16,10 +16,10 @@ describe Surveyor::Common, "" do
       "Do your biological family members (not adopted) have a \"history\" of any of the following?" => "family_members_history_any_following",
       "Your health:" => "your_health",
       "In general, you would say your health is:" => "you_would_say_your_health"
-    }.each{|k, v| Surveyor::Common.to_normalized_string(k).should == v}
+    }.each{|k, v| expect(Surveyor::Common.to_normalized_string(k)).to eq(v)}
   end
   it "should have a list of operators" do
-    %w(== != < > <= >= =~).each{|operator| Surveyor::Common::OPERATORS.include?(operator).should be_true }
+    %w(== != < > <= >= =~).each{|operator| expect(Surveyor::Common::OPERATORS.include?(operator)).to be(true) }
   end
   describe '#generate_api_id' do
     def generate
@@ -27,11 +27,11 @@ describe Surveyor::Common, "" do
     end
 
     it 'generates a String' do
-      generate.should be_a String
+      expect(generate).to be_a String
     end
 
     it 'generates a new value every time' do
-      (1..100).collect { generate }.uniq.size.should == 100
+      expect((1..100).collect { generate }.uniq.size).to eq(100)
     end
   end
 end

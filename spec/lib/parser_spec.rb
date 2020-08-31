@@ -4,7 +4,7 @@ require File.expand_path(File.dirname(__FILE__) + '/../spec_helper')
 describe Surveyor::Parser do
   let(:parser){ Surveyor::Parser.new }
   it "should return a survey object" do
-    Surveyor::Parser.new.parse("survey 'hi' do\n end").is_a?(Survey).should be_true
+    expect(Surveyor::Parser.new.parse("survey 'hi' do\n end").is_a?(Survey)).to be(true)
   end
   context "basic questions" do
     include_context "favorites"
@@ -110,11 +110,11 @@ describe Surveyor::Parser do
         end
       }
       survey = Surveyor::Parser.new.parse(survey_text)
-      survey.is_a?(Survey).should == true
-      survey.translations.size.should == 2
+      expect(survey.is_a?(Survey)).to eq(true)
+      expect(survey.translations.size).to eq(2)
       question = survey.sections.first.questions.first
-      question.translation(:en)[:text].should == "Hello!"
-      question.translation(:es)[:text].should == "¡Hola!"
+      expect(question.translation(:en)[:text]).to eq("Hello!")
+      expect(question.translation(:es)[:text]).to eq("¡Hola!")
     end
     it 'should raise an error w/o :default locale' do
       survey_text = %{
@@ -127,7 +127,7 @@ describe Surveyor::Parser do
       }
       s = Survey.all.size
       expect {survey = Surveyor::Parser.new.parse(survey_text)}.to raise_error
-      Survey.all.size.should == s
+      expect(Survey.all.size).to eq(s)
     end
     it 'should allow multiple default locales' do
       survey_text = %{
@@ -139,12 +139,12 @@ describe Surveyor::Parser do
         end
       }
       survey = Surveyor::Parser.new.parse(survey_text)
-      survey.is_a?(Survey).should == true
-      survey.translations.size.should == 3
+      expect(survey.is_a?(Survey)).to eq(true)
+      expect(survey.translations.size).to eq(3)
       question = survey.sections.first.questions.first
-      question.translation(:'en-US')[:text].should == "Hello!"
-      question.translation(:'en-GB')[:text].should == "Hello!"
-      question.translation(:es)[:text].should == "¡Hola!"
+      expect(question.translation(:'en-US')[:text]).to eq("Hello!")
+      expect(question.translation(:'en-GB')[:text]).to eq("Hello!")
+      expect(question.translation(:es)[:text]).to eq("¡Hola!")
     end
     context 'when a translation is specified as a Hash' do
       it 'should should treat the hash as an inline translation' do
@@ -160,9 +160,9 @@ describe Surveyor::Parser do
           end
         }
         survey = Surveyor::Parser.new.parse(survey_text)
-        survey.is_a?(Survey).should == true
-        survey.translations.size.should == 2
-        survey.translation(:es)['title'].should == "Un idioma nunca es suficiente"
+        expect(survey.is_a?(Survey)).to eq(true)
+        expect(survey.translations.size).to eq(2)
+        expect(survey.translation(:es)['title']).to eq("Un idioma nunca es suficiente")
       end
     end
     context 'when a translation is specified as a String' do
@@ -190,8 +190,8 @@ describe Surveyor::Parser do
               survey_temp_file.flush
               Surveyor::Parser.parse(File.read(survey_temp_file.path))
               survey = Survey.where(:title=>'One language is never enough').first
-              survey.nil?.should == false
-              survey.translation(:es)['title'].should == "Un idioma nunca es suficiente"
+              expect(survey.nil?).to eq(false)
+              expect(survey.translation(:es)['title']).to eq("Un idioma nunca es suficiente")
             end
           end
         end
@@ -219,8 +219,8 @@ describe Surveyor::Parser do
             survey_temp_file.flush
             Surveyor::Parser.parse_file(survey_temp_file.path)
             survey = Survey.where(:title=>'One language is never enough').first
-            survey.nil?.should == false
-            survey.translation(:es)['title'].should == "Un idioma nunca es suficiente"
+            expect(survey.nil?).to eq(false)
+            expect(survey.translation(:es)['title']).to eq("Un idioma nunca es suficiente")
           end
         end
       end
@@ -266,11 +266,9 @@ describe Surveyor::Parser do
             q "Did you take out the trash", pick: :one
             a "Yes"
             a "No"
-
             q "Did you do the laundry", pick: :one
             a "Yes"
             a "No"
-
             q "Optional comments", is_mandatory: false
             a :string
           end
@@ -303,7 +301,6 @@ describe Surveyor::Parser do
             q_watch "Do you watch football?", :pick => :one
             a_1 "Yes"
             a_2 "No"
-
             q "Do you like the replacement refs?", :pick => :one
             dependency :rule => "A or B"
             condition_A :q_1, "==", :a_1
@@ -322,11 +319,9 @@ describe Surveyor::Parser do
             q_watch "Do you watch football?", :pick => :one
             a_1 "Yes"
             a_1 "No"
-
             q_watch "Do you watch baseball?", :pick => :one
             a_yes "Yes"
             a_no  "No"
-
             q "Do you like the replacement refs?", :pick => :one
             dependency :rule => "A or B"
             condition_A :q_watch, "==", :a_1
@@ -365,29 +360,29 @@ describe Surveyor::Parser do
   end
   context "helper methods" do
     it "should translate shortcuts into full model names" do
-      parser.send(:full, "section").should == "survey_section"
-      parser.send(:full, "g").should == "question_group"
-      parser.send(:full, "repeater").should == "question_group"
-      parser.send(:full, "label").should == "question"
-      parser.send(:full, "vc").should == "validation_condition"
-      parser.send(:full, "vcondition").should == "validation_condition"
+      expect(parser.send(:full, "section")).to eq("survey_section")
+      expect(parser.send(:full, "g")).to eq("question_group")
+      expect(parser.send(:full, "repeater")).to eq("question_group")
+      expect(parser.send(:full, "label")).to eq("question")
+      expect(parser.send(:full, "vc")).to eq("validation_condition")
+      expect(parser.send(:full, "vcondition")).to eq("validation_condition")
     end
     it "should translate 'condition' based on context" do
-      parser.send(:full, "condition").should == "dependency_condition"
-      parser.send(:full, "c").should == "dependency_condition"
+      expect(parser.send(:full, "condition")).to eq("dependency_condition")
+      expect(parser.send(:full, "c")).to eq("dependency_condition")
       parser.context[:validation] = Validation.new
-      parser.send(:full, "condition").should == "validation_condition"
-      parser.send(:full, "c").should == "validation_condition"
+      expect(parser.send(:full, "condition")).to eq("validation_condition")
+      expect(parser.send(:full, "c")).to eq("validation_condition")
       parser.context[:validation] = nil
-      parser.send(:full, "condition").should == "dependency_condition"
-      parser.send(:full, "c").should == "dependency_condition"
+      expect(parser.send(:full, "condition")).to eq("dependency_condition")
+      expect(parser.send(:full, "c")).to eq("dependency_condition")
     end
     it "should not translate bad shortcuts" do
-      parser.send(:full, "quack").should == "quack"
-      parser.send(:full, "grizzly").should == "grizzly"
+      expect(parser.send(:full, "quack")).to eq("quack")
+      expect(parser.send(:full, "grizzly")).to eq("grizzly")
     end
     it "should identify models that take blocks" do
-      parser.send(:block_models).should == %w(survey survey_section question_group)
+      expect(parser.send(:block_models)).to eq(%w(survey survey_section question_group))
     end
   end
   context "skip logic", :focus => true do

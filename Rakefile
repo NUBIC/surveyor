@@ -2,7 +2,7 @@ $LOAD_PATH << File.expand_path('../lib', __FILE__)
 require 'fileutils'
 require 'bundler/gem_tasks'
 require 'rspec/core/rake_task'
-
+require 'tempfile'
 ###### RSPEC
 
 RSpec::Core::RakeTask.new(:spec)

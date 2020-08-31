@@ -1,10 +1,9 @@
 require File.expand_path(File.dirname(__FILE__) + '/../spec_helper')
 
-
-describe SkipLogicCondition do
+describe SkipLogicCondition, type: :model do
   it "should have a list of operators" do
     %w(== != < > <= >=).each do |operator|
-      SkipLogicCondition.operators.include?(operator).should be_true
+      expect(SkipLogicCondition.operators.include?(operator)).to be(true)
     end
   end
 
@@ -20,68 +19,68 @@ describe SkipLogicCondition do
     }
 
     it "should be valid" do
-      skip_logic_condition.should be_valid
+      expect(skip_logic_condition).to be_valid
     end
 
     it "should be invalid without a parent skip_logic, question_id" do
       skip_logic_condition.skip_logic_id = nil
-      skip_logic_condition.should have(1).errors_on(:skip_logic)
+      expect(skip_logic_condition).to have(1).errors_on(:skip_logic)
       skip_logic_condition.question_id = nil
-      skip_logic_condition.should have(1).errors_on(:question)
+      expect(skip_logic_condition).to have(1).errors_on(:question)
     end
 
     it "should be invalid without an operator" do
       skip_logic_condition.operator = nil
-      skip_logic_condition.should have(2).errors_on(:operator)
+      expect(skip_logic_condition).to have(2).errors_on(:operator)
     end
 
     it "should be invalid without a rule_key" do
-      skip_logic_condition.should be_valid
+      expect(skip_logic_condition).to be_valid
       skip_logic_condition.rule_key = nil
-      skip_logic_condition.should_not be_valid
-      skip_logic_condition.should have(1).errors_on(:rule_key)
+      expect(skip_logic_condition).not_to be_valid
+      expect(skip_logic_condition).to have(1).errors_on(:rule_key)
     end
 
     it "should have unique rule_key within the context of a skip_logic" do
-      skip_logic_condition.should be_valid
+      expect(skip_logic_condition).to be_valid
       skip_logic = FactoryBot.create( :skip_logic )
-      SkipLogicCondition.create(
+      expect(SkipLogicCondition.create(
         :skip_logic => skip_logic,
         :question => FactoryBot.create( :question ),
         :operator => "==",
         :answer_id => 14,
         :rule_key => "B"
-      ).should be_valid
+      )).to be_valid
       skip_logic_condition.rule_key = "B" # rule key uniquness is scoped by skip_logic_id
       skip_logic_condition.skip_logic_id = skip_logic.id
-      skip_logic_condition.should_not be_valid
-      skip_logic_condition.should have(1).errors_on(:rule_key)
+      expect(skip_logic_condition).not_to be_valid
+      expect(skip_logic_condition).to have(1).errors_on(:rule_key)
     end
 
     it "should have an operator in SkipLogicCondition.operators" do
       SkipLogicCondition.operators.each do |o|
         skip_logic_condition.operator = o
-        skip_logic_condition.should have(0).errors_on(:operator)
+        expect(skip_logic_condition).to have(0).errors_on(:operator)
       end
       skip_logic_condition.operator = "#"
-      skip_logic_condition.should have(1).error_on(:operator)
+      expect(skip_logic_condition).to have(1).error_on(:operator)
     end
     it "should have a properly formed count operator" do
       %w(count>1 count<1 count>=1 count<=1 count==1 count!=1).each do |o|
         skip_logic_condition.operator = o
-        skip_logic_condition.should have(0).errors_on(:operator)
+        expect(skip_logic_condition).to have(0).errors_on(:operator)
       end
       %w(count> count< count>= count<= count== count!=).each do |o|
         skip_logic_condition.operator = o
-        skip_logic_condition.should have(1).errors_on(:operator)
+        expect(skip_logic_condition).to have(1).errors_on(:operator)
       end
       %w(count=1 count><1 count<>1 count!1 count!!1 count=>1 count=<1).each do |o|
         skip_logic_condition.operator = o
-        skip_logic_condition.should have(1).errors_on(:operator)
+        expect(skip_logic_condition).to have(1).errors_on(:operator)
       end
       %w(count= count>< count<> count! count!! count=> count=< count> count< count>= count<= count== count!=).each do |o|
         skip_logic_condition.operator = o
-        skip_logic_condition.should have(1).errors_on(:operator)
+        expect(skip_logic_condition).to have(1).errors_on(:operator)
       end
     end
   end
@@ -90,7 +89,7 @@ describe SkipLogicCondition do
     question = FactoryBot.create(:question)
     skip_logic_condition = FactoryBot.create(:skip_logic_condition, :rule_key => "C", :question => question)
     rs = FactoryBot.create(:response_set)
-    skip_logic_condition.to_hash(rs).should == {:C => false}
+    expect(skip_logic_condition.to_hash(rs)).to eq({:C => false})
   end
 
 
@@ -116,9 +115,9 @@ describe SkipLogicCondition do
 
     response = FactoryBot.create(:response, :answer => answer, :question => answer.question)
     response_set = response.response_set
-    response.integer_value.should == nil
+    expect(response.integer_value).to eq(nil)
 
-    skip_logic_condition.to_hash(response_set).should == {:A => false}
+    expect(skip_logic_condition.to_hash(response_set)).to eq({:A => false})
   end
 
   describe "evaluate '==' operator" do
@@ -128,49 +127,49 @@ describe SkipLogicCondition do
       @r = FactoryBot.create(:response, :question => @a.question, :answer => @a)
       @rs = @r.response_set.reload
       @slc = FactoryBot.create(:skip_logic_condition, :question => @a.question, :answer => @a, :operator => "==", :rule_key => "D")
-      @slc.as(:answer).should == @r.as(:answer)
+      expect(@slc.as(:answer)).to eq(@r.as(:answer))
     end
 
     it "with checkbox/radio type response" do
-      @slc.to_hash(@rs).should == {:D => true}
+      expect(@slc.to_hash(@rs)).to eq({:D => true})
       @slc.answer = @b
-      @slc.to_hash(@rs).should == {:D => false}
+      expect(@slc.to_hash(@rs)).to eq({:D => false})
     end
 
     it "with string value response" do
       @a.update_attributes(:response_class => "string")
       update_response(:string_value => "hello123")
       @slc.string_value = "hello123"
-      @slc.to_hash(@rs).should == {:D => true}
+      expect(@slc.to_hash(@rs)).to eq({:D => true})
       update_response(:string_value => "foo_abc")
-      @slc.to_hash(@rs).should == {:D => false}
+      expect(@slc.to_hash(@rs)).to eq({:D => false})
     end
 
     it "with a text value response" do
       @a.update_attributes(:response_class => "text")
       update_response(:text_value => "hello this is some text for comparison")
       @slc.text_value = "hello this is some text for comparison"
-      @slc.to_hash(@rs).should == {:D => true}
+      expect(@slc.to_hash(@rs)).to eq({:D => true})
       update_response(:text_value => "Not the same text")
-      @slc.to_hash(@rs).should == {:D => false}
+      expect(@slc.to_hash(@rs)).to eq({:D => false})
     end
 
     it "with an integer value response" do
       @a.update_attributes(:response_class => "integer")
       update_response(:integer_value => 10045)
       @slc.integer_value = 10045
-      @slc.to_hash(@rs).should == {:D => true}
+      expect(@slc.to_hash(@rs)).to eq({:D => true})
       update_response(:integer_value => 421)
-      @slc.to_hash(@rs).should == {:D => false}
+      expect(@slc.to_hash(@rs)).to eq({:D => false})
     end
 
     it "with a float value response" do
       @a.update_attributes(:response_class => "float")
       update_response(:float_value => 121.1)
       @slc.float_value = 121.1
-      @slc.to_hash(@rs).should == {:D => true}
+      expect(@slc.to_hash(@rs)).to eq({:D => true})
       update_response(:float_value => 130.123)
-      @slc.to_hash(@rs).should == {:D => false}
+      expect(@slc.to_hash(@rs)).to eq({:D => false})
     end
   end
 
@@ -181,49 +180,49 @@ describe SkipLogicCondition do
       @r = FactoryBot.create(:response, :question => @a.question, :answer => @a)
       @rs = @r.response_set.reload
       @slc = FactoryBot.create(:skip_logic_condition, :question => @a.question, :answer => @a, :operator => "!=", :rule_key => "E")
-      @slc.as(:answer).should == @r.as(:answer)
+      expect(@slc.as(:answer)).to eq(@r.as(:answer))
     end
 
     it "with checkbox/radio type response" do
-      @slc.to_hash(@rs).should == {:E => false}
+      expect(@slc.to_hash(@rs)).to eq({:E => false})
       @slc.answer_id = @a.id.to_i+1
-      @slc.to_hash(@rs).should == {:E => true}
+      expect(@slc.to_hash(@rs)).to eq({:E => true})
     end
 
     it "with string value response" do
       @a.update_attributes(:response_class => "string")
       update_response(:string_value => "hello123")
       @slc.string_value = "hello123"
-      @slc.to_hash(@rs).should == {:E => false}
+      expect(@slc.to_hash(@rs)).to eq({:E => false})
       update_response(:string_value => "foo_abc")
-      @slc.to_hash(@rs).should == {:E => true}
+      expect(@slc.to_hash(@rs)).to eq({:E => true})
     end
 
     it "with a text value response" do
       @a.update_attributes(:response_class => "text")
       update_response(:text_value => "hello this is some text for comparison")
       @slc.text_value = "hello this is some text for comparison"
-      @slc.to_hash(@rs).should == {:E => false}
+      expect(@slc.to_hash(@rs)).to eq({:E => false})
       update_response(:text_value => "Not the same text")
-      @slc.to_hash(@rs).should == {:E => true}
+      expect(@slc.to_hash(@rs)).to eq({:E => true})
     end
 
     it "with an integer value response" do
       @a.update_attributes(:response_class => "integer")
       update_response(:integer_value => 10045)
       @slc.integer_value = 10045
-      @slc.to_hash(@rs).should == {:E => false}
+      expect(@slc.to_hash(@rs)).to eq({:E => false})
       update_response(:integer_value => 421)
-      @slc.to_hash(@rs).should == {:E => true}
+      expect(@slc.to_hash(@rs)).to eq({:E => true})
     end
 
     it "with a float value response" do
       @a.update_attributes(:response_class => "float")
       update_response(:float_value => 121.1)
       @slc.float_value = 121.1
-      @slc.to_hash(@rs).should == {:E => false}
+      expect(@slc.to_hash(@rs)).to eq({:E => false})
       update_response(:float_value => 130.123)
-      @slc.to_hash(@rs).should == {:E => true}
+      expect(@slc.to_hash(@rs)).to eq({:E => true})
     end
   end
 
@@ -234,25 +233,25 @@ describe SkipLogicCondition do
       @r = FactoryBot.create(:response, :question => @a.question, :answer => @a)
       @rs = @r.response_set
       @slc = FactoryBot.create(:skip_logic_condition, :question => @a.question, :answer => @a, :operator => "<", :rule_key => "F")
-      @slc.as(:answer).should == @r.as(:answer)
+      expect(@slc.as(:answer)).to eq(@r.as(:answer))
     end
 
     it "with an integer value response" do
       @a.update_attributes(:response_class => "integer")
       update_response(:integer_value => 50)
       @slc.integer_value = 100
-      @slc.to_hash(@rs).should == {:F => true}
+      expect(@slc.to_hash(@rs)).to eq({:F => true})
       update_response(:integer_value => 421)
-      @slc.to_hash(@rs).should == {:F => false}
+      expect(@slc.to_hash(@rs)).to eq({:F => false})
     end
 
     it "with a float value response" do
       @a.update_attributes(:response_class => "float")
       update_response(:float_value => 5.1)
       @slc.float_value = 121.1
-      @slc.to_hash(@rs).should == {:F => true}
+      expect(@slc.to_hash(@rs)).to eq({:F => true})
       update_response(:float_value => 130.123)
-      @slc.to_hash(@rs).should == {:F => false}
+      expect(@slc.to_hash(@rs)).to eq({:F => false})
     end
   end
 
@@ -263,29 +262,29 @@ describe SkipLogicCondition do
       @r = FactoryBot.create(:response, :question => @a.question, :answer => @a)
       @rs = @r.response_set
       @slc = FactoryBot.create(:skip_logic_condition, :question => @a.question, :answer => @a, :operator => "<=", :rule_key => "G")
-      @slc.as(:answer).should == @r.as(:answer)
+      expect(@slc.as(:answer)).to eq(@r.as(:answer))
     end
 
     it "with an integer value response" do
       @a.update_attributes(:response_class => "integer")
       update_response(:integer_value => 50)
       @slc.integer_value = 100
-      @slc.to_hash(@rs).should == {:G => true}
+      expect(@slc.to_hash(@rs)).to eq({:G => true})
       update_response(:integer_value => 100)
-      @slc.to_hash(@rs).should == {:G => true}
+      expect(@slc.to_hash(@rs)).to eq({:G => true})
       update_response(:integer_value => 421)
-      @slc.to_hash(@rs).should == {:G => false}
+      expect(@slc.to_hash(@rs)).to eq({:G => false})
     end
 
     it "with a float value response" do
       @a.update_attributes(:response_class => "float")
       update_response(:float_value => 5.1)
       @slc.float_value = 121.1
-      @slc.to_hash(@rs).should == {:G => true}
+      expect(@slc.to_hash(@rs)).to eq({:G => true})
       update_response(:float_value => 121.1)
-      @slc.to_hash(@rs).should == {:G => true}
+      expect(@slc.to_hash(@rs)).to eq({:G => true})
       update_response(:float_value => 130.123)
-      @slc.to_hash(@rs).should == {:G => false}
+      expect(@slc.to_hash(@rs)).to eq({:G => false})
     end
 
   end
@@ -297,25 +296,25 @@ describe SkipLogicCondition do
       @r = FactoryBot.create(:response, :question => @a.question, :answer => @a)
       @rs = @r.response_set
       @slc = FactoryBot.create(:skip_logic_condition, :question => @a.question, :answer => @a, :operator => ">", :rule_key => "H")
-      @slc.as(:answer).should == @r.as(:answer)
+      expect(@slc.as(:answer)).to eq(@r.as(:answer))
     end
 
     it "with an integer value response" do
       @a.update_attributes(:response_class => "integer")
       update_response(:integer_value => 50)
       @slc.integer_value = 100
-      @slc.to_hash(@rs).should == {:H => false}
+      expect(@slc.to_hash(@rs)).to eq({:H => false})
       update_response(:integer_value => 421)
-      @slc.to_hash(@rs).should == {:H => true}
+      expect(@slc.to_hash(@rs)).to eq({:H => true})
     end
 
     it "with a float value response" do
       @a.update_attributes(:response_class => "float")
       update_response(:float_value => 5.1)
       @slc.float_value = 121.1
-      @slc.to_hash(@rs).should == {:H => false}
+      expect(@slc.to_hash(@rs)).to eq({:H => false})
       update_response(:float_value => 130.123)
-      @slc.to_hash(@rs).should == {:H => true}
+      expect(@slc.to_hash(@rs)).to eq({:H => true})
     end
   end
 
@@ -326,29 +325,29 @@ describe SkipLogicCondition do
       @r = FactoryBot.create(:response, :question => @a.question, :answer => @a)
       @rs = @r.response_set
       @slc = FactoryBot.create(:skip_logic_condition, :question => @a.question, :answer => @a, :operator => ">=", :rule_key => "I")
-      @slc.as(:answer).should == @r.as(:answer)
+      expect(@slc.as(:answer)).to eq(@r.as(:answer))
     end
 
     it "with an integer value response", focus: true do
       @a.update_attributes(:response_class => "integer")
       update_response(:integer_value => 50)
       @slc.integer_value = 100
-      @slc.to_hash(@rs).should == {:I => false}
+      expect(@slc.to_hash(@rs)).to eq({:I => false})
       update_response(:integer_value => 100)
-      @slc.to_hash(@rs).should == {:I => true}
+      expect(@slc.to_hash(@rs)).to eq({:I => true})
       update_response(:integer_value => 421)
-      @slc.to_hash(@rs).should == {:I => true}
+      expect(@slc.to_hash(@rs)).to eq({:I => true})
     end
 
     it "with a float value response" do
       @a.update_attributes(:response_class => "float")
       update_response(:float_value => 5.1)
       @slc.float_value = 121.1
-      @slc.to_hash(@rs).should == {:I => false}
+      expect(@slc.to_hash(@rs)).to eq({:I => false})
       update_response(:float_value => 121.1)
-      @slc.to_hash(@rs).should == {:I => true}
+      expect(@slc.to_hash(@rs)).to eq({:I => true})
       update_response(:float_value => 130.123)
-      @slc.to_hash(@rs).should == {:I => true}
+      expect(@slc.to_hash(@rs)).to eq({:I => true})
     end
   end
 
@@ -359,7 +358,7 @@ describe SkipLogicCondition do
       @r = FactoryBot.create(:response, :question => @a.question, :answer => @a, :string_value => "")
       @rs = @r.response_set.reload
       @slc = FactoryBot.create(:skip_logic_condition, :question => @a.question, :answer => @a, :operator => "==", :rule_key => "J")
-      @slc.to_hash(@rs).should == {:J => true}
+      expect(@slc.to_hash(@rs)).to eq({:J => true})
     end
 
     it "should compare strings when the skip logic condition string_value is not nil, even if it is blank" do
@@ -368,11 +367,11 @@ describe SkipLogicCondition do
       @r = FactoryBot.create(:response, :question => @a.question, :answer => @a, :string_value => "foo")
       @rs = @r.response_set.reload
       @slc = FactoryBot.create(:skip_logic_condition, :question => @a.question, :answer => @a, :operator => "==", :rule_key => "K", :string_value => "foo")
-      @slc.to_hash(@rs).should == {:K => true}
+      expect(@slc.to_hash(@rs)).to eq({:K => true})
 
       update_response(:string_value => "")
       @slc.string_value = ""
-      @slc.to_hash(@rs).should == {:K => true}
+      expect(@slc.to_hash(@rs)).to eq({:K => true})
     end
   end
 
@@ -393,44 +392,44 @@ describe SkipLogicCondition do
     end
 
     it "with operator with >" do
-      @slc.to_hash(@rs).should == {:M => false}
+      expect(@slc.to_hash(@rs)).to eq({:M => false})
       FactoryBot.create(:response, :question => @q, :answer => @as.last, :response_set => @rs)
-      @rs.reload.responses.count.should == 3
-      @slc.to_hash(@rs.reload).should == {:M => true}
+      expect(@rs.reload.responses.count).to eq(3)
+      expect(@slc.to_hash(@rs.reload)).to eq({:M => true})
     end
 
     it "with operator with <" do
       @slc.operator = "count<2"
-      @slc.to_hash(@rs).should == {:M => false}
+      expect(@slc.to_hash(@rs)).to eq({:M => false})
       @slc.operator = "count<3"
-      @slc.to_hash(@rs).should == {:M => true}
+      expect(@slc.to_hash(@rs)).to eq({:M => true})
     end
 
     it "with operator with <=" do
       @slc.operator = "count<=1"
-      @slc.to_hash(@rs).should == {:M => false}
+      expect(@slc.to_hash(@rs)).to eq({:M => false})
       @slc.operator = "count<=2"
-      @slc.to_hash(@rs).should == {:M => true}
+      expect(@slc.to_hash(@rs)).to eq({:M => true})
       @slc.operator = "count<=3"
-      @slc.to_hash(@rs).should == {:M => true}
+      expect(@slc.to_hash(@rs)).to eq({:M => true})
     end
 
     it "with operator with >=" do
       @slc.operator = "count>=1"
-      @slc.to_hash(@rs).should == {:M => true}
+      expect(@slc.to_hash(@rs)).to eq({:M => true})
       @slc.operator = "count>=2"
-      @slc.to_hash(@rs).should == {:M => true}
+      expect(@slc.to_hash(@rs)).to eq({:M => true})
       @slc.operator = "count>=3"
-      @slc.to_hash(@rs).should == {:M => false}
+      expect(@slc.to_hash(@rs)).to eq({:M => false})
     end
 
     it "with operator with !=" do
       @slc.operator = "count!=1"
-      @slc.to_hash(@rs).should == {:M => true}
+      expect(@slc.to_hash(@rs)).to eq({:M => true})
       @slc.operator = "count!=2"
-      @slc.to_hash(@rs).should == {:M => false}
+      expect(@slc.to_hash(@rs)).to eq({:M => false})
       @slc.operator = "count!=3"
-      @slc.to_hash(@rs).should == {:M => true}
+      expect(@slc.to_hash(@rs)).to eq({:M => true})
     end
   end
 

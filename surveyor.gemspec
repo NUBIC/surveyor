@@ -18,18 +18,14 @@ Gem::Specification.new do |s|
   s.require_paths = ["lib"]
 
   s.add_dependency('rails', '>= 4.2')
-  s.add_dependency('haml', '~> 4.0')
-  s.add_dependency('jquery-rails', '~> 4.3.1')
-  s.add_dependency('sass-rails', '~> 5.0.0')
   s.add_dependency('uuidtools', '~> 2.1')
   s.add_dependency('mustache', '~> 0.99')
-  s.add_dependency('rabl', '~> 0.6')
 
   s.add_development_dependency('yard')
   s.add_development_dependency('rake', '~> 11.0')
   s.add_development_dependency('sqlite3')
-  s.add_development_dependency('bundler', '~> 1.14.0')
-  s.add_development_dependency('rspec-rails', '~> 2.14.2')
+  s.add_development_dependency('bundler', '~> 2.1')
+  s.add_development_dependency('rspec-rails', '~> 3.7')
   s.add_development_dependency('capybara', '~> 2.2.1')
   s.add_development_dependency('launchy', '~> 2.4.2')
   s.add_development_dependency('poltergeist', '~>1.17.0')
@@ -37,4 +33,5 @@ Gem::Specification.new do |s|
   s.add_development_dependency('factory_bot', '~> 4.8.0')
   s.add_development_dependency('database_cleaner', '~> 1.2.0')
   s.add_development_dependency('rspec-retry', '0.4.0')
+  s.add_development_dependency('rspec-collection_matchers')
 end

@@ -64,11 +64,6 @@ module Surveyor
         end
       end
 
-      def as_json(options = nil)
-        template_paths = ActionController::Base.view_paths.collect(&:to_path)
-        Rabl.render(self, 'surveyor/show.json', :view_path => template_paths, :format => "hash")
-      end
-
       def complete!
         self.completed_at = Time.now
       end

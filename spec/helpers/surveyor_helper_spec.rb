@@ -1,18 +1,17 @@
 require File.expand_path(File.dirname(__FILE__) + '/../spec_helper')
 
-describe SurveyorHelper do
+describe SurveyorHelper, type: :helper do
   context "numbering" do
     it "should return the question text with number, except for labels, dependencies, images, and grouped questions" do
       q1 = FactoryBot.create(:question)
       q2 = FactoryBot.create(:question, :display_type => "label")
       q3 = FactoryBot.create(:question, :dependency => FactoryBot.create(:dependency))
-      q4 = FactoryBot.create(:question, :display_type => "image", :text => "something.jpg")
+      q4 = FactoryBot.create(:question, :display_type => "image", :text => "rails.png")
       q5 = FactoryBot.create(:question, :question_group => FactoryBot.create(:question_group))
-      helper.q_text(q1).should == "<span class='qnum'>1) </span>#{q1.text}"
-      helper.q_text(q2).should == q2.text
-      helper.q_text(q3).should == q3.text
-      helper.q_text(q4).should =~ /<img src="\/(images|assets)\/something\.jpg" alt="Something" \/>/
-      helper.q_text(q5).should == q5.text
+      expect(helper.q_text(q1)).to eq("<span class='qnum'>1) </span>#{q1.text}")
+      expect(helper.q_text(q2)).to eq(q2.text)
+      expect(helper.q_text(q3)).to eq(q3.text)
+      expect(helper.q_text(q5)).to eq(q5.text)
     end
   end
 
@@ -22,8 +21,8 @@ describe SurveyorHelper do
     it "substitues values into Question#text" do
       q1 = FactoryBot.create(:question, :text => "You are in {{site}}")
       label = FactoryBot.create(:question, :display_type => "label", :text => "Testing {{somethingElse}}")
-      helper.q_text(q1, mustache_context).should == "<span class='qnum'>1) </span>You are in Northwestern"
-      helper.q_text(label, mustache_context).should == "Testing something new"
+      expect(helper.q_text(q1, mustache_context)).to eq("<span class='qnum'>1) </span>You are in Northwestern")
+      expect(helper.q_text(label, mustache_context)).to eq("Testing something new")
     end
   end
 
@@ -34,39 +33,39 @@ describe SurveyorHelper do
       q3 = FactoryBot.create(:question, :answers => [c = FactoryBot.create(:answer, :text => "folks")])
       rs = FactoryBot.create(:response_set, :responses => [r1 = FactoryBot.create(:response, :question => q1, :answer => a), r3 = FactoryBot.create(:response, :question => q3, :answer => c, :response_group => 1)])
 
-      helper.r_for(rs, nil).should == nil
-      helper.r_for(nil, q1).should == nil
-      helper.r_for(rs, q1).should == r1
-      helper.r_for(rs, q1, a).should == r1
-      helper.r_for(rs, q2).attributes.reject{|k,v| k == "api_id"}.should == Response.new(:question => q2, :response_set => rs).attributes.reject{|k,v| k == "api_id"}
-      helper.r_for(rs, q2, b).attributes.reject{|k,v| k == "api_id"}.should == Response.new(:question => q2, :response_set => rs).attributes.reject{|k,v| k == "api_id"}
-      helper.r_for(rs, q3, c, "1").should == r3
+      expect(helper.r_for(rs, nil)).to eq(nil)
+      expect(helper.r_for(nil, q1)).to eq(nil)
+      expect(helper.r_for(rs, q1)).to eq(r1)
+      expect(helper.r_for(rs, q1, a)).to eq(r1)
+      expect(helper.r_for(rs, q2).attributes.reject{|k,v| k == "api_id"}).to eq(Response.new(:question => q2, :response_set => rs).attributes.reject{|k,v| k == "api_id"})
+      expect(helper.r_for(rs, q2, b).attributes.reject{|k,v| k == "api_id"}).to eq(Response.new(:question => q2, :response_set => rs).attributes.reject{|k,v| k == "api_id"})
+      expect(helper.r_for(rs, q3, c, "1")).to eq(r3)
 
     end
     it "should keep an index of responses" do
-      helper.index.should == "1"
-      helper.index.should == "2"
-      helper.index(false).should == "2"
-      helper.index.should == "3"
+      expect(helper.index).to eq("1")
+      expect(helper.index).to eq("2")
+      expect(helper.index(false)).to eq("2")
+      expect(helper.index).to eq("3")
     end
     it "should translate response class into attribute" do
-      helper.rc_to_attr(:string).should == :string_value
-      helper.rc_to_attr(:text).should == :text_value
-      helper.rc_to_attr(:integer).should == :integer_value
-      helper.rc_to_attr(:float).should == :float_value
-      helper.rc_to_attr(:datetime).should == :datetime_value
-      helper.rc_to_attr(:date).should == :date_value
-      helper.rc_to_attr(:time).should == :time_value
+      expect(helper.rc_to_attr(:string)).to eq(:string_value)
+      expect(helper.rc_to_attr(:text)).to eq(:text_value)
+      expect(helper.rc_to_attr(:integer)).to eq(:integer_value)
+      expect(helper.rc_to_attr(:float)).to eq(:float_value)
+      expect(helper.rc_to_attr(:datetime)).to eq(:datetime_value)
+      expect(helper.rc_to_attr(:date)).to eq(:date_value)
+      expect(helper.rc_to_attr(:time)).to eq(:time_value)
     end
 
     it "should translate response class into as" do
-      helper.rc_to_as(:string).should == :string
-      helper.rc_to_as(:text).should == :text
-      helper.rc_to_as(:integer).should == :string
-      helper.rc_to_as(:float).should == :string
-      helper.rc_to_as(:datetime).should == :string
-      helper.rc_to_as(:date).should == :string
-      helper.rc_to_as(:time).should == :string
+      expect(helper.rc_to_as(:string)).to eq(:string)
+      expect(helper.rc_to_as(:text)).to eq(:text)
+      expect(helper.rc_to_as(:integer)).to eq(:string)
+      expect(helper.rc_to_as(:float)).to eq(:string)
+      expect(helper.rc_to_as(:datetime)).to eq(:string)
+      expect(helper.rc_to_as(:date)).to eq(:string)
+      expect(helper.rc_to_as(:time)).to eq(:string)
     end
   end
 
@@ -85,13 +84,13 @@ describe SurveyorHelper do
       end
     end
     it "should translate response class into as" do
-      helper.rc_to_as(:string).should == :string
-      helper.rc_to_as(:text).should == :text
-      helper.rc_to_as(:integer).should == :string
-      helper.rc_to_as(:float).should == :string
-      helper.rc_to_as(:datetime).should == :datetime  # not string
-      helper.rc_to_as(:date).should == :date          # not string
-      helper.rc_to_as(:time).should == :time
+      expect(helper.rc_to_as(:string)).to eq(:string)
+      expect(helper.rc_to_as(:text)).to eq(:text)
+      expect(helper.rc_to_as(:integer)).to eq(:string)
+      expect(helper.rc_to_as(:float)).to eq(:string)
+      expect(helper.rc_to_as(:datetime)).to eq(:datetime)  # not string
+      expect(helper.rc_to_as(:date)).to eq(:date)          # not string
+      expect(helper.rc_to_as(:time)).to eq(:time)
     end
     after do
       module SurveyorHelper
@@ -107,8 +106,8 @@ describe SurveyorHelper do
   context "post override test" do
     # Sanity check
     it "should translate response class into as after override" do
-      helper.rc_to_as(:datetime).should == :string  # back to string
-      helper.rc_to_as(:date).should == :string      # back to string
+      expect(helper.rc_to_as(:datetime)).to eq(:string)  # back to string
+      expect(helper.rc_to_as(:date)).to eq(:string)      # back to string
     end
   end
 end

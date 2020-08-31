@@ -1,8 +1,5 @@
 require 'rails'
 require 'surveyor'
-require 'simple_form'
-require 'bootstrap-sass'
-require 'haml' # required for view resolution
 
 module Surveyor
   class Engine < Rails::Engine

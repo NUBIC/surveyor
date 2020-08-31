@@ -7,76 +7,76 @@ describe Survey do
   context "when creating" do
     it "is invalid without #title" do
       survey.title = nil
-      survey.should have(1).error_on :title
+      expect(survey).to have(1).error_on :title
     end
     it "adjust #survey_version" do
       original = Survey.new(:title => "Foo")
-      original.save.should be_true
-      original.survey_version.should == 1
+      expect(original.save).to be(true)
+      expect(original.survey_version).to eq(1)
       imposter = Survey.new(:title => "Foo")
-      imposter.save.should be_true
-      imposter.title.should == "Foo"
-      imposter.survey_version.should == 2
+      expect(imposter.save).to be(true)
+      expect(imposter.title).to eq("Foo")
+      expect(imposter.survey_version).to eq(2)
       bandwagoneer = Survey.new(:title => "Foo")
-      bandwagoneer.save.should be_true
-      bandwagoneer.title.should == "Foo"
-      bandwagoneer.survey_version.should == 3
+      expect(bandwagoneer.save).to be(true)
+      expect(bandwagoneer.title).to eq("Foo")
+      expect(bandwagoneer.survey_version).to eq(3)
     end
     it "update #survey_version on save" do
       original = Survey.new(:title => "Foo")
-      original.save.should be_true
+      expect(original.save).to be(true)
       imposter = Survey.new(:title => "Foo")
-      imposter.save.should be_true
+      expect(imposter.save).to be(true)
       imposter.survey_version = 0
-      imposter.save.should be_true
-      imposter.survey_version.should_not eql original.survey_version
+      expect(imposter.save).to be(true)
+      expect(imposter.survey_version).not_to eql original.survey_version
     end
     it "doesn't adjust #title when" do
       original = FactoryBot.create(:survey, :title => "Foo")
-      original.save.should be_true
+      expect(original.save).to be(true)
       original.update_attributes(:title => "Foo")
-      original.title.should == "Foo"
+      expect(original.title).to eq("Foo")
     end
     it "has #api_id with 36 characters by default" do
-      survey.api_id.length.should == 36
+      expect(survey.api_id.length).to eq(36)
     end
   end
 
   context "activating" do
-    it { survey.active?.should }
+    it { expect(survey.active?).to be(false)}
     it "both #inactive_at and #active_at == nil by default" do
-      survey.active_at.should be_nil
-      survey.inactive_at.should be_nil
+      expect(survey.active_at).to be_nil
+      expect(survey.inactive_at).to be_nil
     end
     it "#active_at on a certain date/time" do
       survey.inactive_at = 2.days.from_now
       survey.active_at = 2.days.ago
-      survey.active?.should be_true
+      expect(survey.active?).to be(true)
     end
     it "#inactive_at on a certain date/time" do
       survey.active_at = 3.days.ago
       survey.inactive_at = 1.days.ago
-      survey.active?.should be_false
+      expect(survey.active?).to be(false)
     end
     it "#activate! and #deactivate!" do
       survey.activate!
-      survey.active?.should be_true
+      expect(survey.active?).to be(true)
       survey.deactivate!
-      survey.active?.should be_false
+      expect(survey.active?).to be(false)
     end
     it "nils out past values of #inactive_at on #activate!" do
       survey.inactive_at = 5.days.ago
-      survey.active?.should be_false
+      expect(survey.active?).to be(false)
       survey.activate!
-      survey.active?.should be_true
-      survey.inactive_at.should be_nil
+      expect(survey.active?).to be(true)
+      expect(survey.inactive_at).to be_nil
     end
     it "nils out pas values of #active_at on #deactivate!" do
       survey.active_at = 5.days.ago
-      survey.active?.should be_true
+      expect(survey.active?).to be(true)
       survey.deactivate!
-      survey.active?.should be_false
-      survey.active_at.should be_nil
+      expect(survey.active?).to be(false)
+      expect(survey.active_at).to be_nil
     end
   end
 
@@ -96,41 +96,19 @@ describe Survey do
       s3.questions << q4
     end
 
-    it{ survey.should have(3).sections}
+    it{ expect(survey).to have(3).sections}
     it "gets survey_sections in order" do
-      survey.sections.order("display_order asc").should == [s3, s1, s2]
-      survey.sections.order("display_order asc").map(&:display_order).should == [1,2,3]
+      expect(survey.sections.order("display_order asc")).to eq([s3, s1, s2])
+      expect(survey.sections.order("display_order asc").map(&:display_order)).to eq([1,2,3])
     end
     it "gets survey_sections_with_questions in order" do
-      survey.sections.order("display_order asc").map{|ss| ss.questions.order("display_order asc")}.flatten.should have(4).questions
-      survey.sections.order("display_order asc").map{|ss| ss.questions.order("display_order asc")}.flatten.should == [q4,q1,q3,q2]
+      expect(survey.sections.order("display_order asc").map{|ss| ss.questions.order("display_order asc")}.flatten).to have(4).questions
+      expect(survey.sections.order("display_order asc").map{|ss| ss.questions.order("display_order asc")}.flatten).to eq([q4,q1,q3,q2])
     end
     it "deletes child survey_sections when deleted" do
       survey_section_ids = survey.sections.map(&:id)
       survey.destroy
-      survey_section_ids.each{|id| SurveySection.find_by_id(id).should be_nil}
-    end
-  end
-
-  context "serialization" do
-    let(:s1){ FactoryBot.create(:survey_section, :survey => survey, :title => "wise") }
-    let(:s2){ FactoryBot.create(:survey_section, :survey => survey, :title => "er") }
-    let(:q1){ FactoryBot.create(:question, :survey_section => s1, :text => "what is wise?") }
-    let(:q2){ FactoryBot.create(:question, :survey_section => s2, :text => "what is er?") }
-    let(:q3){ FactoryBot.create(:question, :survey_section => s2, :text => "what is mill?") }
-    before do
-      [s1, s2].each{|s| survey.sections << s }
-      s1.questions << q1
-      s2.questions << q2
-      s2.questions << q3
-    end
-
-    it "includes title, sections, and questions" do
-      actual = survey.as_json
-      actual[:title].should == 'Simple survey'
-      actual[:sections].size.should == 2
-      actual[:sections][0][:questions_and_groups].size.should == 1
-      actual[:sections][1][:questions_and_groups].size.should == 2
+      survey_section_ids.each{|id| expect(SurveySection.find_by_id(id)).to be_nil}
     end
   end
 
@@ -145,11 +123,11 @@ describe Survey do
       survey.translations << survey_translation
     end
     it "returns its own translation" do
-      YAML.load(survey_translation.translation).should_not be_nil
-      survey.translation(:es)[:title].should == "Un idioma nunca es suficiente"
+      expect(YAML.load(survey_translation.translation)).not_to be_nil
+      expect(survey.translation(:es)[:title]).to eq("Un idioma nunca es suficiente")
     end
     it "returns its own default values" do
-      survey.translation(:de).should == {"title" => survey.title, "description" => survey.description}
+      expect(survey.translation(:de)).to eq({"title" => survey.title, "description" => survey.description})
     end
   end
 end

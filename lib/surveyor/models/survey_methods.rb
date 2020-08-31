@@ -1,5 +1,4 @@
 require 'surveyor/common'
-require 'rabl'
 
 module Surveyor
   module Models
@@ -63,11 +62,6 @@ module Surveyor
       def deactivate!
         self.inactive_at = DateTime.now
         self.active_at = nil
-      end
-
-      def as_json(options = nil)
-        template_paths = ActionController::Base.view_paths.collect(&:to_path)
-        Rabl.render(filtered_for_json, 'surveyor/export.json', :view_path => template_paths, :format => "hash")
       end
 
       ##

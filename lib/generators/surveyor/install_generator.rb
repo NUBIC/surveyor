@@ -62,15 +62,6 @@ module Surveyor
       end
     end
 
-    def routes
-      route('mount Surveyor::Engine => "/surveys", :as => "surveyor"')
-    end
-
-    def assets
-      directory "app/assets"
-      copy_file "vendor/assets/stylesheets/custom.sass"
-    end
-
     def surveys
       copy_file "surveys/kitchen_sink_survey.rb"
       copy_file "surveys/quiz.rb"
