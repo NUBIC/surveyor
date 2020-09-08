@@ -1,5 +1,5 @@
 # encoding: UTF-8
-class CreateSurveySections < ActiveRecord::Migration
+class CreateSurveySections < ActiveRecord::Migration[4.2]
   def self.up
     create_table :survey_sections do |t|
       # Context

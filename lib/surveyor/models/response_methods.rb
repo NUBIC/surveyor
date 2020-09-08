@@ -8,9 +8,9 @@ module Surveyor
 
       included do
         # Associations
-        belongs_to :response_set
-        belongs_to :question
-        belongs_to :answer
+        belongs_to :response_set, required: false
+        belongs_to :question, required: false
+        belongs_to :answer, required: false
         attr_accessible *PermittedParams.new.response_attributes if defined? ActiveModel::MassAssignmentSecurity
 
         # Validations

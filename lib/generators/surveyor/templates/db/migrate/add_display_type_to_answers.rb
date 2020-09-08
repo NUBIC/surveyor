@@ -1,5 +1,5 @@
 # encoding: UTF-8
-class AddDisplayTypeToAnswers < ActiveRecord::Migration
+class AddDisplayTypeToAnswers < ActiveRecord::Migration[4.2]
   def self.up
     add_column :answers, :display_type, :string
     Answer.all.each{|a| a.update_attributes(:display_type => "hidden_label") if a.hide_label == true}

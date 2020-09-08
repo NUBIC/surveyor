@@ -116,11 +116,6 @@ describe Answer do
   end
 
   context "for views" do
-    it "#text_for with #display_type == image" do
-      answer.text = "rails.png"
-      answer.display_type = :image
-      answer.text_for.should =~ /<img src="\/(images|assets)\/rails\.png" alt="Rails" \/>/
-    end
     it "#text_for with #display_type == hidden_label" do
       answer.text = "Red"
       answer.text_for.should == "Red"

@@ -1,5 +1,5 @@
 # encoding: UTF-8
-class CreateResponseSets < ActiveRecord::Migration
+class CreateResponseSets < ActiveRecord::Migration[4.2]
   def self.up
     create_table :response_sets do |t|
       # Context

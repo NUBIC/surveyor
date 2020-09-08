@@ -10,14 +10,14 @@ module Surveyor
 
       included do
         # Associations
-        belongs_to :question
+        belongs_to :question, required: false
         has_many :responses
-        has_many :validations, :dependent => :destroy
+        has_many :validations, dependent: :destroy
         attr_accessible *PermittedParams.new.answer_attributes if defined? ActiveModel::MassAssignmentSecurity
 
         # Validations
         validates_presence_of :text
-        validates_inclusion_of :qualify_logic, :in => ["must", "may", "reject"]
+        validates_inclusion_of :qualify_logic, in: ["must", "may", "reject"]
 
         self.param_key = :a
       end

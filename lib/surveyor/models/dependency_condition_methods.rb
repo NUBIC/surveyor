@@ -8,16 +8,16 @@ module Surveyor
 
       included do
         # Associations
-        belongs_to :answer
-        belongs_to :dependency
-        belongs_to :dependent_question, :foreign_key => :question_id, :class_name => :question
-        belongs_to :question
+        belongs_to :answer, required: false
+        belongs_to :dependency, required: false
+        belongs_to :dependent_question, foreign_key: :question_id, class_name: :question, required: false
+        belongs_to :question, required: false
         attr_accessible *PermittedParams.new.dependency_condition_attributes if defined? ActiveModel::MassAssignmentSecurity
 
         # Validations
         validates_presence_of :operator, :rule_key
         validate :validates_operator
-        validates_uniqueness_of :rule_key, :scope => :dependency_id
+        validates_uniqueness_of :rule_key, scope: :dependency_id
       end
 
       module ClassMethods

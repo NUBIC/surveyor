@@ -1,5 +1,5 @@
 # encoding: UTF-8
-class AddInputMaskAttributesToAnswer < ActiveRecord::Migration
+class AddInputMaskAttributesToAnswer < ActiveRecord::Migration[4.2]
   def self.up
     add_column :answers, :input_mask, :string
     add_column :answers, :input_mask_placeholder, :string

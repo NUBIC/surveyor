@@ -7,9 +7,9 @@ module Surveyor
 
       included do
         # Associations
-        has_many :questions, -> { order( 'display_order, id ASC' ) }, :dependent => :destroy, :autosave => true
-        has_many :skip_logics, -> { order( 'execute_order, id ASC' ) }, :dependent => :destroy, :autosave => true, :inverse_of => :survey_section
-        belongs_to :survey
+        has_many :questions, -> { order( 'display_order, id ASC' ) }, dependent: :destroy, autosave: true
+        has_many :skip_logics, -> { order( 'execute_order, id ASC' ) }, dependent: :destroy, autosave: true, inverse_of: :survey_section
+        belongs_to :survey, required: false
         attr_accessible *PermittedParams.new.survey_section_attributes if defined? ActiveModel::MassAssignmentSecurity
 
         # Validations

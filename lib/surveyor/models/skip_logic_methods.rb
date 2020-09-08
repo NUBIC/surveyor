@@ -9,14 +9,14 @@ module Surveyor
 
       included do
         # Associations
-        belongs_to :survey_section, inverse_of: :skip_logics
-        belongs_to :target_survey_section, :foreign_key => :target_survey_section_id, :class_name => "SurveySection"
+        belongs_to :survey_section, inverse_of: :skip_logics, required: false
+        belongs_to :target_survey_section, foreign_key: :target_survey_section_id, class_name: "SurveySection", required: false
         has_many :skip_logic_conditions, inverse_of: :skip_logic, dependent: :destroy
         attr_accessible *PermittedParams.new.skip_logic_attributes if defined? ActiveModel::MassAssignmentSecurity
 
         # Validations
         validates_presence_of :rule
-        validates_format_of :rule, :with => /\A(?:and|or|\)|\(|[A-Z]|\s)+\Z/ #TODO properly formed parenthesis etc.
+        validates_format_of :rule, with: /\A(?:and|or|\)|\(|[A-Z]|\s)+\Z/ #TODO properly formed parenthesis etc.
         validates_presence_of :survey_section
       end
 

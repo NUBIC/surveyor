@@ -1,4 +1,4 @@
-class ApiIdsMustBeUnique < ActiveRecord::Migration
+class ApiIdsMustBeUnique < ActiveRecord::Migration[4.2]
   API_ID_TABLES = %w(surveys questions question_groups answers responses response_sets)
 
   class << self
