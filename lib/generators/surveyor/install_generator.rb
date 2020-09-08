@@ -70,14 +70,6 @@ module Surveyor
       directory "surveys/translations"
     end
 
-    def initializers
-      directory "config/initializers"
-    end
-
-    def locales
-      directory "config/locales"
-    end
-
     private
 
     def check_for_existing_migrations(name)

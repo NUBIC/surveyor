@@ -30,7 +30,7 @@ namespace :testbed do
       gem_file_contents = File.read('Gemfile')
       gem_file_contents.sub!(/^(gem 'rails'.*)$/, %Q{# \\1\nplugin_root = File.expand_path('../..', __FILE__)\neval(File.read File.join(plugin_root, 'Gemfile.rails_version'))\ngem 'surveyor', :path => plugin_root})
       File.open('Gemfile', 'w'){|f| f.write(gem_file_contents) }
-      Bundler.with_clean_env do
+      Bundler.with_unbundled_env do
         sh 'bundle install' # run bundle install after Gemfile modifications
       end
     end
@@ -39,7 +39,7 @@ namespace :testbed do
   desc 'Prepare the databases for the testbed'
   task :migrate do
     chdir('testbed') do
-      Bundler.with_clean_env do
+      Bundler.with_unbundled_env do
         sh 'bundle exec rails generate surveyor:install'
         sh 'bundle exec rake db:migrate db:test:prepare'
       end

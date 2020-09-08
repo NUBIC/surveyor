@@ -126,7 +126,7 @@ describe Surveyor::Parser do
         end
       }
       s = Survey.all.size
-      expect {survey = Surveyor::Parser.new.parse(survey_text)}.to raise_error
+      expect {survey = Surveyor::Parser.new.parse(survey_text)}.to raise_error(Surveyor::ParserError)
       expect(Survey.all.size).to eq(s)
     end
     it 'should allow multiple default locales' do

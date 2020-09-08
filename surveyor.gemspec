@@ -31,7 +31,7 @@ Gem::Specification.new do |s|
   s.add_development_dependency('poltergeist', '~>1.17.0')
   s.add_development_dependency('json_spec', '~> 1.1.1')
   s.add_development_dependency('factory_bot', '~> 4.8.0')
-  s.add_development_dependency('database_cleaner', '~> 1.2.0')
+  s.add_development_dependency('database_cleaner', '~> 1.2')
   s.add_development_dependency('rspec-retry', '0.4.0')
   s.add_development_dependency('rspec-collection_matchers')
 end
