@@ -1,6 +1,24 @@
 History for Surveyor
 ====================
 
+3.1.1
+-----
+Ensure gems are matched the main UI rails app, and use rspec 3.9.x
+
+3.1.0
+---
+Fixes specs that were broken in 3.0
+
+3.0.0
+---
+
+Upgraded to address Rails 5.1.x
+
+2.x
+---
+
+Upgraded for Rails 4.2.10
+
 1.5.0
 -----
 
