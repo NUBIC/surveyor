@@ -4,7 +4,9 @@
 
 env_rails_version = ENV['RAILS_VERSION'] || '5.1.7'
 
-gem "rails", "~> #{env_rails_version}"
+ruby '~> 2.5'
+
+gem 'rails', "~> #{env_rails_version}"
 
 case env_rails_version
 when "master"
@@ -16,19 +18,6 @@ when /^5.1/, /^5.0/, /^4.2.10/
 
   # A JS runtime is required for Rails 4.0+
   gem 'therubyracer', platforms: :ruby
-when /^4.2.5/, /^4.1/, /^4.0/
-  gem "sprockets-rails", "~> 2.3"
-  gem 'bootstrap-sass', '~> 3.3.1'
-
-  # A JS runtime is required for Rails 4.0+
-  gem 'therubyracer', platforms: :ruby
-when /^3.2/
-  gem 'strong_parameters'
-  # A JS runtime is required for Rails 3.1+
-  gem 'therubyracer', '~> 0.12.1'
-
-  gem 'bootstrap-sass', '~> 3.3.1'
-  gem "sprockets-rails", "~> 2.3.3"
 else
-  fail "Unsupported Rails version #{ENV['RAILS_VERSION']}"
+  fail "Unsupported Rails version #{env_rails_version}"
 end

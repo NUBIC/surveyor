@@ -1,6 +1,10 @@
 History for Surveyor
 ====================
 
+3.2.0
+-----
+Require Ruby 2.5.x, drop support for Rails < 4.2.10
+
 3.1.1
 -----
 Ensure gems are matched the main UI rails app, and use rspec 3.9.x

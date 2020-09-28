@@ -5,30 +5,30 @@ describe Answer do
   let(:answer){ FactoryBot.create(:answer) }
 
   context "when creating" do
-    it { answer.should be_valid }
+    it { expect(answer).to be_valid }
     it "deletes validation when deleted" do
       v_id = FactoryBot.create(:validation, :answer => answer).id
       answer.destroy
-      Validation.find_by_id(v_id).should be_nil
+      expect(Validation.find_by_id(v_id)).to be_nil
     end
 
     it 'should check qualifying logic' do
       ['must', 'may', 'reject'].each do |ql|
         answer.qualify_logic = ql
-        answer.save.should be true
+        expect(answer.save).to be(true)
       end
 
       answer.qualify_logic = nil
-      answer.save.should be false
-      answer.should have(1).error_on :qualify_logic
+      expect(answer.save).to be(false)
+      expect(answer).to have(1).error_on(:qualify_logic)
 
       answer.qualify_logic = ''
-      answer.save.should be false
-      answer.should have(1).error_on :qualify_logic
+      expect(answer.save).to be(false)
+      expect(answer).to have(1).error_on(:qualify_logic)
 
       answer.qualify_logic = 'accept'
-      answer.save.should be false
-      answer.should have(1).error_on :qualify_logic
+      expect(answer.save).to be(false)
+      expect(answer).to have(1).error_on(:qualify_logic)
     end
   end
 
@@ -37,16 +37,16 @@ describe Answer do
     let(:mustache_context){ Class.new(::Mustache){ def site; "Northwestern"; end; def foo; "bar"; end } }
     it "subsitutes Mustache context variables" do
       answer.text = "You are in {{site}}"
-      answer.in_context(answer.text, mustache_context).should == "You are in Northwestern"
-      answer.text_for(nil, mustache_context).should == "You are in Northwestern"
+      expect(answer.in_context(answer.text, mustache_context)).to eq("You are in Northwestern")
+      expect(answer.text_for(nil, mustache_context)).to eq("You are in Northwestern")
 
       answer.help_text = "{{site}} is your site"
-      answer.in_context(answer.help_text, mustache_context).should == "Northwestern is your site"
-      answer.help_text_for(mustache_context).should == "Northwestern is your site"
+      expect(answer.in_context(answer.help_text, mustache_context)).to eq("Northwestern is your site")
+      expect(answer.help_text_for(mustache_context)).to eq("Northwestern is your site")
 
       answer.default_value = "{{site}}"
-      answer.in_context(answer.default_value, mustache_context).should == "Northwestern"
-      answer.default_value_for(mustache_context).should == "Northwestern"
+      expect(answer.in_context(answer.default_value, mustache_context)).to eq("Northwestern")
+      expect(answer.default_value_for(mustache_context)).to eq("Northwestern")
     end
   end
 
@@ -78,81 +78,81 @@ describe Answer do
       survey.translations << survey_translation
     end
     it "returns its own translation" do
-      answer.translation(:es)[:help_text].should == "Mi nombre es..."
+      expect(answer.translation(:es)[:help_text]).to eq("Mi nombre es...")
     end
     it "returns translations in views" do
-      answer.help_text_for(nil, :es).should == "Mi nombre es..."
+      expect(answer.help_text_for(nil, :es)).to eq("Mi nombre es...")
     end
     it "returns its own default values" do
-      answer.translation(:de).should == {"text" => nil, "help_text" => "My name is...", "default_value" => nil}
+      expect(answer.translation(:de)).to eq({"text" => nil, "help_text" => "My name is...", "default_value" => nil})
     end
     it "returns default values in views" do
-      answer.help_text_for(nil, :de).should == "My name is..."
+      expect(answer.help_text_for(nil, :de)).to eq("My name is...")
     end
   end
 
   context "handling strings" do
     it "#split preserves strings" do
-      answer.split(answer.text).should == "My favorite color is clear"
+      expect(answer.split(answer.text)).to eq("My favorite color is clear")
     end
     it "#split(:pre) preserves strings" do
-      answer.split(answer.text, :pre).should == "My favorite color is clear"
+      expect(answer.split(answer.text, :pre)).to eq("My favorite color is clear")
     end
     it "#split(:post) preserves strings" do
-      answer.split(answer.text, :post).should == ""
+      expect(answer.split(answer.text, :post)).to eq("")
     end
     it "#split splits strings" do
       answer.text = "before|after|extra"
-      answer.split(answer.text).should == "before|after|extra"
+      expect(answer.split(answer.text)).to eq("before|after|extra")
     end
     it "#split(:pre) splits strings" do
       answer.text = "before|after|extra"
-      answer.split(answer.text, :pre).should == "before"
+      expect(answer.split(answer.text, :pre)).to eq("before")
     end
     it "#split(:post) splits strings" do
       answer.text = "before|after|extra"
-      answer.split(answer.text, :post).should == "after|extra"
+      expect(answer.split(answer.text, :post)).to eq("after|extra")
     end
   end
 
   context "for views" do
     it "#text_for with #display_type == hidden_label" do
       answer.text = "Red"
-      answer.text_for.should == "Red"
+      expect(answer.text_for).to eq("Red")
       answer.display_type = "hidden_label"
-      answer.text_for.should == false
+      expect(answer.text_for).to eq(false)
     end
     it "#default_value_for"
     it "#help_text_for"
     it "reports DOM ready #css_class from #custom_class" do
       answer.custom_class = "foo bar"
-      answer.css_class.should == "form_group foo bar"
+      expect(answer.css_class).to eq("form_group foo bar")
     end
     it "reports DOM ready #css_class from #custom_class and #is_exclusive" do
       answer.custom_class = "foo bar"
       answer.is_exclusive = true
-      answer.css_class.should == "form_group exclusive foo bar"
+      expect(answer.css_class).to eq("form_group exclusive foo bar")
     end
     it "#text_for preserves strings" do
-      answer.text_for.should == "My favorite color is clear"
+      expect(answer.text_for).to eq("My favorite color is clear")
     end
     it "#text_for(:pre) preserves strings" do
-      answer.text_for(:pre).should == "My favorite color is clear"
+      expect(answer.text_for(:pre)).to eq("My favorite color is clear")
     end
     it "#text_for(:post) preserves strings" do
-      answer.text_for(:post).should == false
+      expect(answer.text_for(:post)).to eq(false)
     end
     it "#text_for splits strings" do
       answer.text = "before|after|extra"
-      answer.text_for.should == "before|after|extra"
+      expect(answer.text_for).to eq("before|after|extra")
     end
     it "#text_for(:pre) splits strings" do
       answer.text = "before|after|extra"
-      answer.text_for(:pre).should == "before"
+      expect(answer.text_for(:pre)).to eq("before")
     end
     it "#text_for(:post) splits strings" do
       answer.text = "before|after|extra"
-      answer.text_for(:post).should == "after|extra"
+      expect(answer.text_for(:post)).to eq("after|extra")
     end
   end
 end

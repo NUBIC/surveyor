@@ -22,8 +22,8 @@ describe SurveySection do
       expect(survey_section).to have(3).questions
     end
     it "gets questions in order" do
-      expect(survey_section.questions.order("display_order asc")).to match_array([question_2, question_3, question_1])
-      expect(survey_section.questions.order("display_order asc").map(&:display_order)).to match_array([1,2,3])
+      expect(survey_section.questions.order(display_order: :asc).to_a).to eql([question_2, question_3, question_1])
+      expect(survey_section.questions.order(display_order: :asc).map(&:display_order)).to eq([1,2,3])
     end
     it "deletes child questions when deleted" do
       question_ids = survey_section.questions.map(&:id)
@@ -189,24 +189,24 @@ describe SurveySection do
         :string_value => "answer"
       )
       expect(new_set.save).to be(true)
-      expect(mixed_section.completed?( new_set )).to be(true)
+      expect(mixed_section.completed?(new_set)).to be(true)
     end
 
     it 'should indicate that a section is not complete if only some mandatory questions in the section are complete' do
-      mixed_section.completed?( new_set ).should be false
+      expect(mixed_section.completed?(new_set)).to be(false)
 
       new_set.responses.build(
         :question_id => mixed_mandatory_question_1.id,
         :answer_id => mixed_mandatory_answer_1.id,
         :string_value => "answer"
       )
-      new_set.save.should be true
+      expect(new_set.save).to be(true)
 
-      mixed_section.completed?( new_set ).should be false
+      expect(mixed_section.completed?(new_set)).to be(false)
     end
 
     it 'should indicate that a section is complete if some optional questions in the section are complete' do
-      mixed_section.completed?( new_set ).should be false
+      expect(mixed_section.completed?(new_set)).to be(false)
 
       new_set.responses.build(
         :question_id => mixed_optional_question_1.id,
@@ -223,8 +223,8 @@ describe SurveySection do
         :answer_id => mixed_mandatory_answer_2.id,
         :string_value => "answer"
       )
-      new_set.save.should be true
-      mixed_section.completed?( new_set ).should be true
+      expect(new_set.save).to be(true)
+      expect(mixed_section.completed?(new_set)).to be(true)
     end
 
     it 'should indicate that a section is not complete if a mandatory question is answered with a blank value' do
@@ -240,7 +240,7 @@ describe SurveySection do
         :answer_id => mixed_mandatory_answer_2.id,
         :string_value => "answer"
       )
-      new_set.save.should be true
+      expect(new_set.save).to be(true)
       expect(mixed_section.completed?(new_set)).to be(false)
 
       new_set.responses.build(

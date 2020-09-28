@@ -6,9 +6,8 @@ Gem::Specification.new do |s|
   s.name = %q{surveyor}
   s.version = Surveyor::VERSION
 
-  s.authors = ["Brian Chamberlain", "Mark Yoon"]
-  s.email = %q{yoon@northwestern.edu}
-  s.homepage = %q{http://github.com/NUBIC/surveyor}
+  s.authors = ["Brian Chamberlain", "Mark Yoon", "User Interviews, Inc"]
+  s.homepage = %q{http://github.com/user-interviews/surveyor}
   s.post_install_message = %q{Thanks for using surveyor! Remember to run the surveyor generator and migrate your database, even if you are upgrading.}
   s.summary = %q{A rails (gem) plugin to enable surveys in your application}
 
