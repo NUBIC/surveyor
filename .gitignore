@@ -20,10 +20,8 @@ tmtags
 coverage
 rdoc
 pkg
-Gemfile.lock
 reports
 chromedriver.log
-.ruby-version
 .ruby-gemset
 
 ## PROJECT::SPECIFIC

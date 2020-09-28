@@ -25,7 +25,7 @@ Gem::Specification.new do |s|
   s.add_development_dependency('rake', '~> 11.0')
   s.add_development_dependency('sqlite3')
   s.add_development_dependency('bundler', '~> 2.1')
-  s.add_development_dependency('rspec-rails', '~> 3.7')
+  s.add_development_dependency('rspec-rails', '~> 3.9')
   s.add_development_dependency('capybara', '~> 2.2.1')
   s.add_development_dependency('launchy', '~> 2.4.2')
   s.add_development_dependency('poltergeist', '~>1.17.0')
@@ -34,4 +34,6 @@ Gem::Specification.new do |s|
   s.add_development_dependency('database_cleaner', '~> 1.2')
   s.add_development_dependency('rspec-retry', '0.4.0')
   s.add_development_dependency('rspec-collection_matchers')
+  s.add_development_dependency('sprockets', '~> 3.0')
+  s.add_development_dependency('sprockets-rails', '~> 3.0')
 end
