@@ -1,4 +1,6 @@
 # encoding: UTF-8
+# frozen_string_literal: true
+
 class AddApiIds < ActiveRecord::Migration[4.2]
   def self.up
     add_column :surveys, :api_id, :string

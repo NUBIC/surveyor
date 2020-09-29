@@ -1,4 +1,6 @@
-$LOAD_PATH << File.expand_path('../lib', __FILE__)
+# frozen_string_literal: true
+
+$LOAD_PATH << File.expand_path('lib', __dir__)
 require 'fileutils'
 require 'bundler/gem_tasks'
 require 'rspec/core/rake_task'
@@ -11,12 +13,12 @@ RSpec::Core::RakeTask.new(:rcov) do |spec|
   spec.rcov = true
 end
 
-task :default => :spec
+task default: :spec
 
 ###### TESTBED
 
 desc 'Set up the rails app that the specs and features use'
-task :testbed => 'testbed:rebuild'
+task testbed: 'testbed:rebuild'
 
 namespace :testbed do
   desc 'Generate a minimal surveyor-using rails app'
@@ -24,12 +26,13 @@ namespace :testbed do
     Tempfile.open('surveyor_Rakefile') do |f|
       f.write("application \"config.time_zone='Rome'\"\n")
       f.flush
-      sh "bundle exec rails new testbed --skip-turbolinks --skip-bundle -m #{f.path}" # don't run bundle install until the Gemfile modifications
+      # don't run bundle install until the Gemfile modifications
+      sh "bundle exec rails new testbed --skip-turbolinks --skip-bundle -m #{f.path}"
     end
     chdir('testbed') do
       gem_file_contents = File.read('Gemfile')
-      gem_file_contents.sub!(/^(gem 'rails'.*)$/, %Q{# \\1\nplugin_root = File.expand_path('../..', __FILE__)\neval(File.read File.join(plugin_root, 'Gemfile.rails_version'))\ngem 'surveyor', :path => plugin_root})
-      File.open('Gemfile', 'w'){|f| f.write(gem_file_contents) }
+      gem_file_contents.sub!(/^(gem 'rails'.*)$/, %{# \\1\nplugin_root = File.expand_path('../..', __FILE__)\neval(File.read File.join(plugin_root, 'Gemfile.rails_version'))\ngem 'surveyor', :path => plugin_root})
+      File.open('Gemfile', 'w') { |f| f.write(gem_file_contents) }
       Bundler.with_unbundled_env do
         sh 'bundle install' # run bundle install after Gemfile modifications
       end
@@ -51,7 +54,7 @@ namespace :testbed do
     rm_rf 'testbed'
   end
 
-  task :rebuild => [:remove, :generate, :migrate]
+  task rebuild: [:remove, :generate, :migrate]
 
   desc 'Load all the sample surveys into the testbed instance'
   task :surveys do

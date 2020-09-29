@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module WaitForAjax
   def wait_for_ajax(wait_time = 1)
     Timeout.timeout(wait_time) do

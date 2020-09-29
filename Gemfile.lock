@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    surveyor (3.2.0)
+    surveyor (3.2.1)
       mustache (~> 0.99)
       rails (>= 4.2)
       uuidtools (~> 2.1)

@@ -1,4 +1,6 @@
 # encoding: UTF-8
+# frozen_string_literal: true
+
 class CreateQuestionGroups < ActiveRecord::Migration[4.2]
   def self.up
     create_table :question_groups do |t|

@@ -1,16 +1,18 @@
+# frozen_string_literal: true
+
 class ApiIdsMustBeUnique < ActiveRecord::Migration[4.2]
-  API_ID_TABLES = %w(surveys questions question_groups answers responses response_sets)
+  API_ID_TABLES = %w(surveys questions question_groups answers responses response_sets).freeze
 
   class << self
     def up
       API_ID_TABLES.each do |table|
-        add_index table, 'api_id', :unique => true, :name => api_id_index_name(table)
+        add_index table, 'api_id', unique: true, name: api_id_index_name(table)
       end
     end
 
     def down
       API_ID_TABLES.each do |table|
-        remove_index table, :name => api_id_index_name(table)
+        remove_index table, name: api_id_index_name(table)
       end
     end
 

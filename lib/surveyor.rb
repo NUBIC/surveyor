@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Surveyor
   require 'surveyor/engine' if defined?(Rails) && Rails::VERSION::MAJOR >= 3
   autoload :VERSION, 'surveyor/version'

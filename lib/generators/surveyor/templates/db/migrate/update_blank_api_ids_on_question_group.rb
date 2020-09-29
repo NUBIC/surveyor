@@ -1,4 +1,6 @@
 # encoding: UTF-8
+# frozen_string_literal: true
+
 class Survey < ActiveRecord::Base; end
 class Question < ActiveRecord::Base; end
 class QuestionGroup < ActiveRecord::Base; end
@@ -17,6 +19,5 @@ class UpdateBlankApiIdsOnQuestionGroup < ActiveRecord::Migration[4.2]
     end
   end
 
-  def self.down
-  end
+  def self.down; end
 end

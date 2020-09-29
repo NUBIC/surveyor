@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Surveyor
   module Models
     module SurveySectionMethods
@@ -7,8 +9,8 @@ module Surveyor
 
       included do
         # Associations
-        has_many :questions, -> { order( 'display_order, id ASC' ) }, dependent: :destroy, autosave: true
-        has_many :skip_logics, -> { order( 'execute_order, id ASC' ) }, dependent: :destroy, autosave: true, inverse_of: :survey_section
+        has_many :questions, -> { order('display_order, id ASC') }, dependent: :destroy, autosave: true
+        has_many :skip_logics, -> { order('execute_order, id ASC') }, dependent: :destroy, autosave: true, inverse_of: :survey_section
         belongs_to :survey, required: false
         attr_accessible *PermittedParams.new.survey_section_attributes if defined? ActiveModel::MassAssignmentSecurity
 
@@ -26,16 +28,16 @@ module Surveyor
         self.data_export_identifier ||= Surveyor::Common.normalize(title)
       end
 
-      def dom_class(response_set = nil)
-        [ self.reference_identifier ? "section_#{self.reference_identifier}" : nil,
-          self.custom_class ].compact.join(" ")
+      def dom_class(_response_set = nil)
+        [reference_identifier ? "section_#{reference_identifier}" : nil,
+         custom_class].compact.join(' ')
       end
 
       def questions_and_groups
         qs = []
-        questions.each_with_index.map do |q,i|
+        questions.each_with_index.map do |q, i|
           if q.part_of_group?
-            if (i+1 >= questions.size) or (q.question_group_id != questions[i+1].question_group_id)
+            if (i + 1 >= questions.size) || (q.question_group_id != questions[i + 1].question_group_id)
               q.question_group
             end
           else
@@ -45,23 +47,23 @@ module Surveyor
       end
 
       def translation(locale)
-        {:title => self.title, :description => self.description}.with_indifferent_access.merge(
-          (self.survey.translation(locale)[:survey_sections] || {})[self.reference_identifier] || {}
+        { title: title, description: description }.with_indifferent_access.merge(
+          (survey.translation(locale)[:survey_sections] || {})[reference_identifier] || {},
         )
       end
 
-      def completed?( response_set )
-        self.questions_and_groups.each do |qg|
-          if qg.is_a?( Question )
+      def completed?(response_set)
+        questions_and_groups.each do |qg|
+          if qg.is_a?(Question)
             q = qg
-            return false if q.triggered?( response_set ) && q.mandatory? && !response_set.is_answered?( q )
+            return false if q.triggered?(response_set) && q.mandatory? && !response_set.is_answered?(q)
           else
             g = qg
-            return false if g.triggered?( response_set ) && g.questions.detect{ |q| q.triggered?( response_set ) && q.mandatory? && !response_set.is_answered?( q ) }.nil?
+            return false if g.triggered?(response_set) && g.questions.detect { |q| q.triggered?(response_set) && q.mandatory? && !response_set.is_answered?(q) }.nil?
           end
         end
 
-        return true
+        true
       end
     end
   end
