@@ -58,7 +58,7 @@ module Surveyor
     end
     def static_required_columns
       # no longer requiring field_units
-      %w(variable__field_name form_name section_header field_type field_label field_note text_validation_min text_validation_max identifier branching_logic_show_field_only_if required_field)
+      %w(variable_field_name form_name section_header field_type field_label field_note text_validation_min text_validation_max identifier branching_logic_show_field_only_if required_field)
     end
     def resolve_references
       context[:dependency_conditions].each do |dc|
@@ -107,7 +107,7 @@ module SurveyorRedcapParserQuestionMethods
       Surveyor::RedcapParser.rake_trace "label_ "
     end
     self.attributes = ({
-      :reference_identifier => r[:variable__field_name],
+      :reference_identifier => r[:variable_field_name],
       :text => r[:field_label],
       :help_text => r[:field_note],
       :is_mandatory => (/^y/i.match r[:required_field]) ? true : false,

@@ -12,13 +12,13 @@ describe Surveyor::Parser do
     ENV["FILE"]="surveys/kitchen_sink_survey.rb"
     @rake["surveyor"].invoke
 
-    Survey.count.should == 1
-    SurveySection.count.should == 2
-    Question.count.should == 44
-    Answer.count.should == 241
-    Dependency.count.should == 6
-    DependencyCondition.count.should == 9
-    QuestionGroup.count.should == 6
+    expect(Survey.count).to eq(1)
+    expect(SurveySection.count).to eq(2)
+    expect(Question.count).to eq(44)
+    expect(Answer.count).to eq(241)
+    expect(Dependency.count).to eq(6)
+    expect(DependencyCondition.count).to eq(9)
+    expect(QuestionGroup.count).to eq(6)
 
     Survey.all.map(&:destroy)
   end
@@ -26,13 +26,13 @@ describe Surveyor::Parser do
     ENV["FILE"]="../spec/fixtures/chinese_survey.rb"
     @rake["surveyor"].invoke
 
-    Survey.count.should == 1
-    SurveySection.count.should == 1
-    Question.count.should == 3
-    Answer.count.should == 15
-    Dependency.count.should == 0
-    DependencyCondition.count.should == 0
-    QuestionGroup.count.should == 1
+    expect(Survey.count).to eq(1)
+    expect(SurveySection.count).to eq(1)
+    expect(Question.count).to eq(3)
+    expect(Answer.count).to eq(15)
+    expect(Dependency.count).to eq(0)
+    expect(DependencyCondition.count).to eq(0)
+    expect(QuestionGroup.count).to eq(1)
 
     Survey.all.map(&:destroy)
   end

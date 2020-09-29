@@ -65,16 +65,16 @@ describe Surveyor::RedcapParser do
   context "helper methods" do
     it "requires specific columns" do
       # with standard fields
-      x = %w(field_units choices_or_calculations text_validation_type variable__field_name form_name  section_header field_type field_label field_note text_validation_min text_validation_max identifier branching_logic_show_field_only_if required_field)
+      x = %w(field_units choices_or_calculations text_validation_type variable_field_name form_name  section_header field_type field_label field_note text_validation_min text_validation_max identifier branching_logic_show_field_only_if required_field)
       expect(parser.missing_columns(x)).to be_blank
       # without field_units
-      y = %w(choices_or_calculations text_validation_type variable__field_name form_name  section_header field_type field_label field_note text_validation_min text_validation_max identifier branching_logic_show_field_only_if required_field)
+      y = %w(choices_or_calculations text_validation_type variable_field_name form_name  section_header field_type field_label field_note text_validation_min text_validation_max identifier branching_logic_show_field_only_if required_field)
       expect(parser.missing_columns(y)).to be_blank
       # choices_or_calculations => choices_calculations_or_slider_labels
-      z = %w(field_units choices_calculations_or_slider_labels text_validation_type variable__field_name form_name  section_header field_type field_label field_note text_validation_min text_validation_max identifier branching_logic_show_field_only_if required_field)
+      z = %w(field_units choices_calculations_or_slider_labels text_validation_type variable_field_name form_name  section_header field_type field_label field_note text_validation_min text_validation_max identifier branching_logic_show_field_only_if required_field)
       expect(parser.missing_columns(z)).to be_blank
       # text_validation_type => text_validation_type_or_show_slider_number
-      a = %w(field_units choices_or_calculations text_validation_type_or_show_slider_number variable__field_name form_name  section_header field_type field_label field_note text_validation_min text_validation_max identifier branching_logic_show_field_only_if required_field)
+      a = %w(field_units choices_or_calculations text_validation_type_or_show_slider_number variable_field_name form_name  section_header field_type field_label field_note text_validation_min text_validation_max identifier branching_logic_show_field_only_if required_field)
       expect(parser.missing_columns(a)).to be_blank
     end
     it "decomposes dependency rules" do

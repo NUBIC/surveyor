@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    surveyor (3.1.1)
+    surveyor (3.2.0)
       mustache (~> 0.99)
       rails (>= 4.2)
       uuidtools (~> 2.1)
@@ -209,6 +209,9 @@ DEPENDENCIES
   surveyor!
   therubyracer
   yard
+
+RUBY VERSION
+   ruby 2.5.8p224
 
 BUNDLED WITH
    2.1.4
