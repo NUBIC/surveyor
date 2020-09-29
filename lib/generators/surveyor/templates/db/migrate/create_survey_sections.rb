@@ -1,4 +1,6 @@
 # encoding: UTF-8
+# frozen_string_literal: true
+
 class CreateSurveySections < ActiveRecord::Migration[4.2]
   def self.up
     create_table :survey_sections do |t|

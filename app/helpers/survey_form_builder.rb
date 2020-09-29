@@ -1,6 +1,15 @@
-class SurveyFormBuilder < ActionView::Helpers::FormBuilder 
-  def survey_check_box(method, options = {}, checked_value = "1", unchecked_value = "0")
-    fields = @template.survey_check_box(@object_name, method, options.merge(:object => @object), checked_value, unchecked_value)
+# frozen_string_literal: true
+
+class SurveyFormBuilder < ActionView::Helpers::FormBuilder
+  def survey_check_box(method, options = {}, checked_value = '1', unchecked_value = '0')
+    fields = @template.survey_check_box(
+      @object_name,
+      method,
+      options.merge(object: @object),
+      checked_value,
+      unchecked_value,
+    )
+
     fields[1]
   end
 end
@@ -8,29 +17,45 @@ end
 module ActionView
   module Helpers
     module FormHelper
-      def survey_check_box(object_name, method, options = {}, checked_value = "1", unchecked_value = "0")
-        if (Rails::VERSION::STRING.to_f > 2.1)
-          InstanceTag.new(object_name, method, self, options.delete(:object)).to_survey_check_box_tag(options, checked_value, unchecked_value)
+      def survey_check_box(
+        object_name,
+        method,
+        options = {},
+        checked_value = '1',
+        unchecked_value = '0'
+      )
+        if Rails::VERSION::STRING.to_f > 2.1
+          InstanceTag
+            .new(object_name, method, self, options.delete(:object))
+            .to_survey_check_box_tag(options, checked_value, unchecked_value)
         else
-          InstanceTag.new(object_name, method, self, nil, options.delete(:object)).to_survey_check_box_tag(options, checked_value, unchecked_value)
+          InstanceTag
+            .new(object_name, method, self, nil, options.delete(:object))
+            .to_survey_check_box_tag(options, checked_value, unchecked_value)
         end
       end
     end
 
+    # I have no idea how (or if) the above constructor allegedly works
     class InstanceTag
-      def to_survey_check_box_tag(options = {}, checked_value = "1", unchecked_value = "0")
+      def to_survey_check_box_tag(options = {}, checked_value = '1', unchecked_value = '0')
         options = options.stringify_keys
-        options["type"]     = "checkbox"
-        options["value"]    = checked_value
-        if options.has_key?("checked")
-          cv = options.delete "checked"
-          checked = cv == true || cv == "checked"
-        else
-          checked = self.class.check_box_checked?(value(object), checked_value)
-        end
-        options["checked"] = "checked" if checked
+        options['type']     = 'checkbox'
+        options['value']    = checked_value
+
+        checked =
+          if options.key?('checked')
+            [true, 'checked'].include?(options.delete('checked'))
+          else
+            self.class.check_box_checked?(value(object), checked_value)
+          end
+
+        options['checked'] = 'checked' if checked
         add_default_name_and_id(options)
-        [tag("input", "name" => options["name"], "type" => "hidden", "value" => unchecked_value), tag("input", options)]
+        [
+          tag('input', 'name' => options['name'], 'type' => 'hidden', 'value' => unchecked_value),
+          tag('input', options),
+        ]
       end
     end
   end

@@ -1,7 +1,9 @@
+# frozen_string_literal: true
+
 # This file is customized to run specs withing the testbed environemnt
-ENV["RAILS_ENV"] ||= 'test'
+ENV['RAILS_ENV'] ||= 'test'
 begin
-  require File.expand_path("../../testbed/config/environment", __FILE__)
+  require File.expand_path('../testbed/config/environment', __dir__)
 rescue LoadError => e
   fail "Could not load the testbed app. Have you generated it?\n#{e.class}: #{e}"
 end
@@ -19,11 +21,11 @@ require 'rspec/collection_matchers'
 
 # Requires supporting ruby files with custom matchers and macros, etc,
 # in spec/support/ and its subdirectories.
-Dir["./spec/support/**/*.rb"].sort.each {|f| require f}
+Dir['./spec/support/**/*.rb'].sort.each { |f| require f }
 
 # Checks for pending migrations before tests are run.
 # If you are not using ActiveRecord, you can remove this line.
-ActiveRecord::Migration.check_pending! if ::Rails.version >= "4.0" && defined?(ActiveRecord::Migration)
+ActiveRecord::Migration.check_pending! if ::Rails.version >= '4.0' && defined?(ActiveRecord::Migration)
 
 Capybara.javascript_driver = :poltergeist
 
@@ -62,7 +64,7 @@ RSpec.configure do |config|
   # order dependency and want to debug it, you can fix the order by providing
   # the seed, which is printed after each run.
   #     --seed 1234
-  config.order = "random"
+  config.order = 'random'
 
   # rspec-retry
   # https://github.com/rspec/rspec-core/issues/456
@@ -91,5 +93,5 @@ RSpec.configure do |config|
   end
 end
 JsonSpec.configure do
-  exclude_keys "id", "created_at", "updated_at", "uuid", "modified_at", "completed_at"
+  exclude_keys 'id', 'created_at', 'updated_at', 'uuid', 'modified_at', 'completed_at'
 end

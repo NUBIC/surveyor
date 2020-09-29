@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Surveyor
   module Models
     module ValidationConditionMethods
@@ -19,20 +21,21 @@ module Surveyor
 
       # Instance Methods
       def to_hash(response)
-        {rule_key.to_sym => (response.nil? ? false : self.is_valid?(response))}
+        { rule_key.to_sym => (response.nil? ? false : is_valid?(response)) }
       end
 
       def is_valid?(response)
         klass = response.answer.response_class
-        compare_to = Response.find_by_question_id_and_answer_id(self.question_id, self.answer_id) || self
-        case self.operator
-        when "==", "<", ">", "<=", ">="
-          response.as(klass).send(self.operator, compare_to.as(klass))
-        when "!="
-          !(response.as(klass) == compare_to.as(klass))
-        when "=~"
+        compare_to = Response.find_by_question_id_and_answer_id(question_id, answer_id) || self
+        case operator
+        when '==', '<', '>', '<=', '>='
+          response.as(klass).send(operator, compare_to.as(klass))
+        when '!='
+          response.as(klass) != compare_to.as(klass)
+        when '=~'
           return false if compare_to != self
-          !(response.as(klass).to_s =~ Regexp.new(self.regexp || "")).nil?
+
+          !(response.as(klass).to_s =~ Regexp.new(regexp || '')).nil?
         else
           false
         end

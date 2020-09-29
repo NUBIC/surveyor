@@ -1,4 +1,6 @@
 # encoding: UTF-8
+# frozen_string_literal: true
+
 class CreateAnswers < ActiveRecord::Migration[4.2]
   def self.up
     create_table :answers do |t|
@@ -7,9 +9,14 @@ class CreateAnswers < ActiveRecord::Migration[4.2]
 
       # Content
       t.text :text
-      t.text :short_text #Used for presenting responses to experts (ie non-survey takers). Just a shorted version of the string
+      # Used for presenting responses to experts (ie non-survey takers).
+      # Just a shorted version of the string
+      t.text :short_text
       t.text :help_text
-      t.integer :weight # Used to assign a weight to an answer object (used for computing surveys that have numerical results) (I added this to support the Urology questionnaire -BLC)
+
+      # Used to assign a weight to an answer object (used for computing surveys that have numerical
+      # results) (I added this to support the Urology questionnaire -BLC)
+      t.integer :weight
       t.string :response_class # What kind of additional data does this answer accept?
 
       # Reference
@@ -20,15 +27,17 @@ class CreateAnswers < ActiveRecord::Migration[4.2]
 
       # Display
       t.integer :display_order
-      t.boolean :is_exclusive # If set it causes some UI trigger to remove (and disable) all the other answer choices selected for a question (needed for the WHR)
+      # If set it causes some UI trigger to remove (and disable) all the other
+      # answer choices selected for a question (needed for the WHR)
+      t.boolean :is_exclusive
       t.boolean :hide_label
-      t.integer :display_length # if smaller than answer.length the html input length will be this value
+      # if smaller than answer.length the html input length will be this value
+      t.integer :display_length
 
       t.string :custom_class
       t.string :custom_renderer
 
       t.timestamps
-
     end
   end
 

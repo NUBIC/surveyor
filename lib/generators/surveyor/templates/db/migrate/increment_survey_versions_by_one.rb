@@ -1,4 +1,6 @@
 # encoding: UTF-8
+# frozen_string_literal: true
+
 class IncrementSurveyVersionsByOne < ActiveRecord::Migration[5.0]
   def self.up
     remove_index(:surveys, name: 'surveys_access_code_version_idx')
@@ -8,7 +10,12 @@ class IncrementSurveyVersionsByOne < ActiveRecord::Migration[5.0]
       SET survey_version = survey_version + 1
     SQL
 
-    add_index(:surveys, [:access_code, :survey_version], name: 'surveys_access_code_version_idx', unique: true)
+    add_index(
+      :surveys,
+      [:access_code, :survey_version],
+      name: 'surveys_access_code_version_idx',
+      unique: true,
+    )
   end
 
   def self.down
@@ -19,6 +26,11 @@ class IncrementSurveyVersionsByOne < ActiveRecord::Migration[5.0]
       SET survey_version = survey_version - 1
     SQL
 
-    add_index(:surveys, [:access_code, :survey_version], name: 'surveys_access_code_version_idx', unique: true)
+    add_index(
+      :surveys,
+      [:access_code, :survey_version],
+      name: 'surveys_access_code_version_idx',
+      unique: true,
+    )
   end
 end

@@ -1,4 +1,6 @@
 # encoding: UTF-8
+# frozen_string_literal: true
+
 class AddSectionIdToResponses < ActiveRecord::Migration[4.2]
   def self.up
     add_column :responses, :survey_section_id, :integer

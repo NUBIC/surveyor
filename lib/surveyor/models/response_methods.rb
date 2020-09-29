@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Surveyor
   module Models
     module ResponseMethods
@@ -40,35 +42,32 @@ module Surveyor
       end
 
       def answer_id=(val)
-        write_attribute :answer_id, (val.is_a?(Array) ? val.detect{|x| !x.to_s.blank?} : val)
+        write_attribute :answer_id, (val.is_a?(Array) ? val.detect { |x| !x.to_s.blank? } : val)
       end
+
       def correct?
-        question.correct_answer.nil? or self.answer.response_class != "answer" or (question.correct_answer.id.to_i == answer.id.to_i)
+        question.correct_answer.nil? or answer.response_class != 'answer' or (question.correct_answer.id.to_i == answer.id.to_i)
       end
 
       def time_value
-        read_attribute(:datetime_value).strftime( time_format ) unless read_attribute(:datetime_value).blank?
+        read_attribute(:datetime_value).strftime(time_format) unless read_attribute(:datetime_value).blank?
       end
 
       def time_value=(val)
         self.datetime_value =
-          if val && time = Time.zone.parse("#{Date.today.to_s} #{val}")
+          if val && time = Time.zone.parse("#{Date.today} #{val}")
             time.to_datetime
-          else
-            nil
           end
       end
 
       def date_value
-        read_attribute(:datetime_value).strftime( date_format ) unless read_attribute(:datetime_value).blank?
+        read_attribute(:datetime_value).strftime(date_format) unless read_attribute(:datetime_value).blank?
       end
 
       def date_value=(val)
         self.datetime_value =
           if val && time = Time.zone.parse(val)
             time.to_datetime
-          else
-            nil
           end
       end
 
@@ -85,40 +84,41 @@ module Surveyor
       end
 
       def to_formatted_s
-        return "" if answer.nil? || answer.response_class.nil?
-        return case t = answer.response_class.to_sym
-               when :string, :text, :integer, :float
-                 send("#{t}_value".to_sym).to_s
-               when :date
-                 date_value
-               when :time
-                 time_value
-               when :datetime
-                 (read_attribute(:datetime_value).strftime( datetime_format ) unless read_attribute(:datetime_value).blank?) || ''
-               else
-                 to_s
+        return '' if answer.nil? || answer.response_class.nil?
+
+        case t = answer.response_class.to_sym
+        when :string, :text, :integer, :float
+          send("#{t}_value".to_sym).to_s
+        when :date
+          date_value
+        when :time
+          time_value
+        when :datetime
+          (read_attribute(:datetime_value).strftime(datetime_format) unless read_attribute(:datetime_value).blank?) || ''
+        else
+          to_s
                end
       end
 
       def to_s # used in dependency_explanation_helper
-        if self.answer.response_class == "answer" and self.answer_id
-          return self.answer.text
+        if (answer.response_class == 'answer') && answer_id
+          answer.text
         else
-          return "#{(self.string_value || self.text_value || self.integer_value || self.float_value || nil).to_s}"
+          ((string_value || text_value || integer_value || float_value || nil)).to_s
         end
       end
 
       def json_value
-        return nil if answer.response_class == "answer"
+        return nil if answer.response_class == 'answer'
 
         formats = {
           'datetime' => '%Y-%m-%dT%H:%M%:z',
           'date' => '%Y-%m-%d',
-          'time' => '%H:%M'
+          'time' => '%H:%M',
         }
 
         found = formats[answer.response_class]
-        found ? datetime_value.try{|d| d.utc.strftime(found)} : as(answer.response_class)
+        found ? datetime_value.try { |d| d.utc.strftime(found) } : as(answer.response_class)
       end
     end
   end

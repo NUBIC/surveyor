@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Surveyor
   module Models
     module SurveyTranslationMethods
@@ -12,7 +14,7 @@ module Surveyor
 
         # Validations
         validates_presence_of :locale, :translation
-        validates_uniqueness_of :locale, :scope => :survey_id
+        validates_uniqueness_of :locale, scope: :survey_id
       end
 
       # Instance Methods
@@ -21,8 +23,7 @@ module Surveyor
         default_args
       end
 
-      def default_args
-      end
+      def default_args; end
     end
   end
 end

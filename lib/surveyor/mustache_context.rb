@@ -1,8 +1,10 @@
+# frozen_string_literal: true
+
 module Surveyor
   module MustacheContext
     extend ActiveSupport::Concern
-    
-    def in_context(text, context=nil)
+
+    def in_context(text, context = nil)
       case context
       when NilClass then text
       when Hash     then Mustache.render(text, context)

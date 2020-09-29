@@ -1,16 +1,15 @@
 # encoding: UTF-8
-survey "Date Survey" do
+# frozen_string_literal: true
 
-  section "Simple date questions" do
-
-    q "What is your birth date?"
+survey 'Date Survey' do
+  section 'Simple date questions' do
+    q 'What is your birth date?'
     a :date
 
-    q "At what time were you born?"
+    q 'At what time were you born?'
     a :time
 
-    q "When would you like to schedule your next appointment?"
+    q 'When would you like to schedule your next appointment?'
     a :datetime
-
   end
 end

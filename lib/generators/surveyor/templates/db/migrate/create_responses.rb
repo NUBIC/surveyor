@@ -1,4 +1,6 @@
 # encoding: UTF-8
+# frozen_string_literal: true
+
 class CreateResponses < ActiveRecord::Migration[4.2]
   def self.up
     create_table :responses do |t|
@@ -8,15 +10,17 @@ class CreateResponses < ActiveRecord::Migration[4.2]
 
       # Content
       t.integer :answer_id
-      t.datetime :datetime_value # handles date, time, and datetime (segregate by answer.response_class)
+      # handles date, time, and datetime (segregate by answer.response_class)
+      t.datetime :datetime_value
 
-      #t.datetime :time_value
+      # t.datetime :time_value
       t.integer :integer_value
       t.float :float_value
       t.string :unit
       t.text :text_value
       t.string :string_value
-      t.string :response_other #used to hold the string entered with "Other" type answers in multiple choice questions
+      # used to hold the string entered with "Other" type answers in multiple choice questions
+      t.string :response_other
 
       # arbitrary identifier used to group responses
       # the pertinent example here is Q: What's your car's make/model/year
