@@ -22,6 +22,7 @@ Gem::Specification.new do |s|
   s.add_dependency('rails', '>= 4.2')
   s.add_dependency('uuidtools', '~> 2.1')
 
+  s.add_development_dependency('bootsnap', '~> 1.1')
   s.add_development_dependency('bundler', '~> 2.1')
   s.add_development_dependency('capybara', '~> 2.2.1')
   s.add_development_dependency('database_cleaner', '~> 1.2')

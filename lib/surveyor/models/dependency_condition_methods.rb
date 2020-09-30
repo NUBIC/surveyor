@@ -12,6 +12,8 @@ module Surveyor
         # Associations
         belongs_to :answer, required: false
         belongs_to :dependency, required: false
+
+        # what is the difference between :dependency_question and :question?
         belongs_to :dependent_question, foreign_key: :question_id, class_name: :question, required: false
         belongs_to :question, required: false
         attr_accessible *PermittedParams.new.dependency_condition_attributes if defined? ActiveModel::MassAssignmentSecurity

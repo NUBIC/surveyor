@@ -12,6 +12,8 @@ module Surveyor
         # Associations
         belongs_to :answer, required: false
         belongs_to :skip_logic, inverse_of: :skip_logic_conditions, required: true
+
+        # what is the difference between :dependency_question and :question? and why is one required
         belongs_to :dependent_question, foreign_key: :question_id, class_name: :question, required: false
         belongs_to :question, required: true
         attr_accessible *PermittedParams.new.skip_logic_condition_attributes if defined? ActiveModel::MassAssignmentSecurity

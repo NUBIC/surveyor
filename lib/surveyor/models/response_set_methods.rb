@@ -9,7 +9,7 @@ module Surveyor
 
       included do
         # Associations
-        belongs_to :survey
+        belongs_to :survey, required: true
         belongs_to :user, required: false
         belongs_to :current_section, foreign_key: :current_section_id, class_name: :survey_section, required: false
         has_many :responses, dependent: :destroy
