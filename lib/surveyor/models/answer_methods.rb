@@ -12,10 +12,13 @@ module Surveyor
 
       included do
         # Associations
-        belongs_to :question, required: false
+        belongs_to :question, optional: true
         has_many :responses
         has_many :validations, dependent: :destroy
-        attr_accessible *PermittedParams.new.answer_attributes if defined? ActiveModel::MassAssignmentSecurity
+
+        if defined? ActiveModel::MassAssignmentSecurity
+          attr_accessible *PermittedParams.new.answer_attributes
+        end
 
         # Validations
         validates_presence_of :text
@@ -45,7 +48,12 @@ module Surveyor
       end
 
       def dom_class(_response_set = nil)
-        ['form_group', (response_class unless response_class == 'answer'), ('exclusive' if is_exclusive), custom_class].compact.join(' ')
+        [
+          'form_group',
+          (response_class unless response_class == 'answer'),
+          ('exclusive' if is_exclusive),
+          custom_class,
+        ].compact.join(' ')
       end
 
       def css_class(response_set = nil)
@@ -77,7 +85,11 @@ module Surveyor
       end
 
       def translation(locale)
-        { text: text, help_text: help_text, default_value: default_value }.with_indifferent_access.merge(
+        {
+          text: text,
+          help_text: help_text,
+          default_value: default_value,
+        }.with_indifferent_access.merge(
           (question.translation(locale)[:answers] || {})[reference_identifier] || {},
         )
       end
@@ -85,7 +97,11 @@ module Surveyor
       private
 
       def imaged(text)
-        self.display_type == 'image' && !text.blank? ? ActionController::Base.helpers.image_tag(text) : text
+        if self.display_type == 'image' && !text.blank?
+          ActionController::Base.helpers.image_tag(text)
+        else
+          text
+        end
       end
     end
   end

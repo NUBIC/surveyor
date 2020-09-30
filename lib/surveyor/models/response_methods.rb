@@ -10,10 +10,13 @@ module Surveyor
 
       included do
         # Associations
-        belongs_to :response_set, required: false
-        belongs_to :question, required: false
-        belongs_to :answer, required: false
-        attr_accessible *PermittedParams.new.response_attributes if defined? ActiveModel::MassAssignmentSecurity
+        belongs_to :response_set, optional: true
+        belongs_to :question, optional: true
+        belongs_to :answer, optional: true
+
+        if defined? ActiveModel::MassAssignmentSecurity
+          attr_accessible *PermittedParams.new.response_attributes
+        end
 
         # Validations
         validates_presence_of :question_id, :answer_id
@@ -22,10 +25,16 @@ module Surveyor
       module ClassMethods
         def applicable_attributes(attrs)
           result = HashWithIndifferentAccess.new(attrs)
-          answer_id = result[:answer_id].is_a?(Array) ? result[:answer_id].last : result[:answer_id] # checkboxes are arrays / radio buttons are not arrays
+
+          # checkboxes are arrays / radio buttons are not arrays
+          answer_id = result[:answer_id].is_a?(Array) ? result[:answer_id].last : result[:answer_id]
+
           if result[:string_value] && !answer_id.blank? && Answer.exists?(answer_id)
             answer = Answer.find(answer_id)
-            result.delete(:string_value) unless answer.response_class && answer.response_class.to_sym == :string
+
+            unless answer.response_class && answer.response_class.to_sym == :string
+              result.delete(:string_value)
+            end
           end
           result
         end
@@ -46,11 +55,15 @@ module Surveyor
       end
 
       def correct?
-        question.correct_answer.nil? or answer.response_class != 'answer' or (question.correct_answer.id.to_i == answer.id.to_i)
+        question.correct_answer.nil? or
+          answer.response_class != 'answer' or
+          (question.correct_answer.id.to_i == answer.id.to_i)
       end
 
       def time_value
-        read_attribute(:datetime_value).strftime(time_format) unless read_attribute(:datetime_value).blank?
+        unless read_attribute(:datetime_value).blank?
+          read_attribute(:datetime_value).strftime(time_format)
+        end
       end
 
       def time_value=(val)
@@ -61,7 +74,9 @@ module Surveyor
       end
 
       def date_value
-        read_attribute(:datetime_value).strftime(date_format) unless read_attribute(:datetime_value).blank?
+        unless read_attribute(:datetime_value).blank?
+          read_attribute(:datetime_value).strftime(date_format)
+        end
       end
 
       def date_value=(val)
@@ -94,10 +109,14 @@ module Surveyor
         when :time
           time_value
         when :datetime
-          (read_attribute(:datetime_value).strftime(datetime_format) unless read_attribute(:datetime_value).blank?) || ''
+          unless read_attribute(:datetime_value).blank?
+            read_attribute(:datetime_value).strftime(datetime_format)
+          else
+            ''
+          end
         else
           to_s
-               end
+        end
       end
 
       def to_s # used in dependency_explanation_helper
