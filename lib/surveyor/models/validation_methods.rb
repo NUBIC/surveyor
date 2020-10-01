@@ -12,10 +12,6 @@ module Surveyor
         belongs_to :answer, optional: true
         has_many :validation_conditions, dependent: :destroy
 
-        if defined? ActiveModel::MassAssignmentSecurity
-          attr_accessible *PermittedParams.new.validation_attributes
-        end
-
         # Validations
         validates_presence_of :rule
         validates_format_of :rule, with: /\A(?:and|or|\)|\(|[A-Z]|\s)+\Z/

@@ -18,10 +18,6 @@ module Surveyor
           optional: true
         has_many :skip_logic_conditions, inverse_of: :skip_logic, dependent: :destroy
 
-        if defined? ActiveModel::MassAssignmentSecurity
-          attr_accessible *PermittedParams.new.skip_logic_attributes
-        end
-
         # Validations
         validates_presence_of :rule
         # TODO properly formed parenthesis etc.

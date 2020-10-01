@@ -22,10 +22,6 @@ module Surveyor
 
         belongs_to :survey, optional: true
 
-        if defined? ActiveModel::MassAssignmentSecurity
-          attr_accessible *PermittedParams.new.survey_section_attributes
-        end
-
         # Validations
         validates_presence_of :title, :display_order
       end

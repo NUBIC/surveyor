@@ -16,10 +16,6 @@ module Surveyor
         has_many :responses
         has_many :validations, dependent: :destroy
 
-        if defined? ActiveModel::MassAssignmentSecurity
-          attr_accessible *PermittedParams.new.answer_attributes
-        end
-
         # Validations
         validates_presence_of :text
         validates_inclusion_of :qualify_logic, in: ['must', 'may', 'reject']

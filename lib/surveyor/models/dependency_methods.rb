@@ -13,10 +13,6 @@ module Surveyor
         belongs_to :question_group, optional: true
         has_many :dependency_conditions, dependent: :destroy
 
-        if defined? ActiveModel::MassAssignmentSecurity
-          attr_accessible *PermittedParams.new.dependency_attributes
-        end
-
         # Validations
         validates_presence_of :rule
 

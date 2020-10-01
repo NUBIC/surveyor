@@ -21,10 +21,6 @@ module Surveyor
 
         belongs_to :question, optional: false
 
-        if defined? ActiveModel::MassAssignmentSecurity
-          attr_accessible *PermittedParams.new.skip_logic_condition_attributes
-        end
-
         # Validations
         validates_presence_of :operator, :rule_key
         validate :validates_operator

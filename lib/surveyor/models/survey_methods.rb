@@ -16,7 +16,6 @@ module Surveyor
         has_many :sections, -> { order(display_order: :asc) }, class_name: 'SurveySection', dependent: :destroy, autosave: true
         has_many :response_sets
         has_many :translations, class_name: 'SurveyTranslation'
-        attr_accessible *PermittedParams.new.survey_attributes if defined? ActiveModel::MassAssignmentSecurity
 
         # Validations
         validates_presence_of :title

@@ -23,10 +23,6 @@ module Surveyor
         has_one :dependency, dependent: :destroy
         belongs_to :correct_answer, class_name: 'Answer', dependent: :destroy, optional: true
 
-        if defined? ActiveModel::MassAssignmentSecurity
-          attr_accessible *PermittedParams.new.question_attributes
-        end
-
         attr_accessor :response_group
 
         # Validations

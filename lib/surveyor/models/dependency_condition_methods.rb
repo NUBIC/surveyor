@@ -20,10 +20,6 @@ module Surveyor
           optional: true
         belongs_to :question, optional: true
 
-        if defined? ActiveModel::MassAssignmentSecurity
-          attr_accessible *PermittedParams.new.dependency_condition_attributes
-        end
-
         # Validations
         validates_presence_of :operator, :rule_key
         validate :validates_operator

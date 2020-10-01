@@ -14,10 +14,6 @@ module Surveyor
         belongs_to :question, optional: true
         belongs_to :answer, optional: true
 
-        if defined? ActiveModel::MassAssignmentSecurity
-          attr_accessible *PermittedParams.new.response_attributes
-        end
-
         # Validations
         validates_presence_of :question_id, :answer_id
       end
@@ -55,8 +51,8 @@ module Surveyor
       end
 
       def correct?
-        question.correct_answer.nil? or
-          answer.response_class != 'answer' or
+        question.correct_answer.nil? ||
+          answer.response_class != 'answer' ||
           (question.correct_answer.id.to_i == answer.id.to_i)
       end
 

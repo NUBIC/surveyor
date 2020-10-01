@@ -18,10 +18,6 @@ module Surveyor
         has_many :responses, dependent: :destroy
         accepts_nested_attributes_for :responses, allow_destroy: true
 
-        if defined? ActiveModel::MassAssignmentSecurity
-          attr_accessible *PermittedParams.new.response_set_attributes
-        end
-
         # Validations
         validates_presence_of :survey_id
         validates_associated :responses

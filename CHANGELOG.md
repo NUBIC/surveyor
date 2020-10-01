@@ -3,7 +3,7 @@ History for Surveyor
 
 3.3.0
 -----
-Update for Rails 5.2 support
+Update for Rails 5.2 support, drop < Rails 5.0
 
 3.2.1
 -----

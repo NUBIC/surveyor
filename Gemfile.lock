@@ -210,7 +210,7 @@ DEPENDENCIES
   json_spec (~> 1.1.1)
   launchy (~> 2.4.2)
   poltergeist (~> 1.17.0)
-  rails (~> 5.2)
+  rails (~> 5.2.0)
   rake (~> 11.0)
   rspec-collection_matchers
   rspec-rails (~> 3.9)
