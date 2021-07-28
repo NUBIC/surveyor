@@ -9,12 +9,14 @@ module Surveyor
 
       included do
         # Associations
-        belongs_to :survey
-        belongs_to :user, required: false
-        belongs_to :current_section, foreign_key: :current_section_id, class_name: :survey_section, required: false
+        belongs_to :survey, optional: false
+        belongs_to :user, optional: true
+        belongs_to :current_section,
+          foreign_key: :current_section_id,
+          class_name: :survey_section,
+          optional: true
         has_many :responses, dependent: :destroy
         accepts_nested_attributes_for :responses, allow_destroy: true
-        attr_accessible *PermittedParams.new.response_set_attributes if defined? ActiveModel::MassAssignmentSecurity
 
         # Validations
         validates_presence_of :survey_id
@@ -61,9 +63,12 @@ module Surveyor
         end
         result
       end
+
       %w(question answer response).each do |model|
         define_method "csv_#{model}_columns" do
-          model.capitalize.constantize.content_columns.map(&:name) - (model == 'response' ? [] : %w(created_at updated_at))
+          model.capitalize.constantize.content_columns.map(&:name) - (
+            model == 'response' ? [] : %w(created_at updated_at)
+          )
         end
       end
 
@@ -80,9 +85,20 @@ module Surveyor
       end
 
       def correctness_hash
-        { questions: Survey.where(id: survey_id).includes(sections: :questions).first.sections.map(&:questions).flatten.compact.size,
+        {
+          questions:
+            Survey
+              .where(id: survey_id)
+              .includes(sections: :questions)
+              .first
+              .sections
+              .map(&:questions)
+              .flatten
+              .compact
+              .size,
           responses: responses.compact.size,
-          correct: responses.select(&:correct?).compact.size }
+          correct: responses.select(&:correct?).compact.size,
+        }
       end
 
       def mandatory_questions_complete?
@@ -90,13 +106,25 @@ module Surveyor
       end
 
       def progress_hash
-        qs = Survey.where(id: survey_id).includes(sections: :questions).first.sections.map(&:questions).flatten
+        qs =
+          Survey
+            .where(id: survey_id)
+            .includes(sections: :questions)
+            .first
+            .sections
+            .map(&:questions)
+            .flatten
+
         ds = dependencies(qs.map(&:id))
         triggered = qs - ds.reject { |d| d.is_met?(self) }.map(&:question)
-        { questions: qs.compact.size,
+
+        {
+          questions: qs.compact.size,
           triggered: triggered.compact.size,
           triggered_mandatory: triggered.select(&:mandatory?).compact.size,
-          triggered_mandatory_completed: triggered.select { |q| q.mandatory? and is_answered?(q) }.compact.size }
+          triggered_mandatory_completed:
+            triggered.select { |q| q.mandatory? and is_answered?(q) }.compact.size,
+        }
       end
 
       def is_answered?(question)
@@ -111,7 +139,7 @@ module Surveyor
         group.questions.any? { |question| is_unanswered?(question) }
       end
 
-      # Returns the number of response groups (count of group responses enterted) for this question group
+      # Returns the number of response groups (count of group responses entered) for this group
       def count_group_responses(questions)
         questions.map do |q|
           responses.select do |r|
@@ -125,13 +153,15 @@ module Surveyor
       end
 
       def unanswered_question_dependencies
-        dependencies.select { |d| d.question && is_unanswered?(d.question) && d.is_met?(self) }.map(&:question)
+        dependencies.select do |d|
+          d.question && is_unanswered?(d.question) && d.is_met?(self)
+        end.map(&:question)
       end
 
       def unanswered_question_group_dependencies
-        dependencies
-          .select { |d| d.question_group && is_group_unanswered?(d.question_group) && d.is_met?(self) }
-          .map(&:question_group)
+        dependencies.select do |d|
+          d.question_group && is_group_unanswered?(d.question_group) && d.is_met?(self)
+        end.map(&:question_group)
       end
 
       def all_dependencies(question_ids = nil)
@@ -176,7 +206,9 @@ module Surveyor
 
       def is_qualified?
         survey.sections.map(&:questions).flatten.each do |question|
-          return false if is_answered?(question) && question.triggered?(self) && !question.qualified?(self)
+          if is_answered?(question) && question.triggered?(self) && !question.qualified?(self)
+            return false
+          end
         end
 
         true
@@ -185,10 +217,21 @@ module Surveyor
       protected
 
       def dependencies(question_ids = nil)
-        question_ids = survey.sections.map(&:questions).flatten.map(&:id) if responses.blank? && question_ids.blank?
-        deps = Dependency.includes(:dependency_conditions).where({ dependency_conditions: { question_id: question_ids || responses.map(&:question_id) } })
-        # this is a work around for a bug in active_record in rails 2.3 which incorrectly eager-loads associatins when a
-        # condition clause includes an association limiter
+        if responses.blank? && question_ids.blank?
+          question_ids = survey.sections.map(&:questions).flatten.map(&:id)
+        end
+
+        deps =
+          Dependency
+            .includes(:dependency_conditions)
+            .where({
+              dependency_conditions: {
+                question_id: question_ids || responses.map(&:question_id)
+              },
+            })
+
+        # this is a work around for a bug in active_record in rails 2.3 which incorrectly
+        # eager-loads associations when a condition clause includes an association limiter
         deps.each { |d| d.dependency_conditions.reload }
         deps
       end

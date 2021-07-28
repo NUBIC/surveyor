@@ -10,8 +10,7 @@ module Surveyor
 
       included do
         # Associations
-        belongs_to :validation, required: false
-        attr_accessible *PermittedParams.new.validation_condition_attributes if defined? ActiveModel::MassAssignmentSecurity
+        belongs_to :validation, optional: true
 
         # Validations
         validates_presence_of :operator, :rule_key

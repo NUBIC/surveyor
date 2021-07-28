@@ -15,7 +15,6 @@ module Surveyor
         # Associations
         has_many :questions
         has_one :dependency
-        attr_accessible *PermittedParams.new.question_group_attributes if defined? ActiveModel::MassAssignmentSecurity
 
         self.param_key = :g
       end

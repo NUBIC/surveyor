@@ -9,10 +9,18 @@ module Surveyor
 
       included do
         # Associations
-        has_many :questions, -> { order('display_order, id ASC') }, dependent: :destroy, autosave: true
-        has_many :skip_logics, -> { order('execute_order, id ASC') }, dependent: :destroy, autosave: true, inverse_of: :survey_section
-        belongs_to :survey, required: false
-        attr_accessible *PermittedParams.new.survey_section_attributes if defined? ActiveModel::MassAssignmentSecurity
+        has_many :questions,
+          -> { order('display_order, id ASC') },
+          dependent: :destroy,
+          autosave: true
+
+        has_many :skip_logics,
+          -> { order('execute_order, id ASC') },
+          dependent: :destroy,
+          autosave: true,
+          inverse_of: :survey_section
+
+        belongs_to :survey, optional: true
 
         # Validations
         validates_presence_of :title, :display_order
@@ -34,7 +42,6 @@ module Surveyor
       end
 
       def questions_and_groups
-        qs = []
         questions.each_with_index.map do |q, i|
           if q.part_of_group?
             if (i + 1 >= questions.size) || (q.question_group_id != questions[i + 1].question_group_id)
@@ -56,10 +63,17 @@ module Surveyor
         questions_and_groups.each do |qg|
           if qg.is_a?(Question)
             q = qg
-            return false if q.triggered?(response_set) && q.mandatory? && !response_set.is_answered?(q)
+            if q.triggered?(response_set) && q.mandatory? && !response_set.is_answered?(q)
+              return false
+            end
           else
             g = qg
-            return false if g.triggered?(response_set) && g.questions.detect { |q| q.triggered?(response_set) && q.mandatory? && !response_set.is_answered?(q) }.nil?
+            if g.triggered?(response_set) &&
+                g.questions.detect { |q| q.triggered?(response_set) &&
+                q.mandatory? &&
+                !response_set.is_answered?(q) }.nil?
+              return false
+            end
           end
         end
 

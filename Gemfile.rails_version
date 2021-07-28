@@ -2,22 +2,22 @@
 # separate fragment so that it can be sourced from the test
 # application's Gemfile in addition to the main development Gemfile.
 
-env_rails_version = ENV['RAILS_VERSION'] || '5.1.7'
+env_rails_version = ENV['RAILS_VERSION'] || '5.2.6'
 
-ruby '~> 2.5'
+ruby '~> 2.6.7'
 
 gem 'rails', "~> #{env_rails_version}"
 
 case env_rails_version
 when "master"
   {github: "rails/rails"}
-when /^5.1/, /^5.0/, /^4.2.10/
+when /^5.2/, /^5.1/, /^5.0/
   gem 'bootstrap-sass', '~> 3.3'
   gem 'jquery-rails'
   gem "sprockets-rails", "~> 3.2"
 
   # A JS runtime is required for Rails 4.0+
-  gem 'therubyracer', platforms: :ruby
+  gem 'therubyracer', '~> 0.12.3', platforms: :ruby
 else
   fail "Unsupported Rails version #{env_rails_version}"
 end

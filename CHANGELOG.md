@@ -1,6 +1,10 @@
 History for Surveyor
 ====================
 
+3.3.0
+-----
+Require Ruby 2.6.7, drop Rails < 5.2.6
+
 3.2.1
 -----
 Auto-Rubocop's this very old gem to bring things a little more up to code. There are still some issues remaining, but they can be fixed in time

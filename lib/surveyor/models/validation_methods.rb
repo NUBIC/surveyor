@@ -9,9 +9,8 @@ module Surveyor
 
       included do
         # Associations
-        belongs_to :answer, required: false
+        belongs_to :answer, optional: true
         has_many :validation_conditions, dependent: :destroy
-        attr_accessible *PermittedParams.new.validation_attributes if defined? ActiveModel::MassAssignmentSecurity
 
         # Validations
         validates_presence_of :rule
@@ -21,7 +20,13 @@ module Surveyor
       # Instance Methods
       def is_valid?(response_set)
         ch = conditions_hash(response_set)
-        rgx = Regexp.new(validation_conditions.map { |vc| ['a', 'o'].include?(vc.rule_key) ? "#{vc.rule_key}(?!nd|r)" : vc.rule_key }.join('|')) # exclude and, or
+
+        rgx_value =
+          validation_conditions
+            .map { |vc| ['a', 'o'].include?(vc.rule_key) ? "#{vc.rule_key}(?!nd|r)" : vc.rule_key }
+            .join('|')
+
+        rgx = Regexp.new(rgx_value) # exclude and, or
         # logger.debug "v: #{self.inspect}"
         # logger.debug "rule: #{self.rule.inspect}"
         # logger.debug "rexp: #{rgx.inspect}"
@@ -30,7 +35,8 @@ module Surveyor
         eval(rule.gsub(rgx) { |m| ch[m.to_sym] })
       end
 
-      # A hash of the conditions (keyed by rule_key) and their evaluation (boolean) in the context of response_set
+      # A hash of the conditions (keyed by rule_key) and their evaluation (boolean) in the
+      # context of response_set
       def conditions_hash(response_set)
         hash = {}
         response = response_set.responses.detect { |r| r.answer_id.to_i == answer_id.to_i }

@@ -142,6 +142,8 @@ you don't have it, then bundle, generate the app in `testbed`, and run the specs
     $ bundle exec rake testbed
     $ bundle exec rake spec
 
+Installation issues with `libv8` and `therubyracer` see possible fix [here](https://gist.github.com/fernandoaleman/868b64cd60ab2d51ab24e7bf384da1ca).
+
 [bundler]: http://gembundler.com/
 
 Copyright (c) 2008-2013 Brian Chamberlain and Mark Yoon, released under the [MIT license][mit]

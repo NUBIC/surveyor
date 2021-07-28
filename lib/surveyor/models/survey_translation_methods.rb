@@ -9,8 +9,7 @@ module Surveyor
 
       included do
         # Associations
-        belongs_to :survey, required: false
-        attr_accessible *PermittedParams.new.survey_translation_attributes if defined? ActiveModel::MassAssignmentSecurity
+        belongs_to :survey, optional: true
 
         # Validations
         validates_presence_of :locale, :translation
