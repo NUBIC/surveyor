@@ -17,6 +17,7 @@ module Surveyor
         belongs_to :question_group, dependent: :destroy, optional: true
         has_many :answers,
           -> { order('display_order, id ASC') },
+          inverse_of: :question,
           dependent: :destroy,
           autosave: true # it might not always have answers
 
