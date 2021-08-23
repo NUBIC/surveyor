@@ -1,6 +1,10 @@
 History for Surveyor
 ====================
 
+3.3.1
+-----
+Added `inverse_of: :question` to Answer association in question_methods to prevent n+1 loading from as_json call after serialization.
+
 3.3.0
 -----
 Require Ruby 2.6.7, drop Rails < 5.2.6
